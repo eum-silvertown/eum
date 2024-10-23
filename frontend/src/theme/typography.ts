@@ -8,9 +8,9 @@ export const typography = {
     title: getResponsiveSize(48),
   },
   weight: {
-    regular: '400',
-    medium: '500',
-    bold: '700',
+    regular: 'Pretendard-Regular',
+    medium: 'Pretendard-Medium',
+    bold: 'Pretendard-Bold',
   },
 } as const;
 

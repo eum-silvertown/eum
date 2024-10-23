@@ -56,13 +56,13 @@ const fontSizes = StyleSheet.create({
 
 const fontWeights = StyleSheet.create({
   regular: {
-    fontWeight: typography.weight.regular,
+    fontFamily: typography.weight.regular,
   },
   medium: {
-    fontWeight: typography.weight.medium,
+    fontFamily: typography.weight.medium,
   },
   bold: {
-    fontWeight: typography.weight.bold,
+    fontFamily: typography.weight.bold,
   },
 });
 

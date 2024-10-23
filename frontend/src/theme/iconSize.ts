@@ -1,5 +1,7 @@
+import {getResponsiveSize} from '@utils/responsive';
+
 export const iconSize = {
-  sm: 24,
-  md: 28,
-  lg: 32,
+  sm: getResponsiveSize(24),
+  md: getResponsiveSize(28),
+  lg: getResponsiveSize(32),
 } as const;
