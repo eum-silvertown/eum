@@ -1,7 +1,9 @@
+import {getResponsiveSize} from '@utils/responsive';
+
 export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
+  xs: getResponsiveSize(4),
+  sm: getResponsiveSize(8),
+  md: getResponsiveSize(16),
+  lg: getResponsiveSize(32),
+  xl: getResponsiveSize(48),
 } as const;

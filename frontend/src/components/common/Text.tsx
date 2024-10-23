@@ -5,7 +5,6 @@ import {
   useColorScheme,
 } from 'react-native';
 import {typography, SizeVarient, WeightVarient} from '@theme/typography';
-import {getFontSize} from '@utils/responsive';
 import {colors, ColorVariant} from '@theme/colors';
 
 interface CustomTextProps extends TextProps {
@@ -42,16 +41,16 @@ export function Text({
 
 const fontSizes = StyleSheet.create({
   title: {
-    fontSize: getFontSize(typography.size.title),
+    fontSize: typography.size.title,
   },
   subtitle: {
-    fontSize: getFontSize(typography.size.subtitle),
+    fontSize: typography.size.subtitle,
   },
   body: {
-    fontSize: getFontSize(typography.size.body),
+    fontSize: typography.size.body,
   },
   caption: {
-    fontSize: getFontSize(typography.size.caption),
+    fontSize: typography.size.caption,
   },
 });
 
