@@ -1,23 +1,15 @@
-import {useState} from 'react';
-import {RootStackParamList} from '../../../App';
 import {StyleSheet, View} from 'react-native';
-import Sidebar from './Sidebar';
+import Sidebar from './sidebar/Sidebar';
 
 interface MainLayoutProps {
   children: React.ReactElement;
 }
 
 function MainLayout({children}: MainLayoutProps): React.JSX.Element {
-  const [currentScreen, setCurrentScreen] =
-    useState<keyof RootStackParamList>('HomeScreen');
-
   return (
     <View style={styles.container}>
-      <Sidebar
-        currentScreen={currentScreen}
-        setCurrentScreen={setCurrentScreen}
-      />
-      <View>{children}</View>
+      <Sidebar />
+      <View style={styles.content}>{children}</View>
     </View>
   );
 }
@@ -28,5 +20,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
+  },
+  content: {
+    flex: 1,
   },
 });
