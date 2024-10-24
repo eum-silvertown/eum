@@ -17,7 +17,6 @@ export default Sidebar;
 const styles = StyleSheet.create({
   container: {
     alignItems: 'flex-start',
-    width: '21.875%',
     height: '100%',
     paddingHorizontal: spacing.lg,
     backgroundColor: '#2E2559',

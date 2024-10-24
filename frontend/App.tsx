@@ -32,17 +32,25 @@ function App(): React.JSX.Element {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{animation: 'none', headerShown: false}}>
-        {screens.map((screen, index) => (
-          <Stack.Screen key={index} name={screen.name}>
-            {() => (
-              <MainLayout>
-                <screen.component />
-              </MainLayout>
-            )}
-          </Stack.Screen>
-        ))}
-      </Stack.Navigator>
+      <MainLayout>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+            // content 영역만 애니메이션 되도록 스타일 설정
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}>
+          {screens.map((screen, index) => (
+            <Stack.Screen
+              key={index}
+              name={screen.name}
+              component={screen.component}
+            />
+          ))}
+        </Stack.Navigator>
+      </MainLayout>
     </NavigationContainer>
   );
 }
