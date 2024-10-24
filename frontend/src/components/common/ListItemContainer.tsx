@@ -3,8 +3,9 @@ import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import {StyleSheet, View} from 'react-native';
+import {ViewProps} from 'react-native-svg/lib/typescript/fabric/utils';
 
-interface ListItemContainerProps {
+interface ListItemContainerProps extends ViewProps {
   variant: 'homework' | 'question' | 'userinfo';
   children: React.ReactNode;
 }
@@ -12,8 +13,14 @@ interface ListItemContainerProps {
 function ListItemContainer({
   variant,
   children,
+  style,
+  ...props
 }: ListItemContainerProps): React.JSX.Element {
-  return <View style={[styles.common, styles[variant]]}>{children}</View>;
+  return (
+    <View style={[styles.common, styles[variant], style]} {...props}>
+      {children}
+    </View>
+  );
 }
 
 export default ListItemContainer;
@@ -24,7 +31,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     paddingVertical: spacing.md * 1.2,
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: spacing.xxl,
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.sm,
     borderStyle: 'solid',
@@ -33,7 +40,7 @@ const styles = StyleSheet.create({
     height: getResponsiveSize(75),
   },
   question: {
-    height: getResponsiveSize(60),
+    height: getResponsiveSize(75),
   },
   userinfo: {
     height: getResponsiveSize(75),
