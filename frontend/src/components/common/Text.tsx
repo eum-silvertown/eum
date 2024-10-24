@@ -1,35 +1,29 @@
-import {
-  StyleSheet,
-  Text as RNText,
-  TextProps,
-  useColorScheme,
-} from 'react-native';
+import {StyleSheet, Text as RNText, TextProps} from 'react-native';
 import {typography, SizeVarient, WeightVarient} from '@theme/typography';
-import {colors, ColorVariant} from '@theme/colors';
+import {TextColorVariant, useColors} from 'src/hooks/useColors';
 
 interface CustomTextProps extends TextProps {
   variant?: SizeVarient;
-  color?: ColorVariant;
+  color?: TextColorVariant;
   weight?: WeightVarient;
   children: React.ReactNode;
 }
 
 export function Text({
   variant = 'body',
-  color = 'primary',
+  color = 'main',
   weight = 'regular',
   style,
   children,
   ...props
 }: CustomTextProps) {
-  const colorScheme = useColorScheme();
-  const themeColors = colorScheme === 'dark' ? textColorsDark : textColorsLight;
+  const themeColors = useColors();
 
   return (
     <RNText
       style={[
         fontSizes[variant],
-        themeColors[color],
+        {color: themeColors.text[color]},
         fontWeights[weight],
         style,
       ]}
@@ -63,41 +57,5 @@ const fontWeights = StyleSheet.create({
   },
   bold: {
     fontFamily: typography.weight.bold,
-  },
-});
-
-const textColorsLight = StyleSheet.create({
-  primary: {
-    color: colors.light.text.primary,
-  },
-  secondary: {
-    color: colors.light.text.secondary,
-  },
-  tertiary: {
-    color: colors.light.text.tertiary,
-  },
-  white: {
-    color: colors.light.text.white,
-  },
-  error: {
-    color: colors.light.text.error,
-  },
-});
-
-const textColorsDark = StyleSheet.create({
-  primary: {
-    color: colors.dark.text.primary,
-  },
-  secondary: {
-    color: colors.dark.text.secondary,
-  },
-  tertiary: {
-    color: colors.dark.text.tertiary,
-  },
-  white: {
-    color: colors.dark.text.white,
-  },
-  error: {
-    color: colors.dark.text.error,
   },
 });

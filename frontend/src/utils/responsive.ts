@@ -2,8 +2,8 @@ import {Dimensions} from 'react-native';
 
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
 
-// 갤럭시 S9 기준 (2960)
-const STANDARD_WINDOW_WIDTH = 2960;
+// Figma 기준 (1280)
+const STANDARD_WINDOW_WIDTH = 1280;
 
 export function responsiveSize(size: number) {
   return (SCREEN_WIDTH / STANDARD_WINDOW_WIDTH) * size;
