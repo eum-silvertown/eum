@@ -28,6 +28,21 @@ function MyClassScreen(): React.JSX.Element {
       {imageUrl: defaultImage, name: '박효진'},
       {imageUrl: defaultImage, name: '박효진'},
       {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
     ]);
   }, []);
 
@@ -67,7 +82,6 @@ const styles = StyleSheet.create({
   },
   studentItem: {
     width: `${(100 - 1.5 * 6) / 7}%`, // (100% - (gap 비율 * 6)) / 7 아이템
-    aspectRatio: 1,
     gap: spacing.lg,
     padding: spacing.lg,
     alignItems: 'center',

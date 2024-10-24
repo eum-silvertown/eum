@@ -8,8 +8,12 @@ interface MainLayoutProps {
 function MainLayout({children}: MainLayoutProps): React.JSX.Element {
   return (
     <View style={styles.container}>
-      <Sidebar />
-      <View style={styles.content}>{children}</View>
+      <View style={styles.sidebarContainer}>
+        <Sidebar />
+      </View>
+      <View style={styles.contentWrapper}>
+        <View style={styles.content}>{children}</View>
+      </View>
     </View>
   );
 }
@@ -21,7 +25,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  sidebarContainer: {
+    // Sidebar를 고정된 위치에 배치
+    zIndex: 1,
+    width: '21.875%',
+  },
+  contentWrapper: {
+    flex: 1,
+    overflow: 'hidden', // 애니메이션이 Sidebar를 넘어가지 않도록
+  },
   content: {
     flex: 1,
+    backgroundColor: 'white', // 또는 원하는 배경색
   },
 });
