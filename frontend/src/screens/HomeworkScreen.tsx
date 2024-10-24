@@ -1,12 +1,11 @@
+import HomeworkItem from '@components/common/homework/HomeworkItem';
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
 import {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-type HomeworkType = {
-  state: string;
+export type HomeworkType = {
+  state: '완료' | '미제출';
   category: string;
   problemNum: number;
   dueToDate: string;
@@ -54,28 +53,9 @@ function HomeworkScreen(): React.JSX.Element {
         </Text>
       </View>
       <View style={styles.homeworkContainer}>
-        {homeworkList.map((homework, index) => {
-          return (
-            <View style={styles.homeworkItem}>
-              <Text style={styles.homeworkIndex}>{index + 1}</Text>
-              <Text style={styles.homeworkState}>{homework.state}</Text>
-              <View style={styles.homeworkTitle}>
-                <Text>
-                  {homework.category} - {homework.problemNum}번 문제
-                </Text>
-                <Text>{homework.dueToDate}</Text>
-              </View>
-              <Text style={styles.homeworkDday}>D-</Text>
-              <Text style={styles.homeworkCorrect}>
-                {homework.state === '완료'
-                  ? homework.correct
-                    ? '정답'
-                    : '오답'
-                  : '미제출'}
-              </Text>
-            </View>
-          );
-        })}
+        {homeworkList.map((homework, index) => (
+          <HomeworkItem key={index} index={index} homework={homework} />
+        ))}
       </View>
     </View>
   );
@@ -90,33 +70,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
   },
   homeworkContainer: {
-    marginTop: spacing.xxl * 1.5,
+    marginTop: spacing.xxl,
     gap: spacing.xl,
-  },
-  homeworkItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    paddingVertical: spacing.md * 1.2,
-    paddingHorizontal: spacing.xl,
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.sm,
-    borderStyle: 'solid',
-  },
-  homeworkIndex: {
-    flex: 0.75,
-    paddingLeft: spacing.xl,
-  },
-  homeworkState: {
-    flex: 1,
-  },
-  homeworkTitle: {
-    flex: 4,
-  },
-  homeworkDday: {
-    flex: 0.75,
-  },
-  homeworkCorrect: {
-    flex: 0.75,
   },
 });

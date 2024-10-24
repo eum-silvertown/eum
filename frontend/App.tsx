@@ -6,8 +6,9 @@ import LoginScreen from '@screens/LoginScreen';
 import HomeScreen from '@screens/HomeScreen';
 import ClassListScreen from '@screens/ClassListScreen';
 import HomeworkScreen from '@screens/HomeworkScreen';
-import ProblemBoxScreen from '@screens/ProblemBoxScreen';
+import QuestionBoxScreen from '@screens/QuestionBoxScreen';
 import MyClassScreen from '@screens/MyClassScreen';
+import EditUserScreen from '@screens/EditUserScreen';
 import MainLayout from '@components/common/MainLayout';
 
 // 안드로이드 기본 Navbar 없애기
@@ -26,23 +27,32 @@ function App(): React.JSX.Element {
     {name: 'HomeScreen', component: HomeScreen},
     {name: 'ClassListScreen', component: ClassListScreen},
     {name: 'HomeworkScreen', component: HomeworkScreen},
-    {name: 'ProblemBoxScreen', component: ProblemBoxScreen},
+    {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
     {name: 'MyClassScreen', component: MyClassScreen},
+    {name: 'EditUserScreen', component: EditUserScreen},
   ];
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{animation: 'none', headerShown: false}}>
-        {screens.map((screen, index) => (
-          <Stack.Screen key={index} name={screen.name}>
-            {() => (
-              <MainLayout>
-                <screen.component />
-              </MainLayout>
-            )}
-          </Stack.Screen>
-        ))}
-      </Stack.Navigator>
+      <MainLayout>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+            // content 영역만 애니메이션 되도록 스타일 설정
+            contentStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}>
+          {screens.map((screen, index) => (
+            <Stack.Screen
+              key={index}
+              name={screen.name}
+              component={screen.component}
+            />
+          ))}
+        </Stack.Navigator>
+      </MainLayout>
     </NavigationContainer>
   );
 }
