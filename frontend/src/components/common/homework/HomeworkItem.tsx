@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.xl,
   },
   homeworkState: {
-    width: iconSize.lg,
+    width: iconSize.xl,
     justifyContent: 'center',
     aspectRatio: 1,
     marginHorizontal: spacing.xxl,

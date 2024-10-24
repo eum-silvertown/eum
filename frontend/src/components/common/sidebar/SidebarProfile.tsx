@@ -46,10 +46,18 @@ function SidebarProfile(): React.JSX.Element {
           },
         ]}>
         <View style={[styles.username]}>
-          <Text variant="title" color="white" numberOfLines={1}>
+          <Text
+            variant="title"
+            color="white"
+            numberOfLines={1}
+            style={{overflow: 'hidden'}}>
             박효진
           </Text>
-          <Text variant="body" color="white" numberOfLines={1}>
+          <Text
+            variant="body"
+            color="white"
+            numberOfLines={1}
+            style={{overflow: 'hidden'}}>
             학생
           </Text>
         </View>

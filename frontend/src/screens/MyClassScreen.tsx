@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     borderWidth: borderWidth.sm,
   },
   studentImage: {
-    width: '100%',
+    width: '75%',
     height: undefined,
     aspectRatio: 1,
   },

@@ -31,7 +31,7 @@ function SidebarMenus(): React.JSX.Element {
     {name: '우리 반', screen: 'MyClassScreen', icon: myClassIcon},
   ];
   const navigation = useNavigation<NavigationProps>();
-  const {currentScreen, setCurrentScreen} = useCurrentScreenStore();
+  const {setCurrentScreen} = useCurrentScreenStore();
   const {isExpanded} = useSidebarStore();
   const textOpacity = useRef(new Animated.Value(1)).current;
 
