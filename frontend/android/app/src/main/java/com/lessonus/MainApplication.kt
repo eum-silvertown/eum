@@ -1,4 +1,4 @@
-package com.lessonus
+package com.link
 
 import android.app.Application
 import com.facebook.react.PackageList
