@@ -4,8 +4,9 @@ export type ScreenType = {
   HomeScreen: undefined;
   ClassListScreen: undefined;
   HomeworkScreen: undefined;
-  ProblemBoxScreen: undefined;
+  QuestionBoxScreen: undefined;
   MyClassScreen: undefined;
+  EditUserScreen: undefined;
 };
 
 type ScreenName = keyof ScreenType;

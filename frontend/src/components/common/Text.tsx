@@ -6,6 +6,7 @@ interface CustomTextProps extends TextProps {
   variant?: SizeVarient;
   color?: TextColorVariant;
   weight?: WeightVarient;
+  align?: 'left' | 'right' | 'center';
   children: React.ReactNode;
 }
 
@@ -13,6 +14,7 @@ export function Text({
   variant = 'body',
   color = 'main',
   weight = 'regular',
+  align = 'left',
   style,
   children,
   ...props
@@ -23,7 +25,7 @@ export function Text({
     <RNText
       style={[
         fontSizes[variant],
-        {color: themeColors.text[color]},
+        {color: themeColors.text[color], textAlign: align},
         fontWeights[weight],
         style,
       ]}

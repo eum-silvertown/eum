@@ -6,5 +6,5 @@ export const spacing = {
   md: getResponsiveSize(6),
   lg: getResponsiveSize(12),
   xl: getResponsiveSize(18),
-  xxl: getResponsiveSize(24),
+  xxl: getResponsiveSize(36),
 } as const;
