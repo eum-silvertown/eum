@@ -1,5 +1,6 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
+  Animated,
   LayoutAnimation,
   Platform,
   Pressable,
@@ -9,6 +10,11 @@ import {
 import ListItemContainer from '../ListItemContainer';
 import {Text} from '../Text';
 import {spacing} from '@theme/spacing';
+import FolderExpandIcon from '@assets/icons/folderExpandIcon.svg';
+import FolderIcon from '@assets/icons/folderIcon.svg';
+import FileIcon from '@assets/icons/fileIcon.svg';
+import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
+import {iconSize} from '@theme/iconSize';
 
 // Android에서 LayoutAnimation 활성화
 if (Platform.OS === 'android') {
@@ -34,6 +40,16 @@ function ExpandableListItem({
   level = 0,
 }: ExpandableListItemProps): React.JSX.Element {
   const [isExpanded, setIsExpanded] = useState(false);
+  const folderExpandIconAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.timing(folderExpandIconAnim, {
+      toValue: isExpanded ? 0 : 1,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isExpanded]);
 
   const toggleExpand = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -47,10 +63,35 @@ function ExpandableListItem({
       <Pressable
         onPress={hasChildren ? toggleExpand : undefined}
         style={{marginBottom: spacing.sm}}>
-        <ListItemContainer variant="question">
+        <ListItemContainer variant="question" style={{gap: spacing.xxl}}>
+          {hasChildren && (
+            <Animated.View
+              style={{
+                transform: [
+                  {
+                    rotate: folderExpandIconAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['180deg', '0deg'],
+                    }),
+                  },
+                ],
+              }}>
+              <FolderExpandIcon width={iconSize.sm} height={iconSize.sm} />
+            </Animated.View>
+          )}
+          <View>
+            {hasChildren ? (
+              <FolderIcon width={iconSize.md} height={iconSize.md} />
+            ) : (
+              <FileIcon width={iconSize.md} height={iconSize.md} />
+            )}
+          </View>
           <View>
             <Text color="secondary">{item.parentTitle}</Text>
             <Text>{item.title}</Text>
+          </View>
+          <View style={{marginLeft: 'auto'}}>
+            <VerticalMenuIcon width={iconSize.lg} height={iconSize.lg} />
           </View>
         </ListItemContainer>
       </Pressable>
