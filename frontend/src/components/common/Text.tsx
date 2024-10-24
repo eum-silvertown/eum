@@ -67,6 +67,9 @@ const fontWeights = StyleSheet.create({
 });
 
 const textColorsLight = StyleSheet.create({
+  main: {
+    color: colors.light.text.main,
+  },
   primary: {
     color: colors.light.text.primary,
   },
@@ -82,22 +85,61 @@ const textColorsLight = StyleSheet.create({
   error: {
     color: colors.light.text.error,
   },
+  text01: {
+    color: colors.light.text.text01,
+  },
+  text02: {
+    color: colors.light.text.text02,
+  },
+  text03: {
+    color: colors.light.text.text03,
+  },
+  text04: {
+    color: colors.light.text.text04,
+  },
+  readonly: {
+    color: colors.light.text.readonly,
+  },
+  placeholder: {
+    color: colors.light.text.placeholder,
+  },
 });
 
 const textColorsDark = StyleSheet.create({
+  main: {
+    color: colors.light.text.main,
+  },
   primary: {
-    color: colors.dark.text.primary,
+    color: colors.light.text.primary,
   },
   secondary: {
-    color: colors.dark.text.secondary,
+    color: colors.light.text.secondary,
   },
   tertiary: {
-    color: colors.dark.text.tertiary,
+    color: colors.light.text.tertiary,
   },
   white: {
-    color: colors.dark.text.white,
+    color: colors.light.text.white,
   },
   error: {
-    color: colors.dark.text.error,
+    color: colors.light.text.error,
+  },
+  text01: {
+    color: colors.light.text.text01,
+  },
+  text02: {
+    color: colors.light.text.text02,
+  },
+  text03: {
+    color: colors.light.text.text03,
+  },
+  text04: {
+    color: colors.light.text.text04,
+  },
+  readonly: {
+    color: colors.light.text.readonly,
+  },
+  placeholder: {
+    color: colors.light.text.placeholder,
   },
 });
