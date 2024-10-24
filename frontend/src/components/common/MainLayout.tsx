@@ -1,16 +1,41 @@
-import {StyleSheet, View} from 'react-native';
+import {Animated, StyleSheet, View} from 'react-native';
 import Sidebar from './sidebar/Sidebar';
+import useSidebarStore from '@store/useSidebarStore';
+import {useEffect, useRef} from 'react';
 
 interface MainLayoutProps {
   children: React.ReactElement;
 }
 
 function MainLayout({children}: MainLayoutProps): React.JSX.Element {
+  const {isExpanded} = useSidebarStore();
+  const sidebarWidthAnim = useRef(
+    new Animated.Value(isExpanded ? 21.875 : 5),
+  ).current;
+
+  useEffect(() => {
+    Animated.timing(sidebarWidthAnim, {
+      toValue: isExpanded ? 21.875 : 5,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isExpanded]);
+
   return (
     <View style={styles.container}>
-      <View style={styles.sidebarContainer}>
+      <Animated.View
+        style={[
+          styles.sidebarContainer,
+          {
+            width: sidebarWidthAnim.interpolate({
+              inputRange: [0, 100],
+              outputRange: ['0%', '100%'],
+            }),
+          },
+        ]}>
         <Sidebar />
-      </View>
+      </Animated.View>
       <View style={styles.contentWrapper}>
         <View style={styles.content}>{children}</View>
       </View>
@@ -26,9 +51,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   sidebarContainer: {
-    // Sidebar를 고정된 위치에 배치
     zIndex: 1,
-    width: '21.875%',
   },
   contentWrapper: {
     flex: 1,
