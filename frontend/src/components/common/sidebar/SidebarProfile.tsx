@@ -1,12 +1,19 @@
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from '@components/common/Text';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
 import SettingIcon from '@assets/icons/settingIcon.svg';
 import AlarmIcon from '@assets/icons/alarmIcon.svg';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
+import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function SidebarProfile(): React.JSX.Element {
+  const navigation = useNavigation<NavigationProps>();
+  const {setCurrentScreen} = useCurrentScreenStore();
   return (
     <View style={styles.container}>
       <View style={styles.profileImageContainer}>
@@ -21,7 +28,13 @@ function SidebarProfile(): React.JSX.Element {
         </Text>
       </View>
       <View style={styles.icons}>
-        <SettingIcon width={iconSize.md} height={iconSize.md} />
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('EditUserScreen');
+            setCurrentScreen('EditUserScreen');
+          }}>
+          <SettingIcon width={iconSize.md} height={iconSize.md} />
+        </TouchableOpacity>
         <AlarmIcon width={iconSize.md} height={iconSize.md} />
       </View>
     </View>

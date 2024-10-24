@@ -2,7 +2,7 @@ import {getResponsiveSize} from '@utils/responsive';
 
 export const typography = {
   size: {
-    caption: getResponsiveSize(12),
+    caption: getResponsiveSize(14),
     body: getResponsiveSize(16),
     subtitle: getResponsiveSize(20),
     title: getResponsiveSize(24),
