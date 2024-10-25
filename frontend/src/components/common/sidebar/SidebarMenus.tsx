@@ -8,6 +8,7 @@ import ClassIcon from '@assets/icons/classIcon.svg';
 import HomeworkIcon from '@assets/icons/homeworkIcon.svg';
 import questionBoxIcon from '@assets/icons/questionBoxIcon.svg';
 import myClassIcon from '@assets/icons/myClassIcon.svg';
+import NotificationIcon from '@assets/icons/notificationIcon.svg';
 import {Text} from '../Text';
 import {SvgProps} from 'react-native-svg';
 import {spacing} from '@theme/spacing';
@@ -25,6 +26,7 @@ type NavigationProps = NativeStackNavigationProp<ScreenType>;
 function SidebarMenus(): React.JSX.Element {
   const menuItems: MenuItem[] = [
     {name: '홈', screen: 'HomeScreen', icon: HomeIcon},
+    {name: '알림', screen: 'NotificationScreen', icon: NotificationIcon},
     {name: '수업 목록', screen: 'ClassListScreen', icon: ClassIcon},
     {name: '숙제', screen: 'HomeworkScreen', icon: HomeworkIcon},
     {name: '문제 보관함', screen: 'QuestionBoxScreen', icon: questionBoxIcon},
