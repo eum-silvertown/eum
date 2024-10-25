@@ -1,4 +1,4 @@
-import {Animated, Pressable, StyleSheet} from 'react-native';
+import {Animated, Image, Pressable, StyleSheet} from 'react-native';
 import SidebarProfile from './SidebarProfile';
 import SidebarMenus from './SidebarMenus';
 import {spacing} from '@theme/spacing';
@@ -6,6 +6,8 @@ import SidebarExpandIcon from '@assets/icons/sidebarExpandIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
+import SidebarImage from '@assets/images/sidebarLogo.png';
+import {getResponsiveSize} from '@utils/responsive';
 
 function Sidebar(): React.JSX.Element {
   const {isExpanded, toggleSidebar} = useSidebarStore();
@@ -51,6 +53,7 @@ function Sidebar(): React.JSX.Element {
           <SidebarExpandIcon width={iconSize.md} height={iconSize.md} />
         </Animated.View>
       </Pressable>
+      <Image source={SidebarImage} style={styles.sidebarImage} />
     </Animated.View>
   );
 }
@@ -61,7 +64,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'flex-start',
     height: '100%',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.xl,
     backgroundColor: '#2E2559',
     overflow: 'hidden',
   },
@@ -69,5 +72,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: spacing.lg,
     right: spacing.lg,
+  },
+  sidebarImage: {
+    position: 'absolute',
+    zIndex: -1,
+    left: 0,
+    bottom: '12.5%',
+    width: getResponsiveSize(280),
+    height: getResponsiveSize(392),
   },
 });
