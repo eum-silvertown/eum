@@ -6,7 +6,7 @@ import {StyleSheet, View} from 'react-native';
 import {ViewProps} from 'react-native-svg/lib/typescript/fabric/utils';
 
 interface ListItemContainerProps extends ViewProps {
-  variant: 'homework' | 'question' | 'userinfo';
+  variant: 'homework' | 'userinfo';
   children: React.ReactNode;
 }
 
@@ -37,9 +37,6 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
   },
   homework: {
-    height: getResponsiveSize(75),
-  },
-  question: {
     height: getResponsiveSize(75),
   },
   userinfo: {
