@@ -2,14 +2,14 @@ import {Animated, StyleSheet, View} from 'react-native';
 import Sidebar from './sidebar/Sidebar';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
-import { useAuthStore } from '@store/useAuthStore';
+import {useAuthStore} from '@store/useAuthStore';
 
 interface MainLayoutProps {
   children: React.ReactElement;
 }
 
 function MainLayout({children}: MainLayoutProps): React.JSX.Element {
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn); // 로그인 상태 확인
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn); // 로그인 상태 확인
   const {isExpanded} = useSidebarStore();
   const sidebarWidthAnim = useRef(
     new Animated.Value(isExpanded ? 21.875 : 5),
@@ -24,21 +24,22 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isExpanded]);
 
-
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[
-          styles.sidebarContainer,
-          {
-            width: sidebarWidthAnim.interpolate({
-              inputRange: [0, 100],
-              outputRange: ['0%', '100%'],
-            }),
-          },
-        ]}>
-        {isLoggedIn && <Sidebar />}
-      </Animated.View>
+      {isLoggedIn && (
+        <Animated.View
+          style={[
+            styles.sidebarContainer,
+            {
+              width: sidebarWidthAnim.interpolate({
+                inputRange: [0, 100],
+                outputRange: ['0%', '100%'],
+              }),
+            },
+          ]}>
+          <Sidebar />
+        </Animated.View>
+      )}
       <View style={styles.contentWrapper}>
         <View style={styles.content}>{children}</View>
       </View>

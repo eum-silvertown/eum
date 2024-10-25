@@ -13,18 +13,27 @@ import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
 import serviceLogoImage from '@assets/images/serviceLogoImage.png';
 import {iconSize} from '@theme/iconSize';
-import {colors, useColors} from 'src/hooks/useColors';
-import { useAuthStore } from '@store/useAuthStore';
+import {colors} from 'src/hooks/useColors';
+import {useAuthStore} from '@store/useAuthStore';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function LoginScreen(): React.JSX.Element {
   const [isChecked, setIsChecked] = useState(false); // 체크박스 상태 관리
   const [passwordVisible, setPasswordVisible] = useState(false); // 비밀번호 표시 여부 상태
-  const login = useAuthStore((state) => state.login); // login 메서드 가져오기
+  const login = useAuthStore(state => state.login); // login 메서드 가져오기
+  const navigation = useNavigation<NavigationProps>();
+  const {setCurrentScreen} = useCurrentScreenStore();
 
   // 임시 로그인 함수
   const handleLogin = () => {
     // 임시 사용자 이름과 비밀번호를 사용해 로그인
-    login('tempUser', 'password123');    
+    login('tempUser', 'password123');
+    navigation.navigate('HomeScreen');
+    setCurrentScreen('HomeScreen');
   };
 
   return (
@@ -74,10 +83,6 @@ function LoginScreen(): React.JSX.Element {
               <Text>자동 로그인</Text>
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity>
-            <Text>비밀번호를 잊으셨나요?</Text>
-          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleLogin}>
