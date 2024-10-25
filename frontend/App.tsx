@@ -9,6 +9,7 @@ import HomeworkScreen from '@screens/HomeworkScreen';
 import QuestionBoxScreen from '@screens/QuestionBoxScreen';
 import MyClassScreen from '@screens/MyClassScreen';
 import EditUserScreen from '@screens/EditUserScreen';
+import NotificationScreen from '@screens/NotificationScreen';
 import MainLayout from '@components/common/MainLayout';
 
 // 안드로이드 기본 Navbar 없애기
@@ -30,6 +31,7 @@ function App(): React.JSX.Element {
     {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
     {name: 'MyClassScreen', component: MyClassScreen},
     {name: 'EditUserScreen', component: EditUserScreen},
+    {name: 'NotificationScreen', component: NotificationScreen},
   ];
 
   return (
