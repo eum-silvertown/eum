@@ -14,36 +14,7 @@ function MyClassScreen(): React.JSX.Element {
   const [students, setStudents] = useState<StudentType[]>([]);
 
   useEffect(() => {
-    setStudents([
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-      {imageUrl: defaultImage, name: '박효진'},
-    ]);
+    setStudents([{imageUrl: defaultImage, name: '박효진'}]);
   }, []);
 
   return (
