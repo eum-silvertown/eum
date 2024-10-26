@@ -5,6 +5,7 @@ import { ScreenType } from '@store/useCurrentScreenStore';
 import LoginScreen from '@screens/LoginScreen';
 import HomeScreen from '@screens/HomeScreen';
 import ClassDetailScreen from '@screens/ClassDetailScreen';
+import LessoningScreen from '@screens/LessoningScreen';
 import ClassListScreen from '@screens/ClassListScreen';
 import HomeworkScreen from '@screens/HomeworkScreen';
 import QuestionBoxScreen from '@screens/QuestionBoxScreen';
@@ -34,6 +35,7 @@ function App(): React.JSX.Element {
     { name: 'EditUserScreen', component: EditUserScreen },
     { name: 'NotificationScreen', component: NotificationScreen },
     { name: 'ClassDetailScreen', component: ClassDetailScreen },
+    { name: 'LessoningScreen', component: LessoningScreen },
   ];
 
   return (
