@@ -39,7 +39,7 @@ function Homework(): React.JSX.Element {
 const styles = StyleSheet.create({
     homework: {
         flex: 1,
-        paddingHorizontal: 4,
+        paddingHorizontal: 12,
         paddingVertical: 8,
     },
     item: {

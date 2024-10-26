@@ -66,9 +66,11 @@ const styles = StyleSheet.create({
     },
     replayLayout: {
         flex: 2,
+        backgroundColor: 'lightgray',
     },
     homeworkLayout: {
         flex: 1,
+        backgroundColor: 'lightgray',
     },
 });
 
