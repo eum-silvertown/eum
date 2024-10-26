@@ -8,6 +8,7 @@ export type ScreenType = {
   MyClassScreen: undefined;
   EditUserScreen: undefined;
   NotificationScreen: undefined;
+  ClassDetailScreen: undefined;
 };
 
 type ScreenName = keyof ScreenType;
