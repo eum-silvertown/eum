@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, StyleSheet, Image, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
 import MathJax from 'react-native-mathjax';
 
@@ -28,7 +28,7 @@ function LessoningScreen(): React.JSX.Element {
     const canvasRef = useCanvasRef();
     const [paths, setPaths] = useState<{ path: Path; color: string; strokeWidth: number }[]>([]);
     const [currentPath, setCurrentPath] = useState<Path | null>(null);
-    const [penColor, setPenColor] = useState('#000000');
+    const [penColor, setPenColor] = useState('#000000'); // 기본 검정색 펜
     const [penSize, setPenSize] = useState(2);
 
     // 이미지 URL 추출
@@ -67,65 +67,54 @@ function LessoningScreen(): React.JSX.Element {
 
     return (
         <View style={styles.container}>
-
-            {/* 도구 선택 영역 */}
-            <View style={styles.toolPanel}>
-                <Text>도구 선택</Text>
-
-                {/* 색상 선택 */}
-                <View style={styles.colorOptions}>
-                    {['#000000', '#FF0000', '#00FF00', '#0000FF'].map((color) => (
-                        <TouchableOpacity
-                            key={color}
-                            style={[styles.colorButton, { backgroundColor: color }, penColor === color && styles.selectedColorButton]}
-                            onPress={() => setPenColor(color)}
-                        />
-                    ))}
-                </View>
-
-                {/* 펜 굵기 선택 */}
-                <View style={styles.penSizeButtons}>
-                    {[2, 4, 6].map((size) => (
-                        <TouchableOpacity
-                            key={size}
-                            style={[styles.penButton, penSize === size && styles.activePenButton]}
-                            onPress={() => setPenSize(size)}
-                        >
-                            <Text>{size}px</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-
-                <TouchableOpacity onPress={resetPaths} style={styles.resetButton}>
-                    <Text style={styles.resetText}>지우기</Text>
-                </TouchableOpacity>
-            </View>
+            {/* 문제 영역 */}
+            <ScrollView style={styles.problemContainer}>
+                <MathJax html={`<p>${textWithoutImage}</p>`} />
+                {imageUrl && (
+                    <Image
+                        source={{ uri: imageUrl }}
+                        style={styles.problemImage}
+                    />
+                )}
+            </ScrollView>
 
             {/* 캔버스 영역 */}
-            <View
-                style={styles.canvasContainer}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-            >
-                <Canvas ref={canvasRef} style={styles.canvas}>
+            <View style={styles.canvasContainer}>
+                <Canvas
+                    ref={canvasRef}
+                    style={styles.canvas}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                >
                     {paths.map(({ path, color, strokeWidth }, index) => (
                         <Path key={index} path={path} color={Skia.Color(color)} style="stroke" strokeWidth={strokeWidth} />
                     ))}
                     {currentPath && (
                         <Path path={currentPath} color={Skia.Color(penColor)} style="stroke" strokeWidth={penSize} />
                     )}
-                    {/* 문제 텍스트와 이미지 */}
                 </Canvas>
-                <ScrollView contentContainerStyle={styles.problemContainer}>
-                    <MathJax html={`<p>${textWithoutImage}</p>`} />
-                    {imageUrl && (
-                        <Image
-                            source={{ uri: imageUrl }}
-                            style={styles.problemImage}
-                        />
-                    )}
-                </ScrollView>
+            </View>
+            {/* 플로팅 버튼 영역 */}
+            <View style={styles.floatingToolbar}>
+                <TouchableOpacity style={styles.colorButton} onPress={() => setPenColor('#FF0000')}>
+                    <Text style={styles.buttonText}>Red</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.colorButton} onPress={() => setPenColor('#00FF00')}>
+                    <Text style={styles.buttonText}>Green</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.colorButton} onPress={() => setPenColor('#0000FF')}>
+                    <Text style={styles.buttonText}>Blue</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sizeButton} onPress={() => setPenSize(4)}>
+                    <Text style={styles.buttonText}>Size: 4</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sizeButton} onPress={() => setPenSize(6)}>
+                    <Text style={styles.buttonText}>Size: 6</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.resetButton} onPress={resetPaths}>
+                    <Text style={styles.buttonText}>Reset</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -134,67 +123,59 @@ function LessoningScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f7f7f7',
     },
     problemContainer: {
-        backgroundColor: '#f0f0f0',
         padding: 16,
-    },
-    toolPanel: {
-        padding: 16,
-        backgroundColor: '#e0e0e0',
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-    colorOptions: {
-        flexDirection: 'row',
-    },
-    colorButton: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        marginHorizontal: 4,
-    },
-    selectedColorButton: {
-        borderWidth: 2,
-        borderColor: '#4CAF50',
-    },
-    penSizeButtons: {
-        flexDirection: 'row',
-        marginHorizontal: 8,
-    },
-    penButton: {
-        padding: 8,
-        borderRadius: 4,
-        marginHorizontal: 4,
-        backgroundColor: '#ddd',
-    },
-    activePenButton: {
-        backgroundColor: '#4CAF50',
-    },
-    resetButton: {
-        padding: 8,
-        backgroundColor: '#FF5252',
-        borderRadius: 4,
-    },
-    resetText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
-    canvasContainer: {
-        flex: 1,
-        marginHorizontal: 16,
-        borderRadius: 8,
+        zIndex: 1, // 문제 영역이 캔버스 위에 나타나도록 설정
     },
     problemImage: {
-        width: 100,
+        width: '100%',
         height: 150,
+        resizeMode: 'contain',
         alignSelf: 'center',
+        marginVertical: 10, // 이미지와 텍스트 사이의 간격 추가
+    },
+    canvasContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 2, // 캔버스가 문제 영역 뒤에 위치하도록 설정
     },
     canvas: {
-        width: '100%',
-        height: '100%',
+        flex: 1,
+        backgroundColor: 'transparent', // 캔버스 배경을 투명하게 설정
+    },
+    floatingToolbar: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        padding: 10,
+        backgroundColor: '#fff',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 3,
+    },
+    buttonText: {
+        color: '#000',
+        fontWeight: 'bold',
+    },
+    colorButton: {
+        padding: 10,
+        backgroundColor: '#ddd',
+        borderRadius: 5,
+    },
+    sizeButton: {
+        padding: 10,
+        backgroundColor: '#ddd',
+        borderRadius: 5,
+    },
+    resetButton: {
+        padding: 10,
+        backgroundColor: '#FF5252',
+        borderRadius: 5,
     },
 });
 
