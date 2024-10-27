@@ -52,6 +52,8 @@ function LessoningScreen(): React.JSX.Element {
 
     const handleTouchEnd = () => {
         if (currentPath) {
+            const newPathData = { path: currentPath, color: penColor, strokeWidth: penSize };
+            console.log('그려진 경로:', newPathData); // 콘솔에 출력
             setPaths((prevPaths) => [
                 ...prevPaths,
                 { path: currentPath, color: penColor, strokeWidth: penSize },
@@ -63,6 +65,10 @@ function LessoningScreen(): React.JSX.Element {
     const resetPaths = () => {
         setPaths([]);
         canvasRef.current?.redraw();
+    };
+
+    const removePath = (index: number) => {
+        setPaths((prevPaths) => prevPaths.filter((_, i) => i !== index));
     };
 
     return (
@@ -95,24 +101,28 @@ function LessoningScreen(): React.JSX.Element {
                     )}
                 </Canvas>
             </View>
+
             {/* 플로팅 버튼 영역 */}
             <View style={styles.floatingToolbar}>
-                <TouchableOpacity style={styles.colorButton} onPress={() => setPenColor('#FF0000')}>
+                <TouchableOpacity onPress={() => removePath(paths.length - 1)} style={styles.removeButton}>
+                    <Text style={styles.buttonText}>Remove Last Path</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setPenColor('#FF0000')}>
                     <Text style={styles.buttonText}>Red</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.colorButton} onPress={() => setPenColor('#00FF00')}>
+                <TouchableOpacity onPress={() => setPenColor('#00FF00')}>
                     <Text style={styles.buttonText}>Green</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.colorButton} onPress={() => setPenColor('#0000FF')}>
+                <TouchableOpacity onPress={() => setPenColor('#0000FF')}>
                     <Text style={styles.buttonText}>Blue</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.sizeButton} onPress={() => setPenSize(4)}>
+                <TouchableOpacity onPress={() => setPenSize(4)}>
                     <Text style={styles.buttonText}>Size: 4</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.sizeButton} onPress={() => setPenSize(6)}>
+                <TouchableOpacity onPress={() => setPenSize(6)}>
                     <Text style={styles.buttonText}>Size: 6</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.resetButton} onPress={resetPaths}>
+                <TouchableOpacity onPress={resetPaths}>
                     <Text style={styles.buttonText}>Reset</Text>
                 </TouchableOpacity>
             </View>
@@ -167,12 +177,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ddd',
         borderRadius: 5,
     },
-    sizeButton: {
-        padding: 10,
-        backgroundColor: '#ddd',
-        borderRadius: 5,
-    },
-    resetButton: {
+    removeButton: {
         padding: 10,
         backgroundColor: '#FF5252',
         borderRadius: 5,
