@@ -1,6 +1,4 @@
-import React from 'react';
 import { View, StyleSheet } from 'react-native';
-
 import { spacing } from '@theme/spacing';
 import Chart from '@components/common/classDetail/Chart';
 import ClassHeader from '@components/common/classDetail/ClassHeader';

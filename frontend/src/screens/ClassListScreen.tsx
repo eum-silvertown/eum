@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text, View, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenType } from '@store/useCurrentScreenStore';
