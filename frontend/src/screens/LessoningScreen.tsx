@@ -126,14 +126,14 @@ const styles = StyleSheet.create({
     },
     problemContainer: {
         padding: 16,
-        zIndex: 1, // 문제 영역이 캔버스 위에 나타나도록 설정
+        zIndex: 1, // 문제 1층
     },
     problemImage: {
         width: '100%',
         height: 150,
         resizeMode: 'contain',
         alignSelf: 'center',
-        marginVertical: 10, // 이미지와 텍스트 사이의 간격 추가
+        marginVertical: 10,
     },
     canvasContainer: {
         position: 'absolute',
@@ -141,11 +141,11 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        zIndex: 2, // 캔버스가 문제 영역 뒤에 위치하도록 설정
+        zIndex: 2, // 캔버스 2층
     },
     canvas: {
         flex: 1,
-        backgroundColor: 'transparent', // 캔버스 배경을 투명하게 설정
+        backgroundColor: 'transparent',
     },
     floatingToolbar: {
         flexDirection: 'row',
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 3,
+        zIndex: 3, // 플로팅 버튼 3층
     },
     buttonText: {
         color: '#000',
