@@ -17,6 +17,7 @@ export const colors = {
       placeholder: '#C1C1C1',
     },
     background: {
+      content: '#F9F9FB',
       main: '#2E2559',
       secondary: '#f5f5f5',
       primary: '#0268ED',
@@ -47,6 +48,7 @@ export const colors = {
       placeholder: '#C1C1C1',
     },
     background: {
+      content: '#F9F9FB',
       main: '#2E2559',
       secondary: '#f5f5f5',
       primary: '#0268ED',

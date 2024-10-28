@@ -1,14 +1,16 @@
 import {Animated, StyleSheet, View} from 'react-native';
-import Sidebar from './sidebar/Sidebar';
+import Sidebar from '../sidebar/Sidebar';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
 import {useAuthStore} from '@store/useAuthStore';
+import {useColors} from 'src/hooks/useColors';
 
 interface MainLayoutProps {
   children: React.ReactElement;
 }
 
 function MainLayout({children}: MainLayoutProps): React.JSX.Element {
+  const colors = useColors();
   const isLoggedIn = useAuthStore(state => state.isLoggedIn); // 로그인 상태 확인
   const {isExpanded} = useSidebarStore();
   const sidebarWidthAnim = useRef(
@@ -41,7 +43,13 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
         </Animated.View>
       )}
       <View style={styles.contentWrapper}>
-        <View style={styles.content}>{children}</View>
+        <View
+          style={[
+            styles.content,
+            {backgroundColor: colors.background.content},
+          ]}>
+          {children}
+        </View>
       </View>
     </View>
   );
@@ -63,6 +71,5 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: 'white', // 또는 원하는 배경색
   },
 });
