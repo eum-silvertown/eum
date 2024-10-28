@@ -19,7 +19,12 @@ type CanvasProps = {
   togglePenOpacity: () => void;
   undo: () => void;
   redo: () => void;
+  toggleEraserMode: () => void;
+  isEraserMode: boolean;
 };
+
+// 지우개 반경 설정
+const ERASER_RADIUS = 50;
 
 // 연결할 소켓 IP
 const socket = io('http://192.168.56.1:8080', {
@@ -43,15 +48,14 @@ function LeftCanvasSection() {
   const [penOpacity, setPenOpacity] = useState(1);
   const [undoStack, setUndoStack] = useState<any[]>([]);
   const [, setRedoStack] = useState<any[]>([]);
-  const [prevPoint, setPrevPoint] = useState<{ x: number; y: number } | null>(
-    null,
-  );
+  const [isEraserMode, setIsEraserMode] = useState(false);
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
     console.log('변경완료');
 
   };
+  const toggleEraserMode = () => setIsEraserMode(prev => !prev);
 
   const undo = () => {
     if (paths.length > 0) {
@@ -67,6 +71,17 @@ function LeftCanvasSection() {
       setPaths([...paths, pathToRedo]);
       setUndoStack(undoStack.slice(0, -1));
     }
+  };
+
+  const erasePath = (x: number, y: number) => {
+    setPaths(prevPaths =>
+      prevPaths.filter(({ path }) => {
+        const bounds = path.getBounds();
+        const dx = Math.max(bounds.x - x, x - (bounds.x + bounds.width), 0);
+        const dy = Math.max(bounds.y - y, y - (bounds.y + bounds.height), 0);
+        return dx * dx + dy * dy >= ERASER_RADIUS * ERASER_RADIUS;
+      })
+    );
   };
 
   useEffect(() => {
@@ -102,18 +117,22 @@ function LeftCanvasSection() {
 
   const handleTouchStart = (event: any) => {
     const { locationX, locationY } = event.nativeEvent;
-    const newPath = Skia.Path.Make();
-    newPath.moveTo(locationX, locationY);
-    setCurrentPath(newPath);
-    setPrevPoint({ x: locationX, y: locationY });
+    if (isEraserMode) {
+      erasePath(locationX, locationY);
+    } else {
+      const newPath = Skia.Path.Make();
+      newPath.moveTo(locationX, locationY);
+      setCurrentPath(newPath);
+    }
   };
 
   const handleTouchMove = (event: any) => {
-    if (currentPath && prevPoint) {
-      const { locationX, locationY } = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
+    if (isEraserMode) {
+      erasePath(locationX, locationY);
+    } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
-      console.log('Touch Move:', locationX, locationY);
     }
   };
 
@@ -134,7 +153,6 @@ function LeftCanvasSection() {
       });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
-      setPrevPoint(null);
       setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
     }
   };
@@ -155,6 +173,8 @@ function LeftCanvasSection() {
       togglePenOpacity={togglePenOpacity}
       undo={undo}
       redo={redo}
+      toggleEraserMode={toggleEraserMode}
+      isEraserMode={isEraserMode}
     />
   );
 }
@@ -171,16 +191,14 @@ function RightCanvasSection() {
   const [penOpacity, setPenOpacity] = useState(1);
   const [undoStack, setUndoStack] = useState<any[]>([]);
   const [, setRedoStack] = useState<any[]>([]);
-  const [prevPoint, setPrevPoint] = useState<{ x: number; y: number } | null>(
-    null,
-  );
+  const [isEraserMode, setIsEraserMode] = useState(false);
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
     console.log('변경완료');
 
   };
-
+  const toggleEraserMode = () => setIsEraserMode(prev => !prev);
 
   const undo = () => {
     if (paths.length > 0) {
@@ -196,6 +214,17 @@ function RightCanvasSection() {
       setPaths([...paths, pathToRedo]);
       setUndoStack(undoStack.slice(0, -1));
     }
+  };
+
+  const erasePath = (x: number, y: number) => {
+    setPaths(prevPaths =>
+      prevPaths.filter(({ path }) => {
+        const bounds = path.getBounds();
+        const dx = Math.max(bounds.x - x, x - (bounds.x + bounds.width), 0);
+        const dy = Math.max(bounds.y - y, y - (bounds.y + bounds.height), 0);
+        return dx * dx + dy * dy >= ERASER_RADIUS * ERASER_RADIUS;
+      })
+    );
   };
 
   useEffect(() => {
@@ -231,18 +260,22 @@ function RightCanvasSection() {
 
   const handleTouchStart = (event: any) => {
     const { locationX, locationY } = event.nativeEvent;
-    const newPath = Skia.Path.Make();
-    newPath.moveTo(locationX, locationY);
-    setCurrentPath(newPath);
-    setPrevPoint({ x: locationX, y: locationY });
+    if (isEraserMode) {
+      erasePath(locationX, locationY);
+    } else {
+      const newPath = Skia.Path.Make();
+      newPath.moveTo(locationX, locationY);
+      setCurrentPath(newPath);
+    }
   };
 
   const handleTouchMove = (event: any) => {
-    if (currentPath && prevPoint) {
-      const { locationX, locationY } = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
+    if (isEraserMode) {
+      erasePath(locationX, locationY);
+    } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
-      console.log('Touch Move:', locationX, locationY);
     }
   };
 
@@ -263,10 +296,10 @@ function RightCanvasSection() {
       });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
-      setPrevPoint(null);
-      setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
+      setRedoStack([]);
     }
   };
+
   return (
     <CanvasComponent
       canvasRef={canvasRef}
@@ -283,6 +316,8 @@ function RightCanvasSection() {
       togglePenOpacity={togglePenOpacity}
       undo={undo}
       redo={redo}
+      toggleEraserMode={toggleEraserMode}
+      isEraserMode={isEraserMode}
     />
   );
 }
@@ -312,6 +347,8 @@ function CanvasComponent({
   togglePenOpacity,
   undo,
   redo,
+  toggleEraserMode,
+  isEraserMode,
 }: CanvasProps) {
   const COLOR_PALETTE = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
   const PEN_SIZES = [2, 4, 6, 8, 10];
@@ -398,8 +435,18 @@ function CanvasComponent({
           ]}
         >
           <Text style={styles.buttonText}>형광펜</Text>
-          {/* 되돌리기, 되돌리기 취소하기 */}
         </TouchableOpacity>
+        {/* 지우개모드 */}
+        <TouchableOpacity
+          onPress={toggleEraserMode}
+          style={[
+            styles.eraserButton,
+            isEraserMode && styles.activeEraser,
+          ]}
+        >
+          <Text style={styles.buttonText}>지우개</Text>
+        </TouchableOpacity>
+        {/* 되돌리기, 되돌리기 취소하기 */}
         <TouchableOpacity onPress={undo} style={styles.toolbarButton}>
           <Text style={styles.buttonText}>Undo</Text>
         </TouchableOpacity>
@@ -433,7 +480,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    marginHorizontal: 5,
+    marginHorizontal: 1.5,
     borderWidth: 2,
     borderColor: 'transparent',
   },
@@ -448,7 +495,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    marginHorizontal: 5,
+    marginHorizontal: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -474,6 +521,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     borderRadius: 5,
     marginHorizontal: 5,
+  },
+  eraserButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    backgroundColor: '#ccc',
+    borderRadius: 5,
+  },
+  activeEraser: {
+    backgroundColor: '#FFA500',
   },
   buttonText: { color: '#000', fontWeight: 'bold' },
 });
