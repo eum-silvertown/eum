@@ -1,8 +1,9 @@
 import {StyleSheet, View} from 'react-native';
 import FolderIcon from '@assets/icons/folderIcon.svg';
+import FilledFolderIcon from '@assets/icons/filledFolderIcon.svg';
 import FileIcon from '@assets/icons/fileIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import {Text} from '../Text';
+import {Text} from '../common/Text';
 import {spacing} from '@theme/spacing';
 import {QuestionBoxType} from '@store/useQuestionExplorerStore';
 
@@ -14,9 +15,13 @@ function FileContainer({file}: FileContainerProps): React.JSX.Element {
   return (
     <View style={styles.container}>
       {file.type === 'folder' ? (
-        <FolderIcon width={iconSize.xl} height={iconSize.xl} />
+        file.children ? (
+          <FilledFolderIcon width={iconSize.xxl} height={iconSize.xxl} />
+        ) : (
+          <FolderIcon width={iconSize.xxl} height={iconSize.xxl} />
+        )
       ) : (
-        <FileIcon width={iconSize.xl} height={iconSize.xl} />
+        <FileIcon width={iconSize.xxl} height={iconSize.xxl} />
       )}
       <Text>{file.title}</Text>
     </View>
