@@ -34,6 +34,9 @@ socket.on('connect_error', err => {
   console.log(err.message);
 });
 
+// 지우개 범위 상수
+const ERASER_RADIUS = 10;
+
 // 왼쪽 캔버스 컴포넌트
 function LeftCanvasSection() {
   const canvasRef = useCanvasRef();
@@ -57,16 +60,20 @@ function LeftCanvasSection() {
 
   const toggleEraserMode = () => setIsErasing(!isErasing); // 지우개 모드 토글
 
-  const erasePathsAtPosition = (x: number, y: number) => {
-    const newPaths = paths.filter((path) => {
-      const isInEraseArea = path.path.contains(x, y); // 터치 지점에 path가 있는지 확인
+  const erasePath = (x: number, y: number) => {
+    setPaths(prevPaths =>
+      prevPaths.filter(({ path }) => {
+        const bounds = path.getBounds();
+        const dx = Math.max(bounds.x - x, x - (bounds.x + bounds.width), 0);
+        const dy = Math.max(bounds.y - y, y - (bounds.y + bounds.height), 0);
+        const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
-      if (isInEraseArea) {
-        setUndoStack((prev) => [...prev, path]); // 삭제된 path를 undo 스택에 추가
-      }
-      return !isInEraseArea;
-    });
-    setPaths(newPaths);
+        if (isInEraseArea) {
+          setUndoStack(prev => [...prev, path]); // 삭제된 path를 undo 스택에 추가
+        }
+        return !isInEraseArea;
+      })
+    );
     setRedoStack([]); // 지우기 작업 후 redo 스택 초기화
   };
 
@@ -122,7 +129,7 @@ function LeftCanvasSection() {
     const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
-      erasePathsAtPosition(locationX, locationY);
+      erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
       newPath.moveTo(locationX, locationY);
@@ -134,7 +141,7 @@ function LeftCanvasSection() {
     const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
-      erasePathsAtPosition(locationX, locationY);
+      erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
@@ -209,16 +216,21 @@ function RightCanvasSection() {
   };
 
   const toggleEraserMode = () => setIsErasing(!isErasing); // 지우개 모드 토글
-  const erasePathsAtPosition = (x: number, y: number) => {
-    const newPaths = paths.filter((path) => {
-      const isInEraseArea = path.path.contains(x, y); // 터치 지점에 path가 있는지 확인
 
-      if (isInEraseArea) {
-        setUndoStack((prev) => [...prev, path]); // 삭제된 path를 undo 스택에 추가
-      }
-      return !isInEraseArea;
-    });
-    setPaths(newPaths);
+  const erasePath = (x: number, y: number) => {
+    setPaths(prevPaths =>
+      prevPaths.filter(({ path }) => {
+        const bounds = path.getBounds();
+        const dx = Math.max(bounds.x - x, x - (bounds.x + bounds.width), 0);
+        const dy = Math.max(bounds.y - y, y - (bounds.y + bounds.height), 0);
+        const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
+
+        if (isInEraseArea) {
+          setUndoStack(prev => [...prev, path]); // 삭제된 path를 undo 스택에 추가
+        }
+        return !isInEraseArea;
+      })
+    );
     setRedoStack([]); // 지우기 작업 후 redo 스택 초기화
   };
 
@@ -274,7 +286,7 @@ function RightCanvasSection() {
     const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
-      erasePathsAtPosition(locationX, locationY);
+      erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
       newPath.moveTo(locationX, locationY);
@@ -286,7 +298,7 @@ function RightCanvasSection() {
     const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
-      erasePathsAtPosition(locationX, locationY);
+      erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
