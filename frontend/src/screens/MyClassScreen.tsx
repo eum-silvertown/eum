@@ -3,7 +3,10 @@ import {spacing} from '@theme/spacing';
 import {useEffect, useState} from 'react';
 import {Image, ImageProps, StyleSheet, View} from 'react-native';
 import defaultImage from '@assets/images/defaultProfileImage.png';
-import {borderWidth} from '@theme/borderWidth';
+import Blackboard from '@components/myClass/Blackboard';
+import {getResponsiveSize} from '@utils/responsive';
+import ScreenInfo from '@components/common/ScreenInfo';
+import {borderRadius} from '@theme/borderRadius';
 
 type StudentType = {
   imageUrl: ImageProps;
@@ -14,23 +17,41 @@ function MyClassScreen(): React.JSX.Element {
   const [students, setStudents] = useState<StudentType[]>([]);
 
   useEffect(() => {
-    setStudents([{imageUrl: defaultImage, name: '박효진'}]);
+    setStudents([
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+    ]);
   }, []);
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text variant="title" weight="bold">
-          OO고등학교 1학년 1반
-        </Text>
-      </View>
-      <View style={styles.studentsContainer}>
-        {students.map((student, index) => (
-          <View key={index} style={styles.studentItem}>
-            <Image source={student.imageUrl} style={styles.studentImage} />
-            <Text>{student.name}</Text>
+      <ScreenInfo
+        title="
+          OO고등학교 1학년 1반"
+      />
+      <View style={styles.contentContainer}>
+        <View style={styles.leftContent}>
+          <View style={styles.notice}>
+            <View>
+              <Text variant="subtitle">공지사항</Text>
+            </View>
+            <Blackboard />
           </View>
-        ))}
+          <View style={styles.studentsContainer}>
+            {students.map((student, index) => (
+              <View key={index} style={styles.studentItem}>
+                <Image source={student.imageUrl} style={styles.studentImage} />
+                <Text>{student.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -44,19 +65,38 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
     paddingHorizontal: spacing.xxl,
   },
+  contentContainer: {
+    width: '100%',
+    height: '89%',
+    gap: spacing.md,
+  },
+  leftContent: {
+    width: '60%',
+    height: '100%',
+    gap: spacing.md,
+  },
+  notice: {
+    width: '100%',
+    height: '50%',
+    gap: spacing.lg,
+  },
   studentsContainer: {
+    flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.lg,
-    marginTop: spacing.xxl,
     paddingHorizontal: spacing.md,
   },
   studentItem: {
-    width: `${(100 - 1.5 * 6) / 7}%`, // (100% - (gap 비율 * 6)) / 7 아이템
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: `${(100 - 2.5 * 4) / 5}%`, // (100% - (gap 비율 * 6)) / 7 아이템
+    height: '50%',
     gap: spacing.lg,
     padding: spacing.lg,
-    alignItems: 'center',
-    borderWidth: borderWidth.sm,
+    backgroundColor: 'white',
+    elevation: getResponsiveSize(2),
+    borderRadius: borderRadius.sm,
   },
   studentImage: {
     width: '75%',
