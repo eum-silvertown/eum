@@ -6,15 +6,17 @@ import { io } from 'socket.io-client';
 // Props 타입 정의
 type CanvasProps = {
   canvasRef: React.RefObject<any>;
-  paths: { path: Path; color: string; strokeWidth: number }[];
+  paths: { path: Path; color: string; strokeWidth: number; opacity: number }[];
   currentPath: Path | null;
   penColor: string;
   penSize: number;
+  penOpacity: number;
   handleTouchStart: (event: any) => void;
   handleTouchMove: (event: any) => void;
   handleTouchEnd: () => void;
   setPenColor: (color: string) => void;
   setPenSize: (size: number) => void;
+  togglePenOpacity: () => void;
 };
 
 const socket = io('http://192.168.128.246:8080', {
@@ -30,14 +32,21 @@ socket.on('connect_error', err => {
 function LeftCanvasSection() {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<
-    { path: Path; color: string; strokeWidth: number }[]
+    { path: Path; color: string; strokeWidth: number; opacity: number }[]
   >([]);
   const [currentPath, setCurrentPath] = useState<Path | null>(null);
   const [penColor, setPenColor] = useState('#000000');
   const [penSize, setPenSize] = useState(2);
+  const [penOpacity, setPenOpacity] = useState(1);
   const [prevPoint, setPrevPoint] = useState<{ x: number; y: number } | null>(
     null,
   );
+
+  const togglePenOpacity = () => {
+    setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
+    console.log('변경완료');
+
+  };
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -60,6 +69,7 @@ function LeftCanvasSection() {
             path: receivedPath,
             color: data.color,
             strokeWidth: data.strokeWidth,
+            opacity: data.opacity,
           },
         ]);
       }
@@ -93,11 +103,13 @@ function LeftCanvasSection() {
         path: currentPath,
         color: penColor,
         strokeWidth: penSize,
+        opacity: penOpacity,
       };
       socket.emit('left_to_right', {
         pathString,
         color: penColor,
         strokeWidth: penSize,
+        opacity: penOpacity,
       }); // 오른쪽 캔버스로 데이터 전송
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
@@ -112,11 +124,13 @@ function LeftCanvasSection() {
       currentPath={currentPath}
       penColor={penColor}
       penSize={penSize}
+      penOpacity={penOpacity}
       handleTouchStart={handleTouchStart}
       handleTouchMove={handleTouchMove}
       handleTouchEnd={handleTouchEnd}
       setPenColor={setPenColor}
       setPenSize={setPenSize}
+      togglePenOpacity={togglePenOpacity}
     />
   );
 }
@@ -125,14 +139,21 @@ function LeftCanvasSection() {
 function RightCanvasSection() {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<
-    { path: Path; color: string; strokeWidth: number }[]
+    { path: Path; color: string; strokeWidth: number; opacity: number }[]
   >([]);
   const [currentPath, setCurrentPath] = useState<Path | null>(null);
   const [penColor, setPenColor] = useState('#000000');
   const [penSize, setPenSize] = useState(2);
+  const [penOpacity, setPenOpacity] = useState(1);
   const [prevPoint, setPrevPoint] = useState<{ x: number; y: number } | null>(
     null,
   );
+
+  const togglePenOpacity = () => {
+    setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
+    console.log('변경완료');
+
+  };
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -155,6 +176,7 @@ function RightCanvasSection() {
             path: receivedPath,
             color: data.color,
             strokeWidth: data.strokeWidth,
+            opacity: data.opacity,
           },
         ]);
       }
@@ -188,11 +210,13 @@ function RightCanvasSection() {
         path: currentPath,
         color: penColor,
         strokeWidth: penSize,
+        opacity: penOpacity,
       };
       socket.emit('right_to_left', {
         pathString,
         color: penColor,
         strokeWidth: penSize,
+        opacity: penOpacity,
       }); // 왼쪽 캔버스로 데이터 전송
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
@@ -206,11 +230,13 @@ function RightCanvasSection() {
       currentPath={currentPath}
       penColor={penColor}
       penSize={penSize}
+      penOpacity={penOpacity}
       handleTouchStart={handleTouchStart}
       handleTouchMove={handleTouchMove}
       handleTouchEnd={handleTouchEnd}
       setPenColor={setPenColor}
       setPenSize={setPenSize}
+      togglePenOpacity={togglePenOpacity}
     />
   );
 }
@@ -231,11 +257,13 @@ function CanvasComponent({
   currentPath,
   penColor,
   penSize,
+  penOpacity,
   handleTouchStart,
   handleTouchMove,
   handleTouchEnd,
   setPenColor,
   setPenSize,
+  togglePenOpacity,
 }: CanvasProps) {
   const COLOR_PALETTE = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
   const PEN_SIZES = [2, 4, 6, 8, 10];
@@ -247,7 +275,8 @@ function CanvasComponent({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}>
-        {paths.map(({ path, color, strokeWidth }, index) => (
+        {paths.map(({ path, color, strokeWidth, opacity }, index) => (
+          // 출력 데이터
           <Path
             key={index}
             path={path}
@@ -256,8 +285,10 @@ function CanvasComponent({
             strokeWidth={strokeWidth}
             strokeCap="round"
             strokeJoin="round"
+            opacity={opacity}
           />
         ))}
+        {/* 그려지는 순간 데이터 */}
         {currentPath && (
           <Path
             path={currentPath}
@@ -266,6 +297,7 @@ function CanvasComponent({
             strokeWidth={penSize}
             strokeCap="round"
             strokeJoin="round"
+            opacity={penOpacity}
           />
         )}
       </Canvas>
@@ -309,6 +341,16 @@ function CanvasComponent({
             </TouchableOpacity>
           ))}
         </View>
+        {/* 형광펜 모드 버튼 */}
+        <TouchableOpacity
+          onPress={togglePenOpacity}
+          style={[
+            styles.highlighterButton,
+            penOpacity < 1 && styles.activeHighlighter,
+          ]}
+        >
+          <Text style={styles.buttonText}>형광펜</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -362,4 +404,14 @@ const styles = StyleSheet.create({
     borderColor: '#000', // 선택된 펜 두께에 더 두꺼운 테두리
     borderWidth: 3,
   },
+  highlighterButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    backgroundColor: '#FFD700',
+    borderRadius: 5,
+  },
+  activeHighlighter: {
+    backgroundColor: '#FFA500',
+  },
+  buttonText: { color: '#000', fontWeight: 'bold' },
 });
