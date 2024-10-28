@@ -1,10 +1,10 @@
-import {QuestionBoxType} from '@screens/QuestionBoxScreen';
 import {StyleSheet, View} from 'react-native';
 import FolderIcon from '@assets/icons/folderIcon.svg';
 import FileIcon from '@assets/icons/fileIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {Text} from '../Text';
 import {spacing} from '@theme/spacing';
+import {QuestionBoxType} from '@store/useQuestionExplorerStore';
 
 interface FileContainerProps {
   file: QuestionBoxType;

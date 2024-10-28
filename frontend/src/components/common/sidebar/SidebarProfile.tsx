@@ -7,8 +7,7 @@ import {
 } from 'react-native';
 import {Text} from '@components/common/Text';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
-import SettingIcon from '@assets/icons/settingIcon.svg';
-import AlarmIcon from '@assets/icons/alarmIcon.svg';
+import PencilIcon from '@assets/icons/pencilIcon.svg';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
@@ -49,28 +48,22 @@ function SidebarProfile(): React.JSX.Element {
           <Text
             variant="title"
             color="white"
+            weight="bold"
             numberOfLines={1}
             style={{overflow: 'hidden'}}>
             박효진
           </Text>
-          <Text
-            variant="body"
-            color="white"
-            numberOfLines={1}
-            style={{overflow: 'hidden'}}>
-            학생
-          </Text>
         </View>
-        <View style={styles.icons}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('EditUserScreen');
-              setCurrentScreen('EditUserScreen');
-            }}>
-            <SettingIcon width={iconSize.md} height={iconSize.md} />
-          </TouchableOpacity>
-          <AlarmIcon width={iconSize.md} height={iconSize.md} />
-        </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('EditUserScreen');
+            setCurrentScreen('EditUserScreen');
+          }}
+          style={{
+            alignItems: 'center',
+          }}>
+          <PencilIcon width={iconSize.sm} height={iconSize.sm} />
+        </TouchableOpacity>
       </Animated.View>
     </View>
   );
@@ -111,10 +104,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     gap: spacing.sm,
     overflow: 'hidden',
-  },
-  icons: {
-    flexDirection: 'row',
-    gap: spacing.md,
   },
 });
 
