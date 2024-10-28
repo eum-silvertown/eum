@@ -6,6 +6,8 @@ export const typography = {
     body: getResponsiveSize(16),
     subtitle: getResponsiveSize(20),
     title: getResponsiveSize(24),
+    xl: getResponsiveSize(32),
+    xxl: getResponsiveSize(36),
   },
   weight: {
     regular: 'Pretendard-Regular',
