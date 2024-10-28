@@ -1,12 +1,12 @@
-import {useEffect, useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
-import {Canvas, Path, Skia, useCanvasRef} from '@shopify/react-native-skia';
-import {io} from 'socket.io-client';
+import { useEffect, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
+import { io } from 'socket.io-client';
 
 // Props 타입 정의
 type CanvasProps = {
   canvasRef: React.RefObject<any>;
-  paths: {path: Path; color: string; strokeWidth: number}[];
+  paths: { path: Path; color: string; strokeWidth: number }[];
   currentPath: Path | null;
   penColor: string;
   penSize: number;
@@ -30,12 +30,12 @@ socket.on('connect_error', err => {
 function LeftCanvasSection() {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<
-    {path: Path; color: string; strokeWidth: number}[]
+    { path: Path; color: string; strokeWidth: number }[]
   >([]);
   const [currentPath, setCurrentPath] = useState<Path | null>(null);
   const [penColor, setPenColor] = useState('#000000');
   const [penSize, setPenSize] = useState(2);
-  const [prevPoint, setPrevPoint] = useState<{x: number; y: number} | null>(
+  const [prevPoint, setPrevPoint] = useState<{ x: number; y: number } | null>(
     null,
   );
 
@@ -70,16 +70,16 @@ function LeftCanvasSection() {
   }, []);
 
   const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     const newPath = Skia.Path.Make();
     newPath.moveTo(locationX, locationY);
     setCurrentPath(newPath);
-    setPrevPoint({x: locationX, y: locationY});
+    setPrevPoint({ x: locationX, y: locationY });
   };
 
   const handleTouchMove = (event: any) => {
     if (currentPath && prevPoint) {
-      const {locationX, locationY} = event.nativeEvent;
+      const { locationX, locationY } = event.nativeEvent;
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
       console.log('Touch Move:', locationX, locationY);
@@ -121,16 +121,16 @@ function LeftCanvasSection() {
   );
 }
 
-// 오른쪽 캔버스 컴포넌트 (읽기 전용)
+// 오른쪽 캔버스 컴포넌트
 function RightCanvasSection() {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<
-    {path: Path; color: string; strokeWidth: number}[]
+    { path: Path; color: string; strokeWidth: number }[]
   >([]);
   const [currentPath, setCurrentPath] = useState<Path | null>(null);
   const [penColor, setPenColor] = useState('#000000');
   const [penSize, setPenSize] = useState(2);
-  const [prevPoint, setPrevPoint] = useState<{x: number; y: number} | null>(
+  const [prevPoint, setPrevPoint] = useState<{ x: number; y: number } | null>(
     null,
   );
 
@@ -165,16 +165,16 @@ function RightCanvasSection() {
   }, []);
 
   const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     const newPath = Skia.Path.Make();
     newPath.moveTo(locationX, locationY);
     setCurrentPath(newPath);
-    setPrevPoint({x: locationX, y: locationY});
+    setPrevPoint({ x: locationX, y: locationY });
   };
 
   const handleTouchMove = (event: any) => {
     if (currentPath && prevPoint) {
-      const {locationX, locationY} = event.nativeEvent;
+      const { locationX, locationY } = event.nativeEvent;
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
       console.log('Touch Move:', locationX, locationY);
@@ -215,6 +215,15 @@ function RightCanvasSection() {
   );
 }
 
+export default function CanvasSection() {
+  return (
+    <View style={styles.container}>
+      <LeftCanvasSection />
+      <RightCanvasSection />
+    </View>
+  );
+}
+
 // 공통 Canvas 컴포넌트
 function CanvasComponent({
   canvasRef,
@@ -228,6 +237,8 @@ function CanvasComponent({
   setPenColor,
   setPenSize,
 }: CanvasProps) {
+  const COLOR_PALETTE = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
+  const PEN_SIZES = [2, 4, 6, 8, 10];
   return (
     <View style={styles.canvasContainer}>
       <Canvas
@@ -236,7 +247,7 @@ function CanvasComponent({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}>
-        {paths.map(({path, color, strokeWidth}, index) => (
+        {paths.map(({ path, color, strokeWidth }, index) => (
           <Path
             key={index}
             path={path}
@@ -254,40 +265,55 @@ function CanvasComponent({
           />
         )}
       </Canvas>
+
+      {/* 색상 팔레트 및 굵기 설정 */}
       <View style={styles.floatingToolbar}>
-        <TouchableOpacity onPress={() => setPenColor('#FF0000')}>
-          <Text style={styles.buttonText}>Red</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setPenColor('#00FF00')}>
-          <Text style={styles.buttonText}>Green</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setPenColor('#0000FF')}>
-          <Text style={styles.buttonText}>Blue</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setPenSize(4)}>
-          <Text style={styles.buttonText}>Size: 4</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setPenSize(6)}>
-          <Text style={styles.buttonText}>Size: 6</Text>
-        </TouchableOpacity>
+        {/* 색상 팔레트 */}
+        <View style={styles.paletteContainer}>
+          {COLOR_PALETTE.map(color => (
+            <TouchableOpacity
+              key={color}
+              style={[
+                styles.colorPalette,
+                { backgroundColor: color },
+                penColor === color && styles.selectedColor, // 선택된 색상 스타일 적용
+              ]}
+              onPress={() => setPenColor(color)}
+            />
+          ))}
+        </View>
+
+        {/* 펜 두께 설정 버튼 */}
+        <View style={styles.penSizeContainer}>
+          {PEN_SIZES.map(size => (
+            <TouchableOpacity
+              key={size}
+              style={[
+                styles.penSize,
+                penSize === size && styles.selectedPenSize, // 선택된 두께 스타일 적용
+              ]}
+              onPress={() => setPenSize(size)}
+            >
+              <View
+                style={{
+                  width: size, // 펜 크기를 미리보기 위해 내부 원으로 크기 표시
+                  height: size,
+                  borderRadius: size / 2,
+                  backgroundColor: penColor,
+                }}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </View>
   );
 }
 
-export default function CanvasSection() {
-  return (
-    <View style={styles.container}>
-      <LeftCanvasSection />
-      <RightCanvasSection />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: {flex: 1, flexDirection: 'row'},
-  canvasContainer: {flex: 1, backgroundColor: 'transparent'},
-  canvas: {flex: 1},
+  container: { flex: 1, flexDirection: 'row' },
+  canvasContainer: { flex: 1, backgroundColor: 'transparent' },
+  canvas: { flex: 1 },
   floatingToolbar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -298,5 +324,38 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-  buttonText: {color: '#000', fontWeight: 'bold'},
+  paletteContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  colorPalette: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginHorizontal: 5,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  selectedColor: {
+    borderColor: '#000', // 선택된 색상에 테두리 표시
+  },
+  penSizeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  penSize: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginHorizontal: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'transparent',
+    backgroundColor: '#eee',
+  },
+  selectedPenSize: {
+    borderColor: '#000', // 선택된 펜 두께에 더 두꺼운 테두리
+    borderWidth: 3,
+  },
 });
