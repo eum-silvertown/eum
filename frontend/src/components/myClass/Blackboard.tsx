@@ -1,4 +1,3 @@
-import {Text} from '@components/common/Text';
 import {Image, StyleSheet, View} from 'react-native';
 import BlackboardImage from '@assets/images/blackboard.png';
 import {spacing} from '@theme/spacing';
@@ -7,9 +6,6 @@ function Blackboard(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <Image source={BlackboardImage} style={styles.blackboard} />
-      <View style={styles.blackboardContent}>
-        <Text color="white">하이</Text>
-      </View>
     </View>
   );
 }
@@ -27,7 +23,7 @@ const styles = StyleSheet.create({
   },
   blackboardContent: {
     position: 'absolute',
-    top: spacing.xl,
-    left: spacing.xxl,
+    left: spacing.lg,
+    padding: spacing.xl,
   },
 });
