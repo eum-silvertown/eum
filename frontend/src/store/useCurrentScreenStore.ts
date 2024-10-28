@@ -9,6 +9,7 @@ export type ScreenType = {
   EditUserScreen: undefined;
   LoginScreen: undefined;
   SignUpSelectScreen: undefined;
+  SignUpScreen : { userType: 'teacher' | 'student' };
   NotificationScreen: undefined;
   ClassDetailScreen: undefined;
   LessoningScreen: undefined;
