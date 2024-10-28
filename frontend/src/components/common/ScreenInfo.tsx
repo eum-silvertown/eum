@@ -19,5 +19,5 @@ function ScreenInfo({title}: ScreenInfoProps): React.JSX.Element {
 export default ScreenInfo;
 
 const styles = StyleSheet.create({
-  container: {marginBottom: spacing.xxl},
+  container: {marginBottom: spacing.xl},
 });
