@@ -9,7 +9,7 @@ import HomeworkIcon from '@assets/icons/homeworkIcon.svg';
 import questionBoxIcon from '@assets/icons/questionBoxIcon.svg';
 import myClassIcon from '@assets/icons/myClassIcon.svg';
 import NotificationIcon from '@assets/icons/notificationIcon.svg';
-import {Text} from '../Text';
+import {Text} from '../common/Text';
 import {SvgProps} from 'react-native-svg';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';

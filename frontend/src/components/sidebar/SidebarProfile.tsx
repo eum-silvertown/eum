@@ -45,12 +45,7 @@ function SidebarProfile(): React.JSX.Element {
           },
         ]}>
         <View style={[styles.username]}>
-          <Text
-            variant="title"
-            color="white"
-            weight="bold"
-            numberOfLines={1}
-            style={{overflow: 'hidden'}}>
+          <Text variant="title" color="white" weight="bold">
             박효진
           </Text>
         </View>
@@ -100,7 +95,7 @@ const styles = StyleSheet.create({
   username: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'baseline',
+    width: 'auto',
     paddingHorizontal: spacing.sm,
     gap: spacing.sm,
     overflow: 'hidden',

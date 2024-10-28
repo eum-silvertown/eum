@@ -1,6 +1,6 @@
 import {Text} from '@components/common/Text';
-import FileContainer from '@components/common/questionBox/FileContainer';
-import FolderHeader from '@components/common/questionBox/FolderHeader';
+import FileContainer from '@components/questionBox/FileContainer';
+import FolderHeader from '@components/questionBox/FolderHeader';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
 import {spacing} from '@theme/spacing';
 import React, {useEffect} from 'react';
