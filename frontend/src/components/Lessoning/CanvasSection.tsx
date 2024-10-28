@@ -254,6 +254,8 @@ function CanvasComponent({
             color={Skia.Color(color)}
             style="stroke"
             strokeWidth={strokeWidth}
+            strokeCap="round"
+            strokeJoin="round"
           />
         ))}
         {currentPath && (
@@ -262,6 +264,8 @@ function CanvasComponent({
             color={Skia.Color(penColor)}
             style="stroke"
             strokeWidth={penSize}
+            strokeCap="round"
+            strokeJoin="round"
           />
         )}
       </Canvas>
