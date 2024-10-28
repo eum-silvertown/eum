@@ -26,6 +26,9 @@ function MyClassScreen(): React.JSX.Element {
       {imageUrl: defaultImage, name: '박효진'},
       {imageUrl: defaultImage, name: '박효진'},
       {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
+      {imageUrl: defaultImage, name: '박효진'},
     ]);
   }, []);
 
@@ -38,10 +41,44 @@ function MyClassScreen(): React.JSX.Element {
       <View style={styles.contentContainer}>
         <View style={styles.leftContent}>
           <View style={styles.notice}>
-            <View>
-              <Text variant="subtitle">공지사항</Text>
-            </View>
             <Blackboard />
+          </View>
+          <View style={{flex: 1, flexDirection: 'row', gap: spacing.lg}}>
+            <View
+              style={{
+                flex: 1,
+                padding: spacing.lg,
+                backgroundColor: 'white',
+                elevation: getResponsiveSize(2),
+                borderRadius: borderRadius.lg,
+              }}>
+              <Text>선생님</Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                padding: spacing.lg,
+                backgroundColor: 'white',
+                elevation: getResponsiveSize(2),
+                borderRadius: borderRadius.lg,
+              }}>
+              <Text>공지사항</Text>
+            </View>
+          </View>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            gap: spacing.lg,
+            padding: spacing.lg,
+            backgroundColor: 'white',
+            borderRadius: borderRadius.lg,
+            elevation: getResponsiveSize(2),
+          }}>
+          <View>
+            <Text variant="subtitle" weight="medium">
+              우리 반 칭긔들
+            </Text>
           </View>
           <View style={styles.studentsContainer}>
             {students.map((student, index) => (
@@ -66,9 +103,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
   },
   contentContainer: {
+    flexDirection: 'row',
     width: '100%',
-    height: '89%',
-    gap: spacing.md,
+    height: '92%',
+    gap: spacing.lg,
   },
   leftContent: {
     width: '60%',
@@ -77,8 +115,12 @@ const styles = StyleSheet.create({
   },
   notice: {
     width: '100%',
-    height: '50%',
+    height: '60%',
     gap: spacing.lg,
+    padding: spacing.xl,
+    backgroundColor: 'white',
+    borderRadius: borderRadius.lg,
+    elevation: getResponsiveSize(2),
   },
   studentsContainer: {
     flex: 1,
@@ -90,12 +132,12 @@ const styles = StyleSheet.create({
   studentItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: `${(100 - 2.5 * 4) / 5}%`, // (100% - (gap 비율 * 6)) / 7 아이템
-    height: '50%',
+    width: `${(100 - 5 * 2) / 3}%`, // (100% - (gap 비율 * 6)) / 7 아이템
+    height: '23.5%',
     gap: spacing.lg,
     padding: spacing.lg,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(2),
+    elevation: getResponsiveSize(1),
     borderRadius: borderRadius.sm,
   },
   studentImage: {
