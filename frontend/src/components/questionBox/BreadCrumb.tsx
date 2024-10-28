@@ -1,6 +1,6 @@
 import React from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
-import {Text} from '../Text';
+import {Text} from '../common/Text';
 import {spacing} from '@theme/spacing';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
 
