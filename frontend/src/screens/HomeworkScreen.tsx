@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexDirection: 'row',
-    height: '89%',
+    height: '92%',
   },
   content: {
     flexDirection: 'row',
