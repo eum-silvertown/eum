@@ -22,7 +22,7 @@ type CanvasProps = {
 };
 
 // 연결할 소켓 IP
-const socket = io('http://192.168.128.246:8080', {
+const socket = io('http://192.168.56.1:8080', {
   reconnection: false,
   secure: true,
   transports: ['websocket'],
@@ -77,7 +77,7 @@ function LeftCanvasSection() {
     socket.on('disconnect', () => {
       console.log('서버 연결이 해제되었습니다.');
     });
-    // 왼쪽 캔버스에서 전송된 그리기 데이터 수신
+    // 오른쪽 캔버스에서 전송된 그리기 데이터 수신
     console.log('Setting up right_to_left listener');
     socket.on('right_to_left', data => {
       console.log('Right to Left Path received:', data);
@@ -255,7 +255,7 @@ function RightCanvasSection() {
         strokeWidth: penSize,
         opacity: penOpacity,
       };
-      socket.emit('left_to_right', {
+      socket.emit('right_to_left', {
         pathString,
         color: penColor,
         strokeWidth: penSize,
