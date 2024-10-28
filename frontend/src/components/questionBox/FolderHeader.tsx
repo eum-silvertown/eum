@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: spacing.xxl,
-    marginVertical: spacing.xl,
     marginBottom: spacing.xxl,
+    paddingHorizontal: spacing.lg,
     gap: spacing.xl,
   },
   navigationButtons: {
@@ -101,6 +101,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.lg,
     marginLeft: 'auto',
-    marginRight: spacing.xxl,
   },
 });
