@@ -1,6 +1,21 @@
-FROM openjdk:17-ea-11-jdk-slim
+# 빌드 단계
+FROM gradle:7.6-jdk17 AS builder
+WORKDIR /app
+COPY . .
+RUN ./gradlew clean build --no-daemon
 
-ARG JAR_FILE=build/libs/discovery-service-0.0.1-SNAPSHOT.jar
-ADD ${JAR_FILE} discovery-service.jar
+# 실행 단계
+FROM openjdk:17-alpine
+# 타임존 설정
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone
 
-ENTRYPOINT ["java", "-jar", "discovery-service.jar"]
+# 빌드된 JAR 파일 복사
+COPY --from=builder /app/build/libs/*.jar /app/discovery-service.jar
+
+# 컨테이너에서 사용하는 포트 명시
+EXPOSE 8761
+
+# 애플리케이션 실행
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Seoul", "/app/discovery-service.jar"]
