@@ -7,6 +7,8 @@ export type ScreenType = {
   QuestionBoxScreen: undefined;
   MyClassScreen: undefined;
   EditUserScreen: undefined;
+  LoginScreen: undefined;
+  SignUpSelectScreen: undefined;
 };
 
 type ScreenName = keyof ScreenType;

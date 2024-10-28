@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {ScreenType} from '@store/useCurrentScreenStore';
 import LoginScreen from '@screens/LoginScreen';
+import SignUpSelectScreen from '@screens/SignUpSelectScreen';
 import HomeScreen from '@screens/HomeScreen';
 import ClassListScreen from '@screens/ClassListScreen';
 import HomeworkScreen from '@screens/HomeworkScreen';
@@ -24,6 +25,7 @@ interface ScreenProps {
 function App(): React.JSX.Element {
   const screens: ScreenProps[] = [
     {name: 'LoginScreen', component: LoginScreen},
+    {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
     {name: 'HomeScreen', component: HomeScreen},
     {name: 'ClassListScreen', component: ClassListScreen},
     {name: 'HomeworkScreen', component: HomeworkScreen},
