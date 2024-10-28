@@ -17,8 +17,11 @@ type CanvasProps = {
   setPenColor: (color: string) => void;
   setPenSize: (size: number) => void;
   togglePenOpacity: () => void;
+  undo: () => void;
+  redo: () => void;
 };
 
+// 연결할 소켓 IP
 const socket = io('http://192.168.128.246:8080', {
   reconnection: false,
   secure: true,
@@ -38,6 +41,8 @@ function LeftCanvasSection() {
   const [penColor, setPenColor] = useState('#000000');
   const [penSize, setPenSize] = useState(2);
   const [penOpacity, setPenOpacity] = useState(1);
+  const [undoStack, setUndoStack] = useState<any[]>([]);
+  const [, setRedoStack] = useState<any[]>([]);
   const [prevPoint, setPrevPoint] = useState<{ x: number; y: number } | null>(
     null,
   );
@@ -46,6 +51,22 @@ function LeftCanvasSection() {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
     console.log('변경완료');
 
+  };
+
+  const undo = () => {
+    if (paths.length > 0) {
+      const lastPath = paths[paths.length - 1];
+      setUndoStack([...undoStack, lastPath]);
+      setPaths(paths.slice(0, -1));
+    }
+  };
+
+  const redo = () => {
+    if (undoStack.length > 0) {
+      const pathToRedo = undoStack[undoStack.length - 1];
+      setPaths([...paths, pathToRedo]);
+      setUndoStack(undoStack.slice(0, -1));
+    }
   };
 
   useEffect(() => {
@@ -110,10 +131,11 @@ function LeftCanvasSection() {
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
-      }); // 오른쪽 캔버스로 데이터 전송
+      });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
       setPrevPoint(null);
+      setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
     }
   };
 
@@ -131,6 +153,8 @@ function LeftCanvasSection() {
       setPenColor={setPenColor}
       setPenSize={setPenSize}
       togglePenOpacity={togglePenOpacity}
+      undo={undo}
+      redo={redo}
     />
   );
 }
@@ -145,6 +169,8 @@ function RightCanvasSection() {
   const [penColor, setPenColor] = useState('#000000');
   const [penSize, setPenSize] = useState(2);
   const [penOpacity, setPenOpacity] = useState(1);
+  const [undoStack, setUndoStack] = useState<any[]>([]);
+  const [, setRedoStack] = useState<any[]>([]);
   const [prevPoint, setPrevPoint] = useState<{ x: number; y: number } | null>(
     null,
   );
@@ -153,6 +179,23 @@ function RightCanvasSection() {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
     console.log('변경완료');
 
+  };
+
+
+  const undo = () => {
+    if (paths.length > 0) {
+      const lastPath = paths[paths.length - 1];
+      setUndoStack([...undoStack, lastPath]);
+      setPaths(paths.slice(0, -1));
+    }
+  };
+
+  const redo = () => {
+    if (undoStack.length > 0) {
+      const pathToRedo = undoStack[undoStack.length - 1];
+      setPaths([...paths, pathToRedo]);
+      setUndoStack(undoStack.slice(0, -1));
+    }
   };
 
   useEffect(() => {
@@ -212,15 +255,16 @@ function RightCanvasSection() {
         strokeWidth: penSize,
         opacity: penOpacity,
       };
-      socket.emit('right_to_left', {
+      socket.emit('left_to_right', {
         pathString,
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
-      }); // 왼쪽 캔버스로 데이터 전송
+      });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
       setPrevPoint(null);
+      setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
     }
   };
   return (
@@ -237,6 +281,8 @@ function RightCanvasSection() {
       setPenColor={setPenColor}
       setPenSize={setPenSize}
       togglePenOpacity={togglePenOpacity}
+      undo={undo}
+      redo={redo}
     />
   );
 }
@@ -264,6 +310,8 @@ function CanvasComponent({
   setPenColor,
   setPenSize,
   togglePenOpacity,
+  undo,
+  redo,
 }: CanvasProps) {
   const COLOR_PALETTE = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF'];
   const PEN_SIZES = [2, 4, 6, 8, 10];
@@ -350,6 +398,13 @@ function CanvasComponent({
           ]}
         >
           <Text style={styles.buttonText}>형광펜</Text>
+          {/* 되돌리기, 되돌리기 취소하기 */}
+        </TouchableOpacity>
+        <TouchableOpacity onPress={undo} style={styles.toolbarButton}>
+          <Text style={styles.buttonText}>Undo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={redo} style={styles.toolbarButton}>
+          <Text style={styles.buttonText}>Redo</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -412,6 +467,13 @@ const styles = StyleSheet.create({
   },
   activeHighlighter: {
     backgroundColor: '#FFA500',
+  },
+  toolbarButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#ddd',
+    borderRadius: 5,
+    marginHorizontal: 5,
   },
   buttonText: { color: '#000', fontWeight: 'bold' },
 });
