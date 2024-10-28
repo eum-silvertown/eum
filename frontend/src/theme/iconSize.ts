@@ -5,4 +5,5 @@ export const iconSize = {
   md: getResponsiveSize(20),
   lg: getResponsiveSize(32),
   xl: getResponsiveSize(48),
+  xxl: getResponsiveSize(64),
 } as const;
