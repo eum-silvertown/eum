@@ -24,7 +24,7 @@ pipeline {
                 script {
                     def isConfigRunning = false
                     for (int i = 0; i < 5; i++) {
-                        isConfigRunning = sh(script: "curl -s https://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
+                        isConfigRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
                         if (isConfigRunning) {
                             break
                         }
