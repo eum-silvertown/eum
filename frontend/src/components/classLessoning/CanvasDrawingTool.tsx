@@ -43,104 +43,107 @@ const CanvasDrawingTool = ({
     isErasing,
     eraserPosition,
 }: CanvasComponentProps) => (
-    <View style={styles.canvasContainer}>
-        <Canvas
-            ref={canvasRef}
-            style={styles.canvas}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}>
-            {paths.map(({ path, color, strokeWidth, opacity }, index) => (
-                <Path
-                    key={index}
-                    path={path}
-                    color={Skia.Color(color)}
-                    style="stroke"
-                    strokeWidth={strokeWidth}
-                    strokeCap="round"
-                    strokeJoin="round"
-                    opacity={opacity}
-                />
-            ))}
-            {currentPath && (
-                <Path
-                    path={currentPath}
-                    color={Skia.Color(penColor)}
-                    style="stroke"
-                    strokeWidth={penSize}
-                    strokeCap="round"
-                    strokeJoin="round"
-                    opacity={penOpacity}
-                />
-            )}
-            {/* 지우개 범위 시각화 */}
-            {isErasing && eraserPosition && (
-                <Circle
-                    cx={eraserPosition.x}
-                    cy={eraserPosition.y}
-                    r={10}
-                    color="rgba(0, 0, 0, 0.1)"
-                    style="stroke"
-                    strokeWidth={2}
-                />
-            )}
-        </Canvas>
+    <View style={styles.canvasLayout}>
 
-        {/* 툴바 */}
-        <View style={styles.floatingToolbar}>
-            <View style={styles.paletteContainer}>
-                {COLOR_PALETTE.map(color => (
-                    <TouchableOpacity
-                        key={color}
-                        style={[
-                            styles.colorPalette,
-                            { backgroundColor: color },
-                            penColor === color && styles.selectedColor,
-                        ]}
-                        onPress={() => setPenColor(color)}
+        <View style={styles.canvasContainer}>
+            <Canvas
+                ref={canvasRef}
+                style={styles.canvas}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}>
+                {paths.map(({ path, color, strokeWidth, opacity }, index) => (
+                    <Path
+                        key={index}
+                        path={path}
+                        color={Skia.Color(color)}
+                        style="stroke"
+                        strokeWidth={strokeWidth}
+                        strokeCap="round"
+                        strokeJoin="round"
+                        opacity={opacity}
                     />
                 ))}
-            </View>
+                {currentPath && (
+                    <Path
+                        path={currentPath}
+                        color={Skia.Color(penColor)}
+                        style="stroke"
+                        strokeWidth={penSize}
+                        strokeCap="round"
+                        strokeJoin="round"
+                        opacity={penOpacity}
+                    />
+                )}
+                {/* 지우개 범위 시각화 */}
+                {isErasing && eraserPosition && (
+                    <Circle
+                        cx={eraserPosition.x}
+                        cy={eraserPosition.y}
+                        r={10}
+                        color="rgba(0, 0, 0, 0.1)"
+                        style="stroke"
+                        strokeWidth={2}
+                    />
+                )}
+            </Canvas>
 
-            <View style={styles.penSizeContainer}>
-                {PEN_SIZES.map(size => (
-                    <TouchableOpacity
-                        key={size}
-                        style={[
-                            styles.penSize,
-                            penSize === size && styles.selectedPenSize,
-                        ]}
-                        onPress={() => setPenSize(size)}>
-                        <View
-                            style={{
-                                width: size,
-                                height: size,
-                                borderRadius: size / 2,
-                                backgroundColor: penColor,
-                            }}
+            {/* 툴바 */}
+            <View style={styles.floatingToolbar}>
+                <View style={styles.paletteContainer}>
+                    {COLOR_PALETTE.map(color => (
+                        <TouchableOpacity
+                            key={color}
+                            style={[
+                                styles.colorPalette,
+                                { backgroundColor: color },
+                                penColor === color && styles.selectedColor,
+                            ]}
+                            onPress={() => setPenColor(color)}
                         />
-                    </TouchableOpacity>
-                ))}
+                    ))}
+                </View>
+
+                <View style={styles.penSizeContainer}>
+                    {PEN_SIZES.map(size => (
+                        <TouchableOpacity
+                            key={size}
+                            style={[
+                                styles.penSize,
+                                penSize === size && styles.selectedPenSize,
+                            ]}
+                            onPress={() => setPenSize(size)}>
+                            <View
+                                style={{
+                                    width: size,
+                                    height: size,
+                                    borderRadius: size / 2,
+                                    backgroundColor: penColor,
+                                }}
+                            />
+                        </TouchableOpacity>
+                    ))}
+                </View>
+                <TouchableOpacity
+                    onPress={togglePenOpacity}
+                    style={[
+                        styles.highlighterButton,
+                        penOpacity < 1 && styles.activeHighlighter,
+                    ]}>
+                    <Text style={styles.buttonText}>형광펜</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={undo} style={styles.toolbarButton}>
+                    <Text style={styles.buttonText}>Undo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={redo} style={styles.toolbarButton}>
+                    <Text style={styles.buttonText}>Redo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={toggleEraserMode}
+                    style={isErasing ? styles.activeEraser : styles.eraserButton}>
+                    <Text style={styles.buttonText}>지우개</Text>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity
-                onPress={togglePenOpacity}
-                style={[
-                    styles.highlighterButton,
-                    penOpacity < 1 && styles.activeHighlighter,
-                ]}>
-                <Text style={styles.buttonText}>형광펜</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={undo} style={styles.toolbarButton}>
-                <Text style={styles.buttonText}>Undo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={redo} style={styles.toolbarButton}>
-                <Text style={styles.buttonText}>Redo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                onPress={toggleEraserMode}
-                style={isErasing ? styles.activeEraser : styles.eraserButton}>
-                <Text style={styles.buttonText}>지우개</Text>
-            </TouchableOpacity>
         </View>
     </View>
 );
@@ -223,4 +226,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     buttonText: { color: '#000', fontWeight: 'bold' },
+    canvasLayout: {
+        ...StyleSheet.absoluteFillObject,
+    },
 });

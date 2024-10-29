@@ -29,13 +29,13 @@ function LessoningScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       {/* 왼쪽 문제와 캔버스 */}
-      <View style={styles.leftSection}>
+      <View style={styles.sectionContainer}>
         <ProblemSection />
         <LeftCanvasSection socket={socket} />
       </View>
 
       {/* 오른쪽 문제와 캔버스 */}
-      <View style={styles.rightSection}>
+      <View style={styles.sectionContainer}>
         <ProblemSection />
         <RightCanvasSection socket={socket} />
       </View>
@@ -49,15 +49,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
   },
-  leftSection: {
+  sectionContainer: {
     flex: 1,
     padding: 10,
-    borderRightWidth: 1,
-    borderColor: '#ddd',
+    position: 'relative',
   },
-  rightSection: {
+  problemSection: {
     flex: 1,
-    padding: 10,
+    zIndex: 1,
+  },
+  canvasSection: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 2,
   },
 });
 
