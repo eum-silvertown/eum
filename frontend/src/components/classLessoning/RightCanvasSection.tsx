@@ -10,21 +10,33 @@ interface RightCanvasSectionProps {
     socket: Socket;
 }
 
+// Path 데이터 구조
+type PathData = {
+    path: any;
+    color: string;
+    strokeWidth: number;
+    opacity: number;
+};
+
+// 스택 데이터 구조
+type ActionData = {
+    type: 'draw' | 'erase';
+    pathData: PathData;
+};
+
 // 지우개 범위 상수
 const ERASER_RADIUS = 10;
 
 // 오른쪽 캔버스 컴포넌트
 function RightCanvasSection({ socket }: RightCanvasSectionProps): React.JSX.Element {
     const canvasRef = useCanvasRef();
-    const [paths, setPaths] = useState<
-        { path: any; color: string; strokeWidth: number; opacity: number }[]
-    >([]);
+    const [paths, setPaths] = useState<PathData[]>([]);
     const [currentPath, setCurrentPath] = useState<any | null>(null);
     const [penColor, setPenColor] = useState('#000000');
     const [penSize, setPenSize] = useState(2);
     const [penOpacity, setPenOpacity] = useState(1);
-    const [undoStack, setUndoStack] = useState<any[]>([]);
-    const [, setRedoStack] = useState<any[]>([]);
+    const [undoStack, setUndoStack] = useState<ActionData[]>([]);
+    const [redoStack, setRedoStack] = useState<ActionData[]>([]);
     const [eraserPosition, setEraserPosition] = useState<{
         x: number;
         y: number;
@@ -40,34 +52,53 @@ function RightCanvasSection({ socket }: RightCanvasSectionProps): React.JSX.Elem
 
     const erasePath = (x: number, y: number) => {
         setPaths(prevPaths =>
-            prevPaths.filter(({ path }) => {
-                const bounds = path.getBounds();
+            prevPaths.filter((pathData) => {
+                const bounds = pathData.path.getBounds();
                 const dx = Math.max(bounds.x - x, x - (bounds.x + bounds.width), 0);
                 const dy = Math.max(bounds.y - y, y - (bounds.y + bounds.height), 0);
                 const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
                 if (isInEraseArea) {
-                    setUndoStack(prev => [...prev, path]); // 삭제된 path를 undo 스택에 추가
+                    setUndoStack(prevUndoStack => [
+                        ...prevUndoStack,
+                        { type: 'erase', pathData },
+                    ]);
                 }
                 return !isInEraseArea;
-            }),
+            })
         );
-        setRedoStack([]); // 지우기 작업 후 redo 스택 초기화
+        setRedoStack([]); // 새로운 작업 발생 시 redo 스택 초기화
     };
 
     const undo = () => {
-        if (paths.length > 0) {
-            const lastPath = paths[paths.length - 1];
-            setUndoStack([...undoStack, lastPath]);
-            setPaths(paths.slice(0, -1));
+        if (undoStack.length === 0) { return; }
+
+        const lastAction = undoStack[undoStack.length - 1];
+        setUndoStack(undoStack.slice(0, -1));
+
+        if (lastAction.type === 'draw') {
+            setPaths(paths.slice(0, -1)); // 마지막 경로 제거
+            setRedoStack([...redoStack, lastAction]); // redo 스택에 추가
+        } else if (lastAction.type === 'erase') {
+            // 지운 경로 복구
+            setPaths([...paths, lastAction.pathData]);
+            setRedoStack([...redoStack, lastAction]);
         }
     };
 
     const redo = () => {
-        if (undoStack.length > 0) {
-            const pathToRedo = undoStack[undoStack.length - 1];
-            setPaths([...paths, pathToRedo]);
-            setUndoStack(undoStack.slice(0, -1));
+        if (redoStack.length === 0) { return; }
+
+        const lastRedoAction = redoStack[redoStack.length - 1];
+        setRedoStack(redoStack.slice(0, -1));
+
+        if (lastRedoAction.type === 'draw') {
+            setPaths([...paths, lastRedoAction.pathData]); // 경로 다시 추가
+            setUndoStack([...undoStack, lastRedoAction]);
+        } else if (lastRedoAction.type === 'erase') {
+            // 지우기 작업 반복
+            setPaths(paths.filter(pathData => pathData !== lastRedoAction.pathData));
+            setUndoStack([...undoStack, lastRedoAction]);
         }
     };
 
