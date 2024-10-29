@@ -4,9 +4,10 @@ import {borderRadius} from '@theme/borderRadius';
 import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {Image, ScrollView, StyleSheet, View} from 'react-native';
 import ScreenInfo from '@components/common/ScreenInfo';
 import ProgressBoxes from '@components/homework/ProgressBoxes';
+import noteSpringImage from '@assets/images/noteSpring.png';
 
 export type HomeworkType = {
   state: '완료' | '미제출';
@@ -80,6 +81,7 @@ function HomeworkScreen(): React.JSX.Element {
           />
         ))}
         <View style={[styles.content]}>
+          <Image source={noteSpringImage} style={styles.noteSpringImage} />
           <View style={{flex: 1, gap: spacing.xl}}>
             <ProgressBoxes />
             <View style={styles.homeworkContainer}>
@@ -104,7 +106,8 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.xxl,
+    paddingLeft: spacing.xxl,
+    paddingRight: spacing.xl,
   },
   contentContainer: {
     flexDirection: 'row',
@@ -113,13 +116,17 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     gap: spacing.xl,
-    left: '12.5%',
-    width: '87.5%',
+    width: '90%',
     padding: spacing.xl,
     backgroundColor: 'white',
     borderBottomEndRadius: borderRadius.sm,
     borderTopEndRadius: borderRadius.sm,
     elevation: getResponsiveSize(3),
+  },
+  noteSpringImage: {
+    marginLeft: -spacing.xxl,
+    width: getResponsiveSize(40),
+    objectFit: 'fill',
   },
   homeworkContainer: {
     flex: 1,
