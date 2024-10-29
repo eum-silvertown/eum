@@ -5,6 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerhub-credentials'
         DEPLOY_SERVER_CREDENTIALS = 'ec2-ssh-key'
         DEPLOY_SERVER = 'ubuntu@k11d101.p.ssafy.io'
+        CHECK_SERVER = 'k11d101.p.ssafy.io'
         PROJECT_ROOT = '/home/ubuntu'
         SERVICE_NAME = 'apigateway-service'
         IMAGE_NAME = "yechanissm2/${SERVICE_NAME}"
@@ -25,8 +26,8 @@ pipeline {
                     def isDiscoveryRunning = false
 
                     for (int i = 0; i < 5; i++) {
-                        isConfigRunning = sh(script: "curl -s http://${DEPLOY_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
-                        isDiscoveryRunning = sh(script: "curl -s http://${DEPLOY_SERVER}:8761/actuator/health | grep 'UP'", returnStatus: true) == 0
+                        isConfigRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
+                        isDiscoveryRunning = sh(script: "curl -s http://${CHECK_SERVER}:8761/actuator/health | grep 'UP'", returnStatus: true) == 0
                         if (isConfigRunning && isDiscoveryRunning) {
                             break
                         }

@@ -5,6 +5,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'dockerhub-credentials'
         DEPLOY_SERVER_CREDENTIALS = 'ec2-ssh-key'
         DEPLOY_SERVER = 'ubuntu@k11d101.p.ssafy.io'
+        CHECK_SERVER = 'k11d101.p.ssafy.io'
         PROJECT_ROOT = '/home/ubuntu'
         SERVICE_NAME = 'config-service'
         IMAGE_NAME = "yechanissm2/${SERVICE_NAME}"
@@ -54,7 +55,7 @@ pipeline {
             steps {
                 script {
                     sleep 10
-                    def isRunning = sh(script: "curl -s http://${DEPLOY_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
+                    def isRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
                     if (!isRunning) {
                         error "Config Service is not ready."
                     }
