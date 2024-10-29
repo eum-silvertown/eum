@@ -30,6 +30,7 @@ export const colors = {
     },
     borderColor: {
       cardBorder: '#463986',
+      pickerBorder: '#DCDCDC',
     },
   },
   dark: {
@@ -61,6 +62,7 @@ export const colors = {
     },
     borderColor: {
       cardBorder: '#463986',
+      pickerBorder: '#DCDCDC',
     },
   },
 } as const;
