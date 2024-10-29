@@ -1,26 +1,12 @@
-import {
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Animated,
-} from 'react-native';
+import {Image, StyleSheet, View, Animated} from 'react-native';
 import {Text} from '@components/common/Text';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
-import PencilIcon from '@assets/icons/pencilIcon.svg';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import useSidebarStore from '@store/useSidebarStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNavigation} from '@react-navigation/native';
 import {useEffect, useRef} from 'react';
 
-type NavigationProps = NativeStackNavigationProp<ScreenType>;
-
 function SidebarProfile(): React.JSX.Element {
-  const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
   const {isExpanded} = useSidebarStore();
   const contentOpacity = useRef(new Animated.Value(1)).current;
 
@@ -37,28 +23,10 @@ function SidebarProfile(): React.JSX.Element {
       <View style={styles.profileImageContainer}>
         <Image style={styles.profileImage} source={defaultProfileImage} />
       </View>
-      <Animated.View
-        style={[
-          styles.contentContainer,
-          {
-            opacity: contentOpacity,
-          },
-        ]}>
-        <View style={[styles.username]}>
-          <Text variant="title" color="white" weight="bold">
-            박효진
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('EditUserScreen');
-            setCurrentScreen('EditUserScreen');
-          }}
-          style={{
-            alignItems: 'center',
-          }}>
-          <PencilIcon width={iconSize.sm} height={iconSize.sm} />
-        </TouchableOpacity>
+      <Animated.View style={[styles.username, {opacity: contentOpacity}]}>
+        <Text variant="subtitle" color="white" weight="bold" numberOfLines={1}>
+          박효진
+        </Text>
       </Animated.View>
     </View>
   );
@@ -86,18 +54,8 @@ const styles = StyleSheet.create({
     height: '100%',
     objectFit: 'cover',
   },
-  contentContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
   username: {
-    flex: 1,
-    flexDirection: 'row',
     width: 'auto',
-    paddingHorizontal: spacing.sm,
-    gap: spacing.sm,
     overflow: 'hidden',
   },
 });
