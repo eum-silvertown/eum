@@ -167,6 +167,12 @@ function LeftCanvasSection({ socket }: LeftCanvasSectionProps): React.JSX.Elemen
                 strokeWidth: penSize,
                 opacity: penOpacity,
             };
+
+            setUndoStack(prevUndoStack => [
+                ...prevUndoStack,
+                { type: 'draw', pathData: newPathData },
+            ]);
+
             socket.emit('left_to_right', {
                 pathString,
                 color: penColor,
