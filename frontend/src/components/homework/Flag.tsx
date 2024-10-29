@@ -1,5 +1,6 @@
 import {StyleSheet, View} from 'react-native';
 import {Text} from '../common/Text';
+import {spacing} from '@theme/spacing';
 
 interface FlagProps {
   index: number;
@@ -27,9 +28,11 @@ export default Flag;
 const styles = StyleSheet.create({
   flag: {
     position: 'absolute',
+    left: '87.5%',
     width: '12.5%',
     height: '8.5%',
+    paddingRight: spacing.xxl,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
   },
 });

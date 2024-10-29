@@ -36,6 +36,11 @@ function LoginScreen(): React.JSX.Element {
     setCurrentScreen('HomeScreen');
   };
 
+  const moveSignUp = () => {
+    navigation.navigate('SignUpSelectScreen');
+    setCurrentScreen('SignUpSelectScreen');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -91,7 +96,7 @@ function LoginScreen(): React.JSX.Element {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.moveScreenButton}>
+        <TouchableOpacity style={styles.moveScreenButton} onPress={moveSignUp}>
           <Text style={styles.submitButtonText}>회원가입</Text>
         </TouchableOpacity>
       </View>
