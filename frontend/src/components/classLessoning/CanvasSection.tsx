@@ -32,6 +32,7 @@ type CanvasProps = {
 
 // 연결할 소켓 IP
 const socket = io('http://192.168.128.246:8080', {
+  // TODO : 연결안될때 reconnection false 삭제
   reconnection: false,
   secure: true,
   transports: ['websocket'],
