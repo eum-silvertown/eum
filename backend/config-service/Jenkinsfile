@@ -20,12 +20,15 @@ pipeline {
         }
 
         stage('Copy Secret File') {
-                    steps {
-                        withCredentials([file(credentialsId: 'application-yml', variable: 'APPLICATION_YML')]) {
-                            sh "cp ${APPLICATION_YML} backend/${SERVICE_NAME}/src/main/resources/application.yml"
-                        }
-                    }
+            steps {
+                withCredentials([file(credentialsId: 'application-yml', variable: 'APPLICATION_YML')]) {
+                    sh """
+                        mkdir -p backend/${SERVICE_NAME}/src/main/resources
+                        cp ${APPLICATION_YML} backend/${SERVICE_NAME}/src/main/resources/application.yml
+                    """
                 }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
