@@ -8,7 +8,9 @@ import {spacing} from '@theme/spacing';
 function Notice(): React.JSX.Element {
   return (
     <View style={styles.notice}>
-      <Text>Notice</Text>
+      <Text variant="subtitle" weight="bold" style={styles.subtitle}>
+        Notice
+      </Text>
       <View style={styles.noticeLayout}>
         <Image source={postit} alt="postit" style={styles.imageContainer} />
         <Image source={postit} alt="postit" style={styles.imageContainer} />
@@ -22,6 +24,9 @@ const styles = StyleSheet.create({
   notice: {
     flex: 1,
     justifyContent: 'center',
+  },
+  subtitle: {
+    marginStart: spacing.xl,
   },
   noticeLayout: {
     flexDirection: 'row',
