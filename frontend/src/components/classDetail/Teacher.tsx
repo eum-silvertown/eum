@@ -15,9 +15,9 @@ function Teacher(): React.JSX.Element {
           <ImageBackground source={teacherPhoto} style={styles.photo} imageStyle={styles.photoImage} />
         </View>
         <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>전화번호: 010-1234-5678</Text>
-          <Text style={styles.infoText}>이메일: teacher@example.com</Text>
-          <Text style={styles.infoText}>한줄 소개: 열정적인 교육자로 성장과 소통을 추구합니다.</Text>
+          <Text style={styles.infoText}>Tel. 010-1234-5678</Text>
+          <Text style={styles.infoText}>Email. teacher@example.com</Text>
+          <Text style={styles.infoText}>열정적인 교육자로 성장과 소통을 추구합니다.</Text>
         </View>
       </View>
     </View>
