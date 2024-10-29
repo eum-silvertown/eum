@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -19,9 +19,12 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import SearchIcon from '@assets/icons/searchIcon.svg';
+import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
+import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
+import CancelIcon from '@assets/icons/cancelIcon.svg'
 import {iconSize} from '@theme/iconSize';
-import Config from "react-native-config";
-
+import Config from 'react-native-config';
+import {borderWidth} from '@theme/borderWidth'
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 interface School {
@@ -60,6 +63,7 @@ function SignUpScreen(): React.JSX.Element {
   const [searchSchoolModal, setSearchSchoolModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [schoolList, setSchoolList] = useState<SchoolListItem[]>([]);
+  const [passwordVisible, setPasswordVisible] = useState(false); // 비밀번호 표시 여부 상태
 
   // 유효성 검사 상태
   const [userIdError, setUserIdError] = useState('');
@@ -72,45 +76,52 @@ function SignUpScreen(): React.JSX.Element {
   const [genderError, setGenderError] = useState('');
   const validateFields = () => {
     let isValid = true;
-  
+
     if (!userId) {
       setUserIdError('아이디를 입력해주세요.');
       isValid = false;
     } else {
       setUserIdError('');
     }
-  
+
     if (!email.includes('@')) {
       setEmailError('유효한 이메일 주소를 입력해주세요.');
       isValid = false;
     } else {
       setEmailError('');
     }
-  
+
     if (!name) {
       setNameError('이름을 입력해주세요.');
       isValid = false;
     } else {
       setNameError('');
     }
-  
+
     if (password.length < 6) {
       setPasswordError('비밀번호는 6자리 이상이어야 합니다.');
       isValid = false;
     } else {
       setPasswordError('');
     }
-  
+
     if (password !== confirmPassword) {
       setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
       isValid = false;
     } else {
       setConfirmPasswordError('');
     }
-  
+
     return isValid;
   };
-  
+  // 비밀번호 확인 체크 로직
+  useEffect(() => {
+    if (confirmPassword && password !== confirmPassword) {
+      setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
+    } else {
+      setConfirmPasswordError('');
+    }
+  }, [password, confirmPassword]);
 
   const handleDuplicateCheck = () => {
     console.log('아이디 중복 확인:', userId);
@@ -122,6 +133,11 @@ function SignUpScreen(): React.JSX.Element {
     Alert.alert(email + '인증번호를 전송하였습니다.');
     setIsVerificationSent(true);
   };
+
+  const handleVerificationCodeInput = () => {
+    console.log('인증번호로 인증하기', verificationCode);
+    
+  }
 
   const handleDateChange = (text: string) => {
     // 숫자만 입력 받기
@@ -193,9 +209,7 @@ function SignUpScreen(): React.JSX.Element {
           {/* 아이디 입력 필드 */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>아이디</Text>
-            <View
-             style={styles.inputBox}
-            >
+            <View style={styles.inputBox}>
               <TextInput
                 style={styles.inputField}
                 placeholder="예) test1234"
@@ -208,7 +222,9 @@ function SignUpScreen(): React.JSX.Element {
                 <Text style={styles.buttonText}>중복확인</Text>
               </TouchableOpacity>
             </View>
-            {userIdError ? <Text style={styles.errorText}>{userIdError}</Text> : null}
+            {userIdError ? (
+              <Text style={styles.errorText}>{userIdError}</Text>
+            ) : null}
           </View>
 
           {/* 이메일 입력 필드 */}
@@ -227,7 +243,31 @@ function SignUpScreen(): React.JSX.Element {
                 <Text style={styles.buttonText}>본인인증</Text>
               </TouchableOpacity>
             </View>
-            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+            {emailError ? (
+              <Text style={styles.errorText}>{emailError}</Text>
+            ) : null}
+          </View>
+
+            {/* 이메일 인증번호 입력 필드 */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>본인 인증</Text>
+            <View style={styles.inputBox}>
+              <TextInput
+                style={styles.inputField}
+                placeholder="예) 123456"
+                value={verificationCode}
+                maxLength={6}
+                onChangeText={setVerificationCode}
+              />
+              <TouchableOpacity
+                style={styles.smallButton}
+                onPress={handleSendVerification}>
+                <Text style={styles.buttonText}>인증하기</Text>
+              </TouchableOpacity>
+            </View>
+            {emailError ? (
+              <Text style={styles.errorText}>{emailError}</Text>
+            ) : null}
           </View>
 
           {/* 이름 입력 필드 */}
@@ -239,22 +279,45 @@ function SignUpScreen(): React.JSX.Element {
                 placeholder="예) 홍길동"
                 value={name}
                 onChangeText={setName}
-              />              
+              />
             </View>
-            {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
+            {nameError ? (
+              <Text style={styles.errorText}>{nameError}</Text>
+            ) : null}
           </View>
+          
 
           {/* 비밀번호 입력 필드 */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>비밀번호</Text>
-            <TextInput
-              style={styles.inputField}
-              placeholder="영문, 숫자 포함 6~40자리"
-              value={password}
-              secureTextEntry
-              onChangeText={setPassword}
-            />
-            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+            <View style={styles.inputBox}>
+              <TextInput
+                style={styles.inputField}
+                placeholder="영문, 숫자 포함 6~40자리"
+                value={password}
+                secureTextEntry={!passwordVisible}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setPasswordVisible(!passwordVisible)} // 버튼을 눌렀을 때 상태 변경
+                style={styles.iconButton}>
+                {passwordVisible ? (
+                  <PasswordVisibleIcon
+                    width={iconSize.md}
+                    height={iconSize.md}
+                  />
+                ) : (
+                  <PasswordVisibleOffIcon
+                    width={iconSize.md}
+                    height={iconSize.md}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {passwordError ? (
+              <Text style={styles.errorText}>{passwordError}</Text>
+            ) : null}
           </View>
 
           {/* 비밀번호 확인 입력 필드 */}
@@ -264,10 +327,12 @@ function SignUpScreen(): React.JSX.Element {
               style={styles.inputField}
               placeholder="비밀번호 확인"
               value={confirmPassword}
-              secureTextEntry
+              secureTextEntry={!passwordVisible}
               onChangeText={setConfirmPassword}
             />
-            {confirmPasswordError ? <Text style={styles.errorText}>{confirmPasswordError}</Text> : null}
+            {confirmPasswordError ? (
+              <Text style={styles.errorText}>{confirmPasswordError}</Text>
+            ) : null}
           </View>
 
           {/* 학교 정보 입력 */}
@@ -298,30 +363,49 @@ function SignUpScreen(): React.JSX.Element {
               >
                 <View style={styles.modalBackground}>
                   <View style={styles.modalContent}>
-                    <Text>학교 검색하기</Text>
-                    <Picker
-                      selectedValue={selectdSchoolLevel}
-                      onValueChange={itemValue =>
-                        setSelectedSchoolLevel(itemValue)
-                      }
-                      style={styles.picker}>
-                      <Picker.Item key={0} label="중학교" value="midd_list" />
-                      <Picker.Item key={1} label="고등학교" value="high_list" />
-                    </Picker>
-                    <TextInput
-                      placeholder="학교를 검색해주세요."
-                      value={searchQuery}
-                      onChangeText={setSearchQuery}></TextInput>
+                    <View style={{flexDirection: 'row', justifyContent:'space-between'}}>
+                      <Text>학교 검색하기</Text>
+                      {/* 닫기 버튼 */}
+                      <TouchableOpacity
+                        onPress={() => handleSearchSchoolModal(false)}>
+                          <CancelIcon width={iconSize.sm} height={iconSize.sm}/>
+                      </TouchableOpacity>
+                    </View>
 
-                    <TouchableOpacity onPress={() => searchSchool()}>
-                      <Text>검색하기</Text>
-                    </TouchableOpacity>
+                    <View
+                    style={styles.pickerContainer}>
+                      <Picker
+                        selectedValue={selectdSchoolLevel}
+                        onValueChange={itemValue =>
+                          setSelectedSchoolLevel(itemValue)
+                        }
+                        style={[styles.picker, {borderColor:'black', borderBottomWidth: 1}]}>
+                        <Picker.Item key={0} label="중학교" value="midd_list" />
+                        <Picker.Item key={1} label="고등학교" value="high_list" />
+                      </Picker>
+                    </View>
+
+                    <View style={{width:'100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                      <TextInput
+                        style={{width:'70%', }}
+                        placeholder="학교를 검색해주세요."
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                      />
+                      <TouchableOpacity 
+                      onPress={() => searchSchool()}
+                      style={[styles.button, {width:'30%'}]}>
+                        <Text style={styles.buttonText}>검색</Text>
+                      </TouchableOpacity>
+                    </View>
 
                     <FlatList
-                      data={schoolList}
+                      data={schoolList}                      
                       keyExtractor={item => item.id.toString()}
+                      contentContainerStyle={{alignItems:'flex-start', width:'100%'}}
                       renderItem={({item}) => (
                         <TouchableOpacity
+                        style={{alignItems:'flex-start', width:'100%'}}
                           onPress={() => {
                             setSchool(item.name);
                             setSearchSchoolModal(false);
@@ -333,11 +417,6 @@ function SignUpScreen(): React.JSX.Element {
                       )}
                     />
 
-                    {/* 닫기 버튼 */}
-                    <TouchableOpacity
-                      onPress={() => handleSearchSchoolModal(false)}>
-                      <Text>닫기</Text>
-                    </TouchableOpacity>
                   </View>
                 </View>
               </Modal>
@@ -426,8 +505,8 @@ function SignUpScreen(): React.JSX.Element {
           </View>
 
           {/* 회원가입 제출 */}
-          <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
-            <Text style={styles.signUpButtonText}>회원가입</Text>
+          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+            <Text style={styles.buttonText}>회원가입</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -496,19 +575,19 @@ const styles = StyleSheet.create({
   },
   inputIcon: {
     position: 'absolute',
-    right: spacing.xs,   
+    right: spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  smallButton: {
+  smallButton: {    
     position: 'absolute',
     right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#2e2559',
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,
     height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   modalContainer: {
     flex: 1,
@@ -516,27 +595,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  pickerContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
+  pickerContainer: {    
+    borderWidth: borderWidth.sm,
+    borderColor: colors.light.borderColor.pickerBorder,
+    borderRadius: 10,  
     alignItems: 'center',
   },
   picker: {
     width: '100%',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center',    
     height: 50,
   },
   buttonText: {
     color: 'white',
-    fontWeight: 'bold',
+    fontWeight: 'bold',        
   },
   inputFieldWrapper: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',   
+    alignItems: 'center',
     marginRight: spacing.sm,
     height: 50,
   },
@@ -578,30 +656,25 @@ const styles = StyleSheet.create({
   selectedGenderButtonText: {
     color: 'white',
   },
-  signUpButton: {
+  button: {    
     backgroundColor: '#2e2559',
     paddingVertical: spacing.md,
     borderRadius: 4,
     alignItems: 'center',
-  },
-  signUpButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-
+  }, 
   modalBackground: {
-    flex: 1,
+    flex: 1,    
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게 설정
     justifyContent: 'center', // 중앙 정렬
     alignItems: 'center',
   },
   modalContent: {
-    width: '80%',
+    gap: spacing.sm,
+    width: '30%',
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
-    alignItems: 'center',
+    
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
@@ -617,5 +690,12 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 14,
     marginTop: 4,
+  },
+  iconButton: {
+    position: 'absolute',
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing.md,
   },
 });
