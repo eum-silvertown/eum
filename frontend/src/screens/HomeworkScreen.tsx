@@ -1,12 +1,10 @@
 import Flag from '@components/homework/Flag';
 import HomeworkItem from '@components/homework/HomeworkItem';
-import ProgressChart from '@components/homework/ProgressChart';
-import {Text} from '@components/common/Text';
 import {borderRadius} from '@theme/borderRadius';
 import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import ScreenInfo from '@components/common/ScreenInfo';
 import ProgressBoxes from '@components/homework/ProgressBoxes';
 
@@ -29,27 +27,41 @@ function HomeworkScreen(): React.JSX.Element {
         state: '완료',
         category: '다항식의 연산',
         problemNum: 3,
-        dueToDate: '2024.10.23',
+        dueToDate: '2024.11.23',
         correct: true,
       },
       {
         state: '미제출',
         category: '다항식의 연산',
         problemNum: 3,
-        dueToDate: '2024.10.23',
+        dueToDate: '2024.11.23',
       },
       {
         state: '완료',
         category: '다항식의 연산',
         problemNum: 3,
-        dueToDate: '2024.10.23',
+        dueToDate: '2024.11.23',
         correct: false,
       },
       {
         state: '완료',
         category: '다항식의 연산',
         problemNum: 3,
-        dueToDate: '2024.10.23',
+        dueToDate: '2024.11.23',
+        correct: true,
+      },
+      {
+        state: '완료',
+        category: '다항식의 연산',
+        problemNum: 3,
+        dueToDate: '2024.11.23',
+        correct: true,
+      },
+      {
+        state: '완료',
+        category: '다항식의 연산',
+        problemNum: 3,
+        dueToDate: '2024.11.23',
         correct: true,
       },
     ]);
@@ -68,20 +80,16 @@ function HomeworkScreen(): React.JSX.Element {
           />
         ))}
         <View style={[styles.content]}>
-          <View style={{flex: 1, gap: spacing.lg}}>
+          <View style={{flex: 1, gap: spacing.xl}}>
             <ProgressBoxes />
-            <View style={{flexDirection: 'row', gap: spacing.lg}}>
-              <View style={styles.progressChart}>
-                <Text variant="subtitle" weight="medium">
-                  진행도
-                </Text>
-                <ProgressChart />
-              </View>
-              <View style={styles.homeworkContainer}>
+            <View style={styles.homeworkContainer}>
+              <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollViewContent}>
                 {homeworkList.map((homework, index) => (
                   <HomeworkItem key={index} homework={homework} />
                 ))}
-              </View>
+              </ScrollView>
             </View>
           </View>
         </View>
@@ -113,20 +121,20 @@ const styles = StyleSheet.create({
     borderTopEndRadius: borderRadius.sm,
     elevation: getResponsiveSize(3),
   },
-  progressChart: {
-    width: '32%',
-    height: '98.5%',
-    padding: spacing.lg,
-    backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
-    elevation: getResponsiveSize(2),
-  },
   homeworkContainer: {
     flex: 1,
     alignItems: 'center',
-    height: '98.5%',
     backgroundColor: 'white',
     elevation: getResponsiveSize(2),
     borderRadius: borderRadius.lg,
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: spacing.md,
+    alignItems: 'center',
   },
 });

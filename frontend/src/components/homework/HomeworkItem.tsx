@@ -4,6 +4,7 @@ import {HomeworkType} from '@screens/HomeworkScreen';
 import {spacing} from '@theme/spacing';
 import ListItemContainer from '../common/ListItemContainer';
 import {iconSize} from '@theme/iconSize';
+import {calDueToDate} from '@utils/calDueToDate';
 
 interface HomeworkItemProps {
   homework: HomeworkType;
@@ -28,12 +29,16 @@ function HomeworkItem({homework}: HomeworkItemProps): React.JSX.Element {
       </View>
       <View style={styles.homeworkTitle}>
         <Text>
-          {homework.category} - {homework.problemNum}번 문제
+          {homework.category} | {homework.problemNum}번 문제
         </Text>
-        <Text>{homework.dueToDate}</Text>
+        <Text variant="caption" color="secondary">
+          {homework.dueToDate}
+        </Text>
       </View>
-      <Text style={styles.homeworkDday}>D-</Text>
-      <Text style={styles.homeworkCorrect}>
+      <Text style={styles.homeworkDday}>
+        {calDueToDate(homework.dueToDate)}
+      </Text>
+      <Text style={styles.homeworkCorrect} align="center">
         {homework.state === '완료'
           ? homework.correct
             ? '정답'
@@ -47,10 +52,6 @@ function HomeworkItem({homework}: HomeworkItemProps): React.JSX.Element {
 export default HomeworkItem;
 
 const styles = StyleSheet.create({
-  homeworkIndex: {
-    flex: 0.25,
-    paddingLeft: spacing.xl,
-  },
   homeworkState: {
     width: iconSize.xl,
     justifyContent: 'center',
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
   },
   homeworkTitle: {
-    flex: 4,
+    flex: 3.5,
   },
   homeworkDday: {
     flex: 0.75,
