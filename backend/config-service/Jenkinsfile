@@ -66,7 +66,7 @@ pipeline {
             steps {
                 script {
                     sleep 10
-                    def isRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
+                    def isRunning = sh(script: "curl -s https://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
                     if (!isRunning) {
                         error "Config Service is not ready."
                     }
