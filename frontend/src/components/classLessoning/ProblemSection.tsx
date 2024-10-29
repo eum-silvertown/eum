@@ -1,5 +1,6 @@
-import {ScrollView, Image, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 import MathJax from 'react-native-mathjax';
+import ZoomableView from './ZoomableView';
 
 // 문제 텍스트와 이미지 URL이 포함된 예제
 const problemText = `그림과 같이 양수 $t$ 에 대하여 곡선 $y = e^{x} - 1$ 이 두 직선 $y = t$, $y = 5t$ 와 만나는 점을 각각 $\\mathrm{A}$, $\\mathrm{B}$ 라 하고, 점 $B$ 에서 $x$ 축에 내린 수선의 발을 $C$ 라 하자. 삼각형 $ \\mathrm{ACB} $ 의 넓이를 $S(t)$ 라 할 때, $\\lim_{t \\rightarrow 0+} \\frac{S(t)}{t^{2}}$ 의 값을 구하시오.
@@ -23,27 +24,29 @@ function ProblemSection(): React.JSX.Element {
   const imageUrl = extractImageUrl(problemText);
   const textWithoutImage = removeImageMarkdown(problemText);
 
+  const mathJaxContent = `
+    <div style="padding: 16px;">
+      <p>${textWithoutImage}</p>
+      ${
+        imageUrl
+          ? `<img src="${imageUrl}" style="height: 100%; margin-top: 10px;" />`
+          : ''
+      }
+    </div>
+  `;
+
   return (
-    <ScrollView style={styles.problemContainer}>
-      <MathJax html={`<p>${textWithoutImage}</p>`} />
-      {imageUrl && (
-        <Image source={{uri: imageUrl}} style={styles.problemImage} />
-      )}
-    </ScrollView>
+    <ZoomableView>
+      <ScrollView style={styles.problemContainer}>
+        <MathJax html={mathJaxContent} />
+      </ScrollView>
+    </ZoomableView>
   );
 }
 
 const styles = StyleSheet.create({
   problemContainer: {
-    padding: 16,
     zIndex: 1, // 문제 1층
-  },
-  problemImage: {
-    width: '100%',
-    height: 150,
-    resizeMode: 'contain',
-    alignSelf: 'center',
-    marginVertical: 10,
   },
 });
 
