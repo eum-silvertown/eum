@@ -11,22 +11,14 @@ import {getResponsiveSize} from '@utils/responsive';
 
 function Sidebar(): React.JSX.Element {
   const {isExpanded, toggleSidebar} = useSidebarStore();
-  const iconPositionAnim = useRef(new Animated.Value(spacing.lg)).current;
   const iconRotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.timing(iconPositionAnim, {
-        toValue: isExpanded ? spacing.lg : -spacing.lg,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-      Animated.timing(iconRotateAnim, {
-        toValue: isExpanded ? 0 : 1,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-    ]).start();
+    Animated.timing(iconRotateAnim, {
+      toValue: isExpanded ? 0 : 1,
+      duration: 300,
+      useNativeDriver: true, // 네이티브 드라이버 사용
+    }).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isExpanded]);
 
@@ -39,13 +31,7 @@ function Sidebar(): React.JSX.Element {
     <Animated.View style={styles.container}>
       <SidebarProfile />
       <SidebarMenus />
-      <Pressable
-        onPress={toggleSidebar}
-        style={{
-          position: 'absolute',
-          bottom: spacing.xl,
-          right: spacing.xl,
-        }}>
+      <Pressable onPress={toggleSidebar} style={styles.sidebarExpandIcon}>
         <Animated.View
           style={{
             transform: [{rotate: spin}],
@@ -70,15 +56,15 @@ const styles = StyleSheet.create({
   },
   sidebarExpandIcon: {
     position: 'absolute',
-    bottom: spacing.lg,
-    right: spacing.lg,
+    bottom: spacing.xl,
+    right: spacing.xl,
   },
   sidebarImage: {
     position: 'absolute',
     zIndex: -1,
     left: 0,
     bottom: '12.5%',
-    width: getResponsiveSize(280),
-    height: getResponsiveSize(392),
+    width: getResponsiveSize(240),
+    height: getResponsiveSize(320),
   },
 });
