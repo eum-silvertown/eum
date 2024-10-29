@@ -15,7 +15,7 @@ RUN apk add --no-cache tzdata && \
 COPY --from=builder /app/build/libs/*.jar /app/service.jar
 
 # 컨테이너에서 사용하는 포트 명시
-EXPOSE 8761
+EXPOSE 8080
 
 # 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Seoul", "/app/service.jar"]

@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = 'dockerhub-credentials'
+        DEPLOY_SERVER_CREDENTIALS = 'ec2-ssh-key'
+        DEPLOY_SERVER = 'ubuntu@k11d101.p.ssafy.io'
+        PROJECT_ROOT = '/home/ubuntu'
+        SERVICE_NAME = 'apigateway-service'
+        IMAGE_NAME = "yechanissm2/${SERVICE_NAME}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                deleteDir()
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${env.IMAGE_NAME}:latest")
+                }
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', env.DOCKERHUB_CREDENTIALS) {
+                        docker.image("${env.IMAGE_NAME}:latest").push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Server') {
+            steps {
+                sshagent([env.DEPLOY_SERVER_CREDENTIALS]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
+                            cd ${env.PROJECT_ROOT} &&
+                            docker-compose pull ${SERVICE_NAME} &&
+                            docker-compose up -d ${SERVICE_NAME}
+                        '
+                    """
+                }
+            }
+        }
+    }
+}
