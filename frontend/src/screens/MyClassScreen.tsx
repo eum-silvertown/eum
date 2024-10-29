@@ -7,6 +7,7 @@ import Blackboard from '@components/myClass/Blackboard';
 import {getResponsiveSize} from '@utils/responsive';
 import ScreenInfo from '@components/common/ScreenInfo';
 import {borderRadius} from '@theme/borderRadius';
+import {borderWidth} from '@theme/borderWidth';
 
 type StudentType = {
   imageUrl: ImageProps;
@@ -39,23 +40,13 @@ function MyClassScreen(): React.JSX.Element {
           OO고등학교 1학년 1반"
       />
       <View style={styles.contentContainer}>
-        <View style={styles.leftContent}>
+        <View style={styles.topContent}>
           <Blackboard />
-          <View style={styles.leftBottomContent}>
-            <View style={styles.noticeBox}>
-              <Text>선생님</Text>
-            </View>
-            <View style={styles.noticeBox}>
-              <Text>공지사항</Text>
-            </View>
+          <View style={styles.notice}>
+            <Text>게시판</Text>
           </View>
         </View>
-        <View style={styles.rightContent}>
-          <View>
-            <Text variant="subtitle" weight="medium">
-              우리 반 칭긔들
-            </Text>
-          </View>
+        <View style={styles.bottomContent}>
           <View style={styles.studentsContainer}>
             {students.map((student, index) => (
               <View key={index} style={styles.studentItem}>
@@ -79,47 +70,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
   },
   contentContainer: {
-    flexDirection: 'row',
     width: '100%',
     height: '92%',
     gap: spacing.lg,
   },
-  leftContent: {
-    width: '60%',
-    height: '100%',
+  topContent: {
+    flexDirection: 'row',
+    height: '55%',
     gap: spacing.md,
   },
-  leftBottomContent: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: spacing.lg,
-  },
-  noticeBox: {
-    flex: 1,
+  notice: {
+    width: '33%',
     padding: spacing.lg,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(2),
+    elevation: getResponsiveSize(4),
     borderRadius: borderRadius.lg,
+    borderWidth: borderWidth.xl * 2,
+    borderColor: '#775522',
   },
-  rightContent: {
+  bottomContent: {
     flex: 1,
     gap: spacing.lg,
-    padding: spacing.lg,
-    backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
-    elevation: getResponsiveSize(2),
   },
   studentsContainer: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.lg,
-    paddingHorizontal: spacing.md,
   },
   studentItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: `${(100 - 5 * 1) / 2}%`, // (100% - (gap 비율 * 6)) / 7 아이템
+    width: `${(100 - 5.75 * 4) / 5}%`, // (100% - (gap 비율 * 6)) / 7 아이템
     gap: spacing.lg,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.xl,
