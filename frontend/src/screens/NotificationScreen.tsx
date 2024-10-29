@@ -3,14 +3,11 @@ import {borderRadius} from '@theme/borderRadius';
 import {iconSize} from '@theme/iconSize';
 import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
-import {useColors} from 'src/hooks/useColors';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import ScreenInfo from '@components/common/ScreenInfo';
 import {getResponsiveSize} from '@utils/responsive';
 
 function NotificationScreen(): React.JSX.Element {
-  const colors = useColors();
-
   return (
     <View style={styles.container}>
       <ScreenInfo title="알림 센터" />
@@ -22,19 +19,8 @@ function NotificationScreen(): React.JSX.Element {
             </Text>
           </View>
           {[...Array(5)].map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.notification,
-                {backgroundColor: colors.background.readonly},
-              ]}>
-              <View
-                style={{
-                  width: iconSize.lg,
-                  height: iconSize.lg,
-                  borderRadius: 9999,
-                  backgroundColor: 'white',
-                }}></View>
+            <View key={index} style={styles.notification}>
+              <View style={styles.icon}></View>
               <View>
                 <Text weight="bold">수업 알림</Text>
               </View>
@@ -96,7 +82,15 @@ const styles = StyleSheet.create({
     gap: spacing.xl,
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xl,
+    backgroundColor: 'white',
+    elevation: getResponsiveSize(1),
     borderRadius: borderRadius.md,
+  },
+  icon: {
+    width: iconSize.lg,
+    height: iconSize.lg,
+    borderRadius: 9999,
+    backgroundColor: 'gray',
   },
   notificationTail: {
     flexDirection: 'row',
@@ -107,6 +101,7 @@ const styles = StyleSheet.create({
   buttons: {flex: 1, gap: spacing.lg},
   button: {
     flex: 1,
+    padding: spacing.lg,
     backgroundColor: 'white',
     elevation: getResponsiveSize(2),
     borderRadius: borderRadius.lg,
