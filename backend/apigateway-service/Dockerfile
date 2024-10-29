@@ -2,6 +2,7 @@
 FROM gradle:7.6-jdk17 AS builder
 WORKDIR /app
 COPY . .
+ARG JAR_FILE_PATH
 RUN ./gradlew clean build -x test --no-daemon
 
 # 실행 단계
@@ -11,11 +12,12 @@ RUN apk add --no-cache tzdata && \
     cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     echo "Asia/Seoul" > /etc/timezone
 
-# 빌드된 JAR 파일 복사
-COPY --from=builder /app/build/libs/apigateway-service.jar /app/apigateway-service.jar
+# 빌드된 JAR 파일 복사 (동적 설정)
+ARG JAR_FILE_PATH
+COPY --from=builder /app/${JAR_FILE_PATH} /app/service.jar
 
 # 컨테이너에서 사용하는 포트 명시
-EXPOSE 8080
+EXPOSE 8761
 
 # 애플리케이션 실행
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Seoul", "/app/apigateway-service.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "-Duser.timezone=Asia/Seoul", "/app/service.jar"]
