@@ -3,40 +3,44 @@ import {Text} from '../common/Text';
 import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
+import {iconSize} from '@theme/iconSize';
 import CompleteHomeworkIcon from '@assets/icons/completeHomeworkIcon.svg';
 import IncompleteHomeworkIcon from '@assets/icons/incompleteHomeworkIcon.svg';
 import AvarageScoreIcon from '@assets/icons/scoreIcon.svg';
-import {iconSize} from '@theme/iconSize';
 
 interface ProgressBoxProps {
-  variant: 'complete' | 'incomplete' | 'avarage';
+  color: 'blue' | 'red' | 'green';
   title: string;
   content: string;
+  unit: string;
+  icon: 'complete' | 'incomplete' | 'avarageScore';
 }
 
 function ProgressBox({
-  variant,
+  color,
   title,
   content,
+  unit,
+  icon,
 }: ProgressBoxProps): React.JSX.Element {
-  const ICONS = {
+  const icons = {
     complete: CompleteHomeworkIcon,
     incomplete: IncompleteHomeworkIcon,
-    avarage: AvarageScoreIcon,
+    avarageScore: AvarageScoreIcon,
   } as const;
 
-  const Icon = ICONS[variant];
+  const Icon = icons[icon];
 
   return (
-    <View style={[styles.common, styles[variant]]}>
+    <View style={[styles.common, styles[color]]}>
       <Text weight="bold">{title}</Text>
       <View style={styles.content}>
-        {Icon && <Icon width={iconSize.md} height={iconSize.md} />}
+        <Icon width={iconSize.md} height={iconSize.md} />
         <View style={styles.contentText}>
           <Text variant="xxl" weight="bold">
             {content}
           </Text>
-          <Text variant="subtitle">{variant === 'avarage' ? '점' : '개'}</Text>
+          <Text variant="subtitle">{unit}</Text>
         </View>
       </View>
     </View>
@@ -52,13 +56,13 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     elevation: getResponsiveSize(4),
   },
-  complete: {
+  blue: {
     backgroundColor: '#DAEAEA',
   },
-  incomplete: {
+  red: {
     backgroundColor: '#F9E1E1',
   },
-  avarage: {
+  green: {
     backgroundColor: '#D8E1FE',
   },
   content: {

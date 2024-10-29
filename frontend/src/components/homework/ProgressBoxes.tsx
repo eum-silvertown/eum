@@ -10,9 +10,27 @@ function ProgressBoxes(): React.JSX.Element {
         <View style={styles.progressChart}>
           <ProgressChart />
         </View>
-        <ProgressBox variant="complete" title="완료" content="8" />
-        <ProgressBox variant="incomplete" title="미제출" content="2" />
-        <ProgressBox variant="avarage" title="평균 점수" content="80" />
+        <ProgressBox
+          color="blue"
+          title="완료"
+          content="8"
+          icon="complete"
+          unit="개"
+        />
+        <ProgressBox
+          color="red"
+          title="미제출"
+          content="2"
+          icon="incomplete"
+          unit="개"
+        />
+        <ProgressBox
+          color="green"
+          title="평균 점수"
+          content="80"
+          icon="avarageScore"
+          unit="점"
+        />
       </View>
     </View>
   );
