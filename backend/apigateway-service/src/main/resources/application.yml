@@ -17,3 +17,8 @@ spring:
       mvc:
         routes:
           # TODO : Micro Service ??
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
