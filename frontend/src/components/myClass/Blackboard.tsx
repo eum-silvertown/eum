@@ -16,10 +16,9 @@ export default Blackboard;
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    height: '60%',
+    flex: 1,
     backgroundColor: 'white',
-    borderRadius: borderRadius.xxl,
+    borderRadius: borderRadius.xxl * 1.4,
     elevation: getResponsiveSize(2),
   },
   blackboard: {
