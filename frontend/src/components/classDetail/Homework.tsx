@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, FlatList, StyleSheet} from 'react-native';
 import {Text} from '@components/common/Text';
+import {spacing} from '@theme/spacing';
 
 function Homework(): React.JSX.Element {
   const [homeworkData] = useState([
@@ -37,7 +38,7 @@ function Homework(): React.JSX.Element {
 
   return (
     <View style={styles.homework}>
-      <Text variant="subtitle" weight="bold">
+      <Text variant="subtitle" weight="bold" style={styles.subtitle}>
         숙제
       </Text>
       <FlatList
@@ -51,8 +52,10 @@ function Homework(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   homework: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: spacing.lg,
+  },
+  subtitle: {
+    marginStart: spacing.xl,
   },
   item: {
     flexDirection: 'row',

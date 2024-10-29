@@ -40,7 +40,7 @@ function Overview(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   overview: {
-    flex: 0.75,
+    flex: 0.85,
     gap: spacing.md,
   },
   subtitle: {

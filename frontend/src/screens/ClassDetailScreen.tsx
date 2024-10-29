@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   firstRow: {
-    flex: 6,
+    flex: 5.5,
     flexDirection: 'row',
     gap: spacing.md,
   },
   secondRow: {
-    flex: 4,
+    flex: 4.5,
     flexDirection: 'row',
     gap: spacing.md,
   },

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, FlatList, StyleSheet} from 'react-native';
 import {Text} from '@components/common/Text';
+import {spacing} from '@theme/spacing';
 
 function Replay(): React.JSX.Element {
   const [reviewData] = useState([
@@ -39,7 +40,7 @@ function Replay(): React.JSX.Element {
 
   return (
     <View style={styles.replay}>
-      <Text variant="subtitle" weight="bold">
+      <Text variant="subtitle" weight="bold" style={styles.subtitle}>
         다시보기
       </Text>
       <FlatList
@@ -53,8 +54,7 @@ function Replay(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   replay: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: spacing.lg,
   },
   item: {
     flexDirection: 'row',
@@ -68,6 +68,9 @@ const styles = StyleSheet.create({
   textContainer: {
     paddingHorizontal: 4,
     justifyContent: 'center',
+  },
+  subtitle: {
+    marginStart: spacing.xl,
   },
   idContainer: {
     flex: 1,
