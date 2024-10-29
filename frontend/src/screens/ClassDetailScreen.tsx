@@ -13,7 +13,7 @@ function ClassDetailScreen(): React.JSX.Element {
     <View style={styles.container}>
       <ClassHeader />
       <View style={styles.content}>
-        <View style={styles.row}>
+        <View style={styles.firstRow}>
           <View style={styles.overviewLayout}>
             <Overview />
             <Notice />
@@ -23,7 +23,7 @@ function ClassDetailScreen(): React.JSX.Element {
             <Chart />
           </View>
         </View>
-        <View style={styles.row}>
+        <View style={styles.secondRow}>
           <View style={styles.replayLayout}>
             <Replay />
           </View>
@@ -43,31 +43,42 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
   },
   content: {
-    flex: 8,
+    flex: 1,
     gap: spacing.md,
   },
-  row: {
-    flex: 1,
+  firstRow: {
+    flex: 5.5,
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  secondRow: {
+    flex: 4.5,
     flexDirection: 'row',
     gap: spacing.md,
   },
   overviewLayout: {
     flex: 2,
     flexDirection: 'column',
-    gap: spacing.md,
+    paddingVertical: spacing.lg,
+    backgroundColor: 'white',
+    borderRadius: 8,
   },
   mainContentLayout: {
     flex: 1,
     flexDirection: 'column',
     gap: spacing.md,
+    backgroundColor: 'white',
+    borderRadius: 8,
   },
   replayLayout: {
     flex: 2,
-    backgroundColor: 'lightgray',
+    backgroundColor: 'white',
+    borderRadius: 8,
   },
   homeworkLayout: {
     flex: 1,
-    backgroundColor: 'lightgray',
+    backgroundColor: 'white',
+    borderRadius: 8,
   },
 });
 
