@@ -40,41 +40,17 @@ function MyClassScreen(): React.JSX.Element {
       />
       <View style={styles.contentContainer}>
         <View style={styles.leftContent}>
-          <View style={styles.notice}>
-            <Blackboard />
-          </View>
-          <View style={{flex: 1, flexDirection: 'row', gap: spacing.lg}}>
-            <View
-              style={{
-                flex: 1,
-                padding: spacing.lg,
-                backgroundColor: 'white',
-                elevation: getResponsiveSize(2),
-                borderRadius: borderRadius.lg,
-              }}>
+          <Blackboard />
+          <View style={styles.leftBottomContent}>
+            <View style={styles.noticeBox}>
               <Text>선생님</Text>
             </View>
-            <View
-              style={{
-                flex: 1,
-                padding: spacing.lg,
-                backgroundColor: 'white',
-                elevation: getResponsiveSize(2),
-                borderRadius: borderRadius.lg,
-              }}>
+            <View style={styles.noticeBox}>
               <Text>공지사항</Text>
             </View>
           </View>
         </View>
-        <View
-          style={{
-            flex: 1,
-            gap: spacing.lg,
-            padding: spacing.lg,
-            backgroundColor: 'white',
-            borderRadius: borderRadius.lg,
-            elevation: getResponsiveSize(2),
-          }}>
+        <View style={styles.rightContent}>
           <View>
             <Text variant="subtitle" weight="medium">
               우리 반 칭긔들
@@ -113,11 +89,22 @@ const styles = StyleSheet.create({
     height: '100%',
     gap: spacing.md,
   },
-  notice: {
-    width: '100%',
-    height: '60%',
+  leftBottomContent: {
+    flex: 1,
+    flexDirection: 'row',
     gap: spacing.lg,
-    padding: spacing.xl,
+  },
+  noticeBox: {
+    flex: 1,
+    padding: spacing.lg,
+    backgroundColor: 'white',
+    elevation: getResponsiveSize(2),
+    borderRadius: borderRadius.lg,
+  },
+  rightContent: {
+    flex: 1,
+    gap: spacing.lg,
+    padding: spacing.lg,
     backgroundColor: 'white',
     borderRadius: borderRadius.lg,
     elevation: getResponsiveSize(2),
@@ -130,18 +117,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   studentItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    width: `${(100 - 5 * 2) / 3}%`, // (100% - (gap 비율 * 6)) / 7 아이템
-    height: '23.5%',
+    width: `${(100 - 5 * 1) / 2}%`, // (100% - (gap 비율 * 6)) / 7 아이템
     gap: spacing.lg,
-    padding: spacing.lg,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.xl,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(1),
+    elevation: getResponsiveSize(2),
     borderRadius: borderRadius.sm,
   },
   studentImage: {
-    width: '75%',
+    width: '33%',
     height: undefined,
     aspectRatio: 1,
   },
