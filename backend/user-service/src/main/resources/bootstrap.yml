@@ -1,0 +1,11 @@
+server :
+  port : 0
+
+spring:
+  cloud:
+    config:
+      uri: http://127.0.0.1:8080
+      name: eum
+
+  profiles:
+    active: user
