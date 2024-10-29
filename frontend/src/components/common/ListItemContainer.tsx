@@ -34,9 +34,8 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm,
   },
   homework: {
-    width: '90%',
+    width: '95%',
     height: getResponsiveSize(75),
-    marginHorizontal: spacing.lg,
     borderBottomWidth: borderWidth.sm,
     borderColor: '#00000020',
   },
