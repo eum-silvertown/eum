@@ -1,5 +1,5 @@
-import CanvasSection from '@components/Lessoning/CanvasSection';
-import ProblemSection from '@components/Lessoning/ProblemSection';
+import CanvasSection from '@components/classLessoning/CanvasSection';
+import ProblemSection from '@components/classLessoning/ProblemSection';
 import {View, StyleSheet} from 'react-native';
 
 function LessoningScreen(): React.JSX.Element {

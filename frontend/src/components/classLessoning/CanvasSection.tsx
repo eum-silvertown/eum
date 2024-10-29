@@ -1,13 +1,19 @@
-import { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { Canvas, Circle, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
-import { io } from 'socket.io-client';
+import {useEffect, useState} from 'react';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {
+  Canvas,
+  Circle,
+  Path,
+  Skia,
+  useCanvasRef,
+} from '@shopify/react-native-skia';
+import {io} from 'socket.io-client';
 
 // Props 타입 정의
 type CanvasProps = {
   canvasRef: React.RefObject<any>;
-  paths: { path: Path; color: string; strokeWidth: number; opacity: number }[];
-  currentPath: Path | null;
+  paths: {path: any; color: string; strokeWidth: number; opacity: number}[];
+  currentPath: any | null;
   penColor: string;
   penSize: number;
   penOpacity: number;
@@ -21,11 +27,11 @@ type CanvasProps = {
   redo: () => void;
   toggleEraserMode: () => void;
   isErasing: boolean;
-  eraserPosition: { x: number; y: number } | null;
+  eraserPosition: {x: number; y: number} | null;
 };
 
 // 연결할 소켓 IP
-const socket = io('http://192.168.56.1:8080', {
+const socket = io('http://192.168.128.246:8080', {
   reconnection: false,
   secure: true,
   transports: ['websocket'],
@@ -41,28 +47,30 @@ const ERASER_RADIUS = 10;
 function LeftCanvasSection() {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<
-    { path: Path; color: string; strokeWidth: number; opacity: number }[]
+    {path: any; color: string; strokeWidth: number; opacity: number}[]
   >([]);
-  const [currentPath, setCurrentPath] = useState<Path | null>(null);
+  const [currentPath, setCurrentPath] = useState<any | null>(null);
   const [penColor, setPenColor] = useState('#000000');
   const [penSize, setPenSize] = useState(2);
   const [penOpacity, setPenOpacity] = useState(1);
   const [undoStack, setUndoStack] = useState<any[]>([]);
   const [, setRedoStack] = useState<any[]>([]);
-  const [eraserPosition, setEraserPosition] = useState<{ x: number; y: number } | null>(null);
+  const [eraserPosition, setEraserPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
     console.log('변경완료');
-
   };
 
   const toggleEraserMode = () => setIsErasing(!isErasing); // 지우개 모드 토글
 
   const erasePath = (x: number, y: number) => {
     setPaths(prevPaths =>
-      prevPaths.filter(({ path }) => {
+      prevPaths.filter(({path}) => {
         const bounds = path.getBounds();
         const dx = Math.max(bounds.x - x, x - (bounds.x + bounds.width), 0);
         const dy = Math.max(bounds.y - y, y - (bounds.y + bounds.height), 0);
@@ -72,11 +80,10 @@ function LeftCanvasSection() {
           setUndoStack(prev => [...prev, path]); // 삭제된 path를 undo 스택에 추가
         }
         return !isInEraseArea;
-      })
+      }),
     );
     setRedoStack([]); // 지우기 작업 후 redo 스택 초기화
   };
-
 
   const undo = () => {
     if (paths.length > 0) {
@@ -126,9 +133,9 @@ function LeftCanvasSection() {
   }, []);
 
   const handleTouchStart = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -138,9 +145,9 @@ function LeftCanvasSection() {
   };
 
   const handleTouchMove = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -198,28 +205,30 @@ function LeftCanvasSection() {
 function RightCanvasSection() {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<
-    { path: Path; color: string; strokeWidth: number; opacity: number }[]
+    {path: any; color: string; strokeWidth: number; opacity: number}[]
   >([]);
-  const [currentPath, setCurrentPath] = useState<Path | null>(null);
+  const [currentPath, setCurrentPath] = useState<any | null>(null);
   const [penColor, setPenColor] = useState('#000000');
   const [penSize, setPenSize] = useState(2);
   const [penOpacity, setPenOpacity] = useState(1);
   const [undoStack, setUndoStack] = useState<any[]>([]);
   const [, setRedoStack] = useState<any[]>([]);
-  const [eraserPosition, setEraserPosition] = useState<{ x: number; y: number } | null>(null);
+  const [eraserPosition, setEraserPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
     console.log('변경완료');
-
   };
 
   const toggleEraserMode = () => setIsErasing(!isErasing); // 지우개 모드 토글
 
   const erasePath = (x: number, y: number) => {
     setPaths(prevPaths =>
-      prevPaths.filter(({ path }) => {
+      prevPaths.filter(({path}) => {
         const bounds = path.getBounds();
         const dx = Math.max(bounds.x - x, x - (bounds.x + bounds.width), 0);
         const dy = Math.max(bounds.y - y, y - (bounds.y + bounds.height), 0);
@@ -229,11 +238,10 @@ function RightCanvasSection() {
           setUndoStack(prev => [...prev, path]); // 삭제된 path를 undo 스택에 추가
         }
         return !isInEraseArea;
-      })
+      }),
     );
     setRedoStack([]); // 지우기 작업 후 redo 스택 초기화
   };
-
 
   const undo = () => {
     if (paths.length > 0) {
@@ -283,9 +291,9 @@ function RightCanvasSection() {
   }, []);
 
   const handleTouchStart = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -295,9 +303,9 @@ function RightCanvasSection() {
   };
 
   const handleTouchMove = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -389,9 +397,8 @@ function CanvasComponent({
         style={styles.canvas}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {paths.map(({ path, color, strokeWidth, opacity }, index) => (
+        onTouchEnd={handleTouchEnd}>
+        {paths.map(({path, color, strokeWidth, opacity}, index) => (
           <Path
             key={index}
             path={path}
@@ -435,7 +442,7 @@ function CanvasComponent({
               key={color}
               style={[
                 styles.colorPalette,
-                { backgroundColor: color },
+                {backgroundColor: color},
                 penColor === color && styles.selectedColor,
               ]}
               onPress={() => setPenColor(color)}
@@ -451,8 +458,7 @@ function CanvasComponent({
                 styles.penSize,
                 penSize === size && styles.selectedPenSize,
               ]}
-              onPress={() => setPenSize(size)}
-            >
+              onPress={() => setPenSize(size)}>
               <View
                 style={{
                   width: size,
@@ -469,8 +475,7 @@ function CanvasComponent({
           style={[
             styles.highlighterButton,
             penOpacity < 1 && styles.activeHighlighter,
-          ]}
-        >
+          ]}>
           <Text style={styles.buttonText}>형광펜</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={undo} style={styles.toolbarButton}>
@@ -479,7 +484,9 @@ function CanvasComponent({
         <TouchableOpacity onPress={redo} style={styles.toolbarButton}>
           <Text style={styles.buttonText}>Redo</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={toggleEraserMode} style={isErasing ? styles.activeEraser : styles.eraserButton}>
+        <TouchableOpacity
+          onPress={toggleEraserMode}
+          style={isErasing ? styles.activeEraser : styles.eraserButton}>
           <Text style={styles.buttonText}>지우개</Text>
         </TouchableOpacity>
       </View>
@@ -488,9 +495,9 @@ function CanvasComponent({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, flexDirection: 'row' },
-  canvasContainer: { flex: 1, backgroundColor: 'transparent' },
-  canvas: { flex: 1 },
+  container: {flex: 1, flexDirection: 'row'},
+  canvasContainer: {flex: 1, backgroundColor: 'transparent'},
+  canvas: {flex: 1},
   floatingToolbar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -506,8 +513,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   colorPalette: {
-    width: 30,
-    height: 30,
+    width: 25,
+    height: 25,
     borderRadius: 15,
     marginHorizontal: 1.5,
     borderWidth: 2,
@@ -521,8 +528,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   penSize: {
-    width: 30,
-    height: 30,
+    width: 25,
+    height: 25,
     borderRadius: 15,
     marginHorizontal: 1.5,
     alignItems: 'center',
@@ -538,11 +545,11 @@ const styles = StyleSheet.create({
   highlighterButton: {
     paddingVertical: 5,
     paddingHorizontal: 15,
-    backgroundColor: '#FFD700',
+    backgroundColor: '#ddd',
     borderRadius: 5,
   },
   activeHighlighter: {
-    backgroundColor: '#FFA500',
+    backgroundColor: '#FFD700',
   },
   toolbarButton: {
     paddingVertical: 5,
@@ -559,6 +566,9 @@ const styles = StyleSheet.create({
   },
   activeEraser: {
     backgroundColor: '#FFA500',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 5,
   },
-  buttonText: { color: '#000', fontWeight: 'bold' },
+  buttonText: {color: '#000', fontWeight: 'bold'},
 });
