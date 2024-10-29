@@ -4,7 +4,7 @@ import UpArrowIcon from '@assets/icons/backArrowIcon.svg';
 import SearchIcon from '@assets/icons/searchIcon.svg';
 import AddFolderIcon from '@assets/icons/addFolderIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import BreadCrumb from '@components/common/questionBox/BreadCrumb';
+import BreadCrumb from '@components/questionBox/BreadCrumb';
 import {spacing} from '@theme/spacing';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
 
@@ -75,7 +75,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: spacing.xxl,
-    marginVertical: spacing.xl,
+    marginBottom: spacing.xxl,
+    paddingHorizontal: spacing.lg,
     gap: spacing.xl,
   },
   navigationButtons: {
@@ -100,6 +101,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.lg,
     marginLeft: 'auto',
-    marginRight: spacing.xxl,
   },
 });

@@ -30,17 +30,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    paddingVertical: spacing.md * 1.2,
-    paddingHorizontal: spacing.xxl,
-    borderWidth: borderWidth.sm,
+    backgroundColor: 'white',
     borderRadius: borderRadius.sm,
-    borderStyle: 'solid',
   },
   homework: {
+    width: '95%',
     height: getResponsiveSize(75),
+    borderBottomWidth: borderWidth.sm,
+    borderColor: '#00000020',
   },
   userinfo: {
     height: getResponsiveSize(75),
+    paddingVertical: spacing.md * 1.2,
     paddingHorizontal: spacing.xxl,
   },
 });

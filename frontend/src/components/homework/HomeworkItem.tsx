@@ -1,43 +1,44 @@
 import {StyleSheet, View} from 'react-native';
-import {Text} from '../Text';
+import {Text} from '../common/Text';
 import {HomeworkType} from '@screens/HomeworkScreen';
 import {spacing} from '@theme/spacing';
-import ListItemContainer from '../ListItemContainer';
+import ListItemContainer from '../common/ListItemContainer';
 import {iconSize} from '@theme/iconSize';
-import {useColors} from 'src/hooks/useColors';
+import {calDueToDate} from '@utils/calDueToDate';
 
 interface HomeworkItemProps {
-  index: number;
   homework: HomeworkType;
 }
 
-function HomeworkItem({index, homework}: HomeworkItemProps): React.JSX.Element {
-  const colors = useColors();
+function HomeworkItem({homework}: HomeworkItemProps): React.JSX.Element {
   const stateColor = {
-    완료: colors.background.primary,
-    미제출: colors.background.danger,
+    완료: '#7DCD8E',
+    미제출: '#FFCD29',
   };
 
   return (
     <ListItemContainer variant="homework">
-      <Text style={styles.homeworkIndex}>{index + 1}</Text>
       <View
         style={[
           styles.homeworkState,
           {backgroundColor: stateColor[homework.state]},
         ]}>
-        <Text variant="caption" weight="bold" color="white" align="center">
+        <Text variant="caption" weight="bold" align="center">
           {homework.state}
         </Text>
       </View>
       <View style={styles.homeworkTitle}>
         <Text>
-          {homework.category} - {homework.problemNum}번 문제
+          {homework.category} | {homework.problemNum}번 문제
         </Text>
-        <Text>{homework.dueToDate}</Text>
+        <Text variant="caption" color="secondary">
+          {homework.dueToDate}
+        </Text>
       </View>
-      <Text style={styles.homeworkDday}>D-</Text>
-      <Text style={styles.homeworkCorrect}>
+      <Text style={styles.homeworkDday}>
+        {calDueToDate(homework.dueToDate)}
+      </Text>
+      <Text style={styles.homeworkCorrect} align="center">
         {homework.state === '완료'
           ? homework.correct
             ? '정답'
@@ -51,19 +52,15 @@ function HomeworkItem({index, homework}: HomeworkItemProps): React.JSX.Element {
 export default HomeworkItem;
 
 const styles = StyleSheet.create({
-  homeworkIndex: {
-    flex: 0.25,
-    paddingLeft: spacing.xl,
-  },
   homeworkState: {
     width: iconSize.xl,
     justifyContent: 'center',
     aspectRatio: 1,
-    marginHorizontal: spacing.xxl,
+    marginHorizontal: spacing.xl,
     borderRadius: 9999,
   },
   homeworkTitle: {
-    flex: 4,
+    flex: 3.5,
   },
   homeworkDday: {
     flex: 0.75,

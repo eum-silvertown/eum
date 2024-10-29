@@ -24,8 +24,11 @@ export function Text({
   return (
     <RNText
       style={[
-        fontSizes[variant],
-        {color: themeColors.text[color], textAlign: align},
+        {
+          fontSize: typography.size[variant],
+          color: themeColors.text[color],
+          textAlign: align,
+        },
         fontWeights[weight],
         style,
       ]}
@@ -34,21 +37,6 @@ export function Text({
     </RNText>
   );
 }
-
-const fontSizes = StyleSheet.create({
-  title: {
-    fontSize: typography.size.title,
-  },
-  subtitle: {
-    fontSize: typography.size.subtitle,
-  },
-  body: {
-    fontSize: typography.size.body,
-  },
-  caption: {
-    fontSize: typography.size.caption,
-  },
-});
 
 const fontWeights = StyleSheet.create({
   regular: {

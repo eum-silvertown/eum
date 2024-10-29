@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {StyleSheet, TouchableOpacity, View, Animated} from 'react-native';
+import {StyleSheet, View, Animated, Pressable} from 'react-native';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import useSidebarStore from '@store/useSidebarStore';
 import HomeIcon from '@assets/icons/homeIcon.svg';
@@ -9,11 +9,11 @@ import HomeworkIcon from '@assets/icons/homeworkIcon.svg';
 import questionBoxIcon from '@assets/icons/questionBoxIcon.svg';
 import myClassIcon from '@assets/icons/myClassIcon.svg';
 import NotificationIcon from '@assets/icons/notificationIcon.svg';
-import {Text} from '../Text';
+import {Text} from '../common/Text';
 import {SvgProps} from 'react-native-svg';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
-import {useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 
 interface MenuItem {
   name: string;
@@ -37,6 +37,16 @@ function SidebarMenus(): React.JSX.Element {
   const {isExpanded} = useSidebarStore();
   const textOpacity = useRef(new Animated.Value(1)).current;
 
+  const handlePress = useCallback(
+    (screen: keyof ScreenType) => {
+      setCurrentScreen(screen);
+      requestAnimationFrame(() => {
+        navigation.navigate(screen);
+      });
+    },
+    [navigation, setCurrentScreen],
+  );
+
   useEffect(() => {
     Animated.timing(textOpacity, {
       toValue: isExpanded ? 1 : 0,
@@ -48,13 +58,14 @@ function SidebarMenus(): React.JSX.Element {
   return (
     <View style={styles.container}>
       {menuItems.map(item => (
-        <TouchableOpacity
-          style={[styles.menuContainer]}
+        <Pressable
+          style={({pressed}) => [
+            styles.menuContainer,
+            pressed && {opacity: 0.7},
+          ]}
+          android_ripple={{color: 'rgba(255, 255, 255, 0.1)'}}
           key={item.screen}
-          onPress={() => {
-            navigation.navigate(item.screen);
-            setCurrentScreen(item.screen);
-          }}>
+          onPress={() => handlePress(item.screen)}>
           <View style={styles.icon}>
             <item.icon width={iconSize.md} height={iconSize.md} />
           </View>
@@ -63,14 +74,13 @@ function SidebarMenus(): React.JSX.Element {
               styles.textContainer,
               {
                 opacity: textOpacity,
-                width: 'auto',
               },
             ]}>
             <Text weight={'bold'} color={'white'} numberOfLines={1}>
               {item.name}
             </Text>
           </Animated.View>
-        </TouchableOpacity>
+        </Pressable>
       ))}
     </View>
   );
@@ -91,6 +101,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   textContainer: {
+    width: 'auto',
     overflow: 'hidden',
   },
 });
