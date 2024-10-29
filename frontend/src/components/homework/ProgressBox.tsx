@@ -57,13 +57,13 @@ const styles = StyleSheet.create({
     elevation: getResponsiveSize(4),
   },
   blue: {
-    backgroundColor: '#DAEAEA',
+    backgroundColor: '#D8E1FE',
   },
   red: {
     backgroundColor: '#F9E1E1',
   },
   green: {
-    backgroundColor: '#D8E1FE',
+    backgroundColor: '#DAEAEA',
   },
   content: {
     flex: 1,
