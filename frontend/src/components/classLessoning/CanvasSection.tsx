@@ -82,6 +82,7 @@ function LeftCanvasSection() {
         return !isInEraseArea;
       }),
     );
+    // TODO : 예외처리 필요
     setRedoStack([]); // 지우기 작업 후 redo 스택 초기화
   };
 
