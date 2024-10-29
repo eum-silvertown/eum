@@ -14,12 +14,12 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
   const isLoggedIn = useAuthStore(state => state.isLoggedIn); // 로그인 상태 확인
   const {isExpanded} = useSidebarStore();
   const sidebarWidthAnim = useRef(
-    new Animated.Value(isExpanded ? 20 : 5),
+    new Animated.Value(isExpanded ? 17.5 : 5),
   ).current;
 
   useEffect(() => {
     Animated.timing(sidebarWidthAnim, {
-      toValue: isExpanded ? 20 : 5,
+      toValue: isExpanded ? 17.5 : 5,
       duration: 300,
       useNativeDriver: false,
     }).start();
