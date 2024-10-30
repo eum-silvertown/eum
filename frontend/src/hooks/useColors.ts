@@ -9,6 +9,7 @@ export const colors = {
       tertiary: '#999999',
       white: '#ffffff',
       error: '#ff0000',
+      success: '#4CAF50',
       text01: '#242424',
       text02: '#555',
       text03: '#6F6F6F',
@@ -27,6 +28,7 @@ export const colors = {
       cancle: '#EEEEEE',
       cancelPress: '#A5A5A5',
       readonly: '#ECECEC',
+      white: '#FFFFFF'
     },
     borderColor: {
       cardBorder: '#463986',
@@ -41,6 +43,7 @@ export const colors = {
       tertiary: '#999999',
       white: '#ffffff',
       error: '#ff0000',
+      success: '#4CAF50',
       text01: '#242424',
       text02: '#555',
       text03: '#6F6F6F',
@@ -59,6 +62,7 @@ export const colors = {
       cancle: '#EEEEEE',
       cancelPress: '#A5A5A5',
       readonly: '#ECECEC',
+      white: '#FFFFFF'
     },
     borderColor: {
       cardBorder: '#463986',

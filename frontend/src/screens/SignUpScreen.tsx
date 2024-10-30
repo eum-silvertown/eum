@@ -25,6 +25,8 @@ import CancelIcon from '@assets/icons/cancelIcon.svg'
 import {iconSize} from '@theme/iconSize';
 import Config from 'react-native-config';
 import {borderWidth} from '@theme/borderWidth'
+import ScreenHeader from '@components/account/ScreenHeader';
+
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 interface School {
@@ -194,15 +196,7 @@ function SignUpScreen(): React.JSX.Element {
 
   return (
     <KeyboardAvoidingView style={styles.outerContainer}>
-      {/* 뒤로가기, 헤더 */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <BackArrowIcon />
-        </TouchableOpacity>
-        <Text variant="title" style={styles.headerText} weight="bold">
-          {headerText}
-        </Text>
-      </View>
+      <ScreenHeader title={headerText}/>     
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.formContainer}>
@@ -519,6 +513,7 @@ export default SignUpScreen;
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
+    backgroundColor: colors.light.background.white,  
     width: '100%',
     height: '100%',
     justifyContent: 'center',
