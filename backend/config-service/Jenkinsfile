@@ -48,19 +48,19 @@ pipeline {
             }
         }
 
-        stage('Deploy to Server') {
-            steps {
-                sshagent([env.DEPLOY_SERVER_CREDENTIALS]) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
-                            cd ${env.PROJECT_ROOT} &&
-                            docker-compose pull ${SERVICE_NAME} &&
-                            docker-compose up -d ${SERVICE_NAME}
-                        '
-                    """
-                }
-            }
-        }
+       stage('Deploy to Server') {
+           steps {
+               sshagent([env.DEPLOY_SERVER_CREDENTIALS]) {
+                   sh """
+                       ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
+                           cd ${env.PROJECT_ROOT} &&
+                           docker-compose pull ${SERVICE_NAME} &&
+                           docker-compose up -d --force-recreate --no-deps ${SERVICE_NAME}
+                       '
+                   """
+               }
+           }
+       }
 
         stage('Wait for Service to be Ready') {
             steps {

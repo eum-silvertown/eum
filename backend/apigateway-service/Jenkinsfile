@@ -62,7 +62,7 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
                             cd ${env.PROJECT_ROOT} &&
                             docker-compose pull ${SERVICE_NAME} &&
-                            docker-compose up -d ${SERVICE_NAME}
+                            docker-compose up -d --force-recreate --no-deps ${SERVICE_NAME}
                         '
                     """
                 }
