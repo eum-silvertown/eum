@@ -19,23 +19,23 @@ pipeline {
             }
         }
 
-        stage('Wait for Config and Discovery Services') {
-            steps {
-                script {
-                    def isConfigRunning = false
-                    def isDiscoveryRunning = false
-
-                    for (int i = 0; i < 5; i++) {
-                        isConfigRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
-                        isDiscoveryRunning = sh(script: "curl -s http://${CHECK_SERVER}:8761/actuator/health | grep 'UP'", returnStatus: true) == 0
-                        if (isConfigRunning && isDiscoveryRunning) break
-                        sleep 10
-                    }
-                    if (!isConfigRunning) error "Config Service is not ready."
-                    if (!isDiscoveryRunning) error "Discovery Service is not ready."
-                }
-            }
-        }
+//         stage('Wait for Config and Discovery Services') {
+//             steps {
+//                 script {
+//                     def isConfigRunning = false
+//                     def isDiscoveryRunning = false
+//
+//                     for (int i = 0; i < 5; i++) {
+//                         isConfigRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
+//                         isDiscoveryRunning = sh(script: "curl -s http://${CHECK_SERVER}:8761/actuator/health | grep 'UP'", returnStatus: true) == 0
+//                         if (isConfigRunning && isDiscoveryRunning) break
+//                         sleep 10
+//                     }
+//                     if (!isConfigRunning) error "Config Service is not ready."
+//                     if (!isDiscoveryRunning) error "Discovery Service is not ready."
+//                 }
+//             }
+//         }
 
         stage('Copy Secret File') {
                     steps {
