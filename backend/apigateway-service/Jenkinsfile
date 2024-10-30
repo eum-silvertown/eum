@@ -28,17 +28,11 @@ pipeline {
                     for (int i = 0; i < 5; i++) {
                         isConfigRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
                         isDiscoveryRunning = sh(script: "curl -s http://${CHECK_SERVER}:8761/actuator/health | grep 'UP'", returnStatus: true) == 0
-                        if (isConfigRunning && isDiscoveryRunning) {
-                            break
-                        }
+                        if (isConfigRunning && isDiscoveryRunning) break
                         sleep 10
                     }
-                    if (!isConfigRunning) {
-                        error "Config Service is not ready."
-                    }
-                    if (!isDiscoveryRunning) {
-                        error "Discovery Service is not ready."
-                    }
+                    if (!isConfigRunning) error "Config Service is not ready."
+                    if (!isDiscoveryRunning) error "Discovery Service is not ready."
                 }
             }
         }
@@ -78,16 +72,10 @@ pipeline {
 
     post {
         success {
-            mattermostSend(
-                color: 'good',
-                message: "API Gateway 배포 성공."
-            )
+            mattermostSend(color: 'good', message: "API Gateway 배포 성공.")
         }
         failure {
-            mattermostSend(
-                color: 'danger',
-                message: "API Gateway 배포 실패. 수동 확인이 필요합니다."
-            )
+            mattermostSend(color: 'danger', message: "API Gateway 배포 실패. 수동 확인이 필요합니다.")
         }
     }
 }

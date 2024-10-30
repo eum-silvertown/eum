@@ -25,14 +25,10 @@ pipeline {
                     def isConfigRunning = false
                     for (int i = 0; i < 5; i++) {
                         isConfigRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
-                        if (isConfigRunning) {
-                            break
-                        }
+                        if (isConfigRunning) break
                         sleep 10
                     }
-                    if (!isConfigRunning) {
-                        error "Config Service is not ready."
-                    }
+                    if (!isConfigRunning) error "Config Service is not ready."
                 }
             }
         }
@@ -73,18 +69,12 @@ pipeline {
     post {
         success {
             script {
-                mattermostSend(
-                    color: 'good',
-                    message: "Discovery Service 배포 성공. 다음 API Gateway 배포를 시작합니다."
-                )
-                build job: 'apigateway-service'
+                mattermostSend(color: 'good', message: "Discovery Service 배포 성공. 다음 API Gateway 배포를 시작합니다.")
+                build job: 'apigateway-service', wait: false
             }
         }
         failure {
-            mattermostSend(
-                color: 'danger',
-                message: "Discovery Service 배포 실패. 수동 확인이 필요합니다."
-            )
+            mattermostSend(color: 'danger', message: "Discovery Service 배포 실패. 수동 확인이 필요합니다.")
         }
     }
 }

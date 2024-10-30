@@ -78,18 +78,12 @@ pipeline {
     post {
         success {
             script {
-                mattermostSend(
-                    color: 'good',
-                    message: "Config Service 배포 성공. 다음 Discovery Service 배포를 시작합니다."
-                )
-                build job: 'discovery-service'
+                mattermostSend(color: 'good', message: "Config Service 배포 성공. 다음 Discovery Service 배포를 시작합니다.")
+                build job: 'discovery-service', wait: false
             }
         }
         failure {
-            mattermostSend(
-                color: 'danger',
-                message: "Config Service 배포 실패. 수동 확인이 필요합니다."
-            )
+            mattermostSend(color: 'danger', message: "Config Service 배포 실패. 수동 확인이 필요합니다.")
         }
     }
 }
