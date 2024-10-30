@@ -8,10 +8,11 @@ export type ScreenType = {
   MyClassScreen: undefined;
   LoginScreen: undefined;
   SignUpSelectScreen: undefined;
-  SignUpScreen : { userType: 'teacher' | 'student' };
+  SignUpScreen: {userType: 'teacher' | 'student'};
   NotificationScreen: undefined;
   ClassDetailScreen: undefined;
   LessoningScreen: undefined;
+  DrawingTestScreen: undefined;
 };
 
 type ScreenName = keyof ScreenType;

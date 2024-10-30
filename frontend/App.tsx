@@ -14,6 +14,7 @@ import QuestionBoxScreen from '@screens/QuestionBoxScreen';
 import MyClassScreen from '@screens/MyClassScreen';
 import NotificationScreen from '@screens/NotificationScreen';
 import MainLayout from '@components/common/MainLayout';
+import DrawingTestScreen from '@screens/DrawingTestScreen';
 import {Platform, UIManager} from 'react-native';
 
 // 안드로이드 기본 Navbar 없애기
@@ -46,6 +47,7 @@ function App(): React.JSX.Element {
     {name: 'NotificationScreen', component: NotificationScreen},
     {name: 'ClassDetailScreen', component: ClassDetailScreen},
     {name: 'LessoningScreen', component: LessoningScreen},
+    {name: 'DrawingTestScreen', component: DrawingTestScreen},
   ];
 
   return (
