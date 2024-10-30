@@ -1,7 +1,7 @@
 spring:
   cloud:
     config:
-      uri: http://127.0.0.1:8080  # Config 서버 URI
+      uri: http://127.0.0.1:8888  # Config 서버 URI
       name: eum
   profiles:
     active: user

@@ -71,10 +71,10 @@ pipeline {
 
     post {
         success {
-            mattermostSend(color: 'good', message: "Discovery Service 배포 성공.")
+            mattermostSend(color: 'good', message: "user Service 배포 성공.")
         }
         failure {
-            mattermostSend(color: 'danger', message: "Discovery Service 배포 실패. 수동 확인이 필요합니다.")
+            mattermostSend(color: 'danger', message: "user Service 배포 실패. 수동 확인이 필요합니다.")
         }
     }
 }
