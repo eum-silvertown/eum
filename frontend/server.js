@@ -18,6 +18,11 @@ io.on('connection', socket => {
     console.log('서버에서 left_to_right 이벤트 발생, 데이터:', data);
     io.emit('left_to_right', data); // 클라이언트로 데이터 전송
   });
+  // 왼쪽 캔버스에서 오른쪽 캔버스로 전송
+  socket.on('left_to_right_move', data => {
+    console.log('서버에서 left_to_right_move 이벤트 발생, 데이터:', data);
+    io.emit('left_to_right_move', data); // 클라이언트로 데이터 전송
+  });
 
   // 오른쪽 캔버스에서 왼쪽 캔버스로 전송
   socket.on('right_to_left', data => {
