@@ -23,9 +23,14 @@ pipeline {
         stage('Check for Changes') {
             steps {
                 script {
+                    // origin/backend/develop 브랜치를 가져옵니다.
                     sh "git fetch origin backend/develop"
+
+                    // origin/backend/develop과 현재 HEAD 간의 변경된 파일 목록을 가져옵니다.
                     def changeOutput = sh(script: "git diff --name-only origin/backend/develop...HEAD", returnStdout: true).trim()
                     echo "Changed files:\n${changeOutput}"
+
+                    // 변경된 서비스 디렉토리가 있는지 확인합니다.
                     def buildRequired = false
                     for (file in changeOutput.split("\n")) {
                         if (file.startsWith("${SERVICE_DIR}/")) {
@@ -34,6 +39,8 @@ pipeline {
                             break
                         }
                     }
+
+                    // 결과를 환경 변수로 설정합니다.
                     env.BUILD_REQUIRED = buildRequired.toString()
                     echo "BUILD_REQUIRED: ${env.BUILD_REQUIRED}"
                 }
@@ -101,15 +108,19 @@ pipeline {
 
     post {
         success {
-            if (env.BUILD_REQUIRED == 'true') {
-                mattermostSend(color: 'good', message: "Config Service 배포 성공.")
-            } else {
-                echo "Config Service 변경 사항 없음. 빌드 및 배포를 건너뜁니다."
+            script {
+                if (env.BUILD_REQUIRED == 'true') {
+                    mattermostSend(color: 'good', message: "Config Service 배포 성공.")
+                } else {
+                    echo "Config Service 변경 사항 없음. 빌드 및 배포를 건너뜁니다."
+                }
             }
         }
         failure {
-            if (env.BUILD_REQUIRED == 'true') {
-                mattermostSend(color: 'danger', message: "Config Service 배포 실패. 수동 확인이 필요합니다.")
+            script {
+                if (env.BUILD_REQUIRED == 'true') {
+                    mattermostSend(color: 'danger', message: "Config Service 배포 실패. 수동 확인이 필요합니다.")
+                }
             }
         }
     }
