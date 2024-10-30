@@ -1,15 +1,17 @@
 import React from 'react';
-import { TouchableOpacity, View, Image } from 'react-native';
+import { TouchableOpacity, View, Image, StyleSheet } from 'react-native';
 import { Text } from '@components/common/Text';
-import { StyleSheet } from 'react-native';
-import { spacing } from '@theme/spacing';
-import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import { useNavigation } from '@react-navigation/native';
-import { colors } from 'src/hooks/useColors';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import signUpStudentImage from '@assets/images/signUpStudentImage.png';
 import signUpTeacherImage from '@assets/images/signUpTeacherImage.png';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+
+import { colors } from 'src/hooks/useColors';
+import { spacing } from '@theme/spacing';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import ScreenHeader from '@components/account/ScreenHeader';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -24,14 +26,7 @@ function SignUpSelectScreen(): React.JSX.Element {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <BackArrowIcon />
-                </TouchableOpacity>
-                <Text variant="title" style={styles.headerText} weight="bold">
-                    회원가입
-                </Text>
-            </View>
+            <ScreenHeader title="회원가입"/>
 
             <View style={styles.selectionContainer}>
                 {/* 선생님 가입 섹션 */}
@@ -77,6 +72,7 @@ export default SignUpSelectScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: colors.light.background.white,        
         alignItems: 'center',
         paddingHorizontal: spacing.md,
         justifyContent: 'center',
