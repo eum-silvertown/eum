@@ -20,7 +20,7 @@ function RightRecordCanvasSection({
   const canvasRef = useCanvasRef();
   const [isPlaying, setIsPlaying] = useState(false);
   const [displayPaths, setDisplayPaths] = useState<PathData[]>([]);
-
+  const [progress, setProgress] = useState(0);
   const playbackIndex = useRef(0);
 
   const startPlayback = () => {
@@ -29,6 +29,7 @@ function RightRecordCanvasSection({
     setIsPlaying(true);
     playbackIndex.current = 0;
     setDisplayPaths([]); // 기존 드로잉 초기화
+    setProgress(0);
   };
 
   const stopPlayback = () => {
@@ -56,13 +57,16 @@ function RightRecordCanvasSection({
         ]);
       }
 
+      const newProgress = (playbackIndex.current + 1) / recordedPaths.length;
+      setProgress(newProgress);
+
       playbackIndex.current += 1;
 
       if (playbackIndex.current < recordedPaths.length) {
         const nextTimestamp = recordedPaths[playbackIndex.current].timestamp;
         const delay = nextTimestamp - currentPathData.timestamp;
         console.log('딜레이: ', delay);
-        setTimeout(playNextPath, delay); // 다음 path 재생까지 대기
+        setTimeout(playNextPath, delay / 2); // 다음 path 재생까지 대기
       }
     };
 
@@ -91,6 +95,10 @@ function RightRecordCanvasSection({
           onPress={isPlaying ? stopPlayback : startPlayback}
         />
       </View>
+      {/* Progress Bar */}
+      <View style={styles.progressBarContainer}>
+        <View style={[styles.progressBar, {width: `${progress * 100}%`}]} />
+      </View>
     </View>
   );
 }
@@ -109,6 +117,18 @@ const styles = StyleSheet.create({
   },
   canvasLayout: {
     ...StyleSheet.absoluteFillObject,
+  },
+  progressBarContainer: {
+    height: 4,
+    width: '100%',
+    backgroundColor: '#ddd',
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#3b82f6',
   },
 });
 
