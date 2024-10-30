@@ -1,0 +1,80 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_CREDENTIALS = 'dockerhub-credentials'
+        DEPLOY_SERVER_CREDENTIALS = 'ec2-ssh-key'
+        DEPLOY_SERVER = 'ubuntu@k11d101.p.ssafy.io'
+        CHECK_SERVER = 'k11d101.p.ssafy.io'
+        PROJECT_ROOT = '/home/ubuntu'
+        SERVICE_NAME = 'user-service'
+        IMAGE_NAME = "yechanissm2/${SERVICE_NAME}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                deleteDir()
+                checkout scm
+            }
+        }
+
+//         stage('Wait for Config Service') {
+//             steps {
+//                 script {
+//                     def isConfigRunning = false
+//                     for (int i = 0; i < 5; i++) {
+//                         isConfigRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
+//                         if (isConfigRunning) break
+//                         sleep 10
+//                     }
+//                     if (!isConfigRunning) error "Config Service is not ready."
+//                 }
+//             }
+//         }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${env.IMAGE_NAME}:latest", "--no-cache -f backend/${SERVICE_NAME}/Dockerfile backend/${SERVICE_NAME}")
+                }
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', env.DOCKERHUB_CREDENTIALS) {
+                        docker.image("${env.IMAGE_NAME}:latest").push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Server') {
+            steps {
+                sshagent([env.DEPLOY_SERVER_CREDENTIALS]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
+                            cd ${env.PROJECT_ROOT} &&
+                            docker-compose stop ${SERVICE_NAME} &&
+                            docker-compose rm -f ${SERVICE_NAME} &&
+                            docker-compose pull ${SERVICE_NAME} &&
+                            docker-compose up -d --force-recreate --no-deps ${SERVICE_NAME} &&
+                            docker image prune -f --filter "dangling=true"
+                        '
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            mattermostSend(color: 'good', message: "Discovery Service 배포 성공.")
+        }
+        failure {
+            mattermostSend(color: 'danger', message: "Discovery Service 배포 실패. 수동 확인이 필요합니다.")
+        }
+    }
+}
