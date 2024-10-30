@@ -37,6 +37,17 @@ pipeline {
             }
         }
 
+        stage('Copy Secret File') {
+                    steps {
+                        withCredentials([file(credentialsId: 'application-secret-yml', variable: 'APPLICATION_YML')]) {
+                            sh """
+                                mkdir -p backend/${SERVICE_NAME}/src/main/resources
+                                cp ${APPLICATION_YML} backend/${SERVICE_NAME}/src/main/resources/application-secret.yml
+                            """
+                        }
+                    }
+                }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -61,7 +72,9 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
                             cd ${env.PROJECT_ROOT} &&
-                            docker-compose pull --ignore-pull-failures ${SERVICE_NAME} &&
+                            docker-compose stop ${SERVICE_NAME} &&
+                            docker-compose rm -f ${SERVICE_NAME} &&
+                            docker-compose pull ${SERVICE_NAME} &&
                             docker-compose up -d --force-recreate --no-deps ${SERVICE_NAME} &&
                             docker image prune -f --filter "dangling=true"
                         '

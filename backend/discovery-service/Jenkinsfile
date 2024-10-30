@@ -57,7 +57,9 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
                             cd ${env.PROJECT_ROOT} &&
-                            docker-compose pull --ignore-pull-failures ${SERVICE_NAME} &&
+                            docker-compose stop ${SERVICE_NAME} &&
+                            docker-compose rm -f ${SERVICE_NAME} &&
+                            docker-compose pull ${SERVICE_NAME} &&
                             docker-compose up -d --force-recreate --no-deps ${SERVICE_NAME} &&
                             docker image prune -f --filter "dangling=true"
                         '
@@ -69,10 +71,7 @@ pipeline {
 
     post {
         success {
-            script {
-                mattermostSend(color: 'good', message: "Discovery Service 배포 성공. 다음 API Gateway 배포를 시작합니다.")
-                build job: 'apigateway-service', wait: false
-            }
+            mattermostSend(color: 'good', message: "Discovery Service 배포 성공.")
         }
         failure {
             mattermostSend(color: 'danger', message: "Discovery Service 배포 실패. 수동 확인이 필요합니다.")
