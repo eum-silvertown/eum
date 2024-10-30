@@ -7,8 +7,10 @@ export type ScreenType = {
   QuestionBoxScreen: undefined;
   MyClassScreen: undefined;
   LoginScreen: undefined;
+  FindIdScreen: undefined;
+  FindPasswordScreen: undefined | { userId?: string, email?: string };
   SignUpSelectScreen: undefined;
-  SignUpScreen : { userType: 'teacher' | 'student' };
+  SignUpScreen : undefined | { userType: 'teacher' | 'student' };
   NotificationScreen: undefined;
   ClassDetailScreen: undefined;
   LessoningScreen: undefined;
