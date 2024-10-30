@@ -21,7 +21,10 @@ pipeline {
                         [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'backend/discovery-service']]],
                         [$class: 'RelativeTargetDirectory', relativeTargetDir: 'backend/discovery-service']
                     ],
-                    userRemoteConfigs: [[url: 'https://lab.ssafy.com/s11-final/S11P31D101.git']]
+                    userRemoteConfigs: [[
+                                            url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
+                                            credentialsId: 'gitlab_credentials'
+                                        ]]
                 ])
             }
         }
