@@ -12,21 +12,22 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                deleteDir()
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    extensions: [
-                        [$class: 'RelativeTargetDirectory', relativeTargetDir: 'backend/apigateway-service']
-                    ],
-                    userRemoteConfigs: [[
-                        url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
-                        credentialsId: 'gitlab_credentials'
-                    ]]
-                ])
-            }
-        }
+                    steps {
+                        deleteDir()
+                        checkout([
+                            $class: 'GitSCM',
+                            branches: [[name: '*/backend/develop']],
+                            extensions: [
+                                [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: "backend/${SERVICE_NAME}"]]],
+                                [$class: 'RelativeTargetDirectory', relativeTargetDir: "backend/${SERVICE_NAME}"]
+                            ],
+                            userRemoteConfigs: [[
+                                url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
+                                credentialsId: 'gitlab_credentials'
+                            ]]
+                        ])
+                    }
+                }
 
         stage('Build Docker Image') {
             steps {

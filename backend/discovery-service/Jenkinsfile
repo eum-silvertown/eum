@@ -1,43 +1,39 @@
 pipeline {
     agent any
+
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub-credentials'
         DEPLOY_SERVER_CREDENTIALS = 'ec2-ssh-key'
         DEPLOY_SERVER = 'ubuntu@k11d101.p.ssafy.io'
         CHECK_SERVER = 'k11d101.p.ssafy.io'
         PROJECT_ROOT = '/home/ubuntu'
-        SERVICE_NAME = 'discovery-service' // 서비스 이름 변경
+        SERVICE_NAME = 'discovery-service'
         IMAGE_NAME = "yechanissm2/${SERVICE_NAME}"
     }
 
     stages {
         stage('Checkout') {
-            steps {
-                deleteDir()
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    extensions: [
-                        [$class: 'RelativeTargetDirectory', relativeTargetDir: 'backend/discovery-service']
-                    ],
-                    userRemoteConfigs: [[
-                        url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
-                        credentialsId: 'gitlab_credentials'
-                    ]]
-                ])
-            }
-        }
-
-        stage('Verify Files') {
-            steps {
-                sh 'ls -al backend/discovery-service'
-            }
-        }
+                    steps {
+                        deleteDir()
+                        checkout([
+                            $class: 'GitSCM',
+                            branches: [[name: '*/backend/develop']],
+                            extensions: [
+                                [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: "backend/${SERVICE_NAME}"]]],
+                                [$class: 'RelativeTargetDirectory', relativeTargetDir: "backend/${SERVICE_NAME}"]
+                            ],
+                            userRemoteConfigs: [[
+                                url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
+                                credentialsId: 'gitlab_credentials'
+                            ]]
+                        ])
+                    }
+                }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${env.IMAGE_NAME}:latest", "--no-cache -f backend/discovery-service/Dockerfile backend/discovery-service")
+                    docker.build("${env.IMAGE_NAME}:latest", "--no-cache -f backend/${SERVICE_NAME}/Dockerfile backend/${SERVICE_NAME}")
                 }
             }
         }
@@ -58,8 +54,10 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
                             cd ${env.PROJECT_ROOT} &&
+                            docker-compose stop ${SERVICE_NAME} &&
+                            docker-compose rm -f ${SERVICE_NAME} &&
                             docker-compose pull ${SERVICE_NAME} &&
-                            docker-compose up -d --force-recreate ${SERVICE_NAME} &&
+                            docker-compose up -d --force-recreate --no-deps ${SERVICE_NAME} &&
                             docker image prune -f --filter "dangling=true"
                         '
                     """
@@ -70,10 +68,10 @@ pipeline {
 
     post {
         success {
-            mattermostSend(color: 'good', message: "${SERVICE_NAME} 배포 성공.")
+            mattermostSend(color: 'good', message: "Discovery Service 배포 성공.")
         }
         failure {
-            mattermostSend(color: 'danger', message: "${SERVICE_NAME} 배포 실패. 수동 확인이 필요합니다.")
+            mattermostSend(color: 'danger', message: "Discovery Service 배포 실패. 수동 확인이 필요합니다.")
         }
     }
 }
