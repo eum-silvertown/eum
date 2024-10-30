@@ -61,8 +61,9 @@ pipeline {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${env.DEPLOY_SERVER} '
                             cd ${env.PROJECT_ROOT} &&
-                            docker-compose pull ${SERVICE_NAME} &&
-                            docker-compose up -d --force-recreate --no-deps ${SERVICE_NAME}
+                            docker-compose pull --ignore-pull-failures ${SERVICE_NAME} &&
+                            docker-compose up -d --force-recreate --no-deps ${SERVICE_NAME} &&
+                            docker image prune -f --filter "dangling=true"
                         '
                     """
                 }
