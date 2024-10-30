@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Skia, useCanvasRef} from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
 import {Socket} from 'socket.io-client';
@@ -8,6 +8,7 @@ import {throttle} from 'lodash';
 
 interface LeftCanvasSectionProps {
   socket: Socket;
+  onRecordingEnd: (recordedPaths: PathData[]) => void;
 }
 
 // Path 데이터 구조
@@ -16,6 +17,7 @@ type PathData = {
   color: string;
   strokeWidth: number;
   opacity: number;
+  timestamp: number;
 };
 
 // 스택 데이터 구조
@@ -33,7 +35,7 @@ const sendCompressedData = (socket: Socket, event: string, data: any) => {
 // Debounce
 // const debouncedSendData = debounce(sendCompressedData, 300); // 300ms 동안 입력이 없으면 전송
 // Throttle 적용
-const throttledSendData = throttle(sendCompressedData, 1000); // 1초마다 최대 1회 전송
+const throttledSendData = throttle(sendCompressedData, 100); // 1초마다 최대 1회 전송
 
 // 지우개 범위 상수
 const ERASER_RADIUS = 10;
@@ -41,6 +43,7 @@ const ERASER_RADIUS = 10;
 // 왼쪽 캔버스 컴포넌트
 function LeftCanvasSection({
   socket,
+  onRecordingEnd,
 }: LeftCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -55,6 +58,17 @@ function LeftCanvasSection({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
+
+  const [isRecording, setIsRecording] = useState(false);
+
+  // 녹화 데이터 저장
+  const recordedPathsRef = useRef<PathData[]>([]);
+
+  useEffect(() => {
+    if (isRecording) {
+      recordedPathsRef.current = []; // 녹화 시작 시 초기화
+    }
+  }, [isRecording]);
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
@@ -141,6 +155,7 @@ function LeftCanvasSection({
             color: data.color,
             strokeWidth: data.strokeWidth,
             opacity: data.opacity,
+            timestamp: data.timestampe,
           },
         ]);
       }
@@ -170,13 +185,18 @@ function LeftCanvasSection({
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
-      // 실시간 전송 시 throttle 적용
       const pathData = {
         path: currentPath.toSVGString(),
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
+        timestamp: Date.now(),
       };
+      if (isRecording) {
+        recordedPathsRef.current.push(pathData); // 녹화 데이터 추가
+      }
+
+      // 실시간 전송 시 throttle 적용
       throttledSendData(socket, 'left_to_right_move', pathData);
     }
   };
@@ -185,13 +205,19 @@ function LeftCanvasSection({
     if (isErasing) {
       setEraserPosition(null);
     } else if (currentPath) {
+      console.log(currentPath);
+
       const pathString = currentPath.toSVGString();
       const newPathData = {
         path: currentPath,
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
+        timestamp: Date.now(), // 현재 시간 추가
       };
+      if (isRecording) {
+        recordedPathsRef.current.push(newPathData);
+      }
 
       setUndoStack(prevUndoStack => [
         ...prevUndoStack,
@@ -203,11 +229,25 @@ function LeftCanvasSection({
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
+        timestamp: Date.now(), // 현재 시간 추가
       });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
       setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
     }
+  };
+
+  // 녹화 시작
+  const startRecording = () => {
+    setIsRecording(true);
+  };
+
+  // 녹화 종료 및 데이터 전달
+  const stopRecording = () => {
+    setIsRecording(false);
+    console.log('부모 컴포넌트로 녹화된 경로 전달:', recordedPathsRef.current);
+
+    onRecordingEnd(recordedPathsRef.current); // 부모 컴포넌트로 녹화된 경로 전달
   };
 
   return (
@@ -229,6 +269,9 @@ function LeftCanvasSection({
       toggleEraserMode={toggleEraserMode}
       isErasing={isErasing}
       eraserPosition={eraserPosition}
+      isRecording={isRecording}
+      startRecording={startRecording} // 녹화 시작 버튼
+      stopRecording={stopRecording} // 녹화 종료 버튼
     />
   );
 }
