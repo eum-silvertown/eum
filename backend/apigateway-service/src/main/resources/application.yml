@@ -17,6 +17,11 @@ spring:
       mvc:
         routes:
           # TODO : Micro Service ??
+          - id: user-service
+            uri: lb://user-service
+            predicates:
+              - Path=/api/user
+
 management:
   endpoints:
     web:
