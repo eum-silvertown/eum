@@ -21,9 +21,9 @@ function Overview(): React.JSX.Element {
         />
         <ProgressBox
           color="red"
-          title="숙제"
+          title="수행평가"
           content="10"
-          unit="개"
+          unit="번"
           icon="complete"
         />
         <ProgressBox
