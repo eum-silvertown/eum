@@ -2,7 +2,7 @@ spring:
   cloud:
     config:
       uri: http://config-service:8888  # Config 서버 URI
-      name: eum
+      name: eum-user
   profiles:
     active: user
 
