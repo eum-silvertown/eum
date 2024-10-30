@@ -6,7 +6,7 @@ pipeline {
         DEPLOY_SERVER = 'ubuntu@k11d101.p.ssafy.io'
         CHECK_SERVER = 'k11d101.p.ssafy.io'
         PROJECT_ROOT = '/home/ubuntu'
-        SERVICE_NAME = 'config-service'
+        SERVICE_NAME = 'config-service' // 서비스 이름을 변경해 각 서비스에 맞게 설정
         IMAGE_NAME = "yechanissm2/${SERVICE_NAME}"
     }
 
@@ -18,18 +18,16 @@ pipeline {
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],
                     extensions: [
-                        [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'backend/config-service']]],
                         [$class: 'RelativeTargetDirectory', relativeTargetDir: 'backend/config-service']
                     ],
                     userRemoteConfigs: [[
-                                            url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
-                                            credentialsId: 'gitlab_credentials'
-                                        ]]
+                        url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
+                        credentialsId: 'gitlab_credentials'
+                    ]]
                 ])
             }
         }
 
-        // 나머지 단계들 예시:
         stage('Build Docker Image') {
             steps {
                 script {

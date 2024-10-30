@@ -6,7 +6,7 @@ pipeline {
         DEPLOY_SERVER = 'ubuntu@k11d101.p.ssafy.io'
         CHECK_SERVER = 'k11d101.p.ssafy.io'
         PROJECT_ROOT = '/home/ubuntu'
-        SERVICE_NAME = 'apigateway-service'
+        SERVICE_NAME = 'apigateway-service' // 서비스 이름 변경
         IMAGE_NAME = "yechanissm2/${SERVICE_NAME}"
     }
 
@@ -18,13 +18,12 @@ pipeline {
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],
                     extensions: [
-                        [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: 'backend/apigateway-service']]],
                         [$class: 'RelativeTargetDirectory', relativeTargetDir: 'backend/apigateway-service']
                     ],
                     userRemoteConfigs: [[
-                                            url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
-                                            credentialsId: 'gitlab_credentials'
-                                        ]]
+                        url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
+                        credentialsId: 'gitlab_credentials'
+                    ]]
                 ])
             }
         }
