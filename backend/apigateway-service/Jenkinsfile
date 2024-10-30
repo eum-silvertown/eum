@@ -23,24 +23,24 @@ pipeline {
         stage('Check for Changes') {
             steps {
                 script {
-                    // origin/backend/develop 브랜치를 가져옵니다.
-                    sh "git fetch origin backend/develop"
-
-                    // origin/backend/develop과 현재 HEAD 간의 변경된 파일 목록을 가져옵니다.
-                    def changeOutput = sh(script: "git diff --name-only origin/backend/develop...HEAD", returnStdout: true).trim()
-                    echo "Changed files:\n${changeOutput}"
-
-                    // 변경된 서비스 디렉토리가 있는지 확인합니다.
                     def buildRequired = false
-                    for (file in changeOutput.split("\n")) {
-                        if (file.startsWith("${SERVICE_DIR}/")) {
-                            buildRequired = true
-                            echo "Changes detected in ${SERVICE_NAME}. Proceeding with build."
+                    for (changeSet in currentBuild.changeSets) {
+                        for (entry in changeSet.items) {
+                            for (file in entry.affectedFiles) {
+                                if (file.path.startsWith("${SERVICE_DIR}/")) {
+                                    buildRequired = true
+                                    echo "Changes detected in ${SERVICE_NAME}. Proceeding with build."
+                                    break
+                                }
+                            }
+                            if (buildRequired) {
+                                break
+                            }
+                        }
+                        if (buildRequired) {
                             break
                         }
                     }
-
-                    // 결과를 환경 변수로 설정합니다.
                     env.BUILD_REQUIRED = buildRequired.toString()
                     echo "BUILD_REQUIRED: ${env.BUILD_REQUIRED}"
                 }
