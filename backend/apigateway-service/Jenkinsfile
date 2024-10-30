@@ -15,31 +15,38 @@ pipeline {
         stage('Checkout') {
             steps {
                 deleteDir()
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/backend/develop']],
-                    extensions: [
-                        [$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: "backend/${SERVICE_NAME}"]]],
-                        [$class: 'RelativeTargetDirectory', relativeTargetDir: "backend/${SERVICE_NAME}"]
-                    ],
-                    userRemoteConfigs: [[
-                        url: 'https://lab.ssafy.com/s11-final/S11P31D101.git',
-                        credentialsId: 'gitlab_credentials'
-                    ]]
-                ])
+                checkout scm
             }
         }
 
+//         stage('Wait for Config and Discovery Services') {
+//             steps {
+//                 script {
+//                     def isConfigRunning = false
+//                     def isDiscoveryRunning = false
+//
+//                     for (int i = 0; i < 5; i++) {
+//                         isConfigRunning = sh(script: "curl -s http://${CHECK_SERVER}:8888/actuator/health | grep 'UP'", returnStatus: true) == 0
+//                         isDiscoveryRunning = sh(script: "curl -s http://${CHECK_SERVER}:8761/actuator/health | grep 'UP'", returnStatus: true) == 0
+//                         if (isConfigRunning && isDiscoveryRunning) break
+//                         sleep 10
+//                     }
+//                     if (!isConfigRunning) error "Config Service is not ready."
+//                     if (!isDiscoveryRunning) error "Discovery Service is not ready."
+//                 }
+//             }
+//         }
+
         stage('Copy Secret File') {
-                            steps {
-                                withCredentials([file(credentialsId: 'application-secret-yml', variable: 'APPLICATION_YML')]) {
-                                    sh """
-                                        mkdir -p backend/${SERVICE_NAME}/src/main/resources
-                                        cp ${APPLICATION_YML} backend/${SERVICE_NAME}/src/main/resources/application-secret.yml
-                                    """
-                                }
-                            }
+                    steps {
+                        withCredentials([file(credentialsId: 'application-secret-yml', variable: 'APPLICATION_YML')]) {
+                            sh """
+                                mkdir -p backend/${SERVICE_NAME}/src/main/resources
+                                cp ${APPLICATION_YML} backend/${SERVICE_NAME}/src/main/resources/application-secret.yml
+                            """
                         }
+                    }
+                }
 
         stage('Build Docker Image') {
             steps {
@@ -79,11 +86,10 @@ pipeline {
 
     post {
         success {
-            mattermostSend(color: 'good', message: "${SERVICE_NAME} 배포 성공.")
+            mattermostSend(color: 'good', message: "API Gateway 배포 성공.")
         }
         failure {
-            mattermostSend(color: 'danger', message: "${SERVICE_NAME} 배포 실패. 수동 확인이 필요합니다.")
+            mattermostSend(color: 'danger', message: "API Gateway 배포 실패. 수동 확인이 필요합니다.")
         }
     }
 }
-
