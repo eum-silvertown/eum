@@ -36,7 +36,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${env.IMAGE_NAME}:latest", "-f backend/${SERVICE_NAME}/Dockerfile backend/${SERVICE_NAME}")
+                    docker.build("${env.IMAGE_NAME}:latest", "--no-cache -f backend/${SERVICE_NAME}/Dockerfile backend/${SERVICE_NAME}")
                 }
             }
         }
