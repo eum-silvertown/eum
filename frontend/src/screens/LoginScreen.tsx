@@ -14,7 +14,9 @@ import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
 import serviceLogoImage from '@assets/images/serviceLogoImage.png';
 import {iconSize} from '@theme/iconSize';
 import {colors} from 'src/hooks/useColors';
+
 import {useAuthStore} from '@store/useAuthStore';
+
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
@@ -41,6 +43,16 @@ function LoginScreen(): React.JSX.Element {
     setCurrentScreen('SignUpSelectScreen');
   };
 
+  const moveFindId = () => {
+    navigation.navigate('FindIdScreen');
+    setCurrentScreen('FindIdScreen');
+  }
+
+  const moveFindPassword = () => {
+    navigation.navigate('FindPasswordScreen');
+    setCurrentScreen('FindPasswordScreen');
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -63,7 +75,7 @@ function LoginScreen(): React.JSX.Element {
             />
             <TouchableOpacity
               onPress={() => setPasswordVisible(!passwordVisible)} // 버튼을 눌렀을 때 상태 변경
-              style={styles.iconButton}>
+              >
               {passwordVisible ? (
                 <PasswordVisibleIcon width={iconSize.md} height={iconSize.md} />
               ) : (
@@ -91,14 +103,22 @@ function LoginScreen(): React.JSX.Element {
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleLogin}>
-          <Text style={styles.submitButtonText} color="white">
+          <Text style={styles.submitButtonText} color="white" weight='bold'>
             로그인
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.moveScreenButton} onPress={moveSignUp}>
-          <Text style={styles.submitButtonText}>회원가입</Text>
-        </TouchableOpacity>
+        <View style={styles.accountContainer}>
+          <TouchableOpacity style={styles.moveScreenButton} onPress={moveSignUp}>
+            <Text style={styles.submitButtonText}>회원가입</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.moveScreenButton} onPress={moveFindId}>
+            <Text style={styles.submitButtonText}>아이디 찾기</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.moveScreenButton} onPress={moveFindPassword}>
+            <Text style={styles.submitButtonText}>비밀번호 찾기</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -119,7 +139,7 @@ const styles = StyleSheet.create({
   },
   loginfield: {
     width: '50%',
-    gap: spacing.xl, // 각 요소 간의 간격 설정
+    gap: spacing.xl,
   },
   passwordContainer: {
     flexDirection: 'row',
@@ -127,10 +147,7 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
-  },
-  iconButton: {
-    padding: 8,
-  },
+  },  
   loginOptions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -141,19 +158,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   inputField: {},
   submitButton: {
     backgroundColor: colors.dark.background.main,
     textAlign: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: 50,
+    height: '10%',
   },
   submitButtonText: {
     textAlign: 'center',
   },
   moveScreenButton: {
     alignItems: 'center',
+    width: '20%',
   },
+  accountContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',    
+    marginHorizontal: spacing.xl    
+  }
 });
