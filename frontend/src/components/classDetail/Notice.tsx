@@ -1,9 +1,9 @@
 import React from 'react';
-import {Text} from '@components/common/Text';
-import {View, StyleSheet, Image} from 'react-native';
+import { Text } from '@components/common/Text';
+import { View, StyleSheet, Image } from 'react-native';
 import postit from '@assets/images/postit.png';
-import {getResponsiveSize} from '@utils/responsive';
-import {spacing} from '@theme/spacing';
+import { getResponsiveSize } from '@utils/responsive';
+import { spacing } from '@theme/spacing';
 
 function Notice(): React.JSX.Element {
   return (
@@ -12,19 +12,16 @@ function Notice(): React.JSX.Element {
         공지사항
       </Text>
       <View style={styles.noticeLayout}>
-        {/* 첫 번째 포스트잇 */}
         <View style={styles.imageWrapper}>
           <Image source={postit} alt="postit" style={styles.imageContainer} />
           <Text style={styles.overlayText}>공지사항 1</Text>
         </View>
 
-        {/* 두 번째 포스트잇 */}
         <View style={styles.imageWrapper}>
           <Image source={postit} alt="postit" style={styles.imageContainer} />
           <Text style={styles.overlayText}>공지사항 2</Text>
         </View>
 
-        {/* 세 번째 포스트잇 */}
         <View style={styles.imageWrapper}>
           <Image source={postit} alt="postit" style={styles.imageContainer} />
           <Text style={styles.overlayText}>공지사항 3</Text>
@@ -40,6 +37,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   subtitle: {
+    marginTop: spacing.lg,
     marginStart: spacing.xl,
   },
   noticeLayout: {
