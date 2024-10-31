@@ -1,5 +1,5 @@
-import {View, StyleSheet} from 'react-native';
-import {spacing} from '@theme/spacing';
+import { View, StyleSheet } from 'react-native';
+import { spacing } from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -19,8 +19,12 @@ function ClassDetailScreen(): React.JSX.Element {
             <Notice />
           </View>
           <View style={styles.mainContentLayout}>
-            <Teacher />
-            <Chart />
+            <View style={styles.teacherLayout}>
+              <Teacher />
+            </View>
+            <View style={styles.chartLayout}>
+              <Chart />
+            </View>
           </View>
         </View>
         <View style={styles.secondRow}>
@@ -65,8 +69,15 @@ const styles = StyleSheet.create({
   },
   mainContentLayout: {
     flex: 1,
-    flexDirection: 'column',
     gap: spacing.md,
+  },
+  teacherLayout: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 8,
+  },
+  chartLayout: {
+    flex: 1,
     backgroundColor: 'white',
     borderRadius: 8,
   },

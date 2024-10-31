@@ -1,4 +1,3 @@
-import {ScrollView, StyleSheet} from 'react-native';
 import MathJax from 'react-native-mathjax';
 import ZoomableView from './ZoomableView';
 
@@ -27,27 +26,18 @@ function ProblemSection(): React.JSX.Element {
   const mathJaxContent = `
     <div style="padding: 16px;">
       <p>${textWithoutImage}</p>
-      ${
-        imageUrl
-          ? `<img src="${imageUrl}" style="height: 100%; margin-top: 10px;" />`
-          : ''
-      }
+      ${imageUrl
+      ? `<img src="${imageUrl}" style="width: 30%; margin-top: 10px; display: block; margin: 0 auto" />`
+      : ''
+    }
     </div>
   `;
 
   return (
     <ZoomableView>
-      <ScrollView style={styles.problemContainer}>
-        <MathJax html={mathJaxContent} />
-      </ScrollView>
+      <MathJax html={mathJaxContent} />
     </ZoomableView>
   );
 }
-
-const styles = StyleSheet.create({
-  problemContainer: {
-    zIndex: 1, // 문제 1층
-  },
-});
 
 export default ProblemSection;
