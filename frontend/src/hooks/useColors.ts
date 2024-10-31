@@ -28,7 +28,8 @@ export const colors = {
       cancle: '#EEEEEE',
       cancelPress: '#A5A5A5',
       readonly: '#ECECEC',
-      white: '#FFFFFF'
+      white: '#FFFFFF',
+      modalOverlay: '#00000080',
     },
     borderColor: {
       cardBorder: '#463986',
@@ -62,7 +63,8 @@ export const colors = {
       cancle: '#EEEEEE',
       cancelPress: '#A5A5A5',
       readonly: '#ECECEC',
-      white: '#FFFFFF'
+      white: '#FFFFFF',
+      modalOverlay: '#00000080',
     },
     borderColor: {
       cardBorder: '#463986',
