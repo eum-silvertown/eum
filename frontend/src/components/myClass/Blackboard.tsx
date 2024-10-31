@@ -3,11 +3,21 @@ import BlackboardImage from '@assets/images/blackboard.png';
 import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
+import DrawingTestScreen from '@screens/DrawingTestScreen';
 
 function Blackboard(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <Image source={BlackboardImage} style={styles.blackboard} />
+      <View
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          padding: spacing.xl,
+        }}>
+        <DrawingTestScreen />
+      </View>
     </View>
   );
 }
