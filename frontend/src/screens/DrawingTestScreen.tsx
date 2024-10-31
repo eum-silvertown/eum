@@ -1,224 +1,83 @@
-import {Text} from '@components/common/Text';
-import {Canvas, Path, Skia, useCanvasRef} from '@shopify/react-native-skia';
-import {useEffect, useMemo, useState, useCallback} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {io} from 'socket.io-client';
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
+import {useSharedValue, runOnJS} from 'react-native-reanimated'; // runOnJS 추가
+import {Canvas, Path, Skia, SkPath} from '@shopify/react-native-skia';
 
-const ROOM_ID = 'canvas';
+const DrawingTestScreen: React.FC = () => {
+  const [paths, setPaths] = useState<SkPath[]>([]);
+  const currentPath = useSharedValue<SkPath>(Skia.Path.Make());
 
-function DrawingTestScreen(): React.JSX.Element {
-  const {socket: websocket1, socketError: error1} = useWebSocket('user1');
-  const {socket: websocket2, socketError: error2} = useWebSocket('user2');
+  // setPaths를 JS 스레드에서 실행할 함수로 분리
+  const addPath = (path: SkPath) => {
+    setPaths(prevPaths => [...prevPaths, path]);
+  };
+
+  const pan = Gesture.Pan()
+    .averageTouches(true)
+    .maxPointers(1)
+    .onBegin(e => {
+      const path = Skia.Path.Make();
+      path.moveTo(e.x, e.y);
+      currentPath.value = path;
+    })
+    .onChange(e => {
+      const newPath = currentPath.value.copy();
+      newPath.lineTo(e.x, e.y);
+      currentPath.value = newPath;
+    })
+    .onEnd(() => {
+      // runOnJS를 사용하여 JS 스레드에서 setPaths 실행
+      runOnJS(addPath)(currentPath.value.copy());
+    });
 
   return (
-    <View style={styles.container}>
-      <View style={styles.container}>
-        {error1 ? (
-          <View>
-            <Text>{error1}</Text>
-          </View>
-        ) : (
-          <SharedCanvas socket={websocket1} />
-        )}
+    <GestureHandlerRootView style={styles.container}>
+      <View style={styles.canvasContainer}>
+        <GestureDetector gesture={pan}>
+          <Canvas style={styles.canvas}>
+            {paths.map((path, index) => (
+              <Path
+                key={index}
+                path={path}
+                strokeWidth={4}
+                style="stroke"
+                strokeCap="round"
+                strokeJoin="round"
+                color="black"
+              />
+            ))}
+            <Path
+              path={currentPath}
+              strokeWidth={4}
+              style="stroke"
+              strokeCap="round"
+              strokeJoin="round"
+              color="black"
+            />
+          </Canvas>
+        </GestureDetector>
       </View>
-      <View style={styles.container}>
-        {error2 ? (
-          <View>
-            <Text>{error2}</Text>
-          </View>
-        ) : (
-          <SharedCanvas socket={websocket2} />
-        )}
-      </View>
-    </View>
+    </GestureHandlerRootView>
   );
-}
-
-export default DrawingTestScreen;
-
-interface SharedCanvasProps {
-  socket: any;
-}
-
-type PathType = {
-  roomId: string;
-  path: any;
-  color: string;
-  strokeWidth: number;
 };
 
-function SharedCanvas({socket}: SharedCanvasProps): React.JSX.Element {
-  const [paths, setPaths] = useState<PathType[]>([]);
-  const [currentPath, setCurrentPath] = useState<any | null>(null);
-  const [penColor, setPenColor] = useState('#000000');
-  const [penSize, setPenSize] = useState(2);
-  const [roomId, setRoomId] = useState(ROOM_ID);
-  const [lastPosition, setLastPosition] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
-  const canvasRef = useCanvasRef();
-
-  // Debounce function to emit current path every 0.1 seconds
-  const emitPathDebounced = useCallback(() => {
-    if (currentPath) {
-      const pathString = currentPath.toSVGString();
-      socket.emit('draw-operation', {
-        roomId,
-        pathString,
-        penColor,
-        penSize,
-      });
-      setPaths(prevPaths => [
-        ...prevPaths,
-        {roomId, path: currentPath, color: penColor, strokeWidth: penSize},
-      ]);
-      setCurrentPath(Skia.Path.Make()); // reset currentPath
-    }
-  }, [currentPath, socket, roomId, penColor, penSize]);
-
-  useEffect(() => {
-    const interval = setInterval(emitPathDebounced, 200);
-    return () => clearInterval(interval);
-  }, [emitPathDebounced]);
-
-  const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
-    const newPath = Skia.Path.Make();
-    newPath.moveTo(locationX, locationY);
-    setCurrentPath(newPath);
-    setLastPosition({x: locationX, y: locationY});
-  };
-
-  const handleTouchMove = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
-    if (lastPosition) {
-      currentPath.moveTo(lastPosition?.x, lastPosition?.y);
-    }
-    currentPath.lineTo(locationX, locationY);
-
-    setLastPosition({x: locationX, y: locationY});
-    requestAnimationFrame(() => canvasRef.current?.redraw());
-  };
-
-  const handleTouchEnd = () => {
-    if (currentPath) {
-      const pathString = currentPath.toSVGString();
-      socket.emit('draw-operation', {
-        roomId,
-        pathString,
-        penColor,
-        penSize,
-      });
-      setPaths(prevPaths => [
-        ...prevPaths,
-        {roomId, path: currentPath, color: penColor, strokeWidth: penSize},
-      ]);
-      setCurrentPath(null); // reset after end
-      setLastPosition(null);
-    }
-  };
-
-  useEffect(() => {
-    socket.on('draw-operation', (data: any) => {
-      const receivePath = Skia.Path.MakeFromSVGString(data.pathString);
-      if (receivePath) {
-        setPaths(prevPaths => [
-          ...prevPaths,
-          {
-            roomId: roomId,
-            path: receivePath,
-            color: data.penColor,
-            strokeWidth: data.penSize,
-          },
-        ]);
-      }
-    });
-    return () => {
-      socket.off('draw-operation');
-    };
-  }, [socket, roomId]);
-
-  return (
-    <Canvas
-      ref={canvasRef}
-      style={styles.container}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}>
-      {paths.map(({path, color, strokeWidth}, index) => (
-        <Path
-          key={index}
-          path={path}
-          color={Skia.Color(color)}
-          style="stroke"
-          strokeWidth={strokeWidth}
-          strokeCap="round"
-          strokeJoin="round"
-        />
-      ))}
-      {currentPath && (
-        <Path
-          path={currentPath}
-          color={Skia.Color(penColor)}
-          style="stroke"
-          strokeWidth={penSize}
-          strokeCap="round"
-          strokeJoin="round"
-        />
-      )}
-    </Canvas>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: {
+    flex: 1,
+  },
+  canvasContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  canvas: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
 });
 
-function useWebSocket(userId: string) {
-  const [socketError, setSocketError] = useState<string>('');
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-
-  const socket = useMemo(() => {
-    const SERVER_URL = 'http://192.168.100.104:3001';
-
-    const newSocket = io(SERVER_URL, {
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      transports: ['websocket'],
-      timeout: 10000,
-    });
-    newSocket.on('connect', () => {
-      console.log(`User ${userId} connected with socket Id:`, newSocket.id);
-      setIsConnected(true);
-      setSocketError('');
-
-      // 연결 후 room 참여
-      newSocket.emit('join-room', ROOM_ID);
-    });
-
-    newSocket.on('connect_error', error => {
-      console.error(`User ${userId} connection error:`, error.message);
-      setSocketError(`Connection error: ${error.message}`);
-      setIsConnected(false);
-    });
-
-    newSocket.on('join-room', roomId => {
-      console.log(`User ${userId} successfully joined room: ${roomId}`);
-    });
-
-    return newSocket;
-  }, [userId]);
-
-  useEffect(() => {
-    return () => {
-      if (socket) {
-        console.log(`Cleaning up socket connection for user ${userId}`);
-        socket.disconnect();
-      }
-    };
-  }, [socket, userId]);
-
-  return {socket, socketError, isConnected};
-}
+export default DrawingTestScreen;
