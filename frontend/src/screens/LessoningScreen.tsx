@@ -3,7 +3,8 @@ import {View, StyleSheet} from 'react-native';
 import {io, Socket} from 'socket.io-client';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
-import LeftCanvasSection from '@components/classLessoning/LeftCanvasSection';
+// import LeftCanvasSection from '@components/classLessoning/LeftCanvasSection';
+import LeftRecordCanvasSection from '@components/classLessoning/LeftRecordCanvasSection';
 // import RightCanvasSection from '@components/classLessoning/RightCanvasSection';
 import RightRecordCanvasSection from '@components/classLessoning/RightRecordCanvasSection';
 
@@ -54,10 +55,7 @@ function LessoningScreen(): React.JSX.Element {
       {/* 왼쪽 문제와 캔버스 */}
       <View style={styles.sectionContainer}>
         <ProblemSection />
-        <LeftCanvasSection
-          socket={socket}
-          onRecordingEnd={handleRecordingEnd}
-        />
+        <LeftRecordCanvasSection onRecordingEnd={handleRecordingEnd} />
       </View>
 
       {/* 오른쪽 문제와 캔버스 */}

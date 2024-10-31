@@ -22,6 +22,7 @@ function RightRecordCanvasSection({
   const [displayPaths, setDisplayPaths] = useState<PathData[]>([]);
   const [progress, setProgress] = useState(0);
   const playbackIndex = useRef(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const startPlayback = () => {
     console.log('재생할 데이터', recordedPaths);
@@ -51,22 +52,27 @@ function RightRecordCanvasSection({
       const skiaPath = Skia.Path.MakeFromSVGString(currentPathData.path);
 
       if (skiaPath) {
-        setDisplayPaths(prevPaths => [
-          ...prevPaths,
-          {...currentPathData, path: skiaPath},
-        ]);
+        // 오래된 경로를 제거하여 메모리 최적화
+        setDisplayPaths(prevPaths => {
+          const newPaths = prevPaths.slice(-10000); // 최근 50개의 경로만 유지
+          return [...newPaths, {...currentPathData, path: skiaPath}];
+        });
       }
 
       const newProgress = (playbackIndex.current + 1) / recordedPaths.length;
-      setProgress(newProgress);
+      setProgress(prev => (prev < newProgress ? newProgress : prev));
 
       playbackIndex.current += 1;
 
       if (playbackIndex.current < recordedPaths.length) {
         const nextTimestamp = recordedPaths[playbackIndex.current].timestamp;
         const delay = nextTimestamp - currentPathData.timestamp;
-        console.log('딜레이: ', delay);
-        setTimeout(playNextPath, delay / 2); // 다음 path 재생까지 대기
+
+        // 기존 타이머를 취소하고 새로운 타이머 설정
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+        }
+        timerRef.current = setTimeout(playNextPath, delay * 10);
       }
     };
 
