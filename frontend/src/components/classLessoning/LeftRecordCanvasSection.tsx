@@ -1,5 +1,5 @@
-import {useEffect, useRef, useState} from 'react';
-import {Skia, useCanvasRef} from '@shopify/react-native-skia';
+import { useEffect, useRef, useState } from 'react';
+import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
 
 interface LeftCanvasSectionProps {
@@ -23,7 +23,7 @@ type ActionData = {
 
 // 지우개 범위 상수
 const ERASER_RADIUS = 10;
-
+const MAX_STACK_SIZE = 10; // 최대 스택 크기
 // 왼쪽 캔버스 컴포넌트
 function LeftRecordCanvasSection({
   onRecordingEnd,
@@ -71,7 +71,7 @@ function LeftRecordCanvasSection({
         if (isInEraseArea) {
           setUndoStack(prevUndoStack => [
             ...prevUndoStack,
-            {type: 'erase', pathData},
+            { type: 'erase', pathData },
           ]);
         }
         return !isInEraseArea;
@@ -80,46 +80,61 @@ function LeftRecordCanvasSection({
     setRedoStack([]); // 새로운 작업 발생 시 redo 스택 초기화
   };
 
+  const addToUndoStack = (action: ActionData) => {
+    setUndoStack(prevUndoStack => {
+      const newUndoStack = [...prevUndoStack, action];
+      // 스택이 최대 크기를 초과하면 앞의 요소를 하나 제거
+      if (newUndoStack.length > MAX_STACK_SIZE) {
+        newUndoStack.shift();
+      }
+      return newUndoStack;
+    });
+  };
+  const addToRedoStack = (action: ActionData) => {
+    setRedoStack(prevRedoStack => {
+      const newRedoStack = [...prevRedoStack, action];
+      // 스택이 최대 크기를 초과하면 첫 번째 요소 제거
+      if (newRedoStack.length > MAX_STACK_SIZE) {
+        newRedoStack.shift();
+      }
+      return newRedoStack;
+    });
+  };
   const undo = () => {
-    if (undoStack.length === 0) {
-      return;
-    }
+    if (undoStack.length === 0) { return; }
 
     const lastAction = undoStack[undoStack.length - 1];
     setUndoStack(undoStack.slice(0, -1));
 
     if (lastAction.type === 'draw') {
       setPaths(paths.slice(0, -1)); // 마지막 경로 제거
-      setRedoStack([...redoStack, lastAction]); // redo 스택에 추가
+      addToRedoStack(lastAction); // redo 스택에 추가
     } else if (lastAction.type === 'erase') {
-      // 지운 경로 복구
-      setPaths([...paths, lastAction.pathData]);
-      setRedoStack([...redoStack, lastAction]);
+      setPaths([...paths, lastAction.pathData]); // 지운 경로 복구
+      addToRedoStack(lastAction);
     }
   };
 
   const redo = () => {
-    if (redoStack.length === 0) {
-      return;
-    }
+    if (redoStack.length === 0) { return; }
 
     const lastRedoAction = redoStack[redoStack.length - 1];
     setRedoStack(redoStack.slice(0, -1));
 
     if (lastRedoAction.type === 'draw') {
       setPaths([...paths, lastRedoAction.pathData]); // 경로 다시 추가
-      setUndoStack([...undoStack, lastRedoAction]);
+      addToUndoStack(lastRedoAction);
     } else if (lastRedoAction.type === 'erase') {
-      // 지우기 작업 반복
-      setPaths(paths.filter(pathData => pathData !== lastRedoAction.pathData));
-      setUndoStack([...undoStack, lastRedoAction]);
+      setPaths(paths.filter(pathData => pathData !== lastRedoAction.pathData)); // 지우기 작업 반복
+      addToUndoStack(lastRedoAction);
     }
   };
 
+
   const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -129,11 +144,11 @@ function LeftRecordCanvasSection({
   };
 
   const handleTouchMove = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     console.log('locationX:', locationX, 'locationY:', locationY);
 
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -165,10 +180,7 @@ function LeftRecordCanvasSection({
         timestamp: Date.now(), // 현재 시간 추가
       };
 
-      setUndoStack(prevUndoStack => [
-        ...prevUndoStack,
-        {type: 'draw', pathData: newPathData},
-      ]);
+      addToUndoStack({ type: 'draw', pathData: newPathData });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
       setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
@@ -180,12 +192,10 @@ function LeftRecordCanvasSection({
     setIsRecording(true);
   };
 
-  // 녹화 종료 및 데이터 전달
   const stopRecording = () => {
     setIsRecording(false);
-    console.log('부모 컴포넌트로 녹화된 경로 전달:', recordedPathsRef.current);
-
     onRecordingEnd(recordedPathsRef.current); // 부모 컴포넌트로 녹화된 경로 전달
+    recordedPathsRef.current = []; // 녹화 데이터 초기화
   };
 
   return (
