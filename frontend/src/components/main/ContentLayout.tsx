@@ -4,6 +4,7 @@ import { spacing } from '@theme/spacing';
 import { borderWidth } from '@theme/borderWidth';
 import { borderRadius } from '@theme/borderRadius';
 import { colors } from 'src/hooks/useColors';
+import { getResponsiveSize } from '@utils/responsive';
 
 interface ContentLayoutProps {
   children: React.ReactNode;  
@@ -21,10 +22,8 @@ export default function ContentLayout({ children, flex = 1 }: ContentLayoutProps
 const styles = StyleSheet.create({
   container: {
     padding: spacing.lg,
-    borderWidth: borderWidth.sm,
     borderRadius: borderRadius.xl,
     backgroundColor: colors.light.background.white,
-    borderColor: colors.light.borderColor.pickerBorder,
-    elevation: 3,
+    elevation: getResponsiveSize(2),
   },
 });
