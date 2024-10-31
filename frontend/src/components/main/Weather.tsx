@@ -13,6 +13,7 @@ import {
 import Config from 'react-native-config';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
+import { colors } from 'src/hooks/useColors';
 
 export default function Weather(): React.JSX.Element {
   const API_KEY = Config.OPENWEATHERMAP_API_KEY;
@@ -95,7 +96,7 @@ export default function Weather(): React.JSX.Element {
 
       <View style={styles.infoContainer}>
         {loading ? (
-          <ActivityIndicator size="large"/>
+          <ActivityIndicator color={colors.light.text.main} size="large"/>
         ) : (
           <>
             {location && <Text>{location}</Text>}
