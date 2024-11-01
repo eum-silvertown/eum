@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     elevation: getResponsiveSize(4),
     borderRadius: borderRadius.lg,
-    borderWidth: borderWidth.xl * 2,
+    borderWidth: borderWidth.xl,
     borderColor: '#775522',
   },
   bottomContent: {
