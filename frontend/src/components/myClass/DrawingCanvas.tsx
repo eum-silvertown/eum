@@ -9,8 +9,9 @@ import {
   StyleSheet,
   PanResponder,
   GestureResponderEvent,
-  LayoutChangeEvent,
   Pressable,
+  findNodeHandle,
+  UIManager,
 } from 'react-native';
 import Canvas from 'react-native-canvas';
 
@@ -30,9 +31,29 @@ const DrawingCanvas: React.FC = () => {
     },
   );
 
-  const handleLayout = (event: LayoutChangeEvent) => {
-    const {width, height} = event.nativeEvent.layout;
-    setCanvasSize({width, height});
+  const canvasBounds = useRef<{
+    left: number;
+    right: number;
+    top: number;
+    bottom: number;
+  } | null>(null);
+
+  const handleLayout = () => {
+    if (canvasRef.current) {
+      const handle = findNodeHandle(canvasRef.current);
+      if (handle) {
+        UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
+          // 캔버스의 절대 위치 저장
+          canvasBounds.current = {
+            left: pageX,
+            right: pageX + width,
+            top: pageY,
+            bottom: pageY + height - getResponsiveSize(30),
+          };
+          setCanvasSize({width, height});
+        });
+      }
+    }
   };
 
   useEffect(() => {
@@ -57,31 +78,34 @@ const DrawingCanvas: React.FC = () => {
     evt: GestureResponderEvent,
     type: 'start' | 'move' | 'end',
   ) => {
-    const {locationX, locationY} = evt.nativeEvent;
+    const {locationX, locationY, pageX, pageY} = evt.nativeEvent;
     const canvas = canvasRef.current;
 
-    if (!canvas) return;
+    if (!canvas || !canvasBounds.current) return;
 
+    const {left, right, top, bottom} = canvasBounds.current;
     const ctx = canvas.getContext('2d');
 
-    switch (type) {
-      case 'start':
-        ctx.beginPath();
-        ctx.moveTo(locationX, locationY);
-        break;
+    // 현재 터치 위치가 캔버스 범위 내에 있는지 확인
+    const isInsideCanvas =
+      pageX >= left && pageX <= right && pageY >= top && pageY <= bottom;
 
-      case 'move':
-        if (currentTool.current === 'eraser') {
-          // 지우개는 흰색으로 그리기
-          ctx.strokeStyle = '#004414';
-          ctx.lineWidth = 50; // 지우개 크기
-        } else {
-          ctx.strokeStyle = currentColor.current;
-          ctx.lineWidth = 2;
-        }
-        ctx.lineTo(locationX, locationY);
-        ctx.stroke();
-        break;
+    if (type === 'start' && isInsideCanvas) {
+      ctx.beginPath();
+      ctx.moveTo(locationX, locationY);
+    } else if (type === 'move' && isInsideCanvas) {
+      if (currentTool.current === 'eraser') {
+        ctx.strokeStyle = '#004414';
+        ctx.lineWidth = 50;
+      } else {
+        ctx.strokeStyle = currentColor.current;
+        ctx.lineWidth = 2;
+      }
+      ctx.lineTo(locationX, locationY);
+      ctx.stroke();
+    } else if (type === 'end') {
+      // 터치가 끝나면 그리기 종료
+      ctx.closePath();
     }
   };
 
@@ -172,9 +196,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'flex-end',
     position: 'absolute',
+    zIndex: 1,
     bottom: 0,
     width: '100%',
-    zIndex: 1,
   },
   cholks: {
     flexDirection: 'row',
