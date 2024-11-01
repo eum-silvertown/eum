@@ -1,20 +1,20 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {io, Socket} from 'socket.io-client';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import LeftCanvasSection from '@components/classLessoning/LeftCanvasSection';
 // import LeftRecordCanvasSection from '@components/classLessoning/LeftRecordCanvasSection';
-import RightCanvasSection from '@components/classLessoning/RightCanvasSection';
-// import RightRecordCanvasSection from '@components/classLessoning/RightRecordCanvasSection';
+// import RightCanvasSection from '@components/classLessoning/RightCanvasSection';
+import RightRecordCanvasSection from '@components/classLessoning/RightRecordCanvasSection';
 
-// type PathData = {
-//   path: any;
-//   color: string;66
-//   strokeWidth: number;
-//   opacity: number;
-//   timestamp: number; // timestamp 포함
-// };
+type PathData = {
+  path: any;
+  color: string;
+  strokeWidth: number;
+  opacity: number;
+  timestamp: number; // timestamp 포함
+};
 
 function LessoningScreen(): React.JSX.Element {
   const socket: Socket = io('http://192.168.128.246:8080', {
@@ -25,20 +25,20 @@ function LessoningScreen(): React.JSX.Element {
   socket.on('connect_error', err => {
     console.log(err.message);
   });
-  // const [recordedPaths, setRecordedPaths] = useState<PathData[]>([]); // 녹화된 경로 데이터 저장
+  const [recordedPaths, setRecordedPaths] = useState<PathData[]>([]); // 녹화된 경로 데이터 저장
 
-  // const handleRecordingEnd = (paths: PathData[]) => {
-  //   // path가 Skia Path인 경우, SVG string으로 변환
-  //   const formattedPaths = paths.map(pathData => ({
-  //     ...pathData,
-  //     path:
-  //       typeof pathData.path === 'string'
-  //         ? pathData.path
-  //         : pathData.path.toSVGString(),
-  //   }));
-  //   setRecordedPaths(formattedPaths); // 변환된 데이터를 저장
-  //   console.log('중간단계 데이터 확인용', formattedPaths);
-  // };
+  const handleRecordingEnd = (paths: PathData[]) => {
+    // path가 Skia Path인 경우, SVG string으로 변환
+    const formattedPaths = paths.map(pathData => ({
+      ...pathData,
+      path:
+        typeof pathData.path === 'string'
+          ? pathData.path
+          : pathData.path.toSVGString(),
+    }));
+    setRecordedPaths(formattedPaths); // 변환된 데이터를 저장
+    console.log('중간단계 데이터 확인용', formattedPaths);
+  };
 
   useEffect(() => {
     socket.on('connect_error', err => console.log('연결 오류:', err.message));
@@ -54,15 +54,18 @@ function LessoningScreen(): React.JSX.Element {
       {/* 왼쪽 문제와 캔버스 */}
       <View style={styles.sectionContainer}>
         <ProblemSection />
-        <LeftCanvasSection socket={socket} />
+        <LeftCanvasSection
+          socket={socket}
+          onRecordingEnd={handleRecordingEnd}
+        />
         {/* <LeftRecordCanvasSection onRecordingEnd={handleRecordingEnd} /> */}
       </View>
 
       {/* 오른쪽 문제와 캔버스 */}
       <View style={styles.sectionContainer}>
         <ProblemSection />
-        <RightCanvasSection socket={socket} />
-        {/* <RightRecordCanvasSection recordedPaths={recordedPaths} /> */}
+        {/* <RightCanvasSection socket={socket} /> */}
+        <RightRecordCanvasSection recordedPaths={recordedPaths} />
       </View>
     </View>
   );
