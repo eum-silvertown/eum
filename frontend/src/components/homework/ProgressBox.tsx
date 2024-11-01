@@ -14,7 +14,6 @@ import {
   runOnJS,
 } from 'react-native-reanimated';
 import {useEffect, useState} from 'react';
-import {typography} from '@theme/typography';
 
 interface ProgressBoxProps {
   color: 'blue' | 'red' | 'green';

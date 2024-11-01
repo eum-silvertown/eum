@@ -18,8 +18,14 @@ export type HomeworkType = {
 };
 
 function HomeworkScreen(): React.JSX.Element {
-  const flagColors = ['#FFBEBE', '#F3FFBE', '#BEFFE5', '#BEDCFF', '#FFBEEC'];
-  const flagTexts = ['전체', '국어', '영어', '수학', '과학'];
+  const flag = [
+    {name: '전체', color: '#ffbebe'},
+    {name: '국어', color: '#f3ffbe'},
+    {name: '수학', color: '#beffe5'},
+    {name: '영어', color: '#bedcff'},
+    {name: '과학', color: '#ffbeec'},
+  ];
+  const [selectedFlag, setSelectedFlag] = useState('전체');
   const [homeworkList, setHomeworkList] = useState<HomeworkType[]>([]);
 
   useEffect(() => {
@@ -72,12 +78,14 @@ function HomeworkScreen(): React.JSX.Element {
     <View style={styles.container}>
       <ScreenInfo title="숙제" />
       <View style={styles.contentContainer}>
-        {flagColors.map((_, index) => (
+        {flag.map((_, index) => (
           <Flag
             key={index}
-            color={flagColors[index]}
+            color={flag[index].color}
             index={index}
-            title={flagTexts[index]}
+            title={flag[index].name}
+            selected={flag[index].name === selectedFlag}
+            setSelectedFlag={setSelectedFlag}
           />
         ))}
         <View style={[styles.content]}>
@@ -118,6 +126,7 @@ const styles = StyleSheet.create({
     gap: spacing.xl,
     width: '90%',
     padding: spacing.xl,
+    paddingRight: spacing.xxl,
     backgroundColor: 'white',
     borderBottomEndRadius: borderRadius.sm,
     borderTopEndRadius: borderRadius.sm,
