@@ -14,6 +14,7 @@ type PathData = {
   color: string;
   strokeWidth: number;
   opacity: number;
+  timestamp: number; // 단일 타임스탬프
 };
 
 // 스택 데이터 구조
@@ -24,6 +25,22 @@ type ActionData = {
 
 // 지우개 범위 상수
 const ERASER_RADIUS = 10;
+
+// 병합 함수 정의
+const mergePaths = (pathsToMerge: PathData[]) => {
+  const mergedPathString = pathsToMerge
+    .map(p => p.path.toSVGString())
+    .join(' ');
+  const latestTimestamp = pathsToMerge[pathsToMerge.length - 1].timestamp;
+
+  return {
+    path: Skia.Path.MakeFromSVGString(mergedPathString),
+    color: pathsToMerge[0].color,
+    strokeWidth: pathsToMerge[0].strokeWidth,
+    opacity: pathsToMerge[0].opacity,
+    timestamp: latestTimestamp,
+  };
+};
 
 // 오른쪽 캔버스 컴포넌트
 function RightCanvasSection({
@@ -44,11 +61,10 @@ function RightCanvasSection({
   const [isErasing, setIsErasing] = useState(false);
 
   const togglePenOpacity = () => {
-    setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
-    console.log('변경완료');
+    setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1));
   };
 
-  const toggleEraserMode = () => setIsErasing(!isErasing); // 지우개 모드 토글
+  const toggleEraserMode = () => setIsErasing(!isErasing);
 
   const erasePath = (x: number, y: number) => {
     setPaths(prevPaths =>
@@ -67,7 +83,7 @@ function RightCanvasSection({
         return !isInEraseArea;
       }),
     );
-    setRedoStack([]); // 새로운 작업 발생 시 redo 스택 초기화
+    setRedoStack([]);
   };
 
   const undo = () => {
@@ -79,10 +95,9 @@ function RightCanvasSection({
     setUndoStack(undoStack.slice(0, -1));
 
     if (lastAction.type === 'draw') {
-      setPaths(paths.slice(0, -1)); // 마지막 경로 제거
-      setRedoStack([...redoStack, lastAction]); // redo 스택에 추가
+      setPaths(paths.slice(0, -1));
+      setRedoStack([...redoStack, lastAction]);
     } else if (lastAction.type === 'erase') {
-      // 지운 경로 복구
       setPaths([...paths, lastAction.pathData]);
       setRedoStack([...redoStack, lastAction]);
     }
@@ -97,10 +112,9 @@ function RightCanvasSection({
     setRedoStack(redoStack.slice(0, -1));
 
     if (lastRedoAction.type === 'draw') {
-      setPaths([...paths, lastRedoAction.pathData]); // 경로 다시 추가
+      setPaths([...paths, lastRedoAction.pathData]);
       setUndoStack([...undoStack, lastRedoAction]);
     } else if (lastRedoAction.type === 'erase') {
-      // 지우기 작업 반복
       setPaths(paths.filter(pathData => pathData !== lastRedoAction.pathData));
       setUndoStack([...undoStack, lastRedoAction]);
     }
@@ -110,54 +124,48 @@ function RightCanvasSection({
     socket.on('connect', () => {
       console.log('오른쪽 캔버스 서버에 연결됨:', socket.id);
     });
-    // 연결이 끊어졌을 때
+
     socket.on('disconnect', () => {
       console.log('서버 연결이 해제되었습니다.');
     });
-    // 왼쪽 캔버스에서 전송된 그리기 데이터 수신
-    console.log('Setting up left_to_right listener');
-    socket.on('left_to_right', data => {
-      console.log('Left to Right Path received:', data);
 
-      const receivedPath = Skia.Path.MakeFromSVGString(data.pathString);
-      if (receivedPath) {
-        setPaths(prevPaths => [
-          ...prevPaths,
-          {
-            path: receivedPath,
-            color: data.color,
-            strokeWidth: data.strokeWidth,
-            opacity: data.opacity,
-          },
-        ]);
-      }
-    });
     socket.on('left_to_right_move', (compressedData: Uint8Array) => {
       try {
-        // 압축 해제
         const decompressedData = JSON.parse(
           pako.inflate(compressedData, {to: 'string'}),
         );
 
-        // Skia Path 생성
         const receivedPath = Skia.Path.MakeFromSVGString(decompressedData.path);
         if (receivedPath) {
-          setPaths(prevPaths => [
-            ...prevPaths,
-            {
-              path: receivedPath,
-              color: decompressedData.color,
-              strokeWidth: decompressedData.strokeWidth,
-              opacity: decompressedData.opacity,
-            },
-          ]);
+          const newPathData = {
+            path: receivedPath,
+            color: decompressedData.color,
+            strokeWidth: decompressedData.strokeWidth,
+            opacity: decompressedData.opacity,
+            timestamp: Date.now(),
+          };
+
+          setPaths(prevPaths => {
+            const lastPath = prevPaths[prevPaths.length - 1];
+            if (
+              lastPath &&
+              lastPath.color === newPathData.color &&
+              lastPath.strokeWidth === newPathData.strokeWidth &&
+              lastPath.opacity === newPathData.opacity
+            ) {
+              const mergedPath = mergePaths([lastPath, newPathData]);
+              return [...prevPaths.slice(0, -1), mergedPath];
+            } else {
+              return [...prevPaths, newPathData];
+            }
+          });
         }
       } catch (error) {
         console.error('Failed to decompress data:', error);
       }
     });
+
     return () => {
-      socket.off('left_to_right');
       socket.off('left_to_right_move');
     };
   }, [socket]);
@@ -195,6 +203,7 @@ function RightCanvasSection({
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
+        timestamp: Date.now(),
       };
 
       setUndoStack(prevUndoStack => [
@@ -210,7 +219,7 @@ function RightCanvasSection({
       });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
-      setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
+      setRedoStack([]);
     }
   };
 
