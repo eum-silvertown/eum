@@ -7,6 +7,13 @@ import {iconSize} from '@theme/iconSize';
 import CompleteHomeworkIcon from '@assets/icons/completeHomeworkIcon.svg';
 import IncompleteHomeworkIcon from '@assets/icons/incompleteHomeworkIcon.svg';
 import AvarageScoreIcon from '@assets/icons/scoreIcon.svg';
+import {
+  withTiming,
+  useSharedValue,
+  useAnimatedReaction,
+  runOnJS,
+} from 'react-native-reanimated';
+import {useEffect, useState} from 'react';
 
 interface ProgressBoxProps {
   color: 'blue' | 'red' | 'green';
@@ -15,6 +22,33 @@ interface ProgressBoxProps {
   unit: string;
   icon: 'complete' | 'incomplete' | 'avarageScore';
 }
+
+const AnimatedNumber = ({value}: {value: number}) => {
+  const progress = useSharedValue(0);
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    progress.value = 0;
+    progress.value = withTiming(1, {
+      duration: 1500,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  useAnimatedReaction(
+    () => progress.value * value,
+    result => {
+      runOnJS(setDisplayValue)(Math.round(result));
+    },
+    [value],
+  );
+
+  return (
+    <Text variant="xxl" weight="bold">
+      {displayValue}
+    </Text>
+  );
+};
 
 function ProgressBox({
   color,
@@ -30,6 +64,7 @@ function ProgressBox({
   } as const;
 
   const Icon = icons[icon];
+  const contentValue = parseInt(content, 10);
 
   return (
     <View style={[styles.common, styles[color]]}>
@@ -37,9 +72,7 @@ function ProgressBox({
       <View style={styles.content}>
         <Icon width={iconSize.md} height={iconSize.md} />
         <View style={styles.contentText}>
-          <Text variant="xxl" weight="bold">
-            {content}
-          </Text>
+          <AnimatedNumber value={contentValue} />
           <Text variant="subtitle">{unit}</Text>
         </View>
       </View>
@@ -72,5 +105,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.lg,
   },
-  contentText: {flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs},
+  contentText: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: spacing.xs,
+    overflow: 'hidden',
+  },
 });
