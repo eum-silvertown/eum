@@ -1,166 +1,126 @@
-// import React, {useState, useCallback, useMemo} from 'react';
-// import {StyleSheet, View} from 'react-native';
-// import {
-//   Gesture,
-//   GestureDetector,
-//   GestureHandlerRootView,
-// } from 'react-native-gesture-handler';
-// import {useSharedValue, runOnJS} from 'react-native-reanimated';
-// import {Canvas, Path, Skia, SkPath, Group} from '@shopify/react-native-skia';
+import React, {useRef, useState, useEffect} from 'react';
+import {
+  View,
+  StyleSheet,
+  PanResponder,
+  TouchableOpacity,
+  Text,
+  GestureResponderEvent,
+  LayoutChangeEvent,
+} from 'react-native';
+import Canvas from 'react-native-canvas';
 
-// const BATCH_SIZE = 10; // 패스를 그룹화할 크기
-// const MAX_PATHS = 100; // 최대 패스 개수
+type Tool = 'pen' | 'rect' | 'circle' | 'eraser';
 
-// interface PathGroup {
-//   paths: SkPath[];
-//   id: number;
-// }
+const DrawingTestScreen: React.FC = () => {
+  // 실제 그리기 도구는 useRef로 관리
+  const currentTool = useRef<Tool>('pen');
+  // UI 상태용 선택된 도구는 useState로 관리
+  const [selectedTool, setSelectedTool] = useState<Tool>('pen');
+  const canvasRef = useRef<Canvas | null>(null);
+  const [canvasSize, setCanvasSize] = useState<{width: number; height: number}>(
+    {
+      width: 0,
+      height: 0,
+    },
+  );
 
-// const DrawingTestScreen: React.FC = () => {
-//   const [pathGroups, setPathGroups] = useState<PathGroup[]>([]);
-//   const currentPath = useSharedValue<SkPath>(Skia.Path.Make());
-//   const groupIdCounter = useSharedValue(0);
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const {width, height} = event.nativeEvent.layout;
+    setCanvasSize({width, height});
+  };
 
-//   // 패스 그룹 추가를 최적화
-//   const addPath = useCallback((path: SkPath) => {
-//     setPathGroups(prevGroups => {
-//       const lastGroup = prevGroups[prevGroups.length - 1];
+  useEffect(() => {
+    if (canvasRef.current && canvasSize.width && canvasSize.height) {
+      const canvas = canvasRef.current;
+      canvas.width = canvasSize.width;
+      canvas.height = canvasSize.height;
 
-//       // 패스 개수가 너무 많아지면 이전 그룹들을 합쳐서 하나의 패스로 만듦
-//       if (
-//         prevGroups.reduce((sum, group) => sum + group.paths.length, 0) >
-//         MAX_PATHS
-//       ) {
-//         const mergedPath = Skia.Path.Make();
-//         prevGroups.forEach(group => {
-//           group.paths.forEach(p => {
-//             mergedPath.addPath(p);
-//           });
-//         });
-//         return [
-//           {
-//             paths: [mergedPath],
-//             id: ++groupIdCounter.value,
-//           },
-//         ];
-//       }
+      const ctx = canvas.getContext('2d');
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
 
-//       // 새 그룹 생성 또는 기존 그룹에 추가
-//       if (!lastGroup || lastGroup.paths.length >= BATCH_SIZE) {
-//         return [
-//           ...prevGroups,
-//           {
-//             paths: [path],
-//             id: ++groupIdCounter.value,
-//           },
-//         ];
-//       }
+      // 초기 캔버스 배경색 설정
+      ctx.fillStyle = '#004414';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  }, [canvasSize]);
 
-//       const newGroups = [...prevGroups];
-//       newGroups[newGroups.length - 1] = {
-//         ...lastGroup,
-//         paths: [...lastGroup.paths, path],
-//       };
-//       return newGroups;
-//     });
-//   }, []);
+  const handleDrawing = (
+    evt: GestureResponderEvent,
+    type: 'start' | 'move' | 'end',
+  ) => {
+    const {locationX, locationY} = evt.nativeEvent;
+    const canvas = canvasRef.current;
 
-//   const pan = Gesture.Pan()
-//     .averageTouches(true)
-//     .maxPointers(1)
-//     .onBegin(e => {
-//       const path = Skia.Path.Make();
-//       path.moveTo(e.x, e.y);
-//       currentPath.value = path;
-//     })
-//     .onChange(e => {
-//       const newPath = currentPath.value.copy();
-//       newPath.lineTo(e.x, e.y);
-//       currentPath.value = newPath;
-//     })
-//     .onEnd(() => {
-//       runOnJS(addPath)(currentPath.value.copy());
-//     });
+    if (!canvas) return;
 
-//   // 메모이제이션된 렌더링 컴포넌트
-//   const PathGroups = useMemo(() => {
-//     return pathGroups.map(group => (
-//       <Group key={group.id}>
-//         {group.paths.map((path, pathIndex) => (
-//           <Path
-//             key={`${group.id}-${pathIndex}`}
-//             path={path}
-//             strokeWidth={4}
-//             style="stroke"
-//             strokeCap="round"
-//             strokeJoin="round"
-//             color="white"
-//           />
-//         ))}
-//       </Group>
-//     ));
-//   }, [pathGroups]);
+    const ctx = canvas.getContext('2d');
 
-//   return (
-//     <GestureHandlerRootView style={styles.container}>
-//       <View style={styles.canvasContainer}>
-//         <GestureDetector gesture={pan}>
-//           <Canvas style={styles.canvas}>
-//             {PathGroups}
-//             <Path
-//               path={currentPath}
-//               strokeWidth={4}
-//               style="stroke"
-//               strokeCap="round"
-//               strokeJoin="round"
-//               color="white"
-//             />
-//           </Canvas>
-//         </GestureDetector>
-//       </View>
-//     </GestureHandlerRootView>
-//   );
-// };
+    switch (type) {
+      case 'start':
+        ctx.beginPath();
+        ctx.moveTo(locationX, locationY);
+        break;
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//   },
-//   canvasContainer: {
-//     flex: 1,
-//   },
-//   canvas: {
-//     flex: 1,
-//   },
-// });
+      case 'move':
+        if (currentTool.current === 'eraser') {
+          // 지우개는 흰색으로 그리기
+          ctx.strokeStyle = '#004414';
+          ctx.lineWidth = 20; // 지우개 크기
+        } else {
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 2;
+        }
+        ctx.lineTo(locationX, locationY);
+        ctx.stroke();
+        break;
 
-// export default DrawingTestScreen;
+      case 'end':
+        // 그리기 설정 초기화
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        break;
+    }
+  };
 
-import {Canvas} from '@shopify/react-native-skia';
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {Shape} from 'react-native-svg';
-import useCanvas from 'src/hooks/useCanvas';
-import useToolbar from 'src/hooks/useToolbar';
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: evt => handleDrawing(evt, 'start'),
+      onPanResponderMove: evt => handleDrawing(evt, 'move'),
+      onPanResponderRelease: evt => handleDrawing(evt, 'end'),
+    }),
+  ).current;
 
-const App = () => {
-  const {tool, setTool, ...headerTools} = useToolbar();
-  const {paintStyle} = headerTools;
-  const {shapes, touchHandler, currentShape, onClear, undo, redo} = useCanvas({
-    paintStyle,
-    tool,
-  });
+  const handleToolChange = (tool: Tool) => {
+    currentTool.current = tool; // 실제 그리기 도구 변경
+    setSelectedTool(tool); // UI 상태 변경
+  };
 
   return (
-    <View style={styles.container}>
-      {/* Canvas를 감싸는 View에 touchHandler 연결 */}
-      <View style={styles.canvas} {...touchHandler}>
-        <Canvas style={StyleSheet.absoluteFill}>
-          {shapes.map((shape, index) => (
-            <Shape key={index} {...shape} />
-          ))}
-          {currentShape && <Shape {...currentShape} />}
-        </Canvas>
+    <View style={styles.container} onLayout={handleLayout}>
+      <View style={styles.toolbar}>
+        <TouchableOpacity
+          style={[styles.tool, selectedTool === 'pen' && styles.selectedTool]}
+          onPress={() => handleToolChange('pen')}>
+          <Text>펜</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.tool,
+            selectedTool === 'eraser' && styles.selectedTool,
+          ]}
+          onPress={() => handleToolChange('eraser')}>
+          <Text>지우개</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.drawingArea} {...panResponder.panHandlers}>
+        <Canvas ref={canvasRef} style={styles.canvas} />
       </View>
     </View>
   );
@@ -170,9 +130,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  drawingArea: {
+    flex: 1,
+    backgroundColor: '#ffffff', // 배경색 추가
+  },
   canvas: {
-    flex: 5,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+  },
+  toolbar: {
+    flexDirection: 'row',
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    zIndex: 1,
+  },
+  tool: {
+    padding: 10,
+    marginRight: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+  },
+  selectedTool: {
+    backgroundColor: '#e0e0e0',
   },
 });
 
-export default App;
+export default DrawingTestScreen;
