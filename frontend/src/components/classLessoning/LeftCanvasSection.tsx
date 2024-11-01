@@ -29,6 +29,7 @@ type ActionData = {
 // 상수
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 10; // 최대 스택 크기
+const MERGE_THRESHOLD = 10; // 병합을 위한 경로 개수
 
 // 압축과 전송을 처리하는 함수 정의
 const sendCompressedData = (socket: Socket, event: string, data: any) => {
@@ -76,6 +77,28 @@ function LeftCanvasSection({
 
   const toggleEraserMode = () => setIsErasing(!isErasing); // 지우개 모드 토글
 
+  // 10개 경로 병합 함수
+  const mergePaths = () => {
+    if (paths.length >= MERGE_THRESHOLD) {
+      const pathsToMerge = paths.slice(0, MERGE_THRESHOLD);
+      const mergedPath = pathsToMerge.map(p => p.path.toSVGString()).join(' '); // SVG 병합
+
+      const mergedPathData: PathData = {
+        path: Skia.Path.MakeFromSVGString(mergedPath),
+        color: pathsToMerge[0].color,
+        strokeWidth: pathsToMerge[0].strokeWidth,
+        opacity: pathsToMerge[0].opacity,
+        timestamp: pathsToMerge[0].timestamp, // 병합된 경로의 초기 타임스탬프 사용
+      };
+
+      // paths 배열에서 첫 10개 항목을 병합된 항목으로 대체
+      setPaths(prevPaths => [
+        mergedPathData,
+        ...prevPaths.slice(MERGE_THRESHOLD),
+      ]);
+    }
+  };
+
   const erasePath = (x: number, y: number) => {
     setPaths(prevPaths =>
       prevPaths.filter(pathData => {
@@ -93,13 +116,12 @@ function LeftCanvasSection({
     setRedoStack([]); // 새로운 작업 발생 시 redo 스택 초기화
   };
 
-  // 스택에 항목 추가 및 최대 크기 유지하는 함수
   const addToUndoStack = (action: ActionData) => {
     setUndoStack(prevUndoStack => {
       const newUndoStack = [...prevUndoStack, action];
       if (newUndoStack.length > MAX_STACK_SIZE) {
         newUndoStack.shift();
-      } // 오래된 항목 제거
+      }
       return newUndoStack;
     });
   };
@@ -109,7 +131,7 @@ function LeftCanvasSection({
       const newRedoStack = [...prevRedoStack, action];
       if (newRedoStack.length > MAX_STACK_SIZE) {
         newRedoStack.shift();
-      } // 오래된 항목 제거
+      }
       return newRedoStack;
     });
   };
@@ -124,7 +146,7 @@ function LeftCanvasSection({
 
     if (lastAction.type === 'draw') {
       setPaths(paths.slice(0, -1)); // 마지막 경로 제거
-      addToRedoStack(lastAction); // redo 스택에 추가
+      addToRedoStack(lastAction);
     } else if (lastAction.type === 'erase') {
       setPaths([...paths, lastAction.pathData]); // 지운 경로 복구
       addToRedoStack(lastAction);
@@ -206,8 +228,7 @@ function LeftCanvasSection({
       };
       if (isRecording) {
         recordedPathsRef.current.push(pathData);
-      } // 녹화 데이터 추가
-      console.log('TOSVGSTrign', pathData.path);
+      }
 
       throttledSendData(socket, 'left_to_right_move', pathData);
     }
@@ -217,7 +238,6 @@ function LeftCanvasSection({
     if (isErasing) {
       setEraserPosition(null);
     } else if (currentPath) {
-      const pathString = currentPath.toSVGString();
       const newPathData = {
         path: currentPath,
         color: penColor,
@@ -230,17 +250,11 @@ function LeftCanvasSection({
       }
 
       addToUndoStack({type: 'draw', pathData: newPathData});
-
-      socket.emit('left_to_right', {
-        pathString,
-        color: penColor,
-        strokeWidth: penSize,
-        opacity: penOpacity,
-        timestamp: Date.now(),
-      });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
       setRedoStack([]);
+
+      mergePaths(); // 병합을 체크하고 필요 시 수행
     }
   };
 
@@ -251,7 +265,6 @@ function LeftCanvasSection({
   const stopRecording = () => {
     setIsRecording(false);
     console.log('부모 컴포넌트로 녹화된 경로 전달:', recordedPathsRef.current);
-
     onRecordingEnd(recordedPathsRef.current);
   };
 
