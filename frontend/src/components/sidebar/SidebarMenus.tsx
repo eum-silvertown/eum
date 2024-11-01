@@ -31,7 +31,6 @@ function SidebarMenus(): React.JSX.Element {
     {name: '숙제', screen: 'HomeworkScreen', icon: HomeworkIcon},
     {name: '문제 보관함', screen: 'QuestionBoxScreen', icon: questionBoxIcon},
     {name: '우리 반', screen: 'MyClassScreen', icon: myClassIcon},
-    {name: '테스트(삭제 예정)', screen: 'DrawingTestScreen', icon: HomeIcon},
   ];
   const navigation = useNavigation<NavigationProps>();
   const {setCurrentScreen} = useCurrentScreenStore();
@@ -42,7 +41,7 @@ function SidebarMenus(): React.JSX.Element {
     (screen: keyof ScreenType) => {
       setCurrentScreen(screen);
       requestAnimationFrame(() => {
-        navigation.navigate(screen);
+        navigation.reset({routes: [{name: screen}]});
       });
     },
     [navigation, setCurrentScreen],
