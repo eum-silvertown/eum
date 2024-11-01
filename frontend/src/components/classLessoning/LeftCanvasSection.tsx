@@ -8,7 +8,7 @@ import {throttle} from 'lodash';
 
 interface LeftCanvasSectionProps {
   socket: Socket;
-  onRecordingEnd?: (recordedPaths: PathData[]) => void;
+  onRecordingEnd: (recordedPaths: PathData[]) => void;
 }
 
 // Path 데이터 구조
@@ -26,24 +26,24 @@ type ActionData = {
   pathData: PathData;
 };
 
+// 상수
+const ERASER_RADIUS = 10;
+const MAX_STACK_SIZE = 10; // 최대 스택 크기
+
 // 압축과 전송을 처리하는 함수 정의
 const sendCompressedData = (socket: Socket, event: string, data: any) => {
   const compressedData = pako.deflate(JSON.stringify(data));
+  console.log('압축 데이터', compressedData);
+
   socket.emit(event, compressedData);
 };
 
-// Debounce
-// const debouncedSendData = debounce(sendCompressedData, 300); // 300ms 동안 입력이 없으면 전송
 // Throttle 적용
 const throttledSendData = throttle(sendCompressedData, 100); // 1초마다 최대 1회 전송
 
-// 지우개 범위 상수
-const ERASER_RADIUS = 10;
-
-// 왼쪽 캔버스 컴포넌트
 function LeftCanvasSection({
   socket,
-  // onRecordingEnd,
+  onRecordingEnd,
 }: LeftCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -58,7 +58,6 @@ function LeftCanvasSection({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
-
   const [isRecording, setIsRecording] = useState(false);
 
   // 녹화 데이터 저장
@@ -86,15 +85,33 @@ function LeftCanvasSection({
         const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
         if (isInEraseArea) {
-          setUndoStack(prevUndoStack => [
-            ...prevUndoStack,
-            {type: 'erase', pathData},
-          ]);
+          addToUndoStack({type: 'erase', pathData});
         }
         return !isInEraseArea;
       }),
     );
     setRedoStack([]); // 새로운 작업 발생 시 redo 스택 초기화
+  };
+
+  // 스택에 항목 추가 및 최대 크기 유지하는 함수
+  const addToUndoStack = (action: ActionData) => {
+    setUndoStack(prevUndoStack => {
+      const newUndoStack = [...prevUndoStack, action];
+      if (newUndoStack.length > MAX_STACK_SIZE) {
+        newUndoStack.shift();
+      } // 오래된 항목 제거
+      return newUndoStack;
+    });
+  };
+
+  const addToRedoStack = (action: ActionData) => {
+    setRedoStack(prevRedoStack => {
+      const newRedoStack = [...prevRedoStack, action];
+      if (newRedoStack.length > MAX_STACK_SIZE) {
+        newRedoStack.shift();
+      } // 오래된 항목 제거
+      return newRedoStack;
+    });
   };
 
   const undo = () => {
@@ -107,11 +124,10 @@ function LeftCanvasSection({
 
     if (lastAction.type === 'draw') {
       setPaths(paths.slice(0, -1)); // 마지막 경로 제거
-      setRedoStack([...redoStack, lastAction]); // redo 스택에 추가
+      addToRedoStack(lastAction); // redo 스택에 추가
     } else if (lastAction.type === 'erase') {
-      // 지운 경로 복구
-      setPaths([...paths, lastAction.pathData]);
-      setRedoStack([...redoStack, lastAction]);
+      setPaths([...paths, lastAction.pathData]); // 지운 경로 복구
+      addToRedoStack(lastAction);
     }
   };
 
@@ -125,11 +141,10 @@ function LeftCanvasSection({
 
     if (lastRedoAction.type === 'draw') {
       setPaths([...paths, lastRedoAction.pathData]); // 경로 다시 추가
-      setUndoStack([...undoStack, lastRedoAction]);
+      addToUndoStack(lastRedoAction);
     } else if (lastRedoAction.type === 'erase') {
-      // 지우기 작업 반복
-      setPaths(paths.filter(pathData => pathData !== lastRedoAction.pathData));
-      setUndoStack([...undoStack, lastRedoAction]);
+      setPaths(paths.filter(pathData => pathData !== lastRedoAction.pathData)); // 지우기 작업 반복
+      addToUndoStack(lastRedoAction);
     }
   };
 
@@ -137,12 +152,9 @@ function LeftCanvasSection({
     socket.on('connect', () => {
       console.log('왼쪽 캔버스 서버에 연결됨:', socket.id);
     });
-    // 연결이 끊어졌을 때
     socket.on('disconnect', () => {
       console.log('서버 연결이 해제되었습니다.');
     });
-    // 오른쪽 캔버스에서 전송된 그리기 데이터 수신
-    console.log('Setting up right_to_left listener');
     socket.on('right_to_left', data => {
       console.log('Right to Left Path received:', data);
 
@@ -155,7 +167,7 @@ function LeftCanvasSection({
             color: data.color,
             strokeWidth: data.strokeWidth,
             opacity: data.opacity,
-            timestamp: data.timestampe,
+            timestamp: data.timestamp,
           },
         ]);
       }
@@ -193,10 +205,10 @@ function LeftCanvasSection({
         timestamp: Date.now(),
       };
       if (isRecording) {
-        recordedPathsRef.current.push(pathData); // 녹화 데이터 추가
-      }
+        recordedPathsRef.current.push(pathData);
+      } // 녹화 데이터 추가
+      console.log('TOSVGSTrign', pathData.path);
 
-      // 실시간 전송 시 throttle 적용
       throttledSendData(socket, 'left_to_right_move', pathData);
     }
   };
@@ -205,49 +217,42 @@ function LeftCanvasSection({
     if (isErasing) {
       setEraserPosition(null);
     } else if (currentPath) {
-      console.log(currentPath);
-
       const pathString = currentPath.toSVGString();
       const newPathData = {
         path: currentPath,
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
-        timestamp: Date.now(), // 현재 시간 추가
+        timestamp: Date.now(),
       };
       if (isRecording) {
         recordedPathsRef.current.push(newPathData);
       }
 
-      setUndoStack(prevUndoStack => [
-        ...prevUndoStack,
-        {type: 'draw', pathData: newPathData},
-      ]);
+      addToUndoStack({type: 'draw', pathData: newPathData});
 
       socket.emit('left_to_right', {
         pathString,
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
-        timestamp: Date.now(), // 현재 시간 추가
+        timestamp: Date.now(),
       });
       setPaths(prevPaths => [...prevPaths, newPathData]);
       setCurrentPath(null);
-      setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
+      setRedoStack([]);
     }
   };
 
-  // 녹화 시작
   const startRecording = () => {
     setIsRecording(true);
   };
 
-  // 녹화 종료 및 데이터 전달
   const stopRecording = () => {
     setIsRecording(false);
     console.log('부모 컴포넌트로 녹화된 경로 전달:', recordedPathsRef.current);
 
-    // onRecordingEnd(recordedPathsRef.current); // 부모 컴포넌트로 녹화된 경로 전달
+    onRecordingEnd(recordedPathsRef.current);
   };
 
   return (
@@ -270,8 +275,8 @@ function LeftCanvasSection({
       isErasing={isErasing}
       eraserPosition={eraserPosition}
       isRecording={isRecording}
-      startRecording={startRecording} // 녹화 시작 버튼
-      stopRecording={stopRecording} // 녹화 종료 버튼
+      startRecording={startRecording}
+      stopRecording={stopRecording}
     />
   );
 }
