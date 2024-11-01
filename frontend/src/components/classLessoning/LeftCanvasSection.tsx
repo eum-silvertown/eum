@@ -8,7 +8,7 @@ import {throttle} from 'lodash';
 
 interface LeftCanvasSectionProps {
   socket: Socket;
-  onRecordingEnd: (recordedPaths: PathData[]) => void;
+  onRecordingEnd?: (recordedPaths: PathData[]) => void;
 }
 
 // Path 데이터 구조
@@ -43,7 +43,7 @@ const ERASER_RADIUS = 10;
 // 왼쪽 캔버스 컴포넌트
 function LeftCanvasSection({
   socket,
-  onRecordingEnd,
+  // onRecordingEnd,
 }: LeftCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -247,7 +247,7 @@ function LeftCanvasSection({
     setIsRecording(false);
     console.log('부모 컴포넌트로 녹화된 경로 전달:', recordedPathsRef.current);
 
-    onRecordingEnd(recordedPathsRef.current); // 부모 컴포넌트로 녹화된 경로 전달
+    // onRecordingEnd(recordedPathsRef.current); // 부모 컴포넌트로 녹화된 경로 전달
   };
 
   return (
