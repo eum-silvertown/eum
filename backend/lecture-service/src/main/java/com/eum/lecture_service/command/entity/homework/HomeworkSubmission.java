@@ -40,4 +40,6 @@ public class HomeworkSubmission {
 	@Column(name = "total_count")
 	private Integer totalCount;
 
+	@Column(name = "is_completed")
+	private Boolean isCompleted;
 }

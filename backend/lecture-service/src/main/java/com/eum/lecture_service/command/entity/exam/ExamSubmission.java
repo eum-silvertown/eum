@@ -21,10 +21,10 @@ public class ExamSubmission {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "exam_submission_id")
-	private Long homeworkSubmissionId;
+	private Long examSubmissionId;
 
 	@Column(name = "exam_id", nullable = false)
-	private Long homeworkId;
+	private Long examId;
 
 	@Column(name = "student_id", nullable = false)
 	private Long studentId;
@@ -38,4 +38,6 @@ public class ExamSubmission {
 	@Column(name = "total_count")
 	private Integer totalCount;
 
+	@Column(name = "is_completed")
+	private boolean isCompleted;
 }
