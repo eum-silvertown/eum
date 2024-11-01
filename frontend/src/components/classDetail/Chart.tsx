@@ -1,10 +1,10 @@
 import React from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet } from 'react-native';
-import { spacing } from '@theme/spacing';
-import { Canvas, vec } from '@shopify/react-native-skia';
-import { Ring } from './Ring';
-import { typography } from '@theme/typography';
+import {Text} from '@components/common/Text';
+import {View, StyleSheet} from 'react-native';
+import {spacing} from '@theme/spacing';
+import {Canvas, vec} from '@shopify/react-native-skia';
+import {Ring} from './Ring';
+import {typography} from '@theme/typography';
 
 const width = 120;
 const height = 120;
@@ -51,7 +51,12 @@ function Chart(): React.JSX.Element {
       <View style={styles.rowContainer}>
         <Canvas style={styles.chartContainer}>
           {rings.map((ring, index) => (
-            <Ring key={index} ring={ring} center={center} strokeWidth={strokeWidth} />
+            <Ring
+              key={index}
+              ring={ring}
+              center={center}
+              strokeWidth={strokeWidth}
+            />
           ))}
         </Canvas>
         <View style={styles.legendContainer}>
@@ -62,7 +67,9 @@ function Chart(): React.JSX.Element {
           </View>
           {rings.map((ring, index) => (
             <View key={index} style={styles.legendItem}>
-              <View style={[styles.colorDot, { backgroundColor: ring.colors[0] }]} />
+              <View
+                style={[styles.colorDot, {backgroundColor: ring.colors[0]}]}
+              />
               <Text>{ring.label}</Text>
             </View>
           ))}
@@ -82,7 +89,7 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.lg,
+    marginTop: spacing.md,
     marginHorizontal: 'auto',
     paddingHorizontal: spacing.lg,
   },
