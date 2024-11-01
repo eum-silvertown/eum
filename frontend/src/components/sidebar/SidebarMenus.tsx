@@ -41,7 +41,7 @@ function SidebarMenus(): React.JSX.Element {
     (screen: keyof ScreenType) => {
       setCurrentScreen(screen);
       requestAnimationFrame(() => {
-        navigation.navigate(screen);
+        navigation.reset({routes: [{name: screen}]});
       });
     },
     [navigation, setCurrentScreen],
