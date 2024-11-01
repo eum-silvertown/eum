@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
   noteSpringImage: {
     marginLeft: -spacing.xxl,
     width: getResponsiveSize(40),
+    height: '100%',
     objectFit: 'fill',
   },
   homeworkContainer: {
