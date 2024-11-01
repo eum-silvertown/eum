@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import {StyleSheet, View, TouchableOpacity, Animated} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Animated, Pressable} from 'react-native';
 import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
@@ -13,21 +13,18 @@ import {colors} from 'src/hooks/useColors';
 import {iconSize} from '@theme/iconSize';
 
 interface TodoProps {
-  title: string;
-  importance: number;
-  description: string;
-  completed?: boolean;
+  item: {
+    title: string;
+    importance: number;
+    description: string;
+    completed?: boolean;
+  };
   onToggleComplete?: () => void;
 }
 
-export default function Todo({
-  title,
-  importance,
-  description = '',
-  completed = false,
-  onToggleComplete,
-}: TodoProps) {
+export default function Todo({item}: TodoProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false);
+  const [completed, setCompleted] = useState(item.completed || false);
   const animatedHeight = useRef(new Animated.Value(0)).current;
 
   // 중요도에 따른 체크박스 색상 설정 함수
@@ -52,6 +49,10 @@ export default function Todo({
     }).start();
   };
 
+  const handleToggleComplete = () => {
+    setCompleted(!completed);
+  };
+
   const spin = animatedHeight.interpolate({
     inputRange: [0, 100],
     outputRange: ['0deg', '-180deg'],
@@ -72,21 +73,21 @@ export default function Todo({
             }}>
             <ArrowDownIcon />
           </Animated.View>
-          <Text weight="bold">{title}</Text>
+          <Text weight="bold">{item.title}</Text>
         </View>
 
         <View style={styles.optionContainer}>
-          <TouchableOpacity
+          <CheckBox
+          
             style={styles.optionIcon}
-            onPress={onToggleComplete}>
-            <CheckBox
-              value={completed}
-              tintColors={{
-                true: getCheckBoxColor(importance),
-                false: getCheckBoxColor(importance),
-              }}
-            />
-          </TouchableOpacity>
+            value={completed}
+            onValueChange={handleToggleComplete}
+            tintColors={{
+              true: getCheckBoxColor(item.importance),
+              false: getCheckBoxColor(item.importance),
+            }}
+          />
+
           {expanded && (
             <>
               <TouchableOpacity style={styles.optionIcon}>
@@ -106,7 +107,7 @@ export default function Todo({
           {height: animatedHeight},
           {marginVertical: animatedMargin},
         ]}>
-        <Text variant="caption">{description}</Text>
+        <Text variant="caption">{item.description}</Text>
       </Animated.View>
     </TouchableOpacity>
   );
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingHorizontal: spacing.lg,
   },
-  optionIcon: {
+  optionIcon: {    
     padding: spacing.sm,
   },
 });
