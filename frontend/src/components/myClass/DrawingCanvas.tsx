@@ -1,22 +1,27 @@
+import {Text} from '@components/common/Text';
+import {borderRadius} from '@theme/borderRadius';
+import {borderWidth} from '@theme/borderWidth';
+import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
 import React, {useRef, useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
   PanResponder,
-  TouchableOpacity,
-  Text,
   GestureResponderEvent,
   LayoutChangeEvent,
+  Pressable,
 } from 'react-native';
 import Canvas from 'react-native-canvas';
 
-type Tool = 'pen' | 'rect' | 'circle' | 'eraser';
+type Tool = 'whiteCholk' | 'redCholk' | 'blueCholk' | 'eraser';
 
-const DrawingTestScreen: React.FC = () => {
+const DrawingCanvas: React.FC = () => {
   // 실제 그리기 도구는 useRef로 관리
-  const currentTool = useRef<Tool>('pen');
+  const currentTool = useRef<Tool>('whiteCholk');
+  const currentColor = useRef('#ffffff');
   // UI 상태용 선택된 도구는 useState로 관리
-  const [selectedTool, setSelectedTool] = useState<Tool>('pen');
+  const [selectedTool, setSelectedTool] = useState<Tool>('whiteCholk');
   const canvasRef = useRef<Canvas | null>(null);
   const [canvasSize, setCanvasSize] = useState<{width: number; height: number}>(
     {
@@ -69,19 +74,13 @@ const DrawingTestScreen: React.FC = () => {
         if (currentTool.current === 'eraser') {
           // 지우개는 흰색으로 그리기
           ctx.strokeStyle = '#004414';
-          ctx.lineWidth = 20; // 지우개 크기
+          ctx.lineWidth = 50; // 지우개 크기
         } else {
-          ctx.strokeStyle = '#000000';
+          ctx.strokeStyle = currentColor.current;
           ctx.lineWidth = 2;
         }
         ctx.lineTo(locationX, locationY);
         ctx.stroke();
-        break;
-
-      case 'end':
-        // 그리기 설정 초기화
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 2;
         break;
     }
   };
@@ -104,19 +103,46 @@ const DrawingTestScreen: React.FC = () => {
   return (
     <View style={styles.container} onLayout={handleLayout}>
       <View style={styles.toolbar}>
-        <TouchableOpacity
-          style={[styles.tool, selectedTool === 'pen' && styles.selectedTool]}
-          onPress={() => handleToolChange('pen')}>
-          <Text>펜</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        <View style={styles.cholks}>
+          <Pressable
+            style={[
+              styles.whiteCholk,
+              selectedTool === 'whiteCholk' && styles.selectedTool,
+            ]}
+            onPress={() => {
+              handleToolChange('whiteCholk');
+              currentColor.current = '#ffffff';
+            }}
+          />
+          <Pressable
+            style={[
+              styles.redCholk,
+              selectedTool === 'redCholk' && styles.selectedTool,
+            ]}
+            onPress={() => {
+              handleToolChange('redCholk');
+              currentColor.current = '#ff4f4f';
+            }}
+          />
+          <Pressable
+            style={[
+              styles.blueCholk,
+              selectedTool === 'blueCholk' && styles.selectedTool,
+            ]}
+            onPress={() => {
+              handleToolChange('blueCholk');
+              currentColor.current = '#5c8fff';
+            }}
+          />
+        </View>
+        <Pressable
           style={[
-            styles.tool,
+            styles.eraser,
             selectedTool === 'eraser' && styles.selectedTool,
           ]}
           onPress={() => handleToolChange('eraser')}>
-          <Text>지우개</Text>
-        </TouchableOpacity>
+          <Text color="white">지우개</Text>
+        </Pressable>
       </View>
 
       <View style={styles.drawingArea} {...panResponder.panHandlers}>
@@ -143,19 +169,47 @@ const styles = StyleSheet.create({
   },
   toolbar: {
     flexDirection: 'row',
-    padding: 10,
-    backgroundColor: '#f0f0f0',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
     zIndex: 1,
   },
-  tool: {
-    padding: 10,
-    marginRight: 10,
+  cholks: {
+    flexDirection: 'row',
+    gap: spacing.lg,
+  },
+  whiteCholk: {
+    width: getResponsiveSize(30),
+    height: getResponsiveSize(10),
     backgroundColor: '#fff',
-    borderRadius: 5,
+    borderRadius: borderRadius.sm,
+  },
+  redCholk: {
+    width: getResponsiveSize(30),
+    height: getResponsiveSize(10),
+    backgroundColor: '#ff4f4f',
+    borderRadius: borderRadius.sm,
+  },
+  blueCholk: {
+    width: getResponsiveSize(30),
+    height: getResponsiveSize(10),
+    backgroundColor: '#5c8fff',
+    borderRadius: borderRadius.sm,
+  },
+  eraser: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: getResponsiveSize(60),
+    height: getResponsiveSize(30),
+    backgroundColor: '#550055',
+    borderRadius: borderRadius.md,
   },
   selectedTool: {
-    backgroundColor: '#e0e0e0',
+    borderWidth: borderWidth.md,
+    borderColor: '#ffff00',
   },
 });
 
-export default DrawingTestScreen;
+export default DrawingCanvas;
