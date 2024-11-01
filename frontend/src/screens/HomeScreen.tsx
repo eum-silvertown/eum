@@ -4,7 +4,7 @@ import {StyleSheet, View} from 'react-native';
 import MainHeader from '@components/main/MainHeader';
 import TodoList from '@components/main/TodoList';
 import Weather from '@components/main/Weather';
-import Calendar from '@components/main/Calendar';
+import Calendar from '@components/main/MainCalendar';
 import Timetalbe from '@components/main/Timetable';
 
 function HomeScreen(): React.JSX.Element {
