@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingHorizontal: spacing.lg,
     backgroundColor: '#2E2559',
-    overflow: 'hidden',
   },
   sidebarExpandIcon: {
     position: 'absolute',
-    bottom: spacing.xl,
-    right: spacing.xl,
+    right: 0,
+    bottom: 0,
+    padding: spacing.xl,
   },
   sidebarImage: {
     position: 'absolute',
