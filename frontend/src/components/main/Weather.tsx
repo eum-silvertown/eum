@@ -40,16 +40,16 @@ export default function Weather(): React.JSX.Element {
       fetchWeather();
     };
 
-    const fetchWeather = () => {
-      Geolocation.getCurrentPosition(
-        async position => {
+    const fetchWeather = () => {      
+      Geolocation.getCurrentPosition(        
+        async position => {          
           const {latitude, longitude} = position.coords;
           await getWeatherData(latitude, longitude);
         },
         error => {
           console.log('Error getting location', error);
         },
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+        {enableHighAccuracy: false, timeout: 20000, maximumAge: 1000},
       );
     };
 

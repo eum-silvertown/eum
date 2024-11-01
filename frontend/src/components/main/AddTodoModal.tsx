@@ -1,110 +1,88 @@
 // AddTodoModal.tsx
 import React from 'react';
-import {Modal, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
+import ModalLayout from '@components/common/ModalLayout';
 import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
-import {borderRadius} from '@theme/borderRadius';
 
 interface AddTodoModalProps {
   visible: boolean;
   onClose: () => void;
 }
 
-const AddTodoModal: React.FC<AddTodoModalProps> = ({visible, onClose}) => {
+const AddTodoModal = ({
+  visible,
+  onClose,
+}: AddTodoModalProps): React.JSX.Element => {
   const importanceLevels = ['일반', '평범', '중요', '매우 중요'];
 
-  const createTodo = () => {};
+  const createTodo = () => {
+    // TODO: 할 일 생성 로직
+  };
 
   return (
-    <Modal visible={visible} transparent={true} onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContent}>
-          <Text variant="title" weight="bold">
-            해야할 일 만들기
-          </Text>
+    <ModalLayout visible={visible} onClose={onClose} title="해야할 일 만들기">
+      <View style={[styles.contentContainer]}>
+        <Text variant="subtitle" weight="bold">
+          제목
+        </Text>
+        <InputField placeholder="제목을 입력해주세요." />
+      </View>
 
-          <View style={[styles.contentContainer]}>
-            <Text variant="subtitle" weight="bold">
-              제목
-            </Text>
-            <InputField placeholder="제목을 입력해주세요." />
-          </View>
-
-          <View style={styles.contentContainer}>
-            <Text variant="subtitle" weight="bold">
-              중요도
-            </Text>
-            <View style={styles.importanceLevelContainer}>
-              {importanceLevels.map((item, index) => (
-                <TouchableOpacity key={index} style={styles.importanceButton}>
-                  <Text color="white" weight="bold" align="center">
-                    {item}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          <View style={[styles.contentContainer, {flex: 2}]}>
-            <Text variant="subtitle" weight="bold">
-              내용
-            </Text>
-            <View style={{flex: 1}}>
-              <InputField multiline={true} placeholder="내용을 입력해주세요." />
-            </View>
-          </View>
-
-          <TouchableOpacity onPress={createTodo} style={styles.submitButton}>
-            <Text color='white' weight='bold' align='center'>생성</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text>닫기</Text>
-          </TouchableOpacity>
+      <View style={styles.contentContainer}>
+        <Text variant="subtitle" weight="bold">
+          중요도
+        </Text>
+        <View style={styles.importanceLevelContainer}>
+          {importanceLevels.map((item, index) => (
+            <TouchableOpacity key={index} style={styles.importanceButton}>
+              <Text color="white" weight="bold" align="center">
+                {item}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
-    </Modal>
+
+      <View style={[styles.contentContainer]}>
+        <Text variant="subtitle" weight="bold">
+          내용
+        </Text>
+        <InputField placeholder="내용을 입력해주세요." />
+      </View>
+
+      <TouchableOpacity onPress={createTodo} style={styles.submitButton}>
+        <Text color="white" weight="bold" align="center">
+          생성
+        </Text>
+      </TouchableOpacity>
+    </ModalLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.light.background.modalOverlay,
-  },
-  modalContent: {
-    flex: 0.7,
-    width: '50%',
-    gap: spacing.lg,
-    padding: spacing.xxl,
-    backgroundColor: colors.light.background.white,
-    borderRadius: borderRadius.lg,
-  },
   contentContainer: {
-    flex: 1,
-    gap: spacing.sm,
+    marginBottom: spacing.md,
   },
   importanceLevelContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: spacing.xl,
+    gap: spacing.sm,
   },
   importanceButton: {
     flex: 1,
     backgroundColor: colors.light.background.main,
     padding: spacing.md,
+    borderRadius: 5,
+    alignItems: 'center',
   },
   submitButton: {
     backgroundColor: colors.light.background.main,
     padding: spacing.md,
     alignItems: 'center',
-  },
-  closeButton: {
-    alignItems: 'center',
+    borderRadius: 5,
   },
 });
 

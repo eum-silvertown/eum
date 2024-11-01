@@ -42,7 +42,7 @@ export default function TodoList(): React.JSX.Element {
         />
         <ScrollView>
           {todos.map((item, index) => (
-            <Todo key={index} title={item.title} importance={item.importance} description={item.description} />
+            <Todo key={index} item={item} />
           ))}
         </ScrollView>      
     </ContentLayout>

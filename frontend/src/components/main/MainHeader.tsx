@@ -10,7 +10,7 @@ import { borderWidth } from '@theme/borderWidth';
 import { borderRadius } from '@theme/borderRadius';
 import { spacing } from '@theme/spacing';
 
-export default function MainHeader() {
+export default function MainHeader(): React.JSX.Element {
   const defaultMessage = `박효진 학생, 오늘도 좋은 하루 되세요!`;
   const [message, setMessage] = useState(defaultMessage);
   const [isEditing, setIsEditing] = useState(false);
