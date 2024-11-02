@@ -20,7 +20,7 @@ function LessoningScreen(): React.JSX.Element {
   // const [recordedPaths, setRecordedPaths] = useState<PathData[]>([]);
 
   const socket: Socket = io('http://192.168.128.246:8080', {
-    reconnection: true,
+    reconnection: false,
     secure: true,
     transports: ['websocket'],
   });
