@@ -272,6 +272,8 @@ function LeftCanvasSection({
       togglePenOpacity={togglePenOpacity}
       undo={undo}
       redo={redo}
+      undoStack={undoStack.length}
+      redoStack={redoStack.length}
       toggleEraserMode={toggleEraserMode}
       isErasing={isErasing}
       eraserPosition={eraserPosition}

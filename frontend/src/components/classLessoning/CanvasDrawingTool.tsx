@@ -1,5 +1,14 @@
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {Canvas, Circle, Path, Skia} from '@shopify/react-native-skia';
+import UndoOffIcon from '@assets/icons/undoOffIcon.svg';
+import UndoOnIcon from '@assets/icons/undoOnIcon.svg';
+import RedoOffIcon from '@assets/icons/redoOffIcon.svg';
+import RedoOnIcon from '@assets/icons/redoOnIcon.svg';
+import EraserOffIcon from '@assets/icons/eraserOffIcon.svg';
+import EraserOnIcon from '@assets/icons/eraserOnIcon.svg';
+import HighlighterOffIcon from '@assets/icons/highlighterOffIcon.svg';
+import HighlighterOnIcon from '@assets/icons/highlighterOnIcon.svg';
+import {iconSize} from '@theme/iconSize';
 
 type CanvasComponentProps = {
   canvasRef: React.RefObject<any>;
@@ -16,6 +25,8 @@ type CanvasComponentProps = {
   togglePenOpacity?: () => void;
   undo?: () => void;
   redo?: () => void;
+  undoStack: number | null;
+  redoStack: number | null;
   toggleEraserMode?: () => void;
   isErasing?: boolean;
   eraserPosition?: {x: number; y: number} | null;
@@ -42,6 +53,8 @@ const CanvasDrawingTool = ({
   togglePenOpacity,
   undo,
   redo,
+  undoStack,
+  redoStack,
   toggleEraserMode,
   isErasing,
   eraserPosition,
@@ -129,24 +142,41 @@ const CanvasDrawingTool = ({
             </TouchableOpacity>
           ))}
         </View>
-        <TouchableOpacity
-          onPress={togglePenOpacity}
-          style={[
-            styles.highlighterButton,
-            penOpacity < 1 && styles.activeHighlighter,
-          ]}>
-          <Text style={styles.buttonText}>형광펜</Text>
+
+        {/* 형광펜 아이콘 */}
+        <TouchableOpacity onPress={togglePenOpacity}>
+          {penOpacity < 1 ? (
+            <HighlighterOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <HighlighterOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
         </TouchableOpacity>
-        <TouchableOpacity onPress={undo} style={styles.toolbarButton}>
-          <Text style={styles.buttonText}>Undo</Text>
+
+        {/* Undo 아이콘 */}
+        <TouchableOpacity onPress={undo}>
+          {undoStack ? (
+            <UndoOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <UndoOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
         </TouchableOpacity>
-        <TouchableOpacity onPress={redo} style={styles.toolbarButton}>
-          <Text style={styles.buttonText}>Redo</Text>
+
+        {/* Redo 아이콘 */}
+        <TouchableOpacity onPress={redo}>
+          {redoStack ? (
+            <RedoOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <RedoOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={toggleEraserMode}
-          style={isErasing ? styles.activeEraser : styles.eraserButton}>
-          <Text style={styles.buttonText}>지우개</Text>
+
+        {/* 지우개 아이콘 */}
+        <TouchableOpacity onPress={toggleEraserMode}>
+          {isErasing ? (
+            <EraserOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <EraserOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
         </TouchableOpacity>
         {/* 녹화 시작/중지 버튼 */}
         {isRecording ? (
@@ -170,6 +200,9 @@ const CanvasDrawingTool = ({
 export default CanvasDrawingTool;
 
 const styles = StyleSheet.create({
+  canvasLayout: {
+    ...StyleSheet.absoluteFillObject,
+  },
   canvasContainer: {flex: 1, backgroundColor: 'transparent'},
   canvas: {flex: 1},
   floatingToolbar: {
@@ -184,6 +217,7 @@ const styles = StyleSheet.create({
   },
   paletteContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   colorPalette: {
@@ -199,6 +233,7 @@ const styles = StyleSheet.create({
   },
   penSizeContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   penSize: {
@@ -222,32 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     borderRadius: 5,
   },
-  activeHighlighter: {
-    backgroundColor: '#FFD700',
-  },
-  toolbarButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#ddd',
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  eraserButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#ccc',
-    borderRadius: 5,
-  },
-  activeEraser: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#FFA500',
-    borderRadius: 5,
-  },
   buttonText: {color: '#000', fontWeight: 'bold'},
-  canvasLayout: {
-    ...StyleSheet.absoluteFillObject,
-  },
   recordingButton: {
     paddingVertical: 5,
     paddingHorizontal: 3,
