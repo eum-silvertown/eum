@@ -9,6 +9,8 @@ import EraserOnIcon from '@assets/icons/eraserOnIcon.svg';
 import HighlighterOffIcon from '@assets/icons/highlighterOffIcon.svg';
 import HighlighterOnIcon from '@assets/icons/highlighterOnIcon.svg';
 import {iconSize} from '@theme/iconSize';
+import {getResponsiveSize} from '@utils/responsive';
+import {spacing} from '@theme/spacing';
 
 type CanvasComponentProps = {
   canvasRef: React.RefObject<any>;
@@ -146,6 +148,15 @@ const CanvasDrawingTool = ({
           )}
         </TouchableOpacity>
 
+        {/* 지우개 아이콘 */}
+        <TouchableOpacity onPress={toggleEraserMode}>
+          {isErasing ? (
+            <EraserOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <EraserOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
+        </TouchableOpacity>
+
         {/* Undo 아이콘 */}
         <TouchableOpacity onPress={undo}>
           {undoStack ? (
@@ -163,15 +174,6 @@ const CanvasDrawingTool = ({
             <RedoOffIcon width={iconSize.lg} height={iconSize.lg} />
           )}
         </TouchableOpacity>
-
-        {/* 지우개 아이콘 */}
-        <TouchableOpacity onPress={toggleEraserMode}>
-          {isErasing ? (
-            <EraserOnIcon width={iconSize.lg} height={iconSize.lg} />
-          ) : (
-            <EraserOffIcon width={iconSize.lg} height={iconSize.lg} />
-          )}
-        </TouchableOpacity>
       </View>
     </View>
   </View>
@@ -183,28 +185,38 @@ const styles = StyleSheet.create({
   canvasLayout: {
     ...StyleSheet.absoluteFillObject,
   },
-  canvasContainer: {flex: 1, backgroundColor: 'transparent'},
+  canvasContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
   canvas: {flex: 1},
   floatingToolbar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-    backgroundColor: '#fff',
     position: 'absolute',
-    bottom: 0,
     left: 0,
-    right: 0,
+    top: '50%',
+    transform: [{translateY: -250}],
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+    gap: getResponsiveSize(12),
   },
   paletteContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   },
   colorPalette: {
-    width: 30,
-    height: 30,
+    width: getResponsiveSize(24),
+    height: getResponsiveSize(24),
     borderRadius: 15,
-    marginHorizontal: 1,
+    marginVertical: spacing.xs,
     borderWidth: 2,
     borderColor: 'transparent',
   },
@@ -212,15 +224,15 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
   penSizeContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   },
   penSize: {
-    width: 30,
-    height: 30,
+    width: getResponsiveSize(24),
+    height: getResponsiveSize(24),
     borderRadius: 15,
-    marginHorizontal: 1,
+    marginVertical: spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -235,19 +247,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 3,
     backgroundColor: '#ddd',
-    borderRadius: 5,
-  },
-  buttonText: {color: '#000', fontWeight: 'bold'},
-  recordingButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#32CD32', // 녹화 시작 버튼 색상
-    borderRadius: 5,
-  },
-  recordingButtonActive: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#FF4500', // 녹화 중 버튼 색상
     borderRadius: 5,
   },
 });
