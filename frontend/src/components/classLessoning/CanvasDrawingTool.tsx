@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   canvas: {flex: 1},
   floatingToolbar: {
     position: 'absolute',
-    left: 0,
+    left: 8,
     top: '50%',
     transform: [{translateY: -250}],
     alignItems: 'center',
@@ -221,7 +221,8 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedColor: {
-    borderColor: '#000',
+    borderColor: '#ccc',
+    borderWidth: 3,
   },
   penSizeContainer: {
     flexDirection: 'column',
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
   },
   selectedPenSize: {
-    borderColor: '#000',
+    borderColor: '#ccc',
     borderWidth: 3,
   },
   highlighterButton: {
