@@ -5,6 +5,7 @@ import {Socket} from 'socket.io-client';
 
 import pako from 'pako';
 import {throttle} from 'lodash';
+import LessoningInteractionTool from './LessoningInteractionTool';
 
 interface LeftCanvasSectionProps {
   socket: Socket;
@@ -257,30 +258,34 @@ function LeftCanvasSection({
   };
 
   return (
-    <CanvasDrawingTool
-      canvasRef={canvasRef}
-      paths={pathGroups.flat()}
-      currentPath={currentPath}
-      penColor={penColor}
-      penSize={penSize}
-      penOpacity={penOpacity}
-      handleTouchStart={handleTouchStart}
-      handleTouchMove={handleTouchMove}
-      handleTouchEnd={handleTouchEnd}
-      setPenColor={setPenColor}
-      setPenSize={setPenSize}
-      togglePenOpacity={togglePenOpacity}
-      undo={undo}
-      redo={redo}
-      undoStack={undoStack.length}
-      redoStack={redoStack.length}
-      toggleEraserMode={toggleEraserMode}
-      isErasing={isErasing}
-      eraserPosition={eraserPosition}
-      isRecording={isRecording}
-      startRecording={startRecording}
-      stopRecording={stopRecording}
-    />
+    <>
+      <CanvasDrawingTool
+        canvasRef={canvasRef}
+        paths={pathGroups.flat()}
+        currentPath={currentPath}
+        penColor={penColor}
+        penSize={penSize}
+        penOpacity={penOpacity}
+        handleTouchStart={handleTouchStart}
+        handleTouchMove={handleTouchMove}
+        handleTouchEnd={handleTouchEnd}
+        setPenColor={setPenColor}
+        setPenSize={setPenSize}
+        togglePenOpacity={togglePenOpacity}
+        undo={undo}
+        redo={redo}
+        undoStack={undoStack.length}
+        redoStack={redoStack.length}
+        toggleEraserMode={toggleEraserMode}
+        isErasing={isErasing}
+        eraserPosition={eraserPosition}
+      />
+      <LessoningInteractionTool
+        isRecording={isRecording}
+        startRecording={startRecording}
+        stopRecording={stopRecording}
+      />
+    </>
   );
 }
 

@@ -1,4 +1,4 @@
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Canvas, Circle, Path, Skia} from '@shopify/react-native-skia';
 import UndoOffIcon from '@assets/icons/undoOffIcon.svg';
 import UndoOnIcon from '@assets/icons/undoOnIcon.svg';
@@ -30,9 +30,6 @@ type CanvasComponentProps = {
   toggleEraserMode?: () => void;
   isErasing?: boolean;
   eraserPosition?: {x: number; y: number} | null;
-  startRecording?: () => void;
-  stopRecording?: () => void;
-  isRecording?: boolean;
 };
 
 const COLOR_PALETTE = ['#000000', '#FF5F5F', '#FFCD29', '#14AE5C', '#0D99FF'];
@@ -58,9 +55,6 @@ const CanvasDrawingTool = ({
   toggleEraserMode,
   isErasing,
   eraserPosition,
-  startRecording,
-  stopRecording,
-  isRecording,
 }: CanvasComponentProps) => (
   <View style={styles.canvasLayout}>
     <View style={styles.canvasContainer}>
@@ -178,20 +172,6 @@ const CanvasDrawingTool = ({
             <EraserOffIcon width={iconSize.lg} height={iconSize.lg} />
           )}
         </TouchableOpacity>
-        {/* 녹화 시작/중지 버튼 */}
-        {isRecording ? (
-          <TouchableOpacity
-            onPress={stopRecording}
-            style={styles.recordingButtonActive}>
-            <Text style={styles.buttonText}>녹화 중지</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={startRecording}
-            style={styles.recordingButton}>
-            <Text style={styles.buttonText}>녹화 시작</Text>
-          </TouchableOpacity>
-        )}
       </View>
     </View>
   </View>
@@ -221,10 +201,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   colorPalette: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
     borderRadius: 15,
-    marginHorizontal: 1.5,
+    marginHorizontal: 1,
     borderWidth: 2,
     borderColor: 'transparent',
   },
@@ -237,10 +217,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   penSize: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
     borderRadius: 15,
-    marginHorizontal: 1.5,
+    marginHorizontal: 1,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
