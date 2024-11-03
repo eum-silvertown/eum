@@ -3,6 +3,7 @@ package com.eum.user_service.domain.user.service;
 import com.eum.user_service.domain.user.dto.SignInRequest;
 import com.eum.user_service.domain.user.dto.SignUpRequest;
 import com.eum.user_service.domain.user.dto.TokenResponse;
+import com.eum.user_service.domain.user.dto.UserIdRequest;
 import com.eum.user_service.domain.user.entity.*;
 import com.eum.user_service.domain.user.repository.*;
 import com.eum.user_service.global.util.JwtUtil;
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
             // TEACHER 역할에 대한 추가 처리 로직
             if (classInfo.getTeacher() != null) {
                 //다른 반 선택 에러처리
+                throw new IllegalArgumentException("다른 반을 선택하세요.");
             }
             classInfo.updateTeacher(member);
         }
@@ -59,9 +61,17 @@ public class UserServiceImpl implements UserService {
         Member member = userRepository.findByUserId(signInRequest.userId())
                 .orElseThrow(RuntimeException::new);
         if(!passwordEncoder.matches(signInRequest.password(), member.getPassword())) {
-            throw new RuntimeException();
+            throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
         }
         return createTokenResponse(member);
+    }
+
+    @Override
+    public void checkId(UserIdRequest userIdRequest) {
+        userRepository.findByUserId(userIdRequest.userId())
+                .ifPresent(member -> {
+                    throw new IllegalArgumentException("이미 존재하는 사용자 ID입니다.");
+                });
     }
 
     private ClassInfo getClassInfo(SignUpRequest signUpRequest, School school) {
