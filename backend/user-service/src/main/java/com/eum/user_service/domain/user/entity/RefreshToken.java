@@ -19,20 +19,28 @@ public class RefreshToken {
     private Long userId;
 
     @TimeToLive
-    private long expireTime;
+    private Long expireTime;
+
+    private Boolean isBlacklisted; // 블랙리스트 여부를 저장하는 필드
 
     @Builder
-    public RefreshToken(String refreshToken, Long userId, long expireTime) {
+    public RefreshToken(String refreshToken, Long userId, Long expireTime, Boolean isBlacklisted) {
         this.refreshToken = refreshToken;
         this.userId = userId;
         this.expireTime = expireTime;
+        this.isBlacklisted = isBlacklisted;
     }
 
-    public static RefreshToken of(String refreshToken, Long userId, long expireTime) {
+    public static RefreshToken of(String refreshToken, Long userId, Long expireTime, Boolean isBlacklisted) {
         return RefreshToken.builder()
                 .refreshToken(refreshToken)
                 .userId(userId)
                 .expireTime(expireTime)
+                .isBlacklisted(isBlacklisted)
                 .build();
+    }
+
+    public void updateToBlacklist() {
+        this.isBlacklisted = true;
     }
 }

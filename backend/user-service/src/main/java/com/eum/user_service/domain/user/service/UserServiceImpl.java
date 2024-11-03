@@ -75,16 +75,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public TokenResponse generateAccessToken(TokenRequest tokenRequest) {
-        RefreshToken refreshToken = refreshTokenRepository.findById(tokenRequest.refreshToken())
-                .orElseThrow(() -> new IllegalArgumentException("만료된 refresh token 입니다."));
-
-        // 기존 RefreshToken 삭제
-        refreshTokenRepository.delete(refreshToken);
+        RefreshToken refreshToken = validateRefreshToken(tokenRequest);
+        // 기존 RefreshToken blacklist 등록
+        updateRefreshTokenToBlacklist(refreshToken);
 
         Member member = userRepository.findById(refreshToken.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         return createTokenResponse(member);
+    }
+
+    private void updateRefreshTokenToBlacklist(RefreshToken refreshToken) {
+        refreshToken.updateToBlacklist();
+        refreshTokenRepository.save(refreshToken);
+    }
+
+    private RefreshToken validateRefreshToken(TokenRequest tokenRequest) {
+        RefreshToken refreshToken = refreshTokenRepository.findById(tokenRequest.refreshToken())
+                .orElseThrow(() -> new IllegalArgumentException("만료된 refresh token 입니다."));
+
+        if (refreshToken.getIsBlacklisted()) {
+            throw new IllegalArgumentException("이용할 수 없는 Refresh Token입니다.");
+        }
+        return refreshToken;
     }
 
     private ClassInfo getClassInfo(SignUpRequest signUpRequest, School school) {
@@ -98,7 +111,8 @@ public class UserServiceImpl implements UserService {
         // JWT 토큰 생성
         String accessToken = jwtUtil.createAccessToken(member);
         String refreshToken = jwtUtil.createRefreshToken(member);
-        refreshTokenRepository.save(RefreshToken.of(refreshToken, member.getId(),jwtUtil.getRefreshExpiration()));
+        refreshTokenRepository.save(
+                RefreshToken.of(refreshToken, member.getId(),jwtUtil.getRefreshExpiration(),false));
 
         return TokenResponse.from(accessToken, refreshToken);
     }
