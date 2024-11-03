@@ -1,4 +1,4 @@
-package com.eum.user_service.user.controller;
+package com.eum.user_service.domain.user.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
