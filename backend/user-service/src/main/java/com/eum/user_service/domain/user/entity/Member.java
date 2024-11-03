@@ -5,15 +5,15 @@ import com.eum.user_service.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
 @Entity
+@NoArgsConstructor
 @Table(name = "members")
 public class Member extends BaseEntity {
     @Id
@@ -21,26 +21,26 @@ public class Member extends BaseEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "user_id", nullable = false, length = 30)
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "name", nullable = false, length = 30)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "role", nullable = false, length = 20)
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(name = "birth", nullable = false)
     private LocalDate birth;
 
-    @Column(name = "email", nullable = false, length = 30)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "tel", nullable = false, length = 11)
+    @Column(name = "tel", nullable = false)
     private String tel;
 
     @Column(name = "image")
@@ -63,7 +63,7 @@ public class Member extends BaseEntity {
         this.tel = tel;
     }
 
-    public static Member from(SignUpRequest signUpRequest, String encodedPassword) {
+    public static Member of(SignUpRequest signUpRequest, String encodedPassword) {
         return Member.builder()
                 .userId(signUpRequest.id())
                 .password(encodedPassword)
