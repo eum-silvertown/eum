@@ -31,7 +31,8 @@ public class JwtUtil {
 
     public String createAccessToken(Member member) {
         return Jwts.builder()
-                .claim("username", member.getName())
+                .claim("userId", member.getId())
+                .claim("role",member.getRole())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + accessExpiration))
                 .signWith(secretKey)
@@ -40,22 +41,14 @@ public class JwtUtil {
 
     public String createRefreshToken(Member member) {
         return Jwts.builder()
-                .claim("username", member.getName())
+                .claim("userId", member.getId())
+                .claim("role",member.getRole())
                 .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
                 .signWith(secretKey)
                 .compact();
     }
 
-    public boolean isValidRefreshToken(String refreshToken) {
-        try {
-            getClaimsToken(refreshToken);
-            return true;
-        } catch (NullPointerException | JwtException e) {
-            return false;
-        }
-    }
-
-    private Claims getClaimsToken(String token) {
+    public Claims getClaimsToken(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
