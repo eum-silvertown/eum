@@ -1,16 +1,15 @@
 package com.eum.user_service.domain.user.service;
 
-import com.eum.user_service.domain.user.dto.SignInRequest;
-import com.eum.user_service.domain.user.dto.SignUpRequest;
-import com.eum.user_service.domain.user.dto.TokenResponse;
-import com.eum.user_service.domain.user.dto.UserIdRequest;
+import com.eum.user_service.domain.user.dto.*;
 import com.eum.user_service.domain.user.entity.*;
 import com.eum.user_service.domain.user.repository.*;
 import com.eum.user_service.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +71,20 @@ public class UserServiceImpl implements UserService {
                 .ifPresent(member -> {
                     throw new IllegalArgumentException("이미 존재하는 사용자 ID입니다.");
                 });
+    }
+
+    @Override
+    public TokenResponse generateAccessToken(TokenRequest tokenRequest) {
+        RefreshToken refreshToken = refreshTokenRepository.findById(tokenRequest.refreshToken())
+                .orElseThrow(() -> new IllegalArgumentException("만료된 refresh token 입니다."));
+
+        // 기존 RefreshToken 삭제
+        refreshTokenRepository.delete(refreshToken);
+
+        Member member = userRepository.findById(refreshToken.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        return createTokenResponse(member);
     }
 
     private ClassInfo getClassInfo(SignUpRequest signUpRequest, School school) {

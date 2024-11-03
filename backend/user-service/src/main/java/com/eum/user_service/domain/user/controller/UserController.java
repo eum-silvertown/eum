@@ -1,9 +1,6 @@
 package com.eum.user_service.domain.user.controller;
 
-import com.eum.user_service.domain.user.dto.SignInRequest;
-import com.eum.user_service.domain.user.dto.SignUpRequest;
-import com.eum.user_service.domain.user.dto.TokenResponse;
-import com.eum.user_service.domain.user.dto.UserIdRequest;
+import com.eum.user_service.domain.user.dto.*;
 import com.eum.user_service.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,5 +34,12 @@ public class UserController {
         log.info("check userId request: {}", userIdRequest);
         userService.checkId(userIdRequest);
         return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/access")
+    public ResponseEntity<?> getToken(@RequestBody TokenRequest tokenRequest) {
+        log.info("generate access token request: {}", tokenRequest);
+        TokenResponse token = userService.generateAccessToken(tokenRequest);
+        return ResponseEntity.ok(token);
     }
 }
