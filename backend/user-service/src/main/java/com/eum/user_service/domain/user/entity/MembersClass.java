@@ -1,6 +1,6 @@
 package com.eum.user_service.domain.user.entity;
 
-import com.eum.user_service.global.BaseEntity;
+import com.eum.user_service.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 

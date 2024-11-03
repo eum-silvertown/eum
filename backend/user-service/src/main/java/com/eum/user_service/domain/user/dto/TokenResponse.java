@@ -7,5 +7,7 @@ public record TokenResponse(
         String accessToken,
         String refreshToken
 ) {
-
+    public static TokenResponse from(String accessToken, String refreshToken) {
+        return TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+    }
 }

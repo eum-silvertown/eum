@@ -1,10 +1,14 @@
 package com.eum.user_service.domain.user.entity;
 
-import com.eum.user_service.global.BaseEntity;
+import com.eum.user_service.domain.user.dto.SignUpRequest;
+import com.eum.user_service.global.common.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -27,10 +31,11 @@ public class Member extends BaseEntity {
     private String name;
 
     @Column(name = "role", nullable = false, length = 20)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "birth", nullable = false)
-    private Instant birth;
+    private LocalDate birth;
 
     @Column(name = "email", nullable = false, length = 30)
     private String email;
@@ -47,7 +52,26 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private Set<MembersClass> membersClasses = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "member")
-    private Set<RefreshToken> refreshTokens = new LinkedHashSet<>();
+    @Builder
+    public Member(String userId, String password, String name, Role role, LocalDate birth, String email, String tel) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.role = role;
+        this.birth = birth;
+        this.email = email;
+        this.tel = tel;
+    }
 
+    public static Member from(SignUpRequest signUpRequest, String encodedPassword) {
+        return Member.builder()
+                .userId(signUpRequest.id())
+                .password(encodedPassword)
+                .name(signUpRequest.name())
+                .role(signUpRequest.role())
+                .email(signUpRequest.email())
+                .tel(signUpRequest.tel())
+                .birth(signUpRequest.birth())
+                .build();
+    }
 }
