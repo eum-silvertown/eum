@@ -4,6 +4,7 @@ import com.eum.user_service.domain.user.entity.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
+@Getter
 public class JwtUtil {
     private final SecretKey secretKey;
 

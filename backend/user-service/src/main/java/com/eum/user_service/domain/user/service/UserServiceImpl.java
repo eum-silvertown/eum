@@ -3,10 +3,7 @@ package com.eum.user_service.domain.user.service;
 import com.eum.user_service.domain.user.dto.SignUpRequest;
 import com.eum.user_service.domain.user.dto.TokenResponse;
 import com.eum.user_service.domain.user.entity.*;
-import com.eum.user_service.domain.user.repository.ClassInfoRepository;
-import com.eum.user_service.domain.user.repository.MemberClassRepository;
-import com.eum.user_service.domain.user.repository.SchoolRepository;
-import com.eum.user_service.domain.user.repository.UserRepository;
+import com.eum.user_service.domain.user.repository.*;
 import com.eum.user_service.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +18,7 @@ public class UserServiceImpl implements UserService {
     private final ClassInfoRepository classInfoRepository;
     private final SchoolRepository schoolRepository;
     private final MemberClassRepository memberClassRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
@@ -47,7 +45,7 @@ public class UserServiceImpl implements UserService {
         } else {
             // TEACHER 역할에 대한 추가 처리 로직
             if (classInfo.getTeacher() != null) {
-                //에러처리
+                //다른 반 선택 에러처리
             }
             classInfo.updateTeacher(member);
         }
@@ -55,6 +53,7 @@ public class UserServiceImpl implements UserService {
         // JWT 토큰 생성
         String accessToken = jwtUtil.createAccessToken(member);
         String refreshToken = jwtUtil.createRefreshToken(member);
+        refreshTokenRepository.save(RefreshToken.of(refreshToken,member.getId(),jwtUtil.getRefreshExpiration()));
 
         return TokenResponse.from(accessToken, refreshToken);
     }
