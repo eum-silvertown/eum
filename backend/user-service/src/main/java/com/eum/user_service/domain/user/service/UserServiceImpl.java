@@ -1,5 +1,6 @@
 package com.eum.user_service.domain.user.service;
 
+import com.eum.user_service.domain.user.dto.SignInRequest;
 import com.eum.user_service.domain.user.dto.SignUpRequest;
 import com.eum.user_service.domain.user.dto.TokenResponse;
 import com.eum.user_service.domain.user.entity.*;
@@ -50,12 +51,17 @@ public class UserServiceImpl implements UserService {
             classInfo.updateTeacher(member);
         }
 
-        // JWT 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(member);
-        String refreshToken = jwtUtil.createRefreshToken(member);
-        refreshTokenRepository.save(RefreshToken.of(refreshToken,member.getId(),jwtUtil.getRefreshExpiration()));
+        return createTokenResponse(member);
+    }
 
-        return TokenResponse.from(accessToken, refreshToken);
+    @Override
+    public TokenResponse signIn(SignInRequest signInRequest) {
+        Member member = userRepository.findByUserId(signInRequest.userId())
+                .orElseThrow(RuntimeException::new);
+        if(!passwordEncoder.matches(signInRequest.password(), member.getPassword())) {
+            throw new RuntimeException();
+        }
+        return createTokenResponse(member);
     }
 
     private ClassInfo getClassInfo(SignUpRequest signUpRequest, School school) {
@@ -65,4 +71,12 @@ public class UserServiceImpl implements UserService {
                         .save(ClassInfo.from(school, signUpRequest.grade(), signUpRequest.classNumber())));
     }
 
+    private TokenResponse createTokenResponse(Member member) {
+        // JWT 토큰 생성
+        String accessToken = jwtUtil.createAccessToken(member);
+        String refreshToken = jwtUtil.createRefreshToken(member);
+        refreshTokenRepository.save(RefreshToken.of(refreshToken, member.getId(),jwtUtil.getRefreshExpiration()));
+
+        return TokenResponse.from(accessToken, refreshToken);
+    }
 }

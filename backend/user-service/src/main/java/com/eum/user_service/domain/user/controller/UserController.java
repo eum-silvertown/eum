@@ -1,5 +1,6 @@
 package com.eum.user_service.domain.user.controller;
 
+import com.eum.user_service.domain.user.dto.SignInRequest;
 import com.eum.user_service.domain.user.dto.SignUpRequest;
 import com.eum.user_service.domain.user.dto.TokenResponse;
 import com.eum.user_service.domain.user.service.UserService;
@@ -22,4 +23,12 @@ public class UserController {
         TokenResponse token = userService.signUp(signUpRequest);
         return ResponseEntity.ok(token);
     }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<?> signIn(@RequestBody SignInRequest signInRequest) {
+        log.info("Sign In request: {}", signInRequest);
+        TokenResponse token = userService.signIn(signInRequest);
+        return ResponseEntity.ok(token);
+    }
+
 }
