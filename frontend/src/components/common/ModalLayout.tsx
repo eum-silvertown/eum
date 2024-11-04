@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light.background.modalOverlay,
   },
   modalContent: {
+    flex: 1,
     width: '60%',
     padding: spacing.xxl,
     backgroundColor: colors.light.background.white,
@@ -63,7 +64,9 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: spacing.lg,
   },
-  bodyContent: {},
+  bodyContent: {
+    flex: 1,
+  },
   closeButton: {
     position: 'absolute',
     top: spacing.xl,
