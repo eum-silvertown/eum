@@ -20,6 +20,9 @@ type QuestionExplorerState = {
   history: HistoryEntry[];
   currentHistoryIndex: number;
 
+  // Selectors
+  getCurrentParentId: () => number;
+
   // Actions
   initializeStore: () => void;
   navigateToFolder: (folder: QuestionBoxType) => void;
@@ -84,6 +87,21 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
     currentFolder: [],
     history: [],
     currentHistoryIndex: -1,
+
+    getCurrentParentId: () => {
+      const {currentPath} = get();
+      if (currentPath.length === 0) {
+        return 0; // Root level
+      }
+
+      const currentPathLast = currentPath[currentPath.length - 1];
+      // If current folder has children, use its own ID as parent
+      if (currentPathLast.children && currentPathLast.children.length > 0) {
+        return currentPathLast.id;
+      }
+      // If no children, use the ID of its parent
+      return currentPathLast.parentId || 0;
+    },
 
     initializeStore: () => {
       set({
