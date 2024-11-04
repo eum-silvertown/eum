@@ -52,11 +52,11 @@ function RightRecordCanvasSection({
       const skiaPath = Skia.Path.MakeFromSVGString(currentPathData.path);
 
       if (skiaPath) {
-        // 오래된 경로를 제거하여 메모리 최적화
-        setDisplayPaths(prevPaths => {
-          const newPaths = prevPaths.slice(-10000); // 최근 50개의 경로만 유지
-          return [...newPaths, {...currentPathData, path: skiaPath}];
-        });
+        // 이전 경로를 모두 유지하도록 변경
+        setDisplayPaths(prevPaths => [
+          ...prevPaths,
+          {...currentPathData, path: skiaPath},
+        ]);
       }
 
       const newProgress = (playbackIndex.current + 1) / recordedPaths.length;
@@ -72,7 +72,7 @@ function RightRecordCanvasSection({
         if (timerRef.current) {
           clearTimeout(timerRef.current);
         }
-        timerRef.current = setTimeout(playNextPath, delay * 10);
+        timerRef.current = setTimeout(playNextPath, delay);
       }
     };
 

@@ -21,14 +21,14 @@ function Overview(): React.JSX.Element {
         />
         <ProgressBox
           color="red"
-          title="수행평가"
+          title="시험"
           content="10"
           unit="번"
           icon="complete"
         />
         <ProgressBox
           color="green"
-          title="숙제"
+          title="문제 보관함"
           content="10"
           unit="개"
           icon="complete"
@@ -40,7 +40,7 @@ function Overview(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   overview: {
-    flex: 0.85,
+    flex: 1,
     gap: spacing.md,
   },
   subtitle: {

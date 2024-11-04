@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet, Image } from 'react-native';
+import {Text} from '@components/common/Text';
+import {View, StyleSheet, Image} from 'react-native';
 import postit from '@assets/images/postit.png';
-import { getResponsiveSize } from '@utils/responsive';
-import { spacing } from '@theme/spacing';
+import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
 
 function Notice(): React.JSX.Element {
   return (
@@ -33,8 +33,9 @@ function Notice(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   notice: {
-    flex: 1,
+    height: '50%',
     justifyContent: 'center',
+    paddingVertical: getResponsiveSize(10),
   },
   subtitle: {
     marginTop: spacing.lg,
@@ -43,16 +44,16 @@ const styles = StyleSheet.create({
   noticeLayout: {
     flexDirection: 'row',
     gap: spacing.xxl,
-    marginHorizontal: 'auto',
+    paddingHorizontal: getResponsiveSize(20),
   },
   imageWrapper: {
     position: 'relative',
-    width: getResponsiveSize(168),
-    height: getResponsiveSize(140),
+    flex: 1,
   },
   imageContainer: {
     width: '100%',
     height: '100%',
+    objectFit: 'fill',
   },
   overlayText: {
     position: 'absolute',
