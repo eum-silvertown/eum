@@ -59,6 +59,18 @@ function LeftCanvasSection({
   const [isErasing, setIsErasing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
 
+  // 2초마다 pathGroups를 소켓으로 전송
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const dataToSend = JSON.stringify(pathGroups);
+      const compressedData = pako.deflate(dataToSend);
+
+      socket.emit('pathGroups_data', compressedData);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [pathGroups, socket]);
+
   // 녹화 데이터 저장
   const recordedPathsRef = useRef<PathData[]>([]);
 
