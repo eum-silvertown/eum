@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import {Text} from '@components/common/Text';
 import ContentLayout from './ContentLayout';
@@ -52,7 +52,7 @@ export default function TodoList(): React.JSX.Element {
     },
   ];
 
-  const {setIsModalOpened, setModalContent} = useModalStore();
+  const {setIsModalOpened, setModalTitle, setModalContent} = useModalStore();
 
   return (
     <ContentLayout flex={2}>
@@ -63,15 +63,12 @@ export default function TodoList(): React.JSX.Element {
         <TouchableOpacity
           onPress={() => {
             setIsModalOpened(true);
+            setModalTitle('해야할 일 리스트');
             setModalContent(<AddTodoModal />);
           }}>
           <AddCircleIcon width={iconSize.lg} height={iconSize.lg} />
         </TouchableOpacity>
       </View>
-      {/* <AddTodoModal
-        visible={addTodoModalVisible}
-        onClose={() => setAddTodoModalVisible(false)}
-      /> */}
       <ScrollView>
         {todos.map((item, index) => (
           <Todo key={index} item={item} />
