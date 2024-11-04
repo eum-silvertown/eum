@@ -1,4 +1,4 @@
-package com.eum.lecture_service.global;
+package com.eum.lecture_service.config.global;
 
 import lombok.Builder;
 import lombok.Getter;

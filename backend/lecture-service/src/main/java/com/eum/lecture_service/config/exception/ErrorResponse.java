@@ -1,4 +1,4 @@
-package com.eum.lecture_service.exception;
+package com.eum.lecture_service.config.exception;
 
 import lombok.Builder;
 import lombok.Getter;
