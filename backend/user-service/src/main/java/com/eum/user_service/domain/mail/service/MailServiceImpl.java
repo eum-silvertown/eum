@@ -82,7 +82,7 @@ public class MailServiceImpl implements MailService{
         Random random = new Random();
         StringBuilder key = new StringBuilder();
 
-        for (int i = 0; i < 6; i++) { // 인증 코드 8자리
+        for (int i = 0; i < 6; i++) { // 코드 6자리
             int index = random.nextInt(3);
 
             switch (index) {
@@ -113,7 +113,14 @@ public class MailServiceImpl implements MailService{
     private String sendSimpleMessage(String email) {
         String code = createCode();
         try {
-            MimeMessage message = createMail(email, code);
+            MimeMessage message = mailSender.createMimeMessage();
+            message.setRecipients(MimeMessage.RecipientType.TO, email);
+            message.setSubject("Eum 인증코드입니다");
+            String body = "";
+            body += "<h3>요청하신 인증 코드입니다.</h3>";
+            body += "<h1>" + code + "</h1>";
+            body += "<h3>감사합니다.</h3>";
+            message.setText(body, "UTF-8", "html");
             mailSender.send(message);
         } catch (MailException | MessagingException e) {
             throw new EumException(ErrorCode.MESSAGE_SEND_FAILED);
