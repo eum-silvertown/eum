@@ -2,6 +2,7 @@ package com.eum.user_service.domain.mail.controller;
 
 import com.eum.user_service.domain.mail.dto.EmailAuthCheckRequest;
 import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
+import com.eum.user_service.domain.mail.dto.FindIdResponse;
 import com.eum.user_service.domain.mail.service.MailService;
 import com.eum.user_service.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,11 @@ public class MailController {
     public CommonResponse<?> emailAuthenticationCheck(@RequestBody EmailAuthCheckRequest emailAuthCheckRequest) {
         mailService.checkAuthenticationCode(emailAuthCheckRequest);
         return CommonResponse.success("인증에 성공 했습니다.");
+    }
+
+    @PostMapping("/find/id")
+    public CommonResponse<?> findId(@RequestBody EmailAuthCheckRequest emailAuthCheckRequest) {
+        FindIdResponse findIdResponse = mailService.findIdWithAuthentication(emailAuthCheckRequest);
+        return CommonResponse.success(findIdResponse,"ID 찾기에 성공 했습니다.");
     }
 }

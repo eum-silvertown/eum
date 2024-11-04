@@ -2,8 +2,10 @@ package com.eum.user_service.domain.mail.service;
 
 import com.eum.user_service.domain.mail.dto.EmailAuthCheckRequest;
 import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
+import com.eum.user_service.domain.mail.dto.FindIdResponse;
 import com.eum.user_service.domain.mail.entity.EmailValidationCode;
 import com.eum.user_service.domain.mail.repository.EmailValidationCodeRepository;
+import com.eum.user_service.domain.user.entity.Member;
 import com.eum.user_service.domain.user.repository.UserRepository;
 import com.eum.user_service.global.exception.ErrorCode;
 import com.eum.user_service.global.exception.EumException;
@@ -20,7 +22,6 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService{
 
-
     private final JavaMailSender mailSender;
     private final UserRepository userRepository;
     private final EmailValidationCodeRepository emailValidationCodeRepository;
@@ -36,6 +37,17 @@ public class MailServiceImpl implements MailService{
 
     @Override
     public void checkAuthenticationCode(EmailAuthCheckRequest emailAuthCheckRequest) {
+        validateAuthenticationCode(emailAuthCheckRequest);
+    }
+
+    @Override
+    public FindIdResponse findIdWithAuthentication(EmailAuthCheckRequest emailAuthCheckRequest) {
+        validateAuthenticationCode(emailAuthCheckRequest);
+        Member member = userRepository.findByEmail(emailAuthCheckRequest.email());
+        return FindIdResponse.from(member);
+    }
+
+    private void validateAuthenticationCode(EmailAuthCheckRequest emailAuthCheckRequest) {
         EmailValidationCode emailValidationCode = emailValidationCodeRepository.findById(emailAuthCheckRequest.email())
                 .orElseThrow(() -> new EumException(ErrorCode.EMAIL_AUTHENTICATION_CODE_EXPIRED));
         if(!emailValidationCode.getValidationCode().equals(emailAuthCheckRequest.code()))
