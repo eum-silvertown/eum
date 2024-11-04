@@ -10,4 +10,6 @@ public interface MailService {
     void checkAuthenticationCode(EmailAuthCheckRequest emailAuthCheckRequest);
 
     FindIdResponse findIdWithAuthentication(EmailAuthCheckRequest emailAuthCheckRequest);
+
+    void emailAuthenticationForFindId(EmailAuthRequest emailAuthRequest);
 }

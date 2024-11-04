@@ -31,8 +31,15 @@ public class MailServiceImpl implements MailService{
         if(userRepository.existsByEmail(emailAuthRequest.email())) {
             throw new EumException(ErrorCode.EMAIL_ALREADY_EXISTED);
         }
-        String code = sendSimpleMessage(emailAuthRequest.email());
-        emailValidationCodeRepository.save(EmailValidationCode.of(emailAuthRequest,code));
+        saveAuthenticationCodeAndSendMessage(emailAuthRequest);
+    }
+
+    @Override
+    public void emailAuthenticationForFindId(EmailAuthRequest emailAuthRequest) {
+        if(!userRepository.existsByEmail(emailAuthRequest.email())) {
+            throw new EumException(ErrorCode.USER_NOT_FOUND);
+        }
+        saveAuthenticationCodeAndSendMessage(emailAuthRequest);
     }
 
     @Override
@@ -52,6 +59,11 @@ public class MailServiceImpl implements MailService{
                 .orElseThrow(() -> new EumException(ErrorCode.EMAIL_AUTHENTICATION_CODE_EXPIRED));
         if(!emailValidationCode.getValidationCode().equals(emailAuthCheckRequest.code()))
             throw new EumException(ErrorCode.INVALID_EMAIL_AUTHENTICATION_CODE);
+    }
+
+    private void saveAuthenticationCodeAndSendMessage(EmailAuthRequest emailAuthRequest) {
+        String code = sendSimpleMessage(emailAuthRequest.email());
+        emailValidationCodeRepository.save(EmailValidationCode.of(emailAuthRequest,code));
     }
 
     // 랜덤으로 숫자 생성

@@ -20,19 +20,25 @@ public class MailController {
 
     private final MailService mailService;
 
-    @PostMapping("/auth")
-    public CommonResponse<?> emailAuthentication(@RequestBody EmailAuthRequest emailAuthRequest) {
+    @PostMapping("/auth/request")
+    public CommonResponse<?> requestEmailAuthentication(@RequestBody EmailAuthRequest emailAuthRequest) {
         mailService.emailAuthentication(emailAuthRequest);
         return CommonResponse.success("인증 코드 전송에 성공 했습니다.");
     }
 
-    @PostMapping("/auth/check")
+    @PostMapping("/auth/request/find-id")
+    public CommonResponse<?> requestEmailAuthenticationForFindId(@RequestBody EmailAuthRequest emailAuthRequest) {
+        mailService.emailAuthenticationForFindId(emailAuthRequest);
+        return CommonResponse.success("인증 코드 전송에 성공 했습니다.");
+    }
+
+    @PostMapping("/auth/verify")
     public CommonResponse<?> emailAuthenticationCheck(@RequestBody EmailAuthCheckRequest emailAuthCheckRequest) {
         mailService.checkAuthenticationCode(emailAuthCheckRequest);
         return CommonResponse.success("인증에 성공 했습니다.");
     }
 
-    @PostMapping("/find/id")
+    @PostMapping("/auth/find-id")
     public CommonResponse<?> findId(@RequestBody EmailAuthCheckRequest emailAuthCheckRequest) {
         FindIdResponse findIdResponse = mailService.findIdWithAuthentication(emailAuthCheckRequest);
         return CommonResponse.success(findIdResponse,"ID 찾기에 성공 했습니다.");
