@@ -7,7 +7,7 @@ import {iconSize} from '@theme/iconSize';
 import BreadCrumb from '@components/questionBox/BreadCrumb';
 import {spacing} from '@theme/spacing';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
-import {useModalStore} from '@store/useModalStore';
+import {useModal} from '@store/useModalStore';
 import CreateFolder from './CreateFolder';
 
 function FolderHeader(): React.JSX.Element {
@@ -18,8 +18,17 @@ function FolderHeader(): React.JSX.Element {
   const currentPath = useQuestionExplorerStore(state => state.currentPath);
   const {navigateBack, navigateForward, navigateUp} =
     useQuestionExplorerStore();
-  const {setIsModalOpened, setModalTitle, setModalContent, setModalSize} =
-    useModalStore();
+  const {open} = useModal();
+
+  const openModal = () => {
+    open(<CreateFolder />, {
+      title: '폴더 생성',
+      size: 'xs',
+      onClose: () => {
+        console.log('Modal closed!');
+      },
+    });
+  };
 
   return (
     <View style={styles.folderHeader}>
@@ -68,10 +77,7 @@ function FolderHeader(): React.JSX.Element {
         <SearchIcon width={iconSize.md} height={iconSize.md} />
         <TouchableOpacity
           onPress={() => {
-            setIsModalOpened(true);
-            setModalTitle('폴더 생성');
-            setModalSize('xs');
-            setModalContent(<CreateFolder />);
+            openModal();
           }}>
           <AddFolderIcon width={iconSize.md} height={iconSize.md} />
         </TouchableOpacity>
