@@ -1,17 +1,30 @@
 import Button from '@components/common/Button';
+import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
 import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
 import {typography} from '@theme/typography';
 import {useState} from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
+import {Pressable, StyleSheet, TextInput, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
+import {createFolder} from 'src/services/questionBox';
 
 function CreateFolder(): React.JSX.Element {
   const [folderName, setFolderName] = useState('');
+  const {getCurrentParentId} = useQuestionExplorerStore();
 
   const onChangeText = (inputText: string) => {
     setFolderName(inputText);
+  };
+
+  const onPress = async () => {
+    console.log('title: ', folderName, ' parentId: ', getCurrentParentId());
+    try {
+      const data = await createFolder(folderName, getCurrentParentId());
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -23,7 +36,14 @@ function CreateFolder(): React.JSX.Element {
         keyboardType="default"
         style={styles.input}
       />
-      <Button content="생성 완료" variant="pressable" size="full" />
+      <Pressable>
+        <Button
+          onPress={onPress}
+          content="생성 완료"
+          variant="pressable"
+          size="full"
+        />
+      </Pressable>
     </View>
   );
 }
