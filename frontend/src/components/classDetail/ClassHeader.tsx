@@ -27,7 +27,7 @@ function ClassHeader(): React.JSX.Element {
         </View>
         <TouchableOpacity
           style={styles.enterButton}
-          onPress={() => navigation.navigate('LessoningScreen')}>
+          onPress={() => navigation.navigate('LessoningStudentListScreen')}>
           <Text style={styles.enterButtonText}>수업 입장</Text>
         </TouchableOpacity>
       </View>

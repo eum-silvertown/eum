@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import RecordOffIcon from '@assets/icons/recordOffIcon.svg';
 import RecordOnIcon from '@assets/icons/recordOnIcon.svg';
 import MikeOffIcon from '@assets/icons/mikeOffIcon.svg';
@@ -9,13 +8,17 @@ import TeacherScreenOffIcon from '@assets/icons/teacherScreenOffIcon.svg';
 import TeacherScreenOnIcon from '@assets/icons/teacherScreenOnIcon.svg';
 import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
 import DrawingTabletIcon from '@assets/icons/drawingTabletIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import LessoningStudentGridModal from './LessoningStudentGridModal';
+import {iconSize} from '@theme/iconSize';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type CanvasComponentProps = {
-  startRecording: () => void;
-  stopRecording: () => void;
-  isRecording: boolean;
+  startRecording?: () => void;
+  stopRecording?: () => void;
+  isRecording?: boolean;
 };
 
 const LessoningInteractionTool = ({
@@ -23,8 +26,7 @@ const LessoningInteractionTool = ({
   stopRecording,
   isRecording,
 }: CanvasComponentProps) => {
-  const [isModalVisible, setModalVisible] = useState(false);
-
+  const navigation = useNavigation<NavigationProps>();
   return (
     <View style={styles.InteractionToolBar}>
       <View style={styles.InteractionContainer}>
@@ -50,12 +52,17 @@ const LessoningInteractionTool = ({
             />
           </TouchableOpacity>
           {/* 학생 화면 Grid 보기 */}
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('LessoningStudentListScreen')}>
             <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
           </TouchableOpacity>
           {/* 필기 화면 닫기 */}
-          <TouchableOpacity >
-            <DrawingTabletIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+          <TouchableOpacity
+            onPress={() => navigation.navigate('LessoningScreen')}>
+            <DrawingTabletIcon
+              width={iconSize.mdPlus}
+              height={iconSize.mdPlus}
+            />
           </TouchableOpacity>
           {/* 녹음 시작/중지 */}
           <TouchableOpacity>
@@ -76,11 +83,6 @@ const LessoningInteractionTool = ({
           )}
         </View>
       </View>
-
-      {/* 모달 표시 */}
-      {isModalVisible && (
-        <LessoningStudentGridModal onClose={() => setModalVisible(false)} />
-      )}
     </View>
   );
 };
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
