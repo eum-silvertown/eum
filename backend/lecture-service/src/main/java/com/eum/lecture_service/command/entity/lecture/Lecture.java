@@ -1,5 +1,7 @@
 package com.eum.lecture_service.command.entity.lecture;
 
+import com.eum.lecture_service.config.global.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "lectures")
-public class Lecture {
+public class Lecture extends BaseEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="lecture_id")
