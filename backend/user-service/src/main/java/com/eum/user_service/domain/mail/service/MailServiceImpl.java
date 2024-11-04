@@ -27,6 +27,9 @@ public class MailServiceImpl implements MailService{
 
     @Override
     public void emailAuthentication(EmailAuthRequest emailAuthRequest) {
+        if(userRepository.existsByEmail(emailAuthRequest.email())) {
+            throw new EumException(ErrorCode.EMAIL_ALREADY_EXISTED);
+        }
         String code = sendSimpleMessage(emailAuthRequest.email());
         emailValidationCodeRepository.save(EmailValidationCode.of(emailAuthRequest,code));
     }
