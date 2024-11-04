@@ -3,7 +3,6 @@ import React from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import ModalLayout from '@components/common/ModalLayout';
 import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 
@@ -15,7 +14,7 @@ const AddTodoModal = (): React.JSX.Element => {
   };
 
   return (
-    <ModalLayout title="해야할 일 만들기">
+    <View>
       <View style={[styles.contentContainer]}>
         <Text variant="subtitle" weight="bold">
           제목
@@ -50,7 +49,7 @@ const AddTodoModal = (): React.JSX.Element => {
           생성
         </Text>
       </TouchableOpacity>
-    </ModalLayout>
+    </View>
   );
 };
 
