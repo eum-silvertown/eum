@@ -3,6 +3,7 @@ package com.eum.user_service.domain.mail.controller;
 import com.eum.user_service.domain.mail.dto.EmailAuthCheckRequest;
 import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
 import com.eum.user_service.domain.mail.dto.FindIdResponse;
+import com.eum.user_service.domain.mail.dto.FindPasswordRequest;
 import com.eum.user_service.domain.mail.service.MailService;
 import com.eum.user_service.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,14 @@ public class MailController {
     @PostMapping("/auth/request/find-id")
     public CommonResponse<?> requestEmailAuthenticationForFindId(@RequestBody EmailAuthRequest emailAuthRequest) {
         mailService.emailAuthenticationForFindId(emailAuthRequest);
+        return CommonResponse.success("인증 코드 전송에 성공 했습니다.");
+    }
+
+    @PostMapping("/auth/request/find-password")
+    public CommonResponse<?> requestEmailAuthenticationForFindPassword(
+            @RequestBody FindPasswordRequest findPasswordRequest
+    ) {
+        mailService.emailAuthenticationForFindPassword(findPasswordRequest);
         return CommonResponse.success("인증 코드 전송에 성공 했습니다.");
     }
 

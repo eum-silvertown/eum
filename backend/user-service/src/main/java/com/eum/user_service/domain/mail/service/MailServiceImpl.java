@@ -3,6 +3,7 @@ package com.eum.user_service.domain.mail.service;
 import com.eum.user_service.domain.mail.dto.EmailAuthCheckRequest;
 import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
 import com.eum.user_service.domain.mail.dto.FindIdResponse;
+import com.eum.user_service.domain.mail.dto.FindPasswordRequest;
 import com.eum.user_service.domain.mail.entity.EmailValidationCode;
 import com.eum.user_service.domain.mail.repository.EmailValidationCodeRepository;
 import com.eum.user_service.domain.user.entity.Member;
@@ -40,6 +41,14 @@ public class MailServiceImpl implements MailService{
             throw new EumException(ErrorCode.USER_NOT_FOUND);
         }
         saveAuthenticationCodeAndSendMessage(emailAuthRequest);
+    }
+
+    @Override
+    public void emailAuthenticationForFindPassword(FindPasswordRequest findPasswordRequest) {
+        if(!userRepository.existsByUserIdAndEmail(findPasswordRequest.id(),findPasswordRequest.email())) {
+            throw new EumException(ErrorCode.USER_NOT_FOUND);
+        }
+
     }
 
     @Override
