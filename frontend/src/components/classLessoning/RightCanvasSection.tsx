@@ -1,6 +1,6 @@
-import {useState} from 'react';
-import {Skia, useCanvasRef} from '@shopify/react-native-skia';
-import {Socket} from 'socket.io-client';
+import { useState } from 'react';
+import { Skia, useCanvasRef } from '@shopify/react-native-skia';
+import { Socket } from 'socket.io-client';
 import CanvasDrawingTool from './CanvasDrawingTool';
 import RightCanvasRefSection from './RightCanvasRefSection';
 import LessoningInteractionToolForStudent from './LessoningInteractionToolForStudent';
@@ -45,6 +45,11 @@ function RightCanvasSection({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
+  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
+
+  const handleToggleScreen = () => {
+    setIsTeacherScreenOn(prev => !prev);
+  };
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1));
@@ -190,7 +195,7 @@ function RightCanvasSection({
               dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
             if (isInEraseArea) {
-              addToUndoStack({type: 'erase', pathData});
+              addToUndoStack({ type: 'erase', pathData });
             }
             return !isInEraseArea;
           }),
@@ -259,9 +264,9 @@ function RightCanvasSection({
   };
 
   const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -271,9 +276,9 @@ function RightCanvasSection({
   };
 
   const handleTouchMove = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -293,7 +298,7 @@ function RightCanvasSection({
         timestamp: Date.now(),
       };
       addPathToGroup(newPathData);
-      addToUndoStack({type: 'draw', pathData: newPathData});
+      addToUndoStack({ type: 'draw', pathData: newPathData });
       setCurrentPath(null);
       setRedoStack([]);
     }
@@ -301,7 +306,7 @@ function RightCanvasSection({
 
   return (
     <>
-      <RightCanvasRefSection socket={socket} />
+      {isTeacherScreenOn && <RightCanvasRefSection socket={socket} />}
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={pathGroups.flat()}
@@ -323,7 +328,7 @@ function RightCanvasSection({
         isErasing={isErasing}
         eraserPosition={eraserPosition}
       />
-      <LessoningInteractionToolForStudent />
+      <LessoningInteractionToolForStudent onToggleScreen={handleToggleScreen} />
     </>
   );
 }
