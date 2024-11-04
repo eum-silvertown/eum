@@ -52,4 +52,10 @@ public class MailController {
         FindIdResponse findIdResponse = mailService.findIdWithAuthentication(emailAuthCheckRequest);
         return CommonResponse.success(findIdResponse,"ID 찾기에 성공 했습니다.");
     }
+
+    @PostMapping("/auth/find-password")
+    public CommonResponse<?> findPassword(@RequestBody EmailAuthCheckRequest emailAuthCheckRequest) {
+        mailService.findPasswordWithAuthentication(emailAuthCheckRequest);
+        return CommonResponse.success("임시 비밀번호가 발급되었습니다.");
+    }
 }

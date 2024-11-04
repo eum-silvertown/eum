@@ -15,4 +15,6 @@ public interface MailService {
     void emailAuthenticationForFindId(EmailAuthRequest emailAuthRequest);
 
     void emailAuthenticationForFindPassword(FindPasswordRequest findPasswordRequest);
+
+    void findPasswordWithAuthentication(EmailAuthCheckRequest emailAuthCheckRequest);
 }

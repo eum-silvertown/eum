@@ -63,6 +63,10 @@ public class Member extends BaseEntity {
         this.tel = tel;
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
     public static Member of(SignUpRequest signUpRequest, String encodedPassword) {
         return Member.builder()
                 .userId(signUpRequest.id())
