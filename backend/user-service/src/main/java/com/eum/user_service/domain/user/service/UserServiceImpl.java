@@ -35,11 +35,8 @@ public class UserServiceImpl implements UserService {
         School school = schoolRepository.findByName(signUpRequest.schoolName())
                 .orElseGet(() -> schoolRepository.save(School.of(signUpRequest.schoolName())));
 
-        // 데이터베이스에 사용자 정보 저장
-        userRepository.findByUserId(signUpRequest.id())
-                .ifPresent(member -> {
-                    throw new EumException(ErrorCode.USER_ID_ALREADY_EXISTED);
-                });
+        // 중복 검사
+        checkDuplicateIdAndEmail(signUpRequest);
 
         // User 엔티티 생성
         Member member = Member.of(signUpRequest, encodedPassword);
@@ -90,6 +87,17 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
 
         return createTokenResponse(member);
+    }
+
+    private void checkDuplicateIdAndEmail(SignUpRequest signUpRequest) {
+        userRepository.findByUserId(signUpRequest.id())
+                .ifPresent(member -> {
+                    throw new EumException(ErrorCode.USER_ID_ALREADY_EXISTED);
+                });
+        userRepository.findByEmail(signUpRequest.email())
+                .ifPresent(member -> {
+                    throw new EumException(ErrorCode.EMAIL_ALREADY_EXISTED);
+                });
     }
 
     private void updateRefreshTokenToBlacklist(RefreshToken refreshToken) {

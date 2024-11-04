@@ -50,7 +50,8 @@ public class MailServiceImpl implements MailService{
     @Override
     public FindIdResponse findIdWithAuthentication(EmailAuthCheckRequest emailAuthCheckRequest) {
         validateAuthenticationCode(emailAuthCheckRequest);
-        Member member = userRepository.findByEmail(emailAuthCheckRequest.email());
+        Member member = userRepository.findByEmail(emailAuthCheckRequest.email())
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
         return FindIdResponse.from(member);
     }
 
