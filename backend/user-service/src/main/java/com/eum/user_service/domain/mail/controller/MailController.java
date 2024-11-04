@@ -1,5 +1,6 @@
 package com.eum.user_service.domain.mail.controller;
 
+import com.eum.user_service.domain.mail.dto.EmailAuthCheckRequest;
 import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
 import com.eum.user_service.domain.mail.service.MailService;
 import com.eum.user_service.global.common.CommonResponse;
@@ -22,5 +23,11 @@ public class MailController {
     public CommonResponse<?> emailAuthentication(@RequestBody EmailAuthRequest emailAuthRequest) {
         mailService.emailAuthentication(emailAuthRequest);
         return CommonResponse.success("인증 코드 전송에 성공 했습니다.");
+    }
+
+    @PostMapping("/auth/check")
+    public CommonResponse<?> emailAuthenticationCheck(@RequestBody EmailAuthCheckRequest emailAuthCheckRequest) {
+        mailService.checkAuthenticationCode(emailAuthCheckRequest);
+        return CommonResponse.success("인증에 성공 했습니다.");
     }
 }

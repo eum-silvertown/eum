@@ -1,5 +1,6 @@
 package com.eum.user_service.domain.mail.service;
 
+import com.eum.user_service.domain.mail.dto.EmailAuthCheckRequest;
 import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
 import com.eum.user_service.domain.mail.entity.EmailValidationCode;
 import com.eum.user_service.domain.mail.repository.EmailValidationCodeRepository;
@@ -9,7 +10,6 @@ import com.eum.user_service.global.exception.EumException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,6 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService{
 
-    @Value("${spring.mail.auth-code-expiration}")
-    private Long timeToLive;
 
     private final JavaMailSender mailSender;
     private final UserRepository userRepository;
@@ -30,7 +28,15 @@ public class MailServiceImpl implements MailService{
     @Override
     public void emailAuthentication(EmailAuthRequest emailAuthRequest) {
         String code = sendSimpleMessage(emailAuthRequest.email());
-        emailValidationCodeRepository.save(EmailValidationCode.of(emailAuthRequest,code,timeToLive));
+        emailValidationCodeRepository.save(EmailValidationCode.of(emailAuthRequest,code));
+    }
+
+    @Override
+    public void checkAuthenticationCode(EmailAuthCheckRequest emailAuthCheckRequest) {
+        EmailValidationCode emailValidationCode = emailValidationCodeRepository.findById(emailAuthCheckRequest.email())
+                .orElseThrow(() -> new EumException(ErrorCode.EMAIL_AUTHENTICATION_CODE_EXPIRED));
+        if(!emailValidationCode.getValidationCode().equals(emailAuthCheckRequest.code()))
+            throw new EumException(ErrorCode.INVALID_EMAIL_AUTHENTICATION_CODE);
     }
 
     // 랜덤으로 숫자 생성

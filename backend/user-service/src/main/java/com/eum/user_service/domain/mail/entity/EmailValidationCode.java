@@ -6,11 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.TimeToLive;
 
 @Getter
 @NoArgsConstructor
-@RedisHash(value = "EmailValidationCode")
+@RedisHash(value = "EmailValidationCode", timeToLive = 300)
 public class EmailValidationCode {
 
     @Id
@@ -18,21 +17,16 @@ public class EmailValidationCode {
 
     private String validationCode;
 
-    @TimeToLive
-    private Long expireTime;
-
     @Builder
-    public EmailValidationCode(String userCode, String validationCode, Long expireTime) {
+    public EmailValidationCode(String userCode, String validationCode) {
         this.userCode = userCode;
         this.validationCode = validationCode;
-        this.expireTime = expireTime;
     }
 
-    public static EmailValidationCode of(EmailAuthRequest emailAuthRequest, String validationCode, Long expireTime) {
+    public static EmailValidationCode of(EmailAuthRequest emailAuthRequest, String validationCode) {
         return EmailValidationCode.builder()
                 .userCode(emailAuthRequest.email())
                 .validationCode(validationCode)
-                .expireTime(expireTime)
                 .build();
     }
 }

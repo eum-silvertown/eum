@@ -21,7 +21,8 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTED("U007","이미 등록된 이메일 입니다.", HttpStatus.BAD_REQUEST),
     //mail
     MESSAGE_SEND_FAILED("M001", "메일 전송에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-
+    EMAIL_AUTHENTICATION_CODE_EXPIRED("M002", "만료된 인증 코드입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL_AUTHENTICATION_CODE("M002", "잘못된 인증 코드입니다.", HttpStatus.BAD_REQUEST),
     //token
     AUTHENTICATION_FAILED("A001", "인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
     NO_JWT_TOKEN("A002", "JWT 토큰이 없습니다.", HttpStatus.UNAUTHORIZED),
