@@ -8,16 +8,17 @@ import {getResponsiveSize} from '@utils/responsive';
 interface ButtonProps {
   variant: 'pressable' | 'error';
   content: string;
-  size: 'sm' | 'md' | 'lg';
+  size: 'sm' | 'md' | 'lg' | 'full';
 }
 
 function Button({content, size}: ButtonProps): React.JSX.Element {
   const colors = useColors();
   const styles = StyleSheet.create({
     container: {
+      justifyContent: 'center',
       paddingVertical: spacing.md,
       paddingHorizontal: spacing.lg,
-      backgroundColor: colors.background.primary,
+      backgroundColor: colors.background.main,
       borderRadius: borderRadius.sm,
     },
   });
@@ -30,6 +31,10 @@ function Button({content, size}: ButtonProps): React.JSX.Element {
     },
     lg: {
       width: getResponsiveSize(150),
+    },
+    full: {
+      width: '100%',
+      height: getResponsiveSize(40),
     },
   });
 
