@@ -78,7 +78,6 @@ public class LectureServiceImpl implements LectureService{
 		//아직 스케줄 변경하는 건 없음;
 	}
 
-
 	@Override
 	public void deleteLecture(Long lectureId) {
 		if (!lectureRepository.existsById(lectureId)) {
