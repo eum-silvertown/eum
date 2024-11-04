@@ -7,7 +7,7 @@ import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import Todo from './Todo';
 import AddTodoModal from './AddTodoModal';
-import {useModalStore} from '@store/useModalStore';
+import {useModal} from '@store/useModalStore';
 
 export default function TodoList(): React.JSX.Element {
   const todos = [
@@ -52,7 +52,7 @@ export default function TodoList(): React.JSX.Element {
     },
   ];
 
-  const {setIsModalOpened, setModalTitle, setModalContent} = useModalStore();
+  const {open} = useModal();
 
   return (
     <ContentLayout flex={2}>
@@ -62,9 +62,12 @@ export default function TodoList(): React.JSX.Element {
         </Text>
         <TouchableOpacity
           onPress={() => {
-            setIsModalOpened(true);
-            setModalTitle('해야할 일 리스트');
-            setModalContent(<AddTodoModal />);
+            open(<AddTodoModal />, {
+              title: '해야할 일 리스트',
+              onClose: () => {
+                console.log('해야할 일 리스트 Closed!');
+              },
+            });
           }}>
           <AddCircleIcon width={iconSize.lg} height={iconSize.lg} />
         </TouchableOpacity>
