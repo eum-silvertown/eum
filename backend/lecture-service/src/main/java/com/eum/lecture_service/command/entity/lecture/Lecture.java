@@ -1,5 +1,6 @@
 package com.eum.lecture_service.command.entity.lecture;
 
+import com.eum.lecture_service.command.dto.lecture.LectureDto;
 import com.eum.lecture_service.config.global.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -52,4 +53,13 @@ public class Lecture extends BaseEntity {
 	@Column(name = "semester", nullable = false)
 	private Long semester;
 
+	public void updateFromDTO(LectureDto dto) {
+		this.title = dto.getTitle();
+		this.introduction = dto.getIntroduction();
+		this.subject = dto.getSubject();
+		this.backgroundColor = dto.getBackgroundColor();
+		this.fontColor = dto.getFontColor();
+		this.year = dto.getYear();
+		this.semester = dto.getSemester();
+	}
 }
