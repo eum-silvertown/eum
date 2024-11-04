@@ -4,6 +4,7 @@ import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
 import {useAuthStore} from '@store/useAuthStore';
 import {useColors} from 'src/hooks/useColors';
+import Modal from './Modal';
 
 interface MainLayoutProps {
   children: React.ReactElement;
@@ -51,6 +52,7 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
           {children}
         </View>
       </View>
+      <Modal />
     </View>
   );
 }
