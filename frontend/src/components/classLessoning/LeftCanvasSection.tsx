@@ -29,7 +29,7 @@ type ActionData = {
 
 // 상수
 const ERASER_RADIUS = 10;
-const MAX_STACK_SIZE = 10; // 최대 스택 크기
+const MAX_STACK_SIZE = 5; // 최대 스택 크기
 
 // 압축과 전송을 처리하는 함수 정의
 const sendCompressedData = (socket: Socket, event: string, data: any) => {
@@ -72,7 +72,48 @@ function LeftCanvasSection({
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
   };
 
-  const toggleEraserMode = () => setIsErasing(!isErasing); // 지우개 모드 토글
+  const toggleEraserMode = () => {
+    setIsErasing(!isErasing);
+
+    if (!isErasing) {
+      // Eraser 모드가 켜지면 병합된 경로들을 분할
+      setPathGroups(prevGroups => splitAllMergedPaths(prevGroups));
+    }
+  };
+
+  // 병합된 경로들을 개별 경로로 분할하는 함수
+  const splitAllMergedPaths = (groups: PathData[][]): PathData[][] => {
+    return groups.map(group => {
+      if (group.length === 1) {
+        // 병합된 그룹을 개별 경로로 분리
+        return splitMergedPath(group[0]);
+      }
+      return group; // 이미 분리된 그룹은 그대로 유지
+    });
+  };
+
+  // 병합된 경로를 개별 경로로 분할하는 함수
+  const splitMergedPath = (mergedPathData: PathData): PathData[] => {
+    const svgString = mergedPathData.path.toSVGString();
+    const pathSegments = svgString.split('M').slice(1); // 'M'을 기준으로 분할하여 세그먼트 생성
+
+    return pathSegments
+      .map((segment: string) => {
+        const newPath = Skia.Path.MakeFromSVGString('M' + segment);
+        if (!newPath) {
+          console.warn('Invalid SVG segment:', segment);
+          return null;
+        }
+        return {
+          path: newPath,
+          color: mergedPathData.color,
+          strokeWidth: mergedPathData.strokeWidth,
+          opacity: mergedPathData.opacity,
+          timestamp: mergedPathData.timestamp,
+        };
+      })
+      .filter(Boolean) as PathData[]; // null 필터링
+  };
 
   // 경로 병합 함수
   const mergePaths = (pathsToMerge: PathData[]) => {
