@@ -5,9 +5,16 @@ import CloseButtonIcon from '@assets/icons/cancelIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {useCallback, useEffect, useRef} from 'react';
 
 function Modals(): React.JSX.Element {
-  const {modals, closeModal} = useModalStore();
+  const {modals} = useModalStore();
 
   return (
     <>
@@ -17,7 +24,7 @@ function Modals(): React.JSX.Element {
           style={[
             styles.overlay,
             {
-              zIndex: 1000 + index, // 스택 순서대로 z-index 증가
+              zIndex: 1000 + index,
             },
           ]}>
           <View
@@ -25,24 +32,84 @@ function Modals(): React.JSX.Element {
               styles.wrapper,
               {
                 zIndex: 1001 + index,
-                // 모달 크기와 스타일링을 여기에 추가
               },
             ]}>
-            <View style={[styles.container, size[modal.size]]}>
-              <View style={styles.header}>
-                <Text variant="title" weight="bold">
-                  {modal.title}
-                </Text>
-                <TouchableOpacity onPress={() => closeModal(modal.id)}>
-                  <CloseButtonIcon width={iconSize.sm} height={iconSize.sm} />
-                </TouchableOpacity>
-              </View>
-              <View>{modal.content}</View>
-            </View>
+            <Modal modal={modal} />
           </View>
         </View>
       ))}
     </>
+  );
+}
+
+interface ModalProps {
+  modal: {
+    id: string;
+    title: string;
+    content: React.ReactNode;
+    size: keyof typeof size;
+  };
+}
+
+function Modal({modal}: ModalProps): React.JSX.Element {
+  const {closeModal} = useModalStore();
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+  const isClosing = useRef(false);
+
+  useEffect(() => {
+    opacity.value = withTiming(1, {duration: 150});
+    translateY.value = withTiming(0, {
+      duration: 150,
+    });
+  }, [opacity, translateY]);
+
+  const finishClosing = useCallback(() => {
+    if (!isClosing.current) return;
+    closeModal(modal.id);
+  }, [closeModal, modal.id]);
+
+  const handleClose = useCallback(() => {
+    if (isClosing.current) return;
+    isClosing.current = true;
+
+    // Simultaneous fade out and slide animations
+    opacity.value = withTiming(0, {
+      duration: 100,
+    });
+
+    translateY.value = withTiming(
+      10,
+      {
+        duration: 100,
+      },
+      finished => {
+        if (finished) {
+          runOnJS(finishClosing)();
+        }
+      },
+    );
+  }, [opacity, translateY, finishClosing]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
+      transform: [{translateY: translateY.value}],
+    };
+  });
+
+  return (
+    <Animated.View style={[styles.container, size[modal.size], animatedStyle]}>
+      <View style={styles.header}>
+        <Text variant="title" weight="bold">
+          {modal.title}
+        </Text>
+        <TouchableOpacity onPress={handleClose} activeOpacity={0.7}>
+          <CloseButtonIcon width={iconSize.sm} height={iconSize.sm} />
+        </TouchableOpacity>
+      </View>
+      <View>{modal.content}</View>
+    </Animated.View>
   );
 }
 
