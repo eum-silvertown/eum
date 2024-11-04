@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Skia, useCanvasRef } from '@shopify/react-native-skia';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {Skia, useCanvasRef} from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -29,9 +29,7 @@ const MAX_MEMORY_PATHS = 5; // 메모리에 유지할 최대 경로 수
 const STORAGE_KEY = 'drawing_paths';
 
 // 왼쪽 캔버스 컴포넌트
-function LeftRecordCanvasSection({
-  onRecordingEnd,
-}: LeftCanvasSectionProps): React.JSX.Element {
+function LeftRecordCanvasSection({}: LeftCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
   const [currentPath, setCurrentPath] = useState<any | null>(null);
@@ -46,7 +44,6 @@ function LeftRecordCanvasSection({
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
 
-  const [isRecording, setIsRecording] = useState(false);
   const deletedPaths = useRef<number[]>([]); // 삭제된 경로 ID 추적
 
   // 로컬 저장소에 paths 데이터 저장
@@ -94,14 +91,21 @@ function LeftRecordCanvasSection({
   const offloadOldPaths = async (newPath: PathData) => {
     setPaths(prevPaths => {
       const updatedPaths = [...prevPaths, newPath];
-      if (updatedPaths.length <= MAX_MEMORY_PATHS) { return updatedPaths; }
+      if (updatedPaths.length <= MAX_MEMORY_PATHS) {
+        return updatedPaths;
+      }
 
       // 초과된 데이터를 로컬로 오프로드
-      const pathsToOffload = updatedPaths.slice(0, updatedPaths.length - MAX_MEMORY_PATHS);
+      const pathsToOffload = updatedPaths.slice(
+        0,
+        updatedPaths.length - MAX_MEMORY_PATHS,
+      );
       savePathsToLocalStorage(pathsToOffload);
 
       // 최신 5개 경로만 유지
-      const remainingPaths = updatedPaths.slice(updatedPaths.length - MAX_MEMORY_PATHS);
+      const remainingPaths = updatedPaths.slice(
+        updatedPaths.length - MAX_MEMORY_PATHS,
+      );
       console.log('Remaining paths in memory:', remainingPaths);
       return remainingPaths;
     });
@@ -124,15 +128,6 @@ function LeftRecordCanvasSection({
     console.log('Paths updated:', paths);
   }, [paths]);
 
-  // 녹화 데이터 저장
-  const recordedPathsRef = useRef<PathData[]>([]);
-
-  useEffect(() => {
-    if (isRecording) {
-      recordedPathsRef.current = []; // 녹화 시작 시 초기화
-    }
-  }, [isRecording]);
-
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
     console.log('변경완료');
@@ -151,7 +146,7 @@ function LeftRecordCanvasSection({
         if (isInEraseArea) {
           setUndoStack(prevUndoStack => [
             ...prevUndoStack,
-            { type: 'erase', pathData },
+            {type: 'erase', pathData},
           ]);
           deletedPaths.current.push(pathData.timestamp); // 삭제된 경로 ID 기록
         }
@@ -163,7 +158,9 @@ function LeftRecordCanvasSection({
   // 삭제된 경로를 반영하여 로컬 저장소 동기화
   const syncDeletedPathsWithLocalStorage = useCallback(async () => {
     const localPaths = await loadPathsFromLocalStorage();
-    const filteredPaths = localPaths.filter(path => !deletedPaths.current.includes(path.timestamp));
+    const filteredPaths = localPaths.filter(
+      path => !deletedPaths.current.includes(path.timestamp),
+    );
     await savePathsToLocalStorage(filteredPaths);
     deletedPaths.current = []; // 삭제된 경로 목록 초기화
   }, []);
@@ -172,7 +169,6 @@ function LeftRecordCanvasSection({
     const interval = setInterval(syncDeletedPathsWithLocalStorage, 5000); // 5초마다 동기화
     return () => clearInterval(interval);
   }, [syncDeletedPathsWithLocalStorage]);
-
 
   const addToUndoStack = (action: ActionData) => {
     setUndoStack(prevUndoStack => {
@@ -195,7 +191,9 @@ function LeftRecordCanvasSection({
     });
   };
   const undo = () => {
-    if (undoStack.length === 0) { return; }
+    if (undoStack.length === 0) {
+      return;
+    }
 
     const lastAction = undoStack[undoStack.length - 1];
     setUndoStack(undoStack.slice(0, -1));
@@ -210,7 +208,9 @@ function LeftRecordCanvasSection({
   };
 
   const redo = () => {
-    if (redoStack.length === 0) { return; }
+    if (redoStack.length === 0) {
+      return;
+    }
 
     const lastRedoAction = redoStack[redoStack.length - 1];
     setRedoStack(redoStack.slice(0, -1));
@@ -224,11 +224,10 @@ function LeftRecordCanvasSection({
     }
   };
 
-
   const handleTouchStart = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -238,25 +237,15 @@ function LeftRecordCanvasSection({
   };
 
   const handleTouchMove = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     console.log('locationX:', locationX, 'locationY:', locationY);
 
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
-      const pathData = {
-        path: currentPath.toSVGString(),
-        color: penColor,
-        strokeWidth: penSize,
-        opacity: penOpacity,
-        timestamp: Date.now(),
-      };
-      if (isRecording) {
-        recordedPathsRef.current.push(pathData); // 녹화 데이터 추가
-      }
     }
   };
 
@@ -271,23 +260,11 @@ function LeftRecordCanvasSection({
         opacity: penOpacity,
         timestamp: Date.now(), // timestamp 자체를 고유 ID로 사용
       };
-      addToUndoStack({ type: 'draw', pathData: newPathData });
+      addToUndoStack({type: 'draw', pathData: newPathData});
       handleNewPath(newPathData); // 새로운 경로 추가 및 메모리 관리
       setCurrentPath(null);
       setRedoStack([]); // 새로운 경로가 추가되면 redo 스택 초기화
     }
-  };
-
-
-  // 녹화 시작
-  const startRecording = () => {
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-    setIsRecording(false);
-    onRecordingEnd(recordedPathsRef.current); // 부모 컴포넌트로 녹화된 경로 전달
-    recordedPathsRef.current = []; // 녹화 데이터 초기화
   };
 
   return (
@@ -306,12 +283,11 @@ function LeftRecordCanvasSection({
       togglePenOpacity={togglePenOpacity}
       undo={undo}
       redo={redo}
+      undoStack={undoStack.length}
+      redoStack={redoStack.length}
       toggleEraserMode={toggleEraserMode}
       isErasing={isErasing}
       eraserPosition={eraserPosition}
-      isRecording={isRecording}
-      startRecording={startRecording} // 녹화 시작 버튼
-      stopRecording={stopRecording} // 녹화 종료 버튼
     />
   );
 }
