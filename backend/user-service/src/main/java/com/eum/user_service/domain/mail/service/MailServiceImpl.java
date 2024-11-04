@@ -1,6 +1,6 @@
 package com.eum.user_service.domain.mail.service;
 
-import com.eum.user_service.domain.mail.dto.FindIdRequest;
+import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
 import com.eum.user_service.domain.mail.entity.EmailValidationCode;
 import com.eum.user_service.domain.mail.repository.EmailValidationCodeRepository;
 import com.eum.user_service.domain.user.repository.UserRepository;
@@ -28,9 +28,9 @@ public class MailServiceImpl implements MailService{
     private final EmailValidationCodeRepository emailValidationCodeRepository;
 
     @Override
-    public void emailAuthentication(FindIdRequest findIdRequest) {
-        String code = sendSimpleMessage(findIdRequest.email());
-        emailValidationCodeRepository.save(EmailValidationCode.of(findIdRequest,code,timeToLive));
+    public void emailAuthentication(EmailAuthRequest emailAuthRequest) {
+        String code = sendSimpleMessage(emailAuthRequest.email());
+        emailValidationCodeRepository.save(EmailValidationCode.of(emailAuthRequest,code,timeToLive));
     }
 
     // 랜덤으로 숫자 생성

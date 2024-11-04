@@ -1,7 +1,7 @@
 package com.eum.user_service.domain.mail.service;
 
-import com.eum.user_service.domain.mail.dto.FindIdRequest;
+import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
 
 public interface MailService {
-    void emailAuthentication(FindIdRequest findIdRequest);
+    void emailAuthentication(EmailAuthRequest emailAuthRequest);
 }

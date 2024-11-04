@@ -1,6 +1,6 @@
 package com.eum.user_service.domain.mail.entity;
 
-import com.eum.user_service.domain.mail.dto.FindIdRequest;
+import com.eum.user_service.domain.mail.dto.EmailAuthRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +28,9 @@ public class EmailValidationCode {
         this.expireTime = expireTime;
     }
 
-    public static EmailValidationCode of(FindIdRequest findIdRequest, String validationCode, Long expireTime) {
+    public static EmailValidationCode of(EmailAuthRequest emailAuthRequest, String validationCode, Long expireTime) {
         return EmailValidationCode.builder()
-                .userCode(findIdRequest.email())
+                .userCode(emailAuthRequest.email())
                 .validationCode(validationCode)
                 .expireTime(expireTime)
                 .build();
