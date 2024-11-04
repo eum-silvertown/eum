@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    gap: spacing.md,
+    gap: spacing.lg,
     marginVertical: spacing.md,
   },
   contentTop: {
@@ -45,5 +45,6 @@ const styles = StyleSheet.create({
   },
   contentBottom: {
     flex: 3,
+    marginBottom: spacing.sm
   },
 });
