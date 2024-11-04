@@ -32,7 +32,7 @@ public class MailServiceImpl implements MailService{
         if(userRepository.existsByEmail(emailAuthRequest.email())) {
             throw new EumException(ErrorCode.EMAIL_ALREADY_EXISTED);
         }
-        saveAuthenticationCodeAndSendMessage(emailAuthRequest);
+        saveAuthenticationCodeAndSendMessage(emailAuthRequest.email());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class MailServiceImpl implements MailService{
         if(!userRepository.existsByEmail(emailAuthRequest.email())) {
             throw new EumException(ErrorCode.USER_NOT_FOUND);
         }
-        saveAuthenticationCodeAndSendMessage(emailAuthRequest);
+        saveAuthenticationCodeAndSendMessage(emailAuthRequest.email());
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MailServiceImpl implements MailService{
         if(!userRepository.existsByUserIdAndEmail(findPasswordRequest.id(),findPasswordRequest.email())) {
             throw new EumException(ErrorCode.USER_NOT_FOUND);
         }
-
+        saveAuthenticationCodeAndSendMessage(findPasswordRequest.email());
     }
 
     @Override
@@ -71,9 +71,9 @@ public class MailServiceImpl implements MailService{
             throw new EumException(ErrorCode.INVALID_EMAIL_AUTHENTICATION_CODE);
     }
 
-    private void saveAuthenticationCodeAndSendMessage(EmailAuthRequest emailAuthRequest) {
-        String code = sendSimpleMessage(emailAuthRequest.email());
-        emailValidationCodeRepository.save(EmailValidationCode.of(emailAuthRequest,code));
+    private void saveAuthenticationCodeAndSendMessage(String email) {
+        String code = sendSimpleMessage(email);
+        emailValidationCodeRepository.save(EmailValidationCode.of(email,code));
     }
 
     // 랜덤으로 숫자 생성

@@ -23,9 +23,9 @@ public class EmailValidationCode {
         this.validationCode = validationCode;
     }
 
-    public static EmailValidationCode of(EmailAuthRequest emailAuthRequest, String validationCode) {
+    public static EmailValidationCode of(String email, String validationCode) {
         return EmailValidationCode.builder()
-                .userCode(emailAuthRequest.email())
+                .userCode(email)
                 .validationCode(validationCode)
                 .build();
     }
