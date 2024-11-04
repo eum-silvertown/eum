@@ -14,6 +14,7 @@ export type ScreenType = {
   NotificationScreen: undefined;
   ClassDetailScreen: undefined;
   LessoningScreen: undefined;
+  LessoningStudentListScreen: undefined;
 };
 
 type ScreenName = keyof ScreenType;
