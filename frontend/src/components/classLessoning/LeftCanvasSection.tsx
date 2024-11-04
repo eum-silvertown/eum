@@ -9,6 +9,10 @@ import LessoningInteractionTool from './LessoningInteractionTool';
 interface LeftCanvasSectionProps {
   socket: Socket;
   onRecordingEnd: (recordedPaths: PathData[]) => void;
+  currentPage: number;
+  totalPages: number;
+  onNextPage: () => void;
+  onPrevPage: () => void;
 }
 
 // Path 데이터 구조
@@ -33,6 +37,10 @@ const MAX_STACK_SIZE = 5; // 최대 스택 크기
 function LeftCanvasSection({
   socket,
   onRecordingEnd,
+  currentPage,
+  totalPages,
+  onNextPage,
+  onPrevPage,
 }: LeftCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [pathGroups, setPathGroups] = useState<PathData[][]>([]);
@@ -378,6 +386,10 @@ function LeftCanvasSection({
         isRecording={isRecording}
         startRecording={startRecording}
         stopRecording={stopRecording}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onNextPage={onNextPage}
+        onPrevPage={onPrevPage}
       />
     </>
   );
