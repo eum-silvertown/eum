@@ -35,11 +35,14 @@ public class UserServiceImpl implements UserService {
         School school = schoolRepository.findByName(signUpRequest.schoolName())
                 .orElseGet(() -> schoolRepository.save(School.of(signUpRequest.schoolName())));
 
+        // 데이터베이스에 사용자 정보 저장
+        userRepository.findByUserId(signUpRequest.id())
+                .ifPresent(member -> {
+                    throw new EumException(ErrorCode.USER_ID_ALREADY_EXISTED);
+                });
+
         // User 엔티티 생성
         Member member = Member.of(signUpRequest, encodedPassword);
-        // 데이터베이스에 사용자 정보 저장
-        userRepository.findByUserId(member.getUserId())
-                        .orElseThrow(() -> new EumException(ErrorCode.USER_ID_ALREADY_EXISTED));
         userRepository.save(member);
         //ClassInfo 엔티티 생성
         ClassInfo classInfo = getClassInfo(signUpRequest, school);
