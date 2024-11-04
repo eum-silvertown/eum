@@ -17,7 +17,11 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH("U003","비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     USER_NOT_AUTHORIZED("U004","해당 작업을 수행할 권한이 없습니다.", HttpStatus.FORBIDDEN),
     USER_ID_ALREADY_EXISTED("U005","이미 존재하는 ID 입니다.", HttpStatus.BAD_REQUEST),
-    CLASS_TEACHER_ALREADY_EXISTED("U006","이미 선생님이 등록된 수업 입니다.", HttpStatus.BAD_REQUEST),
+    CLASS_TEACHER_ALREADY_EXISTED("U006","이미 선생님이 등록된 반 입니다.", HttpStatus.BAD_REQUEST),
+
+    //mail
+    MESSAGE_SEND_FAILED("M001", "메일 전송에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+
     //token
     AUTHENTICATION_FAILED("A001", "인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
     NO_JWT_TOKEN("A002", "JWT 토큰이 없습니다.", HttpStatus.UNAUTHORIZED),
