@@ -61,10 +61,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public TokenResponse signIn(SignInRequest signInRequest) {
-        Member member = userRepository.findByUserId(signInRequest.userId())
-                .orElseThrow(RuntimeException::new);
+        Member member = userRepository.findByUserId(signInRequest.id())
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
         if(!passwordEncoder.matches(signInRequest.password(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+            throw new EumException(ErrorCode.PASSWORD_NOT_MATCH);
         }
         return createTokenResponse(member);
     }
