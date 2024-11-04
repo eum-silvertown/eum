@@ -91,7 +91,6 @@ function SidebarMenus(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    gap: spacing.xl,
   },
   icon: {
     alignItems: 'center',
@@ -101,6 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.lg,
+    padding: spacing.lg,
   },
   textContainer: {
     width: 'auto',
