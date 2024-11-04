@@ -8,5 +8,5 @@ import com.eum.lecture_service.command.entity.lecture.LectureSchedule;
 
 public interface LectureScheduleRepository extends JpaRepository<LectureSchedule, Long> {
 
-	List<LectureSchedule> findByClassIdAndDayAndPeriod(Long classId, String day, Long period);
+	List<LectureSchedule> findByLectureClassIdAndDayAndPeriod(Long classId, String day, Long period);
 }
