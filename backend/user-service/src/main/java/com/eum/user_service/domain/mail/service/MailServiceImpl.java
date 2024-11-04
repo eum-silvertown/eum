@@ -61,6 +61,7 @@ public class MailServiceImpl implements MailService{
         validateAuthenticationCode(emailAuthCheckRequest);
         Member member = userRepository.findByEmail(emailAuthCheckRequest.email())
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+        emailValidationCodeRepository.deleteById(emailAuthCheckRequest.email());
         return FindIdResponse.from(member);
     }
 
