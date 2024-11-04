@@ -76,9 +76,53 @@ function LeftCanvasSection({
     setIsErasing(!isErasing);
 
     if (!isErasing) {
-      // Eraser 모드가 켜지면 병합된 경로들을 분할
+      // 병합된 경로들을 분할
       setPathGroups(prevGroups => splitAllMergedPaths(prevGroups));
+    } else {
+      // 다시 병합 수행
+      setPathGroups(prevGroups => mergeSimilarPaths(prevGroups));
     }
+  };
+
+  // 스타일이 같은 경로들을 병합하는 함수
+  const mergeSimilarPaths = (groups: PathData[][]): PathData[][] => {
+    const mergedGroups: PathData[][] = [];
+
+    groups.forEach(group => {
+      if (mergedGroups.length === 0) {
+        mergedGroups.push([...group]);
+        return;
+      }
+
+      const lastMergedGroup = mergedGroups[mergedGroups.length - 1];
+      const lastPath = lastMergedGroup[0];
+
+      // 마지막 병합 그룹과 스타일이 같으면 병합
+      if (
+        lastPath.color === group[0].color &&
+        lastPath.strokeWidth === group[0].strokeWidth &&
+        lastPath.opacity === group[0].opacity
+      ) {
+        const mergedPath = mergePaths([...lastMergedGroup, ...group]);
+
+        if (mergedPath) {
+          // 병합된 경로를 PathData로 만들어 추가
+          const mergedPathData: PathData = {
+            path: mergedPath,
+            color: lastPath.color,
+            strokeWidth: lastPath.strokeWidth,
+            opacity: lastPath.opacity,
+            timestamp: lastPath.timestamp,
+          };
+          mergedGroups[mergedGroups.length - 1] = [mergedPathData];
+        }
+      } else {
+        // 스타일이 다르면 새로운 그룹으로 추가
+        mergedGroups.push([...group]);
+      }
+    });
+
+    return mergedGroups;
   };
 
   // 병합된 경로들을 개별 경로로 분할하는 함수
