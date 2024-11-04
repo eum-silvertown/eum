@@ -1,20 +1,28 @@
 package com.eum.lecture_service.command.entity.lecture;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.eum.lecture_service.command.dto.lecture.LectureDto;
+import com.eum.lecture_service.command.entity.exam.Exam;
+import com.eum.lecture_service.command.entity.folder.Folder;
+import com.eum.lecture_service.command.entity.homework.Homework;
 import com.eum.lecture_service.config.global.BaseEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,6 +60,21 @@ public class Lecture extends BaseEntity {
 
 	@Column(name = "semester", nullable = false)
 	private Long semester;
+
+	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<LectureSchedule> lectureSchedules = new ArrayList<>();
+
+	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Folder> folders = new ArrayList<>();
+
+	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Notice> notices = new ArrayList<>();
+
+	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Homework> homeworks = new ArrayList<>();
+
+	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Exam> exam = new ArrayList<>();
 
 	public void updateFromDTO(LectureDto dto) {
 		this.title = dto.getTitle();

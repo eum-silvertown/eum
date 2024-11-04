@@ -2,9 +2,12 @@ package com.eum.lecture_service.command.entity.homework;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,15 +22,18 @@ import lombok.NoArgsConstructor;
 @Table(name = "homework_problem_submissions")
 public class HomeworkProblemSubmission {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "homework_problem_submission_id")
 	private Long homeworkProblemSubmissionId;
 
-	@Column(name = "homework_submission_id")
-	private Long homeworkSubmissionId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "homework_submission_id")
+	private HomeworkSubmission homeworkSubmission;
 
-	@Column(name = "homework_id", nullable = false)
-	private Long homeworkId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "homework_id", nullable = false)
+	private Homework homework;
 
 	@Column(name = "problem_id", nullable = false)
 	private Long problemId;
@@ -38,3 +44,4 @@ public class HomeworkProblemSubmission {
 	@Column(name = "is_correct")
 	private Boolean isCorrect;
 }
+

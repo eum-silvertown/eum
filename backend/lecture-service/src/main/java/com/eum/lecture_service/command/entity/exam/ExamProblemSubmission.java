@@ -1,10 +1,15 @@
 package com.eum.lecture_service.command.entity.exam;
 
+import com.eum.lecture_service.command.entity.homework.Homework;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,11 +28,13 @@ public class ExamProblemSubmission {
 	@Column(name = "exam_problem_submission_id")
 	private Long examProblemSubmissionId;
 
-	@Column(name = "exam_submission_id")
-	private Long examSubmissionId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "exam_submission_id")
+	private ExamSubmission examSubmission;
 
-	@Column(name = "homework_id", nullable = false)
-	private Long examId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "homework_id", nullable = false)
+	private Homework homework;
 
 	@Column(name = "problem_id", nullable = false)
 	private Long problemId;
