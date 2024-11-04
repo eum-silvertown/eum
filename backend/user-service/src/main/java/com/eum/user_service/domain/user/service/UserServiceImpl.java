@@ -3,6 +3,8 @@ package com.eum.user_service.domain.user.service;
 import com.eum.user_service.domain.user.dto.*;
 import com.eum.user_service.domain.user.entity.*;
 import com.eum.user_service.domain.user.repository.*;
+import com.eum.user_service.global.exception.ErrorCode;
+import com.eum.user_service.global.exception.EumException;
 import com.eum.user_service.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,8 @@ public class UserServiceImpl implements UserService {
         // User 엔티티 생성
         Member member = Member.of(signUpRequest, encodedPassword);
         // 데이터베이스에 사용자 정보 저장
+        userRepository.findByUserId(member.getUserId())
+                        .orElseThrow(() -> new EumException(ErrorCode.USER_ID_ALREADY_EXISTED));
         userRepository.save(member);
         //ClassInfo 엔티티 생성
         ClassInfo classInfo = getClassInfo(signUpRequest, school);
@@ -47,7 +51,7 @@ public class UserServiceImpl implements UserService {
             // TEACHER 역할에 대한 추가 처리 로직
             if (classInfo.getTeacher() != null) {
                 //다른 반 선택 에러처리
-                throw new IllegalArgumentException("다른 반을 선택하세요.");
+                throw new EumException(ErrorCode.CLASS_TEACHER_ALREADY_EXISTED);
             }
             classInfo.updateTeacher(member);
         }
@@ -69,7 +73,7 @@ public class UserServiceImpl implements UserService {
     public void checkId(UserIdRequest userIdRequest) {
         userRepository.findByUserId(userIdRequest.userId())
                 .ifPresent(member -> {
-                    throw new IllegalArgumentException("이미 존재하는 사용자 ID입니다.");
+                    throw new EumException(ErrorCode.USER_ID_ALREADY_EXISTED);
                 });
     }
 
@@ -80,7 +84,7 @@ public class UserServiceImpl implements UserService {
         updateRefreshTokenToBlacklist(refreshToken);
 
         Member member = userRepository.findById(refreshToken.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
 
         return createTokenResponse(member);
     }
@@ -91,11 +95,14 @@ public class UserServiceImpl implements UserService {
     }
 
     private RefreshToken validateRefreshToken(TokenRequest tokenRequest) {
+        if(!jwtUtil.isValidRefreshToken(tokenRequest.refreshToken())) {
+            throw new EumException(ErrorCode.INVALID_JWT_TOKEN);
+        }
         RefreshToken refreshToken = refreshTokenRepository.findById(tokenRequest.refreshToken())
-                .orElseThrow(() -> new IllegalArgumentException("만료된 refresh token 입니다."));
+                .orElseThrow(() -> new EumException(ErrorCode.REFRESH_TOKEN_EXPIRED));
 
         if (refreshToken.getIsBlacklisted()) {
-            throw new IllegalArgumentException("이용할 수 없는 Refresh Token입니다.");
+            throw new EumException(ErrorCode.REFRESH_TOKEN_BLACKLISTED);
         }
         return refreshToken;
     }

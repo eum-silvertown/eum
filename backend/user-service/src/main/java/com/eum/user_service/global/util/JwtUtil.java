@@ -48,7 +48,17 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Claims getClaimsToken(String token) {
+    public boolean isValidRefreshToken(String refreshToken) {
+        try {
+            getClaimsToken(refreshToken);
+            return true;
+        } catch (NullPointerException | JwtException e) {
+            return false;
+        }
+    }
+
+
+    private Claims getClaimsToken(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
