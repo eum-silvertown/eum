@@ -58,9 +58,9 @@ function Modal({modal}: ModalProps): React.JSX.Element {
   const isClosing = useRef(false);
 
   useEffect(() => {
-    opacity.value = withTiming(1, {duration: 150});
+    opacity.value = withTiming(1, {duration: 200});
     translateY.value = withTiming(0, {
-      duration: 150,
+      duration: 200,
     });
   }, [opacity, translateY]);
 
@@ -75,13 +75,13 @@ function Modal({modal}: ModalProps): React.JSX.Element {
 
     // Simultaneous fade out and slide animations
     opacity.value = withTiming(0, {
-      duration: 100,
+      duration: 200,
     });
 
     translateY.value = withTiming(
       10,
       {
-        duration: 100,
+        duration: 200,
       },
       finished => {
         if (finished) {

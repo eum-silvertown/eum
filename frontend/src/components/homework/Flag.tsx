@@ -7,7 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {useEffect} from 'react';
+import {memo, useEffect} from 'react';
 
 interface FlagProps {
   index: number;
@@ -24,16 +24,16 @@ function Flag({
   selected,
   setSelectedFlag,
 }: FlagProps): React.JSX.Element {
-  const leftPercentage = useSharedValue(87.5);
-  const widthPercentage = useSharedValue(12.5);
+  const leftPercentage = useSharedValue(90);
+  const widthPercentage = useSharedValue(10);
 
   useEffect(() => {
     if (selected) {
-      leftPercentage.value = withTiming(87.5, {duration: 300});
-      widthPercentage.value = withTiming(12.5, {duration: 300});
+      leftPercentage.value = withTiming(87.5, {duration: 200});
+      widthPercentage.value = withTiming(12.5, {duration: 200});
     } else {
-      leftPercentage.value = withTiming(90, {duration: 300});
-      widthPercentage.value = withTiming(10, {duration: 300});
+      leftPercentage.value = withTiming(90, {duration: 200});
+      widthPercentage.value = withTiming(10, {duration: 200});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
@@ -62,7 +62,7 @@ function Flag({
   );
 }
 
-export default Flag;
+export default memo(Flag);
 
 const styles = StyleSheet.create({
   flag: {
