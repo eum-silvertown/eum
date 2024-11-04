@@ -25,15 +25,15 @@ public class LectureController {
 	//수업 생성
 	@PostMapping
 	public CommonResponse<?> createLecture(@RequestHeader("X-MEMBER-ID") Long memberId, @RequestBody LectureDto lectureDto) {
-		lectureService.createLecture(lectureDto, memberId);
-		return CommonResponse.success("수업 생성 성공");
+		Long lectureId = lectureService.createLecture(lectureDto, memberId);
+		return CommonResponse.success(lectureId, "수업 생성 성공");
 	}
 
 	//수업 수정
 	@PutMapping("/{lectureId}")
 	public CommonResponse<?> updateLecture(@PathVariable Long lectureId,  @RequestBody LectureDto lectureDto) {
-		lectureService.updateLecture(lectureDto, lectureId);
-		return CommonResponse.success("수업 수정 성공");
+		Long updateLectureId = lectureService.updateLecture(lectureDto, lectureId);
+		return CommonResponse.success(updateLectureId, "수업 수정 성공");
 	}
 
 	//수업 삭제

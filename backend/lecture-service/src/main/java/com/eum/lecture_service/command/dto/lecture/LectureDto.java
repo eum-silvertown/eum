@@ -46,10 +46,10 @@ LectureDto {
 			.build();
 	}
 
-	public List<LectureSchedule> toLectureScheduleEntities(Long lectureId) {
+	public List<LectureSchedule> toLectureScheduleEntities(Lecture lecture) {
 		return schedule.stream()
 			.map(s -> LectureSchedule.builder()
-				.lectureId(lectureId)
+				.lecture(lecture)
 				.day(s.getDay())
 				.period(s.getPeriod())
 				.build())

@@ -7,9 +7,9 @@ import com.eum.lecture_service.command.entity.lecture.Lecture;
 
 public interface LectureService {
 
-	void createLecture(LectureDto lectureDto, Long teacherId);
+	Long createLecture(LectureDto lectureDto, Long teacherId);
 
-	void updateLecture(LectureDto lectureDto, Long lectureId);
+	Long updateLecture(LectureDto lectureDto, Long lectureId);
 
 	void deleteLecture(Long lectureId);
 

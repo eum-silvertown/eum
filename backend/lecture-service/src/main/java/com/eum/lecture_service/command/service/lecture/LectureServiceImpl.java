@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.eum.lecture_service.command.dto.lecture.LectureDto;
 import com.eum.lecture_service.command.entity.folder.Folder;
@@ -27,39 +28,42 @@ public class LectureServiceImpl implements LectureService{
 	private final FolderRepository folderRepository;
 
 	@Override
-	public void createLecture(LectureDto lectureDto, Long teacherId) {
-		validateLectureSchedule(lectureDto);
+	@Transactional
+	public Long createLecture(LectureDto lectureDto, Long teacherId) {
+		Lecture lecture = lectureDto.toLectureEntity(teacherId);
 
-		//lecture 저장
-		Lecture lectureEntity = lectureDto.toLectureEntity(teacherId);
-		Lecture savedLecture = lectureRepository.save(lectureEntity);
+		lectureRepository.save(lecture);
 
-		//lecture 스케줄 저장
-		List<LectureSchedule> lectureScheduleEntities = lectureDto.toLectureScheduleEntities(savedLecture.getLectureId());
-		lectureScheduleRepository.saveAll(lectureScheduleEntities);
+		List<LectureSchedule> schedules = lectureDto.toLectureScheduleEntities(lecture);
 
-		//기본 폴더 생성
-		createDefaultFolders(savedLecture.getLectureId());
+		validateLectureSchedule(schedules, lecture.getClassId());
+
+		lecture.setLectureSchedules(schedules);
+
+		Lecture savedLecture = lectureRepository.save(lecture);
+
+		createDefaultFolders(savedLecture);
+
+		return savedLecture.getLectureId();
 	}
 
-	private void validateLectureSchedule(LectureDto lectureDto) {
-		Long classId = lectureDto.getClassId();
-		for (LectureDto.Schedule schedule : lectureDto.getSchedule()) {
-			List<LectureSchedule> existingSchedules = lectureScheduleRepository.findByClassIdAndDayAndPeriod(
+	private void validateLectureSchedule(List<LectureSchedule> schedules, Long classId) {
+		for (LectureSchedule schedule : schedules) {
+			List<LectureSchedule> existingSchedules = lectureScheduleRepository.findByLectureClassIdAndDayAndPeriod(
 				classId, schedule.getDay(), schedule.getPeriod());
+
 			if (!existingSchedules.isEmpty()) {
-				//이미 수업이 있으니까 익셉션처리
 				throw new EumException(ErrorCode.SCHEDULE_CONFLICT);
 			}
 		}
 	}
 
-	private void createDefaultFolders(Long lectureId) {
+	private void createDefaultFolders(Lecture lecture) {
 		String[] folderNames = {"문제 보관함", "다시보기", "숙제", "시험"};
 
 		Arrays.stream(folderNames).forEach(name -> {
 			Folder folder = Folder.builder()
-				.lectureId(lectureId)
+				.lecture(lecture)
 				.folderName(name)
 				.build();
 			folderRepository.save(folder);
@@ -67,15 +71,23 @@ public class LectureServiceImpl implements LectureService{
 	}
 
 	@Override
-	public void updateLecture(LectureDto lectureDto, Long lectureId) {
-		Lecture findLecture = lectureRepository.findById(lectureId).orElseThrow(() ->
-			new EumException(ErrorCode.LECTURE_NOT_FOUND));
+	@Transactional
+	public Long updateLecture(LectureDto lectureDto, Long lectureId) {
+		Lecture lecture = lectureRepository.findById(lectureId)
+			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
-		findLecture.updateFromDTO(lectureDto);
+		lecture.updateFromDTO(lectureDto);
 
-		lectureRepository.save(findLecture);
+		if (lectureDto.getSchedule() != null) {
+			lecture.getLectureSchedules().clear();
+			List<LectureSchedule> newSchedules = lectureDto.toLectureScheduleEntities(lecture);
+			validateLectureSchedule(newSchedules, lecture.getClassId());
+			lecture.getLectureSchedules().addAll(newSchedules);
+		}
 
-		//아직 스케줄 변경하는 건 없음;
+		Lecture savedLecture = lectureRepository.save(lecture);
+
+		return savedLecture.getLectureId();
 	}
 
 	@Override
@@ -88,6 +100,6 @@ public class LectureServiceImpl implements LectureService{
 
 	@Override
 	public Optional<Lecture> getLecture(Long lectureId) {
-		return Optional.empty();
+		return lectureRepository.findById(lectureId);
 	}
 }
