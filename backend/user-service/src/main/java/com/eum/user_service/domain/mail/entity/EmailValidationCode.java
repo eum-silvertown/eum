@@ -30,7 +30,7 @@ public class EmailValidationCode {
 
     public static EmailValidationCode of(FindIdRequest findIdRequest, String validationCode, Long expireTime) {
         return EmailValidationCode.builder()
-                .userCode(findIdRequest.name() + findIdRequest.email())
+                .userCode(findIdRequest.email())
                 .validationCode(validationCode)
                 .expireTime(expireTime)
                 .build();

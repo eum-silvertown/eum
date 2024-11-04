@@ -28,9 +28,7 @@ public class MailServiceImpl implements MailService{
     private final EmailValidationCodeRepository emailValidationCodeRepository;
 
     @Override
-    public void findId(FindIdRequest findIdRequest) {
-        userRepository.findByNameAndEmail(findIdRequest.name(),findIdRequest.email())
-                        .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+    public void emailAuthentication(FindIdRequest findIdRequest) {
         String code = sendSimpleMessage(findIdRequest.email());
         emailValidationCodeRepository.save(EmailValidationCode.of(findIdRequest,code,timeToLive));
     }
