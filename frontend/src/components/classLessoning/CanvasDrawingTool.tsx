@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-    gap: getResponsiveSize(12),
+    gap: getResponsiveSize(20),
   },
   paletteContainer: {
     flexDirection: 'column',
