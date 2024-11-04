@@ -5,12 +5,12 @@ interface ModalState {
   isModalOpened: boolean;
   modalContent: React.ReactNode;
   modalTitle: string;
-  modalSize: 'sm' | 'md' | 'lg';
+  modalSize: 'xs' | 'sm' | 'md' | 'lg' | 'full';
 
   setIsModalOpened: (value: boolean) => void;
   setModalContent: (content: React.ReactNode) => void;
   setModalTitle: (title: string) => void;
-  setModalSize: (size: 'sm' | 'md' | 'lg') => void;
+  setModalSize: (size: 'xs' | 'sm' | 'md' | 'lg' | 'full') => void;
 }
 
 export const useModalStore = create<ModalState>(set => ({
@@ -23,6 +23,7 @@ export const useModalStore = create<ModalState>(set => ({
       set({
         modalContent: null,
         modalTitle: '',
+        modalSize: 'md',
       });
     }
     set({
