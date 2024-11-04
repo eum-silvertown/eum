@@ -17,19 +17,19 @@ function Modal(): React.JSX.Element {
         <View style={styles.modalBackground}>
           <View style={styles.modalWrapper}>
             <View style={[styles.modalContent, styles[modalSize]]}>
-              {/* 모달 제목 */}
-              {modalTitle && (
-                <Text variant="title" weight="bold" style={styles.title}>
-                  {modalTitle}
-                </Text>
-              )}
+              <View style={styles.modalHeader}>
+                {/* 모달 제목 */}
+                {modalTitle && (
+                  <Text variant="title" weight="bold">
+                    {modalTitle}
+                  </Text>
+                )}
 
-              {/* 닫기 버튼 */}
-              <TouchableOpacity
-                onPress={() => setIsModalOpened(false)}
-                style={styles.closeButton}>
-                <CloseButtonIcon width={iconSize.sm} height={iconSize.sm} />
-              </TouchableOpacity>
+                {/* 닫기 버튼 */}
+                <TouchableOpacity onPress={() => setIsModalOpened(false)}>
+                  <CloseButtonIcon width={iconSize.sm} height={iconSize.sm} />
+                </TouchableOpacity>
+              </View>
 
               {/* 모달 본문 */}
               <View>{modalContent}</View>
@@ -67,15 +67,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     position: 'relative',
   },
-  title: {
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: spacing.lg,
   },
-  closeButton: {
-    position: 'absolute',
-    top: spacing.xl,
-    right: spacing.xl,
-    padding: spacing.md,
-    alignItems: 'center',
+  xs: {
+    width: '40%',
   },
   sm: {
     width: '50%',
@@ -85,5 +84,8 @@ const styles = StyleSheet.create({
   },
   lg: {
     width: '70%',
+  },
+  full: {
+    width: '100%',
   },
 });
