@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import UpArrowIcon from '@assets/icons/backArrowIcon.svg';
 import SearchIcon from '@assets/icons/searchIcon.svg';
@@ -7,6 +7,8 @@ import {iconSize} from '@theme/iconSize';
 import BreadCrumb from '@components/questionBox/BreadCrumb';
 import {spacing} from '@theme/spacing';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
+import {useModalStore} from '@store/useModalStore';
+import CreateFolder from './CreateFolder';
 
 function FolderHeader(): React.JSX.Element {
   const currentHistoryIndex = useQuestionExplorerStore(
@@ -16,6 +18,8 @@ function FolderHeader(): React.JSX.Element {
   const currentPath = useQuestionExplorerStore(state => state.currentPath);
   const {navigateBack, navigateForward, navigateUp} =
     useQuestionExplorerStore();
+  const {setIsModalOpened, setModalTitle, setModalContent, setModalSize} =
+    useModalStore();
 
   return (
     <View style={styles.folderHeader}>
@@ -62,7 +66,15 @@ function FolderHeader(): React.JSX.Element {
 
       <View style={styles.rightIcons}>
         <SearchIcon width={iconSize.md} height={iconSize.md} />
-        <AddFolderIcon width={iconSize.md} height={iconSize.md} />
+        <TouchableOpacity
+          onPress={() => {
+            setIsModalOpened(true);
+            setModalTitle('폴더 생성');
+            setModalSize('xs');
+            setModalContent(<CreateFolder />);
+          }}>
+          <AddFolderIcon width={iconSize.md} height={iconSize.md} />
+        </TouchableOpacity>
       </View>
     </View>
   );

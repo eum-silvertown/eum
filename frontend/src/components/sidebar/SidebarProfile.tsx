@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '12.5%',
     gap: spacing.lg,
+    padding: spacing.lg,
     overflow: 'hidden',
   },
   profileImageContainer: {

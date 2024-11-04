@@ -33,18 +33,20 @@ function SidebarMenus(): React.JSX.Element {
     {name: '우리 반', screen: 'MyClassScreen', icon: myClassIcon},
   ];
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
+  const {setCurrentScreen, currentScreen} = useCurrentScreenStore();
   const {isExpanded} = useSidebarStore();
   const textOpacity = useRef(new Animated.Value(1)).current;
 
   const handlePress = useCallback(
     (screen: keyof ScreenType) => {
-      setCurrentScreen(screen);
-      requestAnimationFrame(() => {
-        navigation.reset({routes: [{name: screen}]});
-      });
+      if (currentScreen !== screen) {
+        setCurrentScreen(screen);
+        requestAnimationFrame(() => {
+          navigation.reset({routes: [{name: screen}]});
+        });
+      }
     },
-    [navigation, setCurrentScreen],
+    [navigation, setCurrentScreen, currentScreen],
   );
 
   useEffect(() => {
@@ -89,7 +91,6 @@ function SidebarMenus(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    gap: spacing.xl,
   },
   icon: {
     alignItems: 'center',
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.lg,
+    padding: spacing.lg,
   },
   textContainer: {
     width: 'auto',

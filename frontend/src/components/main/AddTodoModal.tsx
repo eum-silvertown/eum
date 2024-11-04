@@ -3,19 +3,10 @@ import React from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import ModalLayout from '@components/common/ModalLayout';
 import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 
-interface AddTodoModalProps {
-  visible: boolean;
-  onClose: () => void;
-}
-
-const AddTodoModal = ({
-  visible,
-  onClose,
-}: AddTodoModalProps): React.JSX.Element => {
+const AddTodoModal = (): React.JSX.Element => {
   const importanceLevels = ['일반', '평범', '중요', '매우 중요'];
 
   const createTodo = () => {
@@ -23,7 +14,7 @@ const AddTodoModal = ({
   };
 
   return (
-    <ModalLayout visible={visible} onClose={onClose} title="해야할 일 만들기">
+    <View>
       <View style={[styles.contentContainer]}>
         <Text variant="subtitle" weight="bold">
           제목
@@ -58,13 +49,13 @@ const AddTodoModal = ({
           생성
         </Text>
       </TouchableOpacity>
-    </ModalLayout>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   contentContainer: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.xl,
   },
   importanceLevelContainer: {
     flexDirection: 'row',
