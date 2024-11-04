@@ -2,6 +2,8 @@ package com.eum.lecture_service.command.entity.lecture;
 
 import java.time.LocalDateTime;
 
+import com.eum.lecture_service.config.global.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "notices")
-public class Notice {
+public class Notice extends BaseEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "notice_id")
@@ -33,7 +35,4 @@ public class Notice {
 
 	@Column(name = "content", nullable = false)
 	private String content;
-
-	@Column(name = "created_at", nullable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
 }
