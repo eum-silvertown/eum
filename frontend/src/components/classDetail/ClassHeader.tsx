@@ -5,12 +5,16 @@ import { useNavigation } from '@react-navigation/native';
 import { spacing } from '@theme/spacing';
 import { ScreenType } from '@store/useCurrentScreenStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import PencilIcon from '@assets/icons/pencilIcon.svg';
+import VerticalMenuicon from '@assets/icons/verticalMenuIcon.svg';
 import { iconSize } from '@theme/iconSize';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
-function ClassHeader(): React.JSX.Element {
+type IsTeacherProps = {
+  isTeacher: boolean;
+};
+
+function ClassHeader({ isTeacher }: IsTeacherProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
   const isLive = true;
 
@@ -19,9 +23,6 @@ function ClassHeader(): React.JSX.Element {
       <Text style={styles.title} variant="title" weight="bold">
         이게 뭐여, 수학이여?
       </Text>
-      <TouchableOpacity>
-        <PencilIcon width={iconSize.md} height={iconSize.md} />
-      </TouchableOpacity>
       <View style={styles.rightSection}>
         <View style={[styles.chip, isLive ? styles.liveChip : styles.defaultChip]}>
           <Text style={[isLive ? styles.liveChipText : styles.defaultChipText]}>
@@ -31,9 +32,15 @@ function ClassHeader(): React.JSX.Element {
 
         <TouchableOpacity
           style={styles.enterButton}
-          onPress={() => navigation.navigate('LessoningStudentListScreen')}>
+          onPress={() => navigation.navigate('LessoningStudentListScreen')}
+        >
           <Text style={styles.enterButtonText}>수업 입장</Text>
         </TouchableOpacity>
+        {isTeacher && (
+          <TouchableOpacity style={styles.menuIconContainer}>
+            <VerticalMenuicon width={iconSize.md} height={iconSize.md} />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -52,6 +59,8 @@ const styles = StyleSheet.create({
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   chip: {
     paddingVertical: 4,
@@ -84,6 +93,10 @@ const styles = StyleSheet.create({
   enterButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  menuIconContainer: {
+    marginLeft: spacing.sm,
+    marginRight: spacing.xxl,
   },
 });
 
