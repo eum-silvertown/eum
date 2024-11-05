@@ -7,6 +7,7 @@ import Notice from '@components/classDetail/Notice';
 import Overview from '@components/classDetail/Overview';
 import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
+import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
 import { iconSize } from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 
@@ -20,24 +21,25 @@ function ClassDetailScreen({
   const isTeacher = true;
 
   if (isTeacher) {
+    // 선생님용
     return (
       <View style={styles.container}>
         <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
           <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
         </TouchableOpacity>
-        <ClassHeader />
+        <ClassHeader isTeacher={isTeacher} />
         <View style={styles.content}>
           <View style={styles.firstRow}>
             <View style={styles.overviewLayout}>
-              <Overview />
-              <Notice />
+              <Overview isTeacher={isTeacher} />
+              <Notice isTeacher={isTeacher} />
             </View>
             <View style={styles.mainContentLayout}>
               <View style={styles.teacherLayout}>
-                <Teacher />
+                <Teacher isTeacher={isTeacher} />
               </View>
               <View style={styles.chartLayout}>
-                <Chart />
+                <ClassHandleButtonList />
               </View>
             </View>
           </View>
@@ -54,21 +56,22 @@ function ClassDetailScreen({
     );
   }
 
+  // 학생용
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
         <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
       </TouchableOpacity>
-      <ClassHeader />
+      <ClassHeader isTeacher={isTeacher} />
       <View style={styles.content}>
         <View style={styles.firstRow}>
           <View style={styles.overviewLayout}>
-            <Overview />
-            <Notice />
+            <Overview isTeacher={isTeacher} />
+            <Notice isTeacher={isTeacher} />
           </View>
           <View style={styles.mainContentLayout}>
             <View style={styles.teacherLayout}>
-              <Teacher />
+              <Teacher isTeacher={isTeacher} />
             </View>
             <View style={styles.chartLayout}>
               <Chart />
