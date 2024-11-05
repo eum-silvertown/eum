@@ -17,19 +17,19 @@ function Overview({ isTeacher }: IsTeacherProps): React.JSX.Element {
       </Text>
       <View style={styles.progressLayout}>
         <ProgressBox
-          color="blue"
-          title="숙제"
-          content="10"
-          unit="개"
-          icon="homeworkCheck"
-          isTeacher={isTeacher}
-        />
-        <ProgressBox
           color="red"
           title="시험"
           content="10"
           unit="번"
           icon="complete"
+          isTeacher={isTeacher}
+        />
+        <ProgressBox
+          color="blue"
+          title="숙제"
+          content="10"
+          unit="개"
+          icon="homeworkCheck"
           isTeacher={isTeacher}
         />
         <ProgressBox
