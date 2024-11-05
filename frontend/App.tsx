@@ -44,7 +44,7 @@ function App(): React.JSX.Element {
     {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
     {name: 'SignUpScreen', component: SignUpScreen},
     {name: 'HomeScreen', component: HomeScreen},
-    {name: 'ClassListScreen', component: LectureListScreen},
+    {name: 'ClassListScreen', component: ClassListScreen},
     {name: 'HomeworkScreen', component: HomeworkScreen},
     {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
     {name: 'MyClassScreen', component: MyClassScreen},
