@@ -19,6 +19,8 @@ public enum ErrorCode {
     USER_ID_ALREADY_EXISTED("U005","이미 존재하는 ID 입니다.", HttpStatus.BAD_REQUEST),
     CLASS_TEACHER_ALREADY_EXISTED("U006","이미 선생님이 등록된 반 입니다.", HttpStatus.BAD_REQUEST),
     EMAIL_ALREADY_EXISTED("U007","이미 등록된 이메일 입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_ROLE("U008","등록되지 않은 ROLE 입니다.", HttpStatus.BAD_REQUEST),
+    CLASS_NOT_FOUND("U009","등록되지 않은 반 정보 입니다.", HttpStatus.BAD_REQUEST),
     //mail
     MESSAGE_SEND_FAILED("M001", "메일 전송에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     EMAIL_AUTHENTICATION_CODE_EXPIRED("M002", "만료된 인증 코드입니다.", HttpStatus.BAD_REQUEST),

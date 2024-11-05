@@ -140,30 +140,36 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public MemberInfoResponse getMemberInfo(Long memberId, Role role) {
-        MemberInfoResponse memberInfoResponse = null;
-        ImageResponse imageResponse = null;
+        // 회원 정보 조회
         Member member = userRepository.findById(memberId)
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
-        if(member.getImage() != null) {
-            imageResponse = fileService.getPresignedUrlForRead(member.getImage());
-        }
 
-        if(role.equals(Role.TEACHER)) {
+        // 이미지 URL 생성
+        ImageResponse imageResponse = (member.getImage() != null)
+                ? fileService.getPresignedUrlForRead(member.getImage())
+                : null;
+
+        // 역할에 따라 ClassInfoResponse 생성
+        ClassInfoResponse classInfoResponse = getClassInfoResponseByRole(memberId, role);
+
+        // MemberInfoResponse 생성 후 반환
+        return MemberInfoResponse.from(member, classInfoResponse, imageResponse);
+    }
+
+    private ClassInfoResponse getClassInfoResponseByRole(Long memberId, Role role) {
+        if (role.equals(Role.TEACHER)) {
             ClassInfo classInfo = classInfoRepository.findByTeacherId(memberId)
-                    .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
-            School school = classInfo.getSchool();
-            memberInfoResponse = MemberInfoResponse
-                    .from(member,ClassInfoResponse.from(classInfo,school),imageResponse);
-        } else if(role.equals(Role.STUDENT)) {
+                    .orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
+            return ClassInfoResponse.from(classInfo, classInfo.getSchool());
+        } else if (role.equals(Role.STUDENT)) {
             MembersClass membersClass = memberClassRepository.findByMemberId(memberId)
-                    .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+                    .orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
             ClassInfo classInfo = classInfoRepository.findByMembersClassesId(membersClass.getId())
-                    .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
-            School school = classInfo.getSchool();
-            memberInfoResponse = MemberInfoResponse
-                    .from(member,ClassInfoResponse.from(classInfo,school),imageResponse);
+                    .orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
+            return ClassInfoResponse.from(classInfo, classInfo.getSchool());
+        } else {
+            throw new EumException(ErrorCode.INVALID_ROLE);
         }
-        return memberInfoResponse;
     }
 
     private void checkDuplicateIdAndEmail(SignUpRequest signUpRequest) {
