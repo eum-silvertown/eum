@@ -22,15 +22,7 @@ LectureDto {
 	private Long classId;
 	private Long year;
 	private Long semester;
-	private List<Schedule> schedule;
-
-	@Getter
-	@Builder
-	public static class Schedule {
-		private String day; // 요일
-		private long period; // 교시
-
-	}
+	private List<LectureScheduleDto> schedule;
 
 	public Lecture toLectureEntity(Long teacherId) {
 		return Lecture.builder()
