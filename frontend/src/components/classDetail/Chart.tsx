@@ -81,7 +81,7 @@ function Chart(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   chart: {
-    paddingVertical: spacing.lg,
+    paddingVertical: spacing.md,
   },
   subtitle: {
     marginStart: spacing.xl,

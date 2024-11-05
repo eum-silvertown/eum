@@ -1,5 +1,5 @@
-import { View, StyleSheet } from 'react-native';
-import { spacing } from '@theme/spacing';
+import {View, StyleSheet, Pressable} from 'react-native';
+import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -7,11 +7,21 @@ import Notice from '@components/classDetail/Notice';
 import Overview from '@components/classDetail/Overview';
 import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
+import {Text} from '@components/common/Text';
 
-function ClassDetailScreen(): React.JSX.Element {
+interface ClassDetailScreenProp {
+  closeBook: () => void;
+}
+
+function ClassDetailScreen({
+  closeBook,
+}: ClassDetailScreenProp): React.JSX.Element {
   return (
     <View style={styles.container}>
       <ClassHeader />
+      <Pressable onPress={() => closeBook()}>
+        <Text>닫기</Text>
+      </Pressable>
       <View style={styles.content}>
         <View style={styles.firstRow}>
           <View style={styles.overviewLayout}>
@@ -63,7 +73,8 @@ const styles = StyleSheet.create({
   overviewLayout: {
     flex: 2,
     flexDirection: 'column',
-    paddingVertical: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl,
     backgroundColor: 'white',
     borderRadius: 8,
   },

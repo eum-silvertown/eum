@@ -8,7 +8,6 @@ import FindPasswordScreen from '@screens/FindPasswordScreen';
 import SignUpSelectScreen from '@screens/SignUpSelectScreen';
 import SignUpScreen from '@screens/SignUpScreen';
 import HomeScreen from '@screens/HomeScreen';
-import ClassDetailScreen from '@screens/ClassDetailScreen';
 import LessoningScreen from '@screens/LessoningScreen';
 import LectureListScreen from '@screens/LectureListScreen';
 import ClassListScreen from '@screens/ClassListScreen';
@@ -50,7 +49,6 @@ function App(): React.JSX.Element {
     {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
     {name: 'MyClassScreen', component: MyClassScreen},
     {name: 'NotificationScreen', component: NotificationScreen},
-    {name: 'ClassDetailScreen', component: ClassDetailScreen},
     {name: 'LessoningScreen', component: LessoningScreen},
     {name: 'LessoningStudentListScreen', component: LessoningStudentListScreen},
   ];

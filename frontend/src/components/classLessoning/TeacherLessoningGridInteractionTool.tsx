@@ -1,12 +1,8 @@
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import RecordOffIcon from '@assets/icons/recordOffIcon.svg';
 import RecordOnIcon from '@assets/icons/recordOnIcon.svg';
 import MikeOffIcon from '@assets/icons/mikeOffIcon.svg';
 import MikeOnIcon from '@assets/icons/mikeOnIcon.svg';
-import TeacherScreenMoveIcon from '@assets/icons/teacherScreenMoveIcon.svg';
-import TeacherScreenOffIcon from '@assets/icons/teacherScreenOffIcon.svg';
-import TeacherScreenOnIcon from '@assets/icons/teacherScreenOnIcon.svg';
-import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
 import DrawingTabletIcon from '@assets/icons/drawingTabletIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {ScreenType} from '@store/useCurrentScreenStore';
@@ -21,41 +17,21 @@ type CanvasComponentProps = {
   isRecording?: boolean;
 };
 
-const LessoningInteractionTool = ({
+const TeacherLessoningGridInteractionTool = ({
   startRecording,
   stopRecording,
   isRecording,
 }: CanvasComponentProps) => {
   const navigation = useNavigation<NavigationProps>();
+
+  const handleExit = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.InteractionToolBar}>
       <View style={styles.InteractionContainer}>
         <View style={styles.floatingToolbar}>
-          {/* 선생님 필기 On / Off */}
-          <TouchableOpacity>
-            <TeacherScreenOffIcon
-              width={iconSize.mdPlus}
-              height={iconSize.mdPlus}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <TeacherScreenOnIcon
-              width={iconSize.mdPlus}
-              height={iconSize.mdPlus}
-            />
-          </TouchableOpacity>
-          {/* 선생님 화면으로 이동 */}
-          <TouchableOpacity>
-            <TeacherScreenMoveIcon
-              width={iconSize.mdPlus}
-              height={iconSize.mdPlus}
-            />
-          </TouchableOpacity>
-          {/* 학생 화면 Grid 보기 */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('LessoningStudentListScreen')}>
-            <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-          </TouchableOpacity>
           {/* 필기 화면 닫기 */}
           <TouchableOpacity
             onPress={() => navigation.navigate('LessoningScreen')}>
@@ -74,20 +50,25 @@ const LessoningInteractionTool = ({
           {/* 녹화 시작/중지 */}
           {isRecording ? (
             <TouchableOpacity onPress={stopRecording}>
-              <RecordOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+              <RecordOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={startRecording}>
-              <RecordOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+              <RecordOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
             </TouchableOpacity>
           )}
+
+          {/* 종료 버튼 */}
+          <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
+            <Text style={styles.exitButtonText}>수업 종료하기</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
   );
 };
 
-export default LessoningInteractionTool;
+export default TeacherLessoningGridInteractionTool;
 
 const styles = StyleSheet.create({
   InteractionToolBar: {
@@ -110,7 +91,43 @@ const styles = StyleSheet.create({
   floatingToolbar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    width: '100%',
+    justifyContent: 'space-between',
+    width: '40%',
+  },
+  pageControlContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  pageInfoText: {
+    marginHorizontal: 12,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  pageButtonText: {
+    fontSize: 12,
+    color: '#007AFF',
+    fontWeight: '600',
+  },
+  pageButton: {
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: '#E0F7FA',
+    alignItems: 'center',
+  },
+  disabledText: {
+    color: '#999',
+  },
+  exitButton: {
+    padding: 4,
+    borderRadius: 8,
+    backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
+    alignItems: 'center',
+  },
+  exitButtonText: {
+    fontSize: 12,
+    color: '#D32F2F',
+    fontWeight: 'bold',
   },
 });
