@@ -13,14 +13,21 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FolderController {
 
-    private final FolderService folderCommandService;
+    private final FolderService folderService;
 
     @PostMapping
-    public CommonResponse<?> createFolder(HttpServletRequest request, @RequestBody CreateFolderRequestDTO requestDTO) {
+    public CommonResponse<?> createFolder(@RequestBody CreateFolderRequestDTO requestDTO, HttpServletRequest request) {
         Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
         requestDTO.setMemberId(memberId);
-        CreateFolderResponseDTO response = folderCommandService.createFolder(requestDTO);
+        CreateFolderResponseDTO response = folderService.createFolder(requestDTO);
 
         return CommonResponse.success(response, "폴더 생성 성공");
+    }
+
+    @GetMapping("/{folderId}")
+    public CommonResponse<?> getFolder(@PathVariable Long folderId, HttpServletRequest request) {
+        Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
+
+        return CommonResponse.success(folderService.getSubFolders(folderId, memberId), "폴더 조회 성공");
     }
 }
