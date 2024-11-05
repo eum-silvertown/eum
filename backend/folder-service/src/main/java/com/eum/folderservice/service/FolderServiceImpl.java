@@ -93,7 +93,7 @@ public class FolderServiceImpl implements FolderService {
         if (parentFolder == null) {
             throw new FolderException(ErrorCode.ROOT_FOLDER_DELETE_ERROR);
         }
-        
+
         parentFolder.removeChildFolder(folder);
         folderRepository.delete(folder);
     }
@@ -102,6 +102,10 @@ public class FolderServiceImpl implements FolderService {
     @Transactional
     public void moveFolder(MoveFolderRequestDTO requestDTO, Long memberId) {
         Folder folder = findFolderByIdAndMemberId(requestDTO.getFolderId(), memberId);
+
+        if(folder.getParentFolder() == null) {
+            throw new FolderException(ErrorCode.ROOT_FOLDER_MOVE_ERROR);
+        }
 
         folder.getParentFolder().removeChildFolder(folder);
 
