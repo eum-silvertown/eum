@@ -90,9 +90,11 @@ public class FolderServiceImpl implements FolderService {
         Folder folder = findFolderByIdAndMemberId(folderId, memberId);
         Folder parentFolder = folder.getParentFolder();
 
-        if (parentFolder != null) {
-            parentFolder.removeChildFolder(folder);
+        if (parentFolder == null) {
+            throw new FolderException(ErrorCode.ROOT_FOLDER_DELETE_ERROR);
         }
+        
+        parentFolder.removeChildFolder(folder);
         folderRepository.delete(folder);
     }
 
