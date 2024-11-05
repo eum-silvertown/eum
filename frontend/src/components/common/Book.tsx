@@ -69,7 +69,9 @@ function Book({rightPosition, title, color}: BookProp): React.JSX.Element {
   const openBook = () => {
     setSelected(true);
     // DetailScreen 컴포넌트를 마운트
-    setShowDetail(true);
+    setTimeout(() => {
+      setShowDetail(true);
+    }, ANIM_DURATION * 2.5);
 
     // DetailScreen을 서서히 나타나게 함
     detailOpacity.value = withSequence(
