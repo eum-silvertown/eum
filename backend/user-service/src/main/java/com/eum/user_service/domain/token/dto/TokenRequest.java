@@ -1,4 +1,4 @@
-package com.eum.user_service.domain.user.dto;
+package com.eum.user_service.domain.token.dto;
 
 import lombok.Builder;
 

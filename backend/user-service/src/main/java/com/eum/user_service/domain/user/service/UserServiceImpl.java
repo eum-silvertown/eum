@@ -1,11 +1,14 @@
 package com.eum.user_service.domain.user.service;
 
+import com.eum.user_service.domain.token.dto.TokenRequest;
+import com.eum.user_service.domain.token.dto.TokenResponse;
+import com.eum.user_service.domain.token.entity.RefreshToken;
+import com.eum.user_service.domain.token.service.TokenService;
 import com.eum.user_service.domain.user.dto.*;
 import com.eum.user_service.domain.user.entity.*;
 import com.eum.user_service.domain.user.repository.*;
 import com.eum.user_service.global.exception.ErrorCode;
 import com.eum.user_service.global.exception.EumException;
-import com.eum.user_service.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,9 +24,8 @@ public class UserServiceImpl implements UserService {
     private final ClassInfoRepository classInfoRepository;
     private final SchoolRepository schoolRepository;
     private final MemberClassRepository memberClassRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
 
     @Override
     @Transactional
@@ -56,7 +58,7 @@ public class UserServiceImpl implements UserService {
             classInfo.updateTeacher(member);
         }
 
-        return createTokenResponse(member);
+        return tokenService.createTokenResponse(member);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class UserServiceImpl implements UserService {
         if(!passwordEncoder.matches(signInRequest.password(), member.getPassword())) {
             throw new EumException(ErrorCode.PASSWORD_NOT_MATCH);
         }
-        return createTokenResponse(member);
+        return tokenService.createTokenResponse(member);
     }
 
     @Override
@@ -79,14 +81,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public TokenResponse generateAccessToken(TokenRequest tokenRequest) {
-        RefreshToken refreshToken = validateRefreshToken(tokenRequest);
+        RefreshToken refreshToken = tokenService.validateRefreshToken(tokenRequest);
         // 기존 RefreshToken blacklist 등록
-        updateRefreshTokenToBlacklist(refreshToken);
+        tokenService.updateRefreshTokenToBlacklist(refreshToken);
 
         Member member = userRepository.findById(refreshToken.getUserId())
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
 
-        return createTokenResponse(member);
+        return tokenService.createTokenResponse(member);
     }
 
     private void checkDuplicateIdAndEmail(SignUpRequest signUpRequest) {
@@ -100,24 +102,6 @@ public class UserServiceImpl implements UserService {
                 });
     }
 
-    private void updateRefreshTokenToBlacklist(RefreshToken refreshToken) {
-        refreshToken.updateToBlacklist();
-        refreshTokenRepository.save(refreshToken);
-    }
-
-    private RefreshToken validateRefreshToken(TokenRequest tokenRequest) {
-        if(!jwtUtil.isValidRefreshToken(tokenRequest.refreshToken())) {
-            throw new EumException(ErrorCode.INVALID_JWT_TOKEN);
-        }
-        RefreshToken refreshToken = refreshTokenRepository.findById(tokenRequest.refreshToken())
-                .orElseThrow(() -> new EumException(ErrorCode.REFRESH_TOKEN_EXPIRED));
-
-        if (refreshToken.getIsBlacklisted()) {
-            throw new EumException(ErrorCode.REFRESH_TOKEN_BLACKLISTED);
-        }
-        return refreshToken;
-    }
-
     private ClassInfo getClassInfo(SignUpRequest signUpRequest, School school) {
         return classInfoRepository
                 .findBySchoolAndGradeAndClassNumber(school, signUpRequest.grade(), signUpRequest.classNumber())
@@ -125,13 +109,4 @@ public class UserServiceImpl implements UserService {
                         .save(ClassInfo.from(school, signUpRequest.grade(), signUpRequest.classNumber())));
     }
 
-    private TokenResponse createTokenResponse(Member member) {
-        // JWT 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(member);
-        String refreshToken = jwtUtil.createRefreshToken(member);
-        refreshTokenRepository.save(
-                RefreshToken.of(refreshToken, member.getId(),jwtUtil.getRefreshExpiration(),false));
-
-        return TokenResponse.from(accessToken, refreshToken);
-    }
 }

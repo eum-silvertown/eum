@@ -1,11 +1,12 @@
 package com.eum.user_service.domain.user.controller;
 
+import com.eum.user_service.domain.token.dto.TokenRequest;
+import com.eum.user_service.domain.token.dto.TokenResponse;
 import com.eum.user_service.domain.user.dto.*;
 import com.eum.user_service.domain.user.service.UserService;
 import com.eum.user_service.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,5 +43,11 @@ public class UserController {
         log.info("generate access token request: {}", tokenRequest);
         TokenResponse token = userService.generateAccessToken(tokenRequest);
         return CommonResponse.success(token,"토큰 발급에 성공했습니다.");
+    }
+
+    @GetMapping("/logout")
+    public CommonResponse<?> logout(@RequestHeader(value = "X-MEMBER-ID") String memberId) {
+
+        return CommonResponse.success(memberId);
     }
 }
