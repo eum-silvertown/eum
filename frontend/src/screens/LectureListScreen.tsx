@@ -1,9 +1,6 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Text} from '@components/common/Text';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType} from '@store/useCurrentScreenStore';
 import {spacing} from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
 import {Picker} from '@react-native-picker/picker';
@@ -11,39 +8,45 @@ import AddLectureModal from '@components/lectureList/AddLectureModal';
 import {colors} from 'src/hooks/useColors';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
-import {useModal} from '@store/useModalStore';
+import {useModal} from 'src/hooks/useModal';
+import {useLectureStore} from '@store/useLectureStore';
+import Lecture from '@components/main/Lecture';
+
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
+import {iconSize} from '@theme/iconSize';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
-const classData = [
-  {id: '1', title: '수학', year: '2023', color: '#ff0000'},
-  {id: '2', title: '영어', year: '2022', color: '#0000ff'},
-  {id: '3', title: '과학', year: '2023', color: '#00ff00'},
-  {id: '4', title: '국어', year: '2021', color: '#ffff00'},
-  {id: '5', title: '국어', year: '2024', color: '#ffff00'},
-];
+function LectureListScreen(): React.JSX.Element {
+  // 현재 연도와 학기 계산
+  const currentYear = new Date().getFullYear();
+  const currentSemester = new Date().getMonth() < 6 ? 1 : 2;
 
-function ClassListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const [selectedYear, setSelectedYear] = useState<string | undefined>();
-  const [selectedSemester, setSelectedSemester] = useState<
-    string | undefined
-  >();
-  const [lectureModalVisible, setAddLectureModalVisible] =
-    useState<boolean>(false);
+  const [selectedYear, setSelectedYear] = useState<number | undefined>(
+    currentYear,
+  );
+  const [selectedSemester, setSelectedSemester] = useState<number | undefined>(
+    currentSemester,
+  );
+  const {lectures} = useLectureStore();
   const {open} = useModal();
 
-  // 현재 연도와 학기 계산
-  const currentYear = new Date().getFullYear().toString();
-  const currentSemester = new Date().getMonth() < 6 ? '1' : '2';
-
   // 중복 제거된 연도 목록 생성
-  const years = Array.from(new Set(classData.map(item => item.year))).sort(
-    (a, b) => parseInt(b) - parseInt(a),
-  );
+  const years = Array.from(
+    new Set(
+      lectures
+        .map(item => item.year)
+        .filter((year): year is number => year !== undefined),
+    ),
+  ).sort((a, b) => b - a);
 
-  const handlePress = (classId: string) => {
-    // navigation.navigate('ClassDetailScreen', { classId });
+  // 임시로 스크린 이동
+  const handleMoveLectureDetail = () => {
+    navigation.navigate('ClassDetailScreen');
   };
 
   // 현재 학기 설정
@@ -52,38 +55,17 @@ function ClassListScreen(): React.JSX.Element {
     setSelectedSemester(currentSemester);
   };
 
+  // 연도와 학기 필터 적용
+  const filteredLectures = lectures.filter(
+    data =>
+      (!selectedYear || data.year === selectedYear) && // 연도 필터 적용
+      (!selectedSemester || data.semester === selectedSemester), // 학기 필터 적용
+  );
+
   return (
     <View style={styles.container}>
-      <ScreenInfo title="수업" />
-
       <View style={styles.header}>
-        <Picker
-          selectedValue={selectedYear}
-          onValueChange={itemValue => setSelectedYear(itemValue)}
-          style={styles.picker}>
-          <Picker.Item label="연도 선택" value="" />
-          {years.map(year => (
-            <Picker.Item key={year} label={`${year}`} value={year} />
-          ))}
-        </Picker>
-
-        <Picker
-          selectedValue={selectedSemester}
-          onValueChange={itemValue => setSelectedSemester(itemValue)}
-          style={styles.picker}>
-          <Picker.Item label="학기 선택" value="" />
-          <Picker.Item label="1학기" value="1" />
-          <Picker.Item label="2학기" value="2" />
-        </Picker>
-
-        <TouchableOpacity
-          onPress={handleCurrentSemester}
-          style={styles.currentSemesterButton}>
-          <Text color="white" weight="bold">
-            현재 학기
-          </Text>
-        </TouchableOpacity>
-
+        <ScreenInfo title="수업" />
         <TouchableOpacity
           onPress={() => {
             open(<AddLectureModal />, {
@@ -93,69 +75,99 @@ function ClassListScreen(): React.JSX.Element {
               },
             });
           }}>
-          <Text>수업 생성</Text>
+          <AddCircleIcon width={iconSize.xl} height={iconSize.xl} />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.classList}>
-        {classData
-          .filter(data => !selectedYear || data.year === selectedYear) // 연도 필터 적용
-          .map(data => (
-            <TouchableOpacity
-              key={data.id}
-              onPress={() => handlePress(data.id)}
-              style={[styles.classItem, {backgroundColor: data.color}]}>
-              <Text color="white" weight="bold" align="center">
-                {data.title}
-              </Text>
-            </TouchableOpacity>
+      <View style={styles.classListContainer}>
+        <View style={styles.filter}>
+          <Picker
+            selectedValue={selectedYear}
+            onValueChange={itemValue => setSelectedYear(itemValue)}
+            style={styles.picker}>
+            <Picker.Item label="연도 선택" value="" />
+            {years.map(year => (
+              <Picker.Item key={year} label={`${year}`} value={year} />
+            ))}
+          </Picker>
 
-            
-            
-          ))}
+          <Picker
+            selectedValue={selectedSemester}
+            onValueChange={itemValue => setSelectedSemester(itemValue)}
+            style={styles.picker}>
+            <Picker.Item label="학기 선택" value={0} />
+            <Picker.Item label="1학기" value={1} />
+            <Picker.Item label="2학기" value={2} />
+          </Picker>
+
+          <TouchableOpacity
+            onPress={handleCurrentSemester}
+            style={styles.currentSemesterButton}>
+            <Text weight="bold">현재 학기</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView
+          contentContainerStyle={styles.classList}
+          showsVerticalScrollIndicator={false}>
+          {lectures
+            .filter(data => !selectedYear || data.year === selectedYear)
+            .filter(
+              data => !selectedSemester || data.semester === selectedSemester,
+            )
+            .map(data => (
+              <TouchableOpacity
+                key={data.lectureId}
+                onPress={handleMoveLectureDetail}>
+                <Lecture item={data}></Lecture>
+              </TouchableOpacity>
+            ))}
+        </ScrollView>
       </View>
     </View>
   );
 }
 
-export default ClassListScreen;
+export default LectureListScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: colors.light.background.white,
     paddingVertical: spacing.xl,
     paddingHorizontal: spacing.xxl,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  filter: {    
+    width: '30%',
+    marginLeft: 'auto',
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.md,
   },
   picker: {
     flex: 1,
-    height: 40,
   },
   currentSemesterButton: {
     padding: spacing.sm,
-    backgroundColor: '#007AFF',
     borderRadius: 5,
     alignItems: 'center',
+  },
+  classListContainer: {
+    flex: 1,
+    backgroundColor: colors.light.background.white,
+    borderRadius: borderRadius.xl,
+    elevation: getResponsiveSize(2),
+    padding: spacing.lg,
   },
   classList: {
-    padding: spacing.lg,
-    borderRadius: borderRadius.xl,
-    backgroundColor: colors.light.background.white,
-    elevation: getResponsiveSize(2),
+    alignSelf: 'center',
+    width: '95%',
     flexDirection: 'row',
     flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     gap: spacing.md,
-  },
-  classItem: {
-    width: '45%',
-    padding: spacing.md,
-    borderRadius: 5,
-    alignItems: 'center',
   },
 });
