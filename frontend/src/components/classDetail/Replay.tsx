@@ -54,7 +54,7 @@ function Replay(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   replay: {
-    paddingVertical: spacing.lg,
+    paddingVertical: spacing.md,
   },
   item: {
     flexDirection: 'row',

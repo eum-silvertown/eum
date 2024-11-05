@@ -1,16 +1,34 @@
 import React from 'react';
 import {Text} from '@components/common/Text';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import postit from '@assets/images/postit.png';
 import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
+import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
+import {iconSize} from '@theme/iconSize';
+import {useModal} from 'src/hooks/useModal';
+import NoticeCreateModal from './NoticeCreateModal';
 
 function Notice(): React.JSX.Element {
+  const {open} = useModal();
   return (
     <View style={styles.notice}>
-      <Text variant="subtitle" weight="bold" style={styles.subtitle}>
-        공지사항
-      </Text>
+      <View style={styles.noticeHeader}>
+        <Text variant="subtitle" weight="bold">
+          공지사항
+        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            open(<NoticeCreateModal />, {
+              title: '공지사항 생성',
+              onClose: () => {
+                console.log('공지사항 생성 닫기');
+              },
+            });
+          }}>
+          <AddCircleIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.noticeLayout}>
         <View style={styles.imageWrapper}>
           <Image source={postit} alt="postit" style={styles.imageContainer} />
@@ -37,7 +55,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: getResponsiveSize(10),
   },
-  subtitle: {
+  noticeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: spacing.lg,
     marginStart: spacing.xl,
   },
