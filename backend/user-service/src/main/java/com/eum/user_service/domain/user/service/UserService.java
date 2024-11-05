@@ -15,4 +15,6 @@ public interface UserService {
     TokenResponse generateAccessToken(TokenRequest tokenRequest);
 
     void logout(Long memberId, String token);
+
+    void updateMemberPassword(Long memberId, PasswordUpdateRequest passwordUpdateRequest);
 }

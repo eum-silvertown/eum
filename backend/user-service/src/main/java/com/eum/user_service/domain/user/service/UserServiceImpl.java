@@ -108,6 +108,14 @@ public class UserServiceImpl implements UserService {
         tokenService.updateAccessTokenToBlacklist(token);
     }
 
+    @Override
+    @Transactional
+    public void updateMemberPassword(Long memberId, PasswordUpdateRequest passwordUpdateRequest) {
+        Member member = userRepository.findById(memberId)
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+        member.updatePassword(passwordEncoder.encode(passwordUpdateRequest.password()));
+    }
+
     private void checkDuplicateIdAndEmail(SignUpRequest signUpRequest) {
         userRepository.findByUserId(signUpRequest.id())
                 .ifPresent(member -> {

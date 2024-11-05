@@ -50,6 +50,13 @@ public class UserController {
                                     @RequestHeader(value = "Authorization") String token) {
         log.info("access token request: {}", token);
         userService.logout(Long.valueOf(memberId), token);
-        return CommonResponse.success("로그아웃 성공");
+        return CommonResponse.success("로그아웃에 성공했습니다.");
+    }
+
+    @PatchMapping("/info/password")
+    public CommonResponse<?> updateMemberPassword(@RequestHeader(value = "X-MEMBER-ID") String memberId,
+                                                  @RequestBody PasswordUpdateRequest passwordUpdateRequest) {
+        userService.updateMemberPassword(Long.valueOf(memberId), passwordUpdateRequest);
+        return CommonResponse.success("비밀번호 변경에 성공했습니다.");
     }
 }
