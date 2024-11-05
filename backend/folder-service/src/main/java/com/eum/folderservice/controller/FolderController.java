@@ -1,6 +1,6 @@
 package com.eum.folderservice.controller;
 
-import com.eum.folderservice.dto.CreateFolderRequestDTO;
+import com.eum.folderservice.dto.request.CreateFolderRequestDTO;
 import com.eum.folderservice.dto.response.CreateFolderResponseDTO;
 import com.eum.folderservice.service.FolderService;
 import com.eum.folderservice.common.util.CommonResponse;

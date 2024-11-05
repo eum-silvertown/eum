@@ -1,4 +1,4 @@
-package com.eum.folderservice.dto;
+package com.eum.folderservice.dto.request;
 
 import com.eum.folderservice.domain.Folder;
 import lombok.Getter;
