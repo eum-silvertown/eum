@@ -8,10 +8,10 @@ import {spacing} from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
 import {Picker} from '@react-native-picker/picker';
 import AddLectureModal from '@components/lectureList/AddLectureModal';
-import {flatMap} from 'lodash';
-import { colors } from 'src/hooks/useColors';
-import { borderRadius } from '@theme/borderRadius';
-import { getResponsiveSize } from '@utils/responsive';
+import {colors} from 'src/hooks/useColors';
+import {borderRadius} from '@theme/borderRadius';
+import {getResponsiveSize} from '@utils/responsive';
+import {useModalStore} from '@store/useModalStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -31,6 +31,7 @@ function ClassListScreen(): React.JSX.Element {
   >();
   const [lectureModalVisible, setAddLectureModalVisible] =
     useState<boolean>(false);
+  const {setIsModalOpened, setModalTitle, setModalContent} = useModalStore();
 
   // 현재 연도와 학기 계산
   const currentYear = new Date().getFullYear().toString();
@@ -82,16 +83,18 @@ function ClassListScreen(): React.JSX.Element {
             현재 학기
           </Text>
         </TouchableOpacity>
+        
 
-        <TouchableOpacity onPress={() => setAddLectureModalVisible(true)}>
+        <TouchableOpacity
+          onPress={() => {
+            setIsModalOpened(true);
+            setModalTitle('수업 생성');            
+            setModalContent(<AddLectureModal />);
+          }}>
           <Text>수업 생성</Text>
         </TouchableOpacity>
 
-        <AddLectureModal
-          visible={lectureModalVisible}
-          onClose={() => setAddLectureModalVisible(false)}
-        />
-
+        
       </View>
 
       <View style={styles.classList}>
@@ -141,7 +144,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: borderRadius.xl,
     backgroundColor: colors.light.background.white,
-    elevation: getResponsiveSize(2),    
+    elevation: getResponsiveSize(2),
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.md,
