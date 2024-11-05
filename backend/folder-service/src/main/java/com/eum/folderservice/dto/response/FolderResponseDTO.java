@@ -6,13 +6,13 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CreateFolderResponseDTO {
+public class FolderResponseDTO {
     private Long folderId;
     private String title;
     private Long childrenCount;
 
-    public static CreateFolderResponseDTO of(Folder folder) {
-        return CreateFolderResponseDTO.builder()
+    public static FolderResponseDTO of(Folder folder) {
+        return FolderResponseDTO.builder()
                 .folderId(folder.getId())
                 .title(folder.getTitle())
                 .childrenCount(folder.getChildrenCount())

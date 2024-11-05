@@ -2,7 +2,8 @@ package com.eum.folderservice.service;
 
 import com.eum.folderservice.domain.Folder;
 import com.eum.folderservice.dto.request.CreateFolderRequestDTO;
-import com.eum.folderservice.dto.response.CreateFolderResponseDTO;
+import com.eum.folderservice.dto.request.ModifyTitleRequestDTO;
+import com.eum.folderservice.dto.response.FolderResponseDTO;
 import com.eum.folderservice.dto.response.SubFolderResponseDTO;
 import com.eum.folderservice.repository.FolderRepository;
 import com.eum.folderservice.common.exception.ErrorCode;
@@ -22,7 +23,7 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     @Transactional
-    public CreateFolderResponseDTO createFolder(CreateFolderRequestDTO createFolderDTO) {
+    public FolderResponseDTO createFolder(CreateFolderRequestDTO createFolderDTO) {
         Folder newFolder = null;
 
         // 최상위 폴더인 경우
@@ -31,8 +32,7 @@ public class FolderServiceImpl implements FolderService {
         }
         // 상위 폴더가 존재하는 경우
         else {
-            Folder parentFolder = folderRepository.findById(createFolderDTO.getParentId())
-                    .orElseThrow(() -> new FolderException(ErrorCode.FOLDER_NOT_FOUND_ERROR));
+            Folder parentFolder = findFolderByIdAndMemberId(createFolderDTO.getParentId(), createFolderDTO.getMemberId());
 
             for(Folder subFolder : parentFolder.getSubFolders()) {
                 if(subFolder.getTitle().equals(createFolderDTO.getTitle())) {
@@ -46,14 +46,27 @@ public class FolderServiceImpl implements FolderService {
 
         Folder savedFolder = folderRepository.save(newFolder);
 
-        return CreateFolderResponseDTO.of(savedFolder);
+        return FolderResponseDTO.of(savedFolder);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<SubFolderResponseDTO> getSubFolders(Long folderId, Long memberId) {
-        Folder folder = folderRepository.findByIdAndMemberId(folderId, memberId)
-                .orElseThrow(() -> new FolderException(ErrorCode.FOLDER_NOT_FOUND_ERROR));
+        Folder folder = findFolderByIdAndMemberId(folderId, memberId);
         return folder.getSubFolders().stream().map(SubFolderResponseDTO::of).toList();
+    }
+
+    @Override
+    @Transactional
+    public FolderResponseDTO modifyFolderTitle(ModifyTitleRequestDTO requestDTO, Long memberId) {
+        Folder folder = findFolderByIdAndMemberId(requestDTO.getFolderId(), memberId);
+        folder.modifyTitle(requestDTO.getTitle());
+        return FolderResponseDTO.of(folder);
+    }
+
+    @Transactional
+    protected Folder findFolderByIdAndMemberId(Long folderId, Long memberId) {
+        return folderRepository.findByIdAndMemberId(folderId, memberId)
+                .orElseThrow(() -> new FolderException(ErrorCode.FOLDER_NOT_FOUND_ERROR));
     }
 }
