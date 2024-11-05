@@ -38,7 +38,7 @@ function NotificationScreen(): React.JSX.Element {
         </View>
         <View style={styles.buttons}>
           <View style={styles.button}>
-            <Text>하이 ㅎ</Text>
+            <Text>디데이 설정 같은 거?</Text>
           </View>
           <View style={styles.button}>
             <Text>하이 ㅎ</Text>

@@ -1,4 +1,3 @@
-import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
 import MainHeader from '@components/main/MainHeader';

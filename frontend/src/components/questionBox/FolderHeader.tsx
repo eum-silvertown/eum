@@ -7,8 +7,8 @@ import {iconSize} from '@theme/iconSize';
 import BreadCrumb from '@components/questionBox/BreadCrumb';
 import {spacing} from '@theme/spacing';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
-import {useModal} from '@store/useModalStore';
 import CreateFolder from './CreateFolder';
+import {useModal} from 'src/hooks/useModal';
 
 function FolderHeader(): React.JSX.Element {
   const currentHistoryIndex = useQuestionExplorerStore(
@@ -24,9 +24,6 @@ function FolderHeader(): React.JSX.Element {
     open(<CreateFolder />, {
       title: '폴더 생성',
       size: 'xs',
-      onClose: () => {
-        console.log('Modal closed!');
-      },
     });
   };
 
