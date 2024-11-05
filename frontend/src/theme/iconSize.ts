@@ -1,7 +1,7 @@
 import {getResponsiveSize} from '@utils/responsive';
 
 export const iconSize = {
-  xxs: getResponsiveSize(8),
+  xxs: getResponsiveSize(10),
   xs: getResponsiveSize(12),
   sm: getResponsiveSize(16),
   md: getResponsiveSize(20),
