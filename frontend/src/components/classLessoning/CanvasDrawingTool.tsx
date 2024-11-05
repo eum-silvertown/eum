@@ -13,7 +13,8 @@ import ToolBarToRightIcon from '@assets/icons/toolBarToRightIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {getResponsiveSize} from '@utils/responsive';
 import {spacing} from '@theme/spacing';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type CanvasComponentProps = {
   canvasRef: React.RefObject<any>;
@@ -63,7 +64,25 @@ const CanvasDrawingTool = ({
 }: CanvasComponentProps) => {
   const [isRightHanded, setIsRightHanded] = useState(true);
 
-  const toggleHandedness = () => setIsRightHanded(!isRightHanded);
+  const STORAGE_KEY = 'handednessPreference';
+
+  // 로컬 손잡이 설정 불러오기
+  useEffect(() => {
+    const loadHandednessPreference = async () => {
+      const savedPreference = await AsyncStorage.getItem(STORAGE_KEY);
+      if (savedPreference !== null) {
+        setIsRightHanded(savedPreference === 'right');
+      }
+    };
+    loadHandednessPreference();
+  }, []);
+
+  // 손잡이 설정 변경 로컬 저장
+  const toggleHandedness = async () => {
+    const newHandedness = !isRightHanded;
+    setIsRightHanded(newHandedness);
+    await AsyncStorage.setItem(STORAGE_KEY, newHandedness ? 'right' : 'left');
+  };
 
   return (
     <View style={styles.canvasLayout}>
