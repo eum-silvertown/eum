@@ -13,16 +13,7 @@ interface LectureProps {
 }
 
 export default function Lecture({ item }: LectureProps): React.JSX.Element {
-  const pages = 15;
-
-  const calculateLectureTime = (lecturePeriod?: number) => {
-    if (!lecturePeriod) return null;
-    const baseHour = 9;
-    const hour = baseHour + (lecturePeriod - 1);
-    return `${hour.toString().padStart(2, '0')}:00`;
-  };
-
-  const lectureTime = calculateLectureTime(item.lecturePeriod);
+  const pages = 7;  
 
   return (
     <View style={styles.container}>
@@ -37,8 +28,8 @@ export default function Lecture({ item }: LectureProps): React.JSX.Element {
                   backgroundColor:
                     index === pages - 1 ? item.backgroundColor : 'white',
                   transform: [
-                    { translateY: index * -2 },
-                    { translateX: index * 3 },
+                    { translateY: index * -4 },
+                    { translateX: index * 5 },
                   ],
                   zIndex: -index,
                 },
@@ -75,31 +66,21 @@ export default function Lecture({ item }: LectureProps): React.JSX.Element {
             </View>
           </View>
         </View>
-      </View>
-      {lectureTime && (
-        <View style={styles.periodContainer}>
-          <Text variant="subtitle" weight="bold">
-            {lectureTime}
-          </Text>
-        </View>
-      )}
+      </View>      
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: {    
     gap: spacing.md,
     padding: spacing.md,
   },
   lectureContainer: {
     width: getResponsiveSize(170),
-    height: getResponsiveSize(200),
-    marginTop: spacing.md,
-    flex: 1,
+    height: getResponsiveSize(200),    
     alignItems: 'center',
-    padding: spacing.xl,
+    padding: spacing.lg,
   },
   pagesContainer: {
     width: '100%',
@@ -139,9 +120,5 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: borderRadius.sm,
     borderWidth: borderWidth.sm,
-  },
-  periodContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  },  
 });
