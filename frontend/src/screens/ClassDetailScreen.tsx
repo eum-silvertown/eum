@@ -1,5 +1,5 @@
-import { View, StyleSheet } from 'react-native';
-import { spacing } from '@theme/spacing';
+import {View, StyleSheet} from 'react-native';
+import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -7,8 +7,16 @@ import Notice from '@components/classDetail/Notice';
 import Overview from '@components/classDetail/Overview';
 import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
+import {useFocusEffect} from '@react-navigation/native';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 
 function ClassDetailScreen(): React.JSX.Element {
+  const setCurrentScreen = useCurrentScreenStore(
+    state => state.setCurrentScreen,
+  );
+  useFocusEffect(() => {
+    setCurrentScreen('ClassDetailScreen');
+  });
   return (
     <View style={styles.container}>
       <ClassHeader />
