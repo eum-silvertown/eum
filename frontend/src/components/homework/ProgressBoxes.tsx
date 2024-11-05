@@ -2,6 +2,7 @@ import {StyleSheet, View} from 'react-native';
 import ProgressBox from './ProgressBox';
 import {spacing} from '@theme/spacing';
 import ProgressChart from './ProgressChart';
+import {memo} from 'react';
 
 function ProgressBoxes(): React.JSX.Element {
   return (
@@ -36,7 +37,7 @@ function ProgressBoxes(): React.JSX.Element {
   );
 }
 
-export default ProgressBoxes;
+export default memo(ProgressBoxes);
 
 const styles = StyleSheet.create({
   progressContainer: {

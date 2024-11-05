@@ -1,5 +1,16 @@
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Canvas, Circle, Path, Skia} from '@shopify/react-native-skia';
+import UndoOffIcon from '@assets/icons/undoOffIcon.svg';
+import UndoOnIcon from '@assets/icons/undoOnIcon.svg';
+import RedoOffIcon from '@assets/icons/redoOffIcon.svg';
+import RedoOnIcon from '@assets/icons/redoOnIcon.svg';
+import EraserOffIcon from '@assets/icons/eraserOffIcon.svg';
+import EraserOnIcon from '@assets/icons/eraserOnIcon.svg';
+import HighlighterOffIcon from '@assets/icons/highlighterOffIcon.svg';
+import HighlighterOnIcon from '@assets/icons/highlighterOnIcon.svg';
+import {iconSize} from '@theme/iconSize';
+import {getResponsiveSize} from '@utils/responsive';
+import {spacing} from '@theme/spacing';
 
 type CanvasComponentProps = {
   canvasRef: React.RefObject<any>;
@@ -16,12 +27,11 @@ type CanvasComponentProps = {
   togglePenOpacity?: () => void;
   undo?: () => void;
   redo?: () => void;
+  undoStack: number | null;
+  redoStack: number | null;
   toggleEraserMode?: () => void;
   isErasing?: boolean;
   eraserPosition?: {x: number; y: number} | null;
-  startRecording?: () => void;
-  stopRecording?: () => void;
-  isRecording?: boolean;
 };
 
 const COLOR_PALETTE = ['#000000', '#FF5F5F', '#FFCD29', '#14AE5C', '#0D99FF'];
@@ -42,12 +52,11 @@ const CanvasDrawingTool = ({
   togglePenOpacity,
   undo,
   redo,
+  undoStack,
+  redoStack,
   toggleEraserMode,
   isErasing,
   eraserPosition,
-  startRecording,
-  stopRecording,
-  isRecording,
 }: CanvasComponentProps) => (
   <View style={styles.canvasLayout}>
     <View style={styles.canvasContainer}>
@@ -129,39 +138,42 @@ const CanvasDrawingTool = ({
             </TouchableOpacity>
           ))}
         </View>
-        <TouchableOpacity
-          onPress={togglePenOpacity}
-          style={[
-            styles.highlighterButton,
-            penOpacity < 1 && styles.activeHighlighter,
-          ]}>
-          <Text style={styles.buttonText}>형광펜</Text>
+
+        {/* 형광펜 아이콘 */}
+        <TouchableOpacity onPress={togglePenOpacity}>
+          {penOpacity < 1 ? (
+            <HighlighterOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <HighlighterOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
         </TouchableOpacity>
-        <TouchableOpacity onPress={undo} style={styles.toolbarButton}>
-          <Text style={styles.buttonText}>Undo</Text>
+
+        {/* 지우개 아이콘 */}
+        <TouchableOpacity onPress={toggleEraserMode}>
+          {isErasing ? (
+            <EraserOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <EraserOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
         </TouchableOpacity>
-        <TouchableOpacity onPress={redo} style={styles.toolbarButton}>
-          <Text style={styles.buttonText}>Redo</Text>
+
+        {/* Undo 아이콘 */}
+        <TouchableOpacity onPress={undo}>
+          {undoStack ? (
+            <UndoOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <UndoOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={toggleEraserMode}
-          style={isErasing ? styles.activeEraser : styles.eraserButton}>
-          <Text style={styles.buttonText}>지우개</Text>
+
+        {/* Redo 아이콘 */}
+        <TouchableOpacity onPress={redo}>
+          {redoStack ? (
+            <RedoOnIcon width={iconSize.lg} height={iconSize.lg} />
+          ) : (
+            <RedoOffIcon width={iconSize.lg} height={iconSize.lg} />
+          )}
         </TouchableOpacity>
-        {/* 녹화 시작/중지 버튼 */}
-        {isRecording ? (
-          <TouchableOpacity
-            onPress={stopRecording}
-            style={styles.recordingButtonActive}>
-            <Text style={styles.buttonText}>녹화 중지</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={startRecording}
-            style={styles.recordingButton}>
-            <Text style={styles.buttonText}>녹화 시작</Text>
-          </TouchableOpacity>
-        )}
       </View>
     </View>
   </View>
@@ -170,42 +182,58 @@ const CanvasDrawingTool = ({
 export default CanvasDrawingTool;
 
 const styles = StyleSheet.create({
-  canvasContainer: {flex: 1, backgroundColor: 'transparent'},
+  canvasLayout: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  canvasContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
   canvas: {flex: 1},
   floatingToolbar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
-    backgroundColor: '#fff',
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    left: 8,
+    top: '50%',
+    transform: [{translateY: -250}],
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 12,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+    gap: getResponsiveSize(20),
   },
   paletteContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   colorPalette: {
-    width: 25,
-    height: 25,
+    width: getResponsiveSize(24),
+    height: getResponsiveSize(24),
     borderRadius: 15,
-    marginHorizontal: 1.5,
+    marginVertical: spacing.xs,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   selectedColor: {
-    borderColor: '#000',
+    borderColor: '#ccc',
+    borderWidth: 3,
   },
   penSizeContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   penSize: {
-    width: 25,
-    height: 25,
+    width: getResponsiveSize(24),
+    height: getResponsiveSize(24),
     borderRadius: 15,
-    marginHorizontal: 1.5,
+    marginVertical: spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -213,51 +241,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
   },
   selectedPenSize: {
-    borderColor: '#000',
+    borderColor: '#ccc',
     borderWidth: 3,
   },
   highlighterButton: {
     paddingVertical: 5,
     paddingHorizontal: 3,
     backgroundColor: '#ddd',
-    borderRadius: 5,
-  },
-  activeHighlighter: {
-    backgroundColor: '#FFD700',
-  },
-  toolbarButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#ddd',
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  eraserButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#ccc',
-    borderRadius: 5,
-  },
-  activeEraser: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#FFA500',
-    borderRadius: 5,
-  },
-  buttonText: {color: '#000', fontWeight: 'bold'},
-  canvasLayout: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  recordingButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#32CD32', // 녹화 시작 버튼 색상
-    borderRadius: 5,
-  },
-  recordingButtonActive: {
-    paddingVertical: 5,
-    paddingHorizontal: 3,
-    backgroundColor: '#FF4500', // 녹화 중 버튼 색상
     borderRadius: 5,
   },
 });

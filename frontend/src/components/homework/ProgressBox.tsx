@@ -28,7 +28,6 @@ const AnimatedNumber = ({value}: {value: number}) => {
   const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
-    progress.value = 0;
     progress.value = withTiming(1, {
       duration: 1500,
     });

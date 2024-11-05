@@ -16,6 +16,7 @@ import HomeworkScreen from '@screens/HomeworkScreen';
 import QuestionBoxScreen from '@screens/QuestionBoxScreen';
 import MyClassScreen from '@screens/MyClassScreen';
 import NotificationScreen from '@screens/NotificationScreen';
+import LessoningStudentListScreen from '@screens/LessoningStudentListScreen';
 import MainLayout from '@components/common/MainLayout';
 import {Platform, UIManager} from 'react-native';
 
@@ -51,6 +52,7 @@ function App(): React.JSX.Element {
     {name: 'NotificationScreen', component: NotificationScreen},
     {name: 'ClassDetailScreen', component: ClassDetailScreen},
     {name: 'LessoningScreen', component: LessoningScreen},
+    {name: 'LessoningStudentListScreen', component: LessoningStudentListScreen},
   ];
 
   return (

@@ -4,7 +4,8 @@ import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
 import {useAuthStore} from '@store/useAuthStore';
 import {useColors} from 'src/hooks/useColors';
-import Modal from './Modal';
+import Modals from './Modals';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 
 interface MainLayoutProps {
   children: React.ReactElement;
@@ -18,6 +19,16 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
     new Animated.Value(isExpanded ? 17.5 : 5),
   ).current;
 
+  // 현재 스크린
+  const currentScreen = useCurrentScreenStore(state => state.currentScreen);
+  console.log(currentScreen);
+
+  // Sidebar가 보이지 않아야 하는 스크린 설정
+  const screensWithoutSidebar = [
+    'LessoningScreen',
+    'LessoningStudentListScreen',
+  ];
+
   useEffect(() => {
     Animated.timing(sidebarWidthAnim, {
       toValue: isExpanded ? 17.5 : 5,
@@ -29,7 +40,7 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {isLoggedIn && (
+      {isLoggedIn && !screensWithoutSidebar.includes(currentScreen) && (
         <Animated.View
           style={[
             styles.sidebarContainer,
@@ -52,7 +63,7 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
           {children}
         </View>
       </View>
-      <Modal />
+      <Modals />
     </View>
   );
 }

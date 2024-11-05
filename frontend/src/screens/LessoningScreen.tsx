@@ -8,6 +8,9 @@ import LeftCanvasSection from '@components/classLessoning/LeftCanvasSection';
 import RightCanvasSection from '@components/classLessoning/RightCanvasSection';
 // import RightRecordCanvasSection from '@components/classLessoning/RightRecordCanvasSection';
 
+import {useFocusEffect} from '@react-navigation/native';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+
 type PathData = {
   path: any;
   color: string;
@@ -18,9 +21,15 @@ type PathData = {
 
 function LessoningScreen(): React.JSX.Element {
   // const [recordedPaths, setRecordedPaths] = useState<PathData[]>([]);
+  const setCurrentScreen = useCurrentScreenStore(
+    state => state.setCurrentScreen,
+  );
 
+  useFocusEffect(() => {
+    setCurrentScreen('LessoningScreen');
+  });
   const socket: Socket = io('http://192.168.128.246:8080', {
-    reconnection: true,
+    reconnection: false,
     secure: true,
     transports: ['websocket'],
   });
