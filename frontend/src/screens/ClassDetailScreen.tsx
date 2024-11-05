@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingTop: spacing.md,
     paddingBottom: spacing.xl,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   mainContentLayout: {
@@ -131,22 +131,22 @@ const styles = StyleSheet.create({
   },
   teacherLayout: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   chartLayout: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   replayLayout: {
     flex: 2,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   homeworkLayout: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
 });
