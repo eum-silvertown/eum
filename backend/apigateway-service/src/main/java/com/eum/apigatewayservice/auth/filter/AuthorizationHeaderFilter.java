@@ -40,7 +40,6 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Conf
                     throw new EumException(ErrorCode.ACCESS_TOKEN_BLACKLISTED);
                 }
                 Claims claims = jwtUtil.getClaims(token);
-
                 addAuthorizationHeaders(exchange.getRequest(), claims);
             } catch (ExpiredJwtException ex) {
                 throw new EumException(ErrorCode.ACCESS_TOKEN_EXPIRED);

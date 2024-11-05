@@ -9,19 +9,22 @@ import org.springframework.data.redis.core.TimeToLive;
 
 @Getter
 @NoArgsConstructor
-@RedisHash(value = "refreshToken")
+@RedisHash(value = "key")
 public class RefreshToken {
 
     @Id
-    private String refreshToken;
+    private String key;
 
     private Long userId;
+
+    private String refreshToken;
 
     @TimeToLive
     private Long expireTime;
 
     @Builder
-    public RefreshToken(String refreshToken, Long userId, Long expireTime) {
+    public RefreshToken(String key, String refreshToken, Long userId, Long expireTime) {
+        this.key = key;
         this.refreshToken = refreshToken;
         this.userId = userId;
         this.expireTime = expireTime;
@@ -29,8 +32,9 @@ public class RefreshToken {
 
     public static RefreshToken of(String refreshToken, Long userId, Long expireTime) {
         return RefreshToken.builder()
-                .refreshToken(refreshToken)
+                .key("refresh_token" + userId)
                 .userId(userId)
+                .refreshToken(refreshToken)
                 .expireTime(expireTime)
                 .build();
     }

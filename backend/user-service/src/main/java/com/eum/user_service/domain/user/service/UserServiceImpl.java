@@ -3,6 +3,7 @@ package com.eum.user_service.domain.user.service;
 import com.eum.user_service.domain.token.dto.TokenRequest;
 import com.eum.user_service.domain.token.dto.TokenResponse;
 import com.eum.user_service.domain.token.entity.RefreshToken;
+import com.eum.user_service.domain.token.service.BlacklistTokenService;
 import com.eum.user_service.domain.token.service.TokenService;
 import com.eum.user_service.domain.user.dto.*;
 import com.eum.user_service.domain.user.entity.*;
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private final MemberClassRepository memberClassRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final BlacklistTokenService blacklistTokenService;
 
     @Override
     @Transactional
@@ -89,6 +91,21 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
 
         return tokenService.createTokenResponse(member);
+    }
+
+    @Override
+    public void logout(Long memberId, String token) {
+        Member member = userRepository.findById(memberId)
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+
+        // todo : refresh blacklist
+        RefreshToken refreshToken = tokenService.getRefreshTokenByMemberId(memberId);
+        if (refreshToken != null) {
+            tokenService.updateRefreshTokenToBlacklist(refreshToken);
+        }
+
+        //todo : access blacklist
+        tokenService.updateAccessTokenToBlacklist(token);
     }
 
     private void checkDuplicateIdAndEmail(SignUpRequest signUpRequest) {

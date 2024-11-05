@@ -6,9 +6,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class BlacklistTokenService {
 
+    @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     private static final String BLACKLIST_TOKEN_KEY = "BlacklistTokens";

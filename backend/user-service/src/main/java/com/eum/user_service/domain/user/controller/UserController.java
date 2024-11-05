@@ -46,8 +46,10 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public CommonResponse<?> logout(@RequestHeader(value = "X-MEMBER-ID") String memberId) {
-
-        return CommonResponse.success(memberId);
+    public CommonResponse<?> logout(@RequestHeader(value = "X-MEMBER-ID") String memberId,
+                                    @RequestHeader(value = "Authorization") String token) {
+        log.info("access token request: {}", token);
+        userService.logout(Long.valueOf(memberId), token);
+        return CommonResponse.success("로그아웃 성공");
     }
 }

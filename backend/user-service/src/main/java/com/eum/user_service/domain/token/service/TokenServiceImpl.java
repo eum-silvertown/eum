@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
+    private static final String REFRESH_TOKEN_PREFIX = "refresh_token";
+
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
     private final BlacklistTokenService blacklistTokenService;
@@ -25,7 +27,7 @@ public class TokenServiceImpl implements TokenService {
         String accessToken = jwtUtil.createAccessToken(member);
         String refreshToken = jwtUtil.createRefreshToken(member);
         refreshTokenRepository.save(
-                RefreshToken.of(refreshToken, member.getId(),jwtUtil.getRefreshExpiration()));
+                RefreshToken.of(refreshToken,member.getId(),jwtUtil.getRefreshExpiration()));
 
         return TokenResponse.from(accessToken, refreshToken);
     }
@@ -35,7 +37,8 @@ public class TokenServiceImpl implements TokenService {
         if(!jwtUtil.isValidRefreshToken(tokenRequest.refreshToken())) {
             throw new EumException(ErrorCode.INVALID_JWT_TOKEN);
         }
-        RefreshToken refreshToken = refreshTokenRepository.findById(tokenRequest.refreshToken())
+        RefreshToken refreshToken = refreshTokenRepository
+                .findById(REFRESH_TOKEN_PREFIX + jwtUtil.getUserIdFromRefreshToken(tokenRequest.refreshToken()))
                 .orElseThrow(() -> new EumException(ErrorCode.REFRESH_TOKEN_EXPIRED));
 
         if (blacklistTokenService.isTokenBlacklisted(refreshToken.getRefreshToken())) {
@@ -48,5 +51,17 @@ public class TokenServiceImpl implements TokenService {
     public void updateRefreshTokenToBlacklist(RefreshToken refreshToken) {
         blacklistTokenService.addTokenToBlacklist(refreshToken.getRefreshToken());
         refreshTokenRepository.delete(refreshToken);
+    }
+
+    @Override
+    public RefreshToken getRefreshTokenByMemberId(Long memberId) {
+        return refreshTokenRepository
+                .findById(REFRESH_TOKEN_PREFIX + memberId)
+                .orElse(null);
+    }
+
+    @Override
+    public void updateAccessTokenToBlacklist(String accessToken) {
+        blacklistTokenService.addTokenToBlacklist(accessToken);
     }
 }

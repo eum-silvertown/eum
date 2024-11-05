@@ -57,6 +57,10 @@ public class JwtUtil {
         }
     }
 
+    public Long getUserIdFromRefreshToken(String refreshToken) {
+        return getClaimsToken(refreshToken).get("userId",Long.class);
+    }
+
 
     private Claims getClaimsToken(String token) {
         return Jwts.parser()

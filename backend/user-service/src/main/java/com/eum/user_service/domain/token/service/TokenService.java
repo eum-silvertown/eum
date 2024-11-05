@@ -10,4 +10,6 @@ public interface TokenService {
     TokenResponse createTokenResponse(Member member);
     RefreshToken validateRefreshToken(TokenRequest tokenRequest);
     void updateRefreshTokenToBlacklist(RefreshToken refreshToken);
+    RefreshToken getRefreshTokenByMemberId(Long memberId);
+    void updateAccessTokenToBlacklist(String accessToken);
 }

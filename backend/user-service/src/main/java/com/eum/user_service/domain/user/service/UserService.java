@@ -13,4 +13,6 @@ public interface UserService {
     void checkId(UserIdRequest userIdRequest);
 
     TokenResponse generateAccessToken(TokenRequest tokenRequest);
+
+    void logout(Long memberId, String token);
 }
