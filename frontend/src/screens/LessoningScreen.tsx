@@ -1,15 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {io, Socket} from 'socket.io-client';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { io, Socket } from 'socket.io-client';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherCanvasSection from '@components/classLessoning/TeacherCanvasSection';
-// import LeftRecordCanvasSection from '@components/classLessoning/LeftRecordCanvasSection';
 import StudentCanvasSection from '@components/classLessoning/StudentCanvasSection';
-// import RightRecordCanvasSection from '@components/classLessoning/RightRecordCanvasSection';
 
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
 
 type PathData = {
   path: any;
@@ -31,6 +29,8 @@ function LessoningScreen(): React.JSX.Element {
 
   const [currentPage, setCurrentPage] = useState(0);
 
+  const isTeacher = true;
+
   const handleNextPage = () => {
     if (currentPage < problems.length - 1) {
       setCurrentPage(currentPage + 1);
@@ -43,7 +43,6 @@ function LessoningScreen(): React.JSX.Element {
     }
   };
 
-  // const [recordedPaths, setRecordedPaths] = useState<PathData[]>([]);
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
   );
@@ -64,7 +63,6 @@ function LessoningScreen(): React.JSX.Element {
         ? pathData.path.toSVGString()
         : pathData.path,
     }));
-    // setRecordedPaths(formattedPaths);
     console.log('중간단계 데이터 확인용', formattedPaths);
   };
 
@@ -76,21 +74,28 @@ function LessoningScreen(): React.JSX.Element {
     };
   }, [socket]);
 
+  // 선생님일 경우
+  if (isTeacher) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.sectionContainer}>
+          <ProblemSection problemText={problems[currentPage]} />
+          <TeacherCanvasSection
+            socket={socket}
+            onRecordingEnd={handleRecordingEnd}
+            currentPage={currentPage + 1}
+            totalPages={problems.length}
+            onNextPage={handleNextPage}
+            onPrevPage={handlePrevPage}
+          />
+        </View>
+      </View>
+    );
+  }
+
+  // 학생일 경우
   return (
     <View style={styles.container}>
-      <View style={styles.sectionContainer}>
-        <ProblemSection problemText={problems[currentPage]} />
-        <TeacherCanvasSection
-          socket={socket}
-          onRecordingEnd={handleRecordingEnd}
-          currentPage={currentPage + 1}
-          totalPages={problems.length}
-          onNextPage={handleNextPage}
-          onPrevPage={handlePrevPage}
-        />
-        {/* <LeftRecordCanvasSection onRecordingEnd={handleRecordingEnd} /> */}
-      </View>
-
       <View style={styles.sectionContainer}>
         <ProblemSection problemText={problems[currentPage]} />
         <StudentCanvasSection
@@ -100,7 +105,6 @@ function LessoningScreen(): React.JSX.Element {
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
         />
-        {/* <RightRecordCanvasSection recordedPaths={recordedPaths} /> */}
       </View>
     </View>
   );
