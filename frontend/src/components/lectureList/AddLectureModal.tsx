@@ -21,10 +21,9 @@ import Lecture from '@components/main/Lecture';
 import {getResponsiveSize} from '@utils/responsive';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import StatusMessage from '@components/account/StatusMessage';
-import { useModalStore } from '@store/useModalStore';
+import {useModalContext} from 'src/contexts/useModalContext';
 
-interface AddLectureModalProps {
-}
+interface AddLectureModalProps {}
 
 interface Schedule {
   day: string;
@@ -44,7 +43,8 @@ interface LectureProps {
   };
 }
 
-const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
+const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
+  const {close} = useModalContext();
   const [title, setTitle] = useState('');
   const [subjects, setSubjects] = useState('');
   const [introduction, setIntroduction] = useState('');
@@ -74,7 +74,7 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
   const [subjectError, setSubjectError] = useState('');
   const [introductionError, setIntroductionError] = useState('');
   const [gradeError, setGradeError] = useState('');
-  const [scheduleError, setScheduleError] = useState('');  
+  const [scheduleError, setScheduleError] = useState('');
 
   useEffect(() => {
     const currentYear = new Date().getFullYear().toString();
@@ -139,7 +139,7 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
     setScheduleError('');
 
     let isValid = true;
-    
+
     // 유효성 검사 및 에러 메시지 설정
     if (!title.trim()) {
       setTitleError('제목을 입력해주세요.');
@@ -157,8 +157,13 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
       setGradeError('학급 정보를 선택해주세요.');
       isValid = false;
     }
-    if (schedules.length === 0 || schedules.some((item) => !item.day || !item.period)) {
-      setScheduleError('수업 시간표를 모두 입력하거나 불필요한 항목은 삭제해주세요.');
+    if (
+      schedules.length === 0 ||
+      schedules.some(item => !item.day || !item.period)
+    ) {
+      setScheduleError(
+        '수업 시간표를 모두 입력하거나 불필요한 항목은 삭제해주세요.',
+      );
       isValid = false;
     }
 
@@ -181,6 +186,7 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
     };
 
     console.log('Lecture Data:', lectureData); // 콘솔에 JSON 데이터 출력
+    close();
   };
 
   useEffect(() => {
@@ -217,12 +223,19 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
                 value={title}
                 onChangeText={setTitle}
               />
-              {/* 제목 에러 메시지 */}
-              {titleError ? <StatusMessage message={titleError} status="error" /> : null}
+              <View style={styles.errorContainer}>
+                {/* 제목 에러 메시지 */}
+                {titleError ? (
+                  <StatusMessage message={titleError} status="error" />
+                ) : null}
+              </View>
             </View>
 
             <View>
-              <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
+              <Text
+                variant="subtitle"
+                weight="bold"
+                style={styles.contentLabel}>
                 과목
               </Text>
               <View style={styles.pickerSet}>
@@ -235,10 +248,17 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
                   <Picker.Item key={2} label="영어" value="영어" />
                   <Picker.Item key={3} label="수학" value="수학" />
                 </Picker>
+                {/* 과목 에러 메시지 */}
               </View>
-              {/* 과목 에러 메시지 */}
-              {subjectError ? <StatusMessage message={subjectError} status="error" /> : null}
-              <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
+              {subjectError ? (
+                <StatusMessage message={subjectError} status="error" />
+              ) : null}
+            </View>
+            <View>
+              <Text
+                variant="subtitle"
+                weight="bold"
+                style={styles.contentLabel}>
                 수업 소개
               </Text>
               <InputField
@@ -247,12 +267,19 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
                 onChangeText={setIntroduction}
                 multiline={true}
               />
-              {/* 수업 소개 에러 메시지 */}
-              {introductionError ? <StatusMessage message={introductionError} status="error" /> : null}
+              <View style={styles.errorContainer}>
+                {/* 수업 소개 에러 메시지 */}
+                {introductionError ? (
+                  <StatusMessage message={introductionError} status="error" />
+                ) : null}
+              </View>
             </View>
 
             <View>
-              <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
+              <Text
+                variant="subtitle"
+                weight="bold"
+                style={styles.contentLabel}>
                 학급
               </Text>
               <View style={styles.pickerSet}>
@@ -281,10 +308,14 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
                   ))}
                 </Picker>
               </View>
-              {/* 학급 에러 메시지 */}
-              {gradeError ? <StatusMessage message={gradeError} status="error" /> : null}
+              <View style={styles.errorContainer}>
+                {/* 학급 에러 메시지 */}
+                {gradeError ? (
+                  <StatusMessage message={gradeError} status="error" />
+                ) : null}
+              </View>
             </View>
-            
+
             <View>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -325,14 +356,19 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
                       <Picker.Item label="5교시" value="5교시" />
                       <Picker.Item label="6교시" value="6교시" />
                     </Picker>
-                    <TouchableOpacity onPress={() => handleRemoveSchedule(index)}>
+                    <TouchableOpacity
+                      onPress={() => handleRemoveSchedule(index)}>
                       <CancelIcon width={iconSize.xs} height={iconSize.xs} />
                     </TouchableOpacity>
                   </View>
                 ))}
               </View>
-              {/* 시간표 에러 메시지 */}
-              {scheduleError ? <StatusMessage message={scheduleError} status="error" /> : null}
+              <View style={styles.errorContainer}>
+                {/* 시간표 에러 메시지 */}
+                {scheduleError ? (
+                  <StatusMessage message={scheduleError} status="error" />
+                ) : null}
+              </View>
             </View>
           </View>
 
@@ -437,19 +473,19 @@ const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1,    
     gap: spacing.md,
   },
-  content: {
+  content: {    
     flex: 1,
     flexDirection: 'row',
     gap: spacing.xl,
   },
   contentLabel: {
-    marginBottom: spacing.xs,
+    marginBottom: spacing.sm,
   },
   lectureInfoContainer: {
-    gap: spacing.md,
+    gap: spacing.sm,
     flex: 3,
   },
   lecturePreviewContainer: {
@@ -514,7 +550,6 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.sm,
   },
-
   pickerSet: {
     paddingHorizontal: spacing.md,
     borderWidth: borderWidth.sm,
@@ -535,6 +570,10 @@ const styles = StyleSheet.create({
   },
   separator: {
     borderWidth: borderWidth.xs,
+  },
+  errorContainer: {
+    minHeight: spacing.lg,
+    justifyContent: 'center',
   },
 });
 
