@@ -30,7 +30,8 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xxl,
   },
   content: {
     flex: 1,
