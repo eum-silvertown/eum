@@ -28,7 +28,10 @@ public enum ErrorCode {
 	// Exam
 	EXAM_NOT_FOUND("E001", "시험 없음" , HttpStatus.BAD_REQUEST),
 	EXAM_TIME_INVALID("E002", "시험 기간 아님", HttpStatus.BAD_REQUEST),
-	EXAM_ALREADY_SUBMITTED("E003","이미 제출한 시험", HttpStatus.BAD_REQUEST),;
+	EXAM_ALREADY_SUBMITTED("E003","이미 제출한 시험", HttpStatus.BAD_REQUEST),
+
+	// HOMEWORK
+	HOMEWORK_NOT_FOUND("H001", "숙제 없음" , HttpStatus.BAD_REQUEST );
 
 	private final String code;
 	private final String message;
