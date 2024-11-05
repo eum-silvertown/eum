@@ -17,6 +17,7 @@ public class TokenServiceImpl implements TokenService {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final BlacklistTokenService blacklistTokenService;
 
     @Override
     public TokenResponse createTokenResponse(Member member) {
@@ -37,7 +38,7 @@ public class TokenServiceImpl implements TokenService {
         RefreshToken refreshToken = refreshTokenRepository.findById(tokenRequest.refreshToken())
                 .orElseThrow(() -> new EumException(ErrorCode.REFRESH_TOKEN_EXPIRED));
 
-        if (refreshToken.getIsBlacklisted()) {
+        if (blacklistTokenService.isTokenBlacklisted(refreshToken.getRefreshToken())) {
             throw new EumException(ErrorCode.REFRESH_TOKEN_BLACKLISTED);
         }
         return refreshToken;
@@ -45,6 +46,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void updateRefreshTokenToBlacklist(RefreshToken refreshToken) {
-
+        blacklistTokenService.addTokenToBlacklist(refreshToken.getRefreshToken());
+        refreshTokenRepository.delete(refreshToken);
     }
 }
