@@ -30,19 +30,21 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.xxl,
   },
   content: {
     flex: 1,
-    gap: spacing.md,
+    gap: spacing.lg,
     marginVertical: spacing.md,
   },
   contentTop: {
     flexDirection: 'row',
-    flex: 2,
+    flex: 3,
     gap: spacing.lg,
   },
   contentBottom: {
     flex: 3,
+    marginBottom: spacing.sm
   },
 });

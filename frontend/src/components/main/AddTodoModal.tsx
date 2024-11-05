@@ -5,10 +5,11 @@ import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
 import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
+import {useModalContext} from 'src/contexts/useModalContext';
 
 const AddTodoModal = (): React.JSX.Element => {
   const importanceLevels = ['일반', '평범', '중요', '매우 중요'];
-
+  const {close} = useModalContext();
   const createTodo = () => {
     // TODO: 할 일 생성 로직
   };

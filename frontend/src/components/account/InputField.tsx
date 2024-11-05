@@ -40,7 +40,7 @@ function InputField({
   multiline = false,  
 }: InputFieldProps): React.JSX.Element {  
   return (
-    <View style={[styles.inputBox, multiline && { flex: 1 }]}>
+    <View style={[styles.inputBox,]}>
       <TextInput
         style={styles.inputField}
         placeholder={placeholder}

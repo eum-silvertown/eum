@@ -9,6 +9,7 @@ import SignUpSelectScreen from '@screens/SignUpSelectScreen';
 import SignUpScreen from '@screens/SignUpScreen';
 import HomeScreen from '@screens/HomeScreen';
 import LessoningScreen from '@screens/LessoningScreen';
+import LectureListScreen from '@screens/LectureListScreen';
 import ClassListScreen from '@screens/ClassListScreen';
 import HomeworkScreen from '@screens/HomeworkScreen';
 import QuestionBoxScreen from '@screens/QuestionBoxScreen';
