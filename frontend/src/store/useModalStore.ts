@@ -1,7 +1,7 @@
 import React from 'react';
 import {create} from 'zustand';
 
-interface ModalData {
+export interface ModalData {
   id: string;
   isOpened: boolean;
   content: React.ReactNode;
@@ -53,35 +53,3 @@ export const useModalStore = create<ModalStackState>(set => ({
       ),
     })),
 }));
-
-export const useModal = () => {
-  const store = useModalStore();
-
-  const open = React.useCallback(
-    (
-      content: React.ReactNode,
-      options?: {
-        title?: string;
-        size?: ModalData['size'];
-        onClose?: () => void;
-      },
-    ) => {
-      const modalId = store.openModal({
-        content,
-        title: options?.title || '',
-        size: options?.size || 'md',
-        onClose: options?.onClose,
-      });
-
-      return () => store.closeModal(modalId);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
-
-  return {
-    modals: store.modals,
-    open,
-    closeAll: store.closeAllModals,
-  };
-};

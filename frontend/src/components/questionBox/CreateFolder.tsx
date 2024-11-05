@@ -6,12 +6,14 @@ import {spacing} from '@theme/spacing';
 import {typography} from '@theme/typography';
 import {useState} from 'react';
 import {Pressable, StyleSheet, TextInput, View} from 'react-native';
+import {useModalContext} from 'src/contexts/useModalContext';
 import {colors} from 'src/hooks/useColors';
 import {createFolder} from 'src/services/questionBox';
 
 function CreateFolder(): React.JSX.Element {
   const [folderName, setFolderName] = useState('');
   const {getCurrentParentId} = useQuestionExplorerStore();
+  const {close} = useModalContext();
 
   const onChangeText = (inputText: string) => {
     setFolderName(inputText);
@@ -22,8 +24,10 @@ function CreateFolder(): React.JSX.Element {
     try {
       const data = await createFolder(folderName, getCurrentParentId());
       console.log(data);
+      close();
     } catch (error) {
       console.error(error);
+      close();
     }
   };
 
@@ -36,7 +40,7 @@ function CreateFolder(): React.JSX.Element {
         keyboardType="default"
         style={styles.input}
       />
-      <Pressable>
+      <Pressable onPress={onPress}>
         <Button
           onPress={onPress}
           content="생성 완료"
