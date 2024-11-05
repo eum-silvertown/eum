@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    marginRight: 12,
   },
   pageIndicator: {
     fontSize: 16,
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
   },
   item: {
     flexDirection: 'row',
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#fdfeff',
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginHorizontal: 16,
