@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
   floatingToolbar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    width: '100%',
+    justifyContent: 'space-between',
+    width: '40%',
   },
   pageControlContainer: {
     flexDirection: 'row',
