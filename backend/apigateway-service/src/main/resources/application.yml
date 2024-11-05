@@ -14,13 +14,21 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
-      mvc:
         routes:
-          # TODO : Micro Service ??
+          - id: test-service
+            uri: lb://user-service
+            predicates:
+              - Path=/api/user/test
+            filters:
+              - StripPrefix=1
+              - AuthorizationHeaderFilter # 특정 라우트에만 필터 적용
           - id: user-service
             uri: lb://user-service
             predicates:
-              - Path=/api/user
+              - Path=/api/user/**, /api/mail/**
+            filters:
+              - StripPrefix=1 # "/api/user-service" 부분을 제거하여 "/sign-up"으로 전달
+
 
 management:
   endpoints:
