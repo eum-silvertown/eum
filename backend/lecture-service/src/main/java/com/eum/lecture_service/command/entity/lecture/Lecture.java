@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.eum.lecture_service.command.dto.lecture.LectureDto;
 import com.eum.lecture_service.command.entity.exam.Exam;
-import com.eum.lecture_service.command.entity.folder.Folder;
 import com.eum.lecture_service.command.entity.homework.Homework;
+import com.eum.lecture_service.command.entity.lesson.Lesson;
 import com.eum.lecture_service.config.global.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -65,16 +65,16 @@ public class Lecture extends BaseEntity {
 	private List<LectureSchedule> lectureSchedules = new ArrayList<>();
 
 	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Folder> folders = new ArrayList<>();
-
-	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Notice> notices = new ArrayList<>();
 
 	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Homework> homeworks = new ArrayList<>();
 
 	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Exam> exam = new ArrayList<>();
+	private List<Exam> exams = new ArrayList<>();
+
+	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Lesson> lessons = new ArrayList<>();
 
 	public void updateFromDTO(LectureDto dto) {
 		this.title = dto.getTitle();

@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eum.lecture_service.command.dto.lecture.LectureDto;
-import com.eum.lecture_service.command.entity.folder.Folder;
 import com.eum.lecture_service.command.entity.lecture.Lecture;
 import com.eum.lecture_service.command.entity.lecture.LectureSchedule;
-import com.eum.lecture_service.command.repository.folder.FolderRepository;
 import com.eum.lecture_service.command.repository.lecture.LectureRepository;
 import com.eum.lecture_service.command.repository.lecture.LectureScheduleRepository;
 import com.eum.lecture_service.config.exception.ErrorCode;
@@ -25,7 +23,6 @@ public class LectureServiceImpl implements LectureService{
 
 	private final LectureRepository lectureRepository;
 	private final LectureScheduleRepository lectureScheduleRepository;
-	private final FolderRepository folderRepository;
 
 	@Override
 	@Transactional
@@ -42,8 +39,6 @@ public class LectureServiceImpl implements LectureService{
 
 		Lecture savedLecture = lectureRepository.save(lecture);
 
-		createDefaultFolders(savedLecture);
-
 		return savedLecture.getLectureId();
 	}
 
@@ -58,17 +53,6 @@ public class LectureServiceImpl implements LectureService{
 		}
 	}
 
-	private void createDefaultFolders(Lecture lecture) {
-		String[] folderNames = {"문제 보관함", "다시보기", "숙제", "시험"};
-
-		Arrays.stream(folderNames).forEach(name -> {
-			Folder folder = Folder.builder()
-				.lecture(lecture)
-				.folderName(name)
-				.build();
-			folderRepository.save(folder);
-		});
-	}
 
 	@Override
 	@Transactional
