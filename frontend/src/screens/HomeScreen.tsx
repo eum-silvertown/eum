@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   contentTop: {
     flexDirection: 'row',
-    flex: 2,
+    flex: 3,
     gap: spacing.lg,
   },
   contentBottom: {
