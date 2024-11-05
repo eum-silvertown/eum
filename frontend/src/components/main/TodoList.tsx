@@ -7,7 +7,7 @@ import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import Todo from './Todo';
 import AddTodoModal from './AddTodoModal';
-import {useModal} from '@store/useModalStore';
+import { useModal } from 'src/hooks/useModal';
 
 export default function TodoList(): React.JSX.Element {
   const todos = [
