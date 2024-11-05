@@ -22,7 +22,7 @@ public class ExamProblemSubmissionDto {
 	private Long studentId;
 	private Boolean isCorrect;
 
-	public ExamProblemSubmission toEntity(ExamSubmission examSubmission) {
+	public ExamProblemSubmission toEntity(ExamSubmission examSubmission, Long studentId) {
 		return ExamProblemSubmission.builder()
 			.examSubmission(examSubmission)
 			.questionId(questionId)
