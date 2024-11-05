@@ -14,10 +14,12 @@ import Config from 'react-native-config';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import { colors } from 'src/hooks/useColors';
+import axios from 'axios';
+
 
 export default function Weather(): React.JSX.Element {
   const API_KEY = Config.OPENWEATHERMAP_API_KEY;
-  const [loading, setloading] = useState<boolean | null>(true);
+  const [loading, setLoading] = useState<boolean | null>(true);
   const [temperature, setTemperature] = useState<string | null>(null);
   const [weatherDescription, setWeatherDescription] = useState<string | null>(
     null,
@@ -53,18 +55,27 @@ export default function Weather(): React.JSX.Element {
       );
     };
 
-    const getWeatherData = async (lat: number, lon: number) => {
+    const getWeatherData = async (lat: number, lon: number) => {      
       try {
-        const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&lang=kr&units=metric&appid=${API_KEY}`,
+        const response = await axios.get(
+          `https://api.openweathermap.org/data/2.5/weather`,
+          {
+            params: {
+              lat,
+              lon,
+              lang: 'kr',
+              units: 'metric',
+              appid: API_KEY,
+            },
+          }
         );
-        const data = await response.json();
+        const data = response.data;
         setTemperature(`${Math.round(data.main.temp)}°C`);
         setWeatherDescription(data.weather[0].description);
         setLocation(data.name);
         setIconCode(data.weather[0].icon); // 아이콘 코드 설정
         updateDate(); // 날짜 업데이트
-        setloading(false);
+        setLoading(false);
       } catch (error) {
         console.log('Error fetching weather data', error);
       }
