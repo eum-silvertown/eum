@@ -45,6 +45,7 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public SubFolderResponseDTO getRootFolder(Long memberId) {
         Folder rootFolder = folderRepository.findByMemberIdAndParentFolderIsNull(memberId)
                 .orElseThrow(() -> new FolderException(ErrorCode.FOLDER_NOT_FOUND_ERROR));
@@ -63,7 +64,16 @@ public class FolderServiceImpl implements FolderService {
     @Override
     @Transactional(readOnly = true)
     public SubFolderResponseDTO getSubFolders(Long folderId, Long memberId) {
-        return null;
+        Folder folder = findFolderByIdAndMemberId(folderId, memberId);
+
+        List<Folder> subFolders = folder.getSubFolders() == null ? new ArrayList<>() : folder.getSubFolders();
+        List<SavedFile> subFiles = folder.getSavedFiles() == null ? new ArrayList<>() : folder.getSavedFiles();
+
+        return SubFolderResponseDTO.builder()
+                .folderId(folder.getId())
+                .subFolders(subFolders.stream().map(FolderResponseDTO::of).toList())
+                .subFiles(subFiles.stream().map(SavedFileResponseDTO::of).toList())
+                .build();
     }
 
     @Override

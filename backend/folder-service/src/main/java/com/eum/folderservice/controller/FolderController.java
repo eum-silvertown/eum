@@ -26,6 +26,13 @@ public class FolderController {
         return CommonResponse.success(response, "폴더 생성 성공");
     }
 
+    @GetMapping("/root")
+    public CommonResponse<?> getMemberRootFolder(HttpServletRequest request) {
+        Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
+
+        return CommonResponse.success(folderService.getRootFolder(memberId), "루트 폴더 조회 성공");
+    }
+
     @GetMapping("/{folderId}")
     public CommonResponse<?> getFolder(@PathVariable Long folderId, HttpServletRequest request) {
         Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
