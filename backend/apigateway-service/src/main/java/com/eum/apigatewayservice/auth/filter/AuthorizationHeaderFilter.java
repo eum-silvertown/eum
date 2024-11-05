@@ -4,13 +4,13 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import com.eum.apigatewayservice.auth.jwt.JwtUtil;
 import com.eum.apigatewayservice.exception.ErrorCode;
 import com.eum.apigatewayservice.exception.EumException;
+import com.eum.apigatewayservice.token.service.BlacklistTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -21,11 +21,11 @@ import com.eum.apigatewayservice.auth.filter.AuthorizationHeaderFilter.Config;
 @Component
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Config> {
 
-    @Value("${jwt.secret}")
-    private String secret;
-
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private BlacklistTokenService blacklistTokenService;
 
     public AuthorizationHeaderFilter() {
         super(Config.class);
@@ -36,7 +36,9 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Conf
         return (exchange, chain) -> {
             try {
                 String token = exchange.getRequest().getHeaders().get(AUTHORIZATION).get(0);
-
+                if(blacklistTokenService.isTokenBlacklisted(token)){
+                    throw new EumException(ErrorCode.ACCESS_TOKEN_BLACKLISTED);
+                }
                 Claims claims = jwtUtil.getClaims(token);
 
                 addAuthorizationHeaders(exchange.getRequest(), claims);
