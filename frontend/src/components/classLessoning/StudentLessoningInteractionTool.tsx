@@ -1,4 +1,11 @@
-import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Modal,
+  TextInput,
+} from 'react-native';
 import TeacherScreenMoveIcon from '@assets/icons/teacherScreenMoveIcon.svg';
 import TeacherScreenOffIcon from '@assets/icons/teacherScreenOffIcon.svg';
 import TeacherScreenOnIcon from '@assets/icons/teacherScreenOnIcon.svg';
@@ -35,6 +42,20 @@ const StudentLessoningInteractionTool = ({
   const handleToggle = () => {
     setIsTeacherScreenOn(prev => !prev); // 로컬 상태 업데이트
     onToggleScreen(); // 상위 컴포넌트로 전달된 콜백 호출
+  };
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [answerText, setAnswerText] = useState('');
+
+  const handleInputAnswer = () => {
+    setIsModalVisible(true); // 모달 열기
+  };
+
+  const handleSubmitAnswer = () => {
+    console.log('Submitted Answer:', answerText);
+    // 답변 제출 로직 추가 가능
+    setAnswerText(''); // 입력 창 초기화
+    setIsModalVisible(false); // 모달 닫기
   };
 
   return (
@@ -94,13 +115,48 @@ const StudentLessoningInteractionTool = ({
               </Text>
             </TouchableOpacity>
           </View>
-
+          {/* 정답 입력 버튼 */}
+          <TouchableOpacity
+            onPress={handleInputAnswer}
+            style={styles.inputButton}>
+            <Text style={styles.inputButtonText}>정답 입력하기</Text>
+          </TouchableOpacity>
           {/* 퇴장 버튼 */}
           <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
             <Text style={styles.exitButtonText}>수업 퇴장하기</Text>
           </TouchableOpacity>
         </View>
       </View>
+      {/* 답변 입력 모달 */}
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)}>
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>정답을 입력하세요</Text>
+            <TextInput
+              style={styles.input}
+              value={answerText}
+              onChangeText={setAnswerText}
+              placeholder="답을 입력하세요"
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                onPress={() => setIsModalVisible(false)}
+                style={styles.cancelButton}>
+                <Text style={styles.cancelButtonText}>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSubmitAnswer}
+                style={styles.submitButton}>
+                <Text style={styles.submitButtonText}>제출</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -165,6 +221,73 @@ const styles = StyleSheet.create({
   exitButtonText: {
     fontSize: 12,
     color: '#D32F2F',
+    fontWeight: 'bold',
+  },
+  inputButton: {
+    padding: 4,
+    borderRadius: 8,
+    backgroundColor: '#d7ffcd',
+    alignItems: 'center',
+  },
+  inputButtonText: {
+    fontSize: 12,
+    color: '#2fd355',
+    fontWeight: 'bold',
+  },
+
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  input: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  cancelButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginRight: 5,
+    backgroundColor: '#FFCDD2',
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: '#D32F2F',
+    fontWeight: 'bold',
+  },
+  submitButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginLeft: 5,
+    backgroundColor: '#C8E6C9',
+    borderRadius: 5,
+  },
+  submitButtonText: {
+    color: '#388E3C',
     fontWeight: 'bold',
   },
 });
