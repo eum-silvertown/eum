@@ -17,4 +17,6 @@ public interface UserService {
     void logout(Long memberId, String token);
 
     void updateMemberPassword(Long memberId, PasswordUpdateRequest passwordUpdateRequest);
+
+    void deleteMemberInfo(Long memberId);
 }

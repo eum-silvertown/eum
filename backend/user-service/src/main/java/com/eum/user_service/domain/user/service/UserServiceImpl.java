@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
     private final MemberClassRepository memberClassRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final BlacklistTokenService blacklistTokenService;
 
     @Override
     @Transactional
@@ -114,6 +113,13 @@ public class UserServiceImpl implements UserService {
         Member member = userRepository.findById(memberId)
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
         member.updatePassword(passwordEncoder.encode(passwordUpdateRequest.password()));
+    }
+
+    @Override
+    @Transactional
+    public void deleteMemberInfo(Long memberId) {
+        userRepository.findById(memberId)
+                .ifPresent(userRepository::delete);
     }
 
     private void checkDuplicateIdAndEmail(SignUpRequest signUpRequest) {
