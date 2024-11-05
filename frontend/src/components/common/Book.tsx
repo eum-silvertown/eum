@@ -1,18 +1,43 @@
 import {Text} from '@components/common/Text';
+import ClassDetailScreen from '@screens/ClassDetailScreen';
+import {spacing} from '@theme/spacing';
+import {useState} from 'react';
 import {LayoutChangeEvent, Pressable, StyleSheet, View} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withTiming,
+  withSequence,
 } from 'react-native-reanimated';
 
-function Book(): React.JSX.Element {
+interface BookProp {
+  rightPosition: number;
+  title: string;
+  color: string;
+}
+
+function Book({rightPosition, title, color}: BookProp): React.JSX.Element {
   const rotateY = useSharedValue(0);
   const containerWidth = useSharedValue(0);
-  const right = useSharedValue(75);
+  const right = useSharedValue(75 - rightPosition);
   const width = useSharedValue(25);
   const height = useSharedValue(50);
+  const padding = useSharedValue(spacing.lg);
+  const detailOpacity = useSharedValue(0);
+  const [selected, setSelected] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
+  const ANIM_DURATION = 500;
+
+  // 배경 DetailScreen 애니메이션 스타일
+  const detailScreenStyle = useAnimatedStyle(() => ({
+    opacity: detailOpacity.value,
+    position: 'absolute',
+    left: '-100%',
+    width: '200%',
+    height: '100%',
+    zIndex: 1,
+  }));
 
   // 앞면 애니메이션 스타일
   const frontAnimatedStyles = useAnimatedStyle(() => ({
@@ -38,31 +63,66 @@ function Book(): React.JSX.Element {
     right: `${right.value}%`,
     width: `${width.value}%`,
     height: `${height.value}%`,
+    padding: padding.value,
   }));
 
   const openBook = () => {
-    right.value = withTiming(0, {duration: 1000});
-    width.value = withTiming(50, {duration: 1000});
-    height.value = withTiming(100, {duration: 1000});
+    setSelected(true);
+    // DetailScreen 컴포넌트를 마운트
+    setShowDetail(true);
+
+    // DetailScreen을 서서히 나타나게 함
+    detailOpacity.value = withSequence(
+      withDelay(
+        ANIM_DURATION * 2.5,
+        withTiming(1, {duration: ANIM_DURATION / 2}),
+      ),
+    );
+
+    right.value = withTiming(0, {duration: ANIM_DURATION});
+    width.value = withTiming(50, {duration: ANIM_DURATION});
+    height.value = withTiming(100, {duration: ANIM_DURATION});
+    padding.value = withTiming(0, {duration: ANIM_DURATION});
     rotateY.value = withDelay(
-      1000,
+      ANIM_DURATION,
       withTiming(-180, {
-        duration: 2000,
+        duration: ANIM_DURATION * 2,
       }),
     );
   };
 
   const closeBook = () => {
+    // DetailScreen을 서서히 사라지게 함
+    detailOpacity.value = withTiming(0, {duration: ANIM_DURATION / 2});
+
     rotateY.value = withTiming(0, {
-      duration: 2000,
+      duration: ANIM_DURATION * 2,
     });
-    right.value = withDelay(2000, withTiming(75, {duration: 1000}));
-    width.value = withDelay(2000, withTiming(25, {duration: 1000}));
-    height.value = withDelay(2000, withTiming(50, {duration: 1000}));
+    right.value = withDelay(
+      ANIM_DURATION * 2,
+      withTiming(75 - rightPosition, {duration: ANIM_DURATION}),
+    );
+    width.value = withDelay(
+      ANIM_DURATION * 2,
+      withTiming(25, {duration: ANIM_DURATION}),
+    );
+    height.value = withDelay(
+      ANIM_DURATION * 2,
+      withTiming(50, {duration: ANIM_DURATION}),
+    );
+    padding.value = withDelay(
+      ANIM_DURATION * 2,
+      withTiming(spacing.lg, {duration: ANIM_DURATION}),
+    );
+
+    setTimeout(() => {
+      setSelected(false);
+      // 애니메이션이 완전히 끝난 후 DetailScreen 언마운트
+      setShowDetail(false);
+    }, 3000);
   };
 
   const onContainerLayout = (event: LayoutChangeEvent) => {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
     const {width} = event.nativeEvent.layout;
     containerWidth.value = width;
   };
@@ -71,34 +131,37 @@ function Book(): React.JSX.Element {
     <Animated.View
       style={[
         bookStyles,
+        styles.container,
         {
-          position: 'absolute',
-          backgroundColor: 'green',
+          zIndex: selected ? 1 : 0,
         },
       ]}>
+      {/* ClassDetailScreen 조건부 렌더링 */}
+      {showDetail && (
+        <Animated.View style={detailScreenStyle}>
+          <ClassDetailScreen closeBook={closeBook} />
+        </Animated.View>
+      )}
+
       <Pressable onPress={openBook} style={styles.bookContainer}>
         <View style={styles.rightPageContainer}>
-          {/* 페이지 뒷면 */}
-          <Pressable
-            style={[styles.page]}
-            onPress={closeBook}
-            onLayout={onContainerLayout}>
-            <View style={[styles.content, styles.backContent]}>
-              <Text style={styles.text}>닫기</Text>
-            </View>
-          </Pressable>
-          {/* 페이지 앞면 */}
+          {/* 오른쪽 페이지 (펼침)*/}
+          <View style={styles.page}>
+            <View
+              style={[styles.content, styles.backContent]}
+              onLayout={onContainerLayout}
+            />
+          </View>
+          {/* 표지 */}
           <Animated.View style={[styles.page, frontAnimatedStyles]}>
-            <View style={[styles.content, styles.frontContent]}>
-              <Text style={styles.text}>페이지 앞면</Text>
+            <View style={[styles.content, {backgroundColor: color}]}>
+              <Text>{title}</Text>
             </View>
           </Animated.View>
 
-          {/* 페이지 뒷면 */}
+          {/* 왼쪽 페이지 (펼침) */}
           <Animated.View style={[styles.page, backAnimatedStyles]}>
-            <View style={[styles.content, styles.backContent]}>
-              <Text style={styles.text}>페이지 뒷면</Text>
-            </View>
+            <View style={[styles.content, styles.backContent]} />
           </Animated.View>
         </View>
       </Pressable>
@@ -109,6 +172,9 @@ function Book(): React.JSX.Element {
 export default Book;
 
 const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+  },
   bookContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -138,15 +204,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
-  frontContent: {
-    backgroundColor: '#ff5252',
-  },
   backContent: {
-    backgroundColor: '#7c4dff',
-  },
-  text: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    backgroundColor: 'white',
   },
 });

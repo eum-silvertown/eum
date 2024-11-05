@@ -1,4 +1,4 @@
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Pressable} from 'react-native';
 import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
@@ -7,19 +7,21 @@ import Notice from '@components/classDetail/Notice';
 import Overview from '@components/classDetail/Overview';
 import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {Text} from '@components/common/Text';
 
-function ClassDetailScreen(): React.JSX.Element {
-  const setCurrentScreen = useCurrentScreenStore(
-    state => state.setCurrentScreen,
-  );
-  useFocusEffect(() => {
-    setCurrentScreen('ClassDetailScreen');
-  });
+interface ClassDetailScreenProp {
+  closeBook: () => void;
+}
+
+function ClassDetailScreen({
+  closeBook,
+}: ClassDetailScreenProp): React.JSX.Element {
   return (
     <View style={styles.container}>
       <ClassHeader />
+      <Pressable onPress={() => closeBook()}>
+        <Text>닫기</Text>
+      </Pressable>
       <View style={styles.content}>
         <View style={styles.firstRow}>
           <View style={styles.overviewLayout}>

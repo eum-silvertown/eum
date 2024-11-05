@@ -51,7 +51,14 @@ function ClassListScreen(): React.JSX.Element {
           </View>
         </View>
         <View style={styles.classList}>
-          <Book />
+          {classData.map((data, index) => (
+            <Book
+              key={data.id}
+              rightPosition={index * 25}
+              color={data.color}
+              title={data.title}
+            />
+          ))}
         </View>
       </View>
     </View>
@@ -71,7 +78,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: '100%',
     height: '90%',
-    backgroundColor: 'yellow',
   },
   header: {
     height: '7.5%',
