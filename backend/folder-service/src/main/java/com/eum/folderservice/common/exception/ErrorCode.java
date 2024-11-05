@@ -16,6 +16,9 @@ public enum ErrorCode {
     FOLDER_ALREADY_EXISTS_ERROR("F002", "해당 폴더가 이미 존재합니다.", HttpStatus.BAD_REQUEST),
     ROOT_FOLDER_DELETE_ERROR("F003", "최상위 폴더는 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST),
     ROOT_FOLDER_MOVE_ERROR("F004", "최상위 폴더는 이동할 수 없습니다.", HttpStatus.BAD_REQUEST),
+
+    // File(Question)
+    FILE_NOT_FOUND_ERROR("Q001", "해당 파일을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     ;
 
     private final String code;
