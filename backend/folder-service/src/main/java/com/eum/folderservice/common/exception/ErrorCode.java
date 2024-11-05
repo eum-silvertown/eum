@@ -13,7 +13,7 @@ public enum ErrorCode {
 
     // Folder
     FOLDER_NOT_FOUND_ERROR("F001", "해당 폴더를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    FOLDER_ALREADY_EXISTS_ERROR("F002", "해당 폴더가 이미 존재합니다.", HttpStatus.BAD_REQUEST);
+    FOLDER_ALREADY_EXISTS_ERROR("F002", "해당 폴더가 이미 존재합니다.", HttpStatus.BAD_REQUEST),
     ;
     private final String code;
     private final String message;

@@ -1,6 +1,6 @@
-package com.eum.folderservice.command.dto;
+package com.eum.folderservice.dto;
 
-import com.eum.folderservice.command.domain.Folder;
+import com.eum.folderservice.domain.Folder;
 import lombok.Getter;
 import lombok.Setter;
 

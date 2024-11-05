@@ -1,9 +1,9 @@
-package com.eum.folderservice.command.controller;
+package com.eum.folderservice.controller;
 
-import com.eum.folderservice.command.dto.CreateFolderRequestDTO;
-import com.eum.folderservice.command.service.FolderCommandService;
+import com.eum.folderservice.dto.CreateFolderRequestDTO;
+import com.eum.folderservice.dto.response.CreateFolderResponseDTO;
+import com.eum.folderservice.service.FolderService;
 import com.eum.folderservice.common.util.CommonResponse;
-import com.eum.folderservice.query.dto.CreateFolderResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/folder")
 @RequiredArgsConstructor
-public class FolderCommandController {
+public class FolderController {
 
-    private final FolderCommandService folderCommandService;
+    private final FolderService folderCommandService;
 
     @PostMapping
     public CommonResponse<?> createFolder(HttpServletRequest request, @RequestBody CreateFolderRequestDTO requestDTO) {

@@ -1,29 +1,30 @@
-package com.eum.folderservice.command.service;
+package com.eum.folderservice.service;
 
-import com.eum.folderservice.command.domain.Folder;
-import com.eum.folderservice.command.dto.CreateFolderRequestDTO;
-import com.eum.folderservice.command.repository.FolderRepository;
+import com.eum.folderservice.domain.Folder;
+import com.eum.folderservice.dto.CreateFolderRequestDTO;
+import com.eum.folderservice.dto.response.CreateFolderResponseDTO;
+import com.eum.folderservice.repository.FolderRepository;
 import com.eum.folderservice.common.exception.ErrorCode;
 import com.eum.folderservice.common.exception.FolderException;
-import com.eum.folderservice.query.dto.CreateFolderResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @Service
 @RequiredArgsConstructor
-public class FolderCommandServiceImpl implements FolderCommandService {
+public class FolderServiceImpl implements FolderService {
 
     private final FolderRepository folderRepository;
 
     @Override
     @Transactional
     public CreateFolderResponseDTO createFolder(CreateFolderRequestDTO createFolderDTO) {
-        Folder folder = null;
+        Folder newFolder = null;
 
         // 최상위 폴더인 경우
         if (createFolderDTO.getParentId() == 0) {
-            folder = createFolderDTO.from(null);
+            newFolder = createFolderDTO.from(null);
         }
         // 상위 폴더가 존재하는 경우
         else {
@@ -36,11 +37,12 @@ public class FolderCommandServiceImpl implements FolderCommandService {
                 }
             }
 
-            folder = createFolderDTO.from(parentFolder);
-            parentFolder.addChildFolder(folder);
+            newFolder = createFolderDTO.from(parentFolder);
+            parentFolder.addChildFolder(newFolder);
         }
 
-        Folder savedFolder = folderRepository.save(folder);
+        Folder savedFolder = folderRepository.save(newFolder);
+
         return CreateFolderResponseDTO.of(savedFolder);
     }
 }

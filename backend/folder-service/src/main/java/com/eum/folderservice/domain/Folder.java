@@ -1,4 +1,4 @@
-package com.eum.folderservice.command.domain;
+package com.eum.folderservice.domain;
 
 import com.eum.folderservice.common.util.BaseEntity;
 import jakarta.persistence.*;
@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
 import java.util.List;
