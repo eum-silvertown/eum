@@ -1,5 +1,5 @@
-import {View, StyleSheet, Pressable} from 'react-native';
-import {spacing} from '@theme/spacing';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { spacing } from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -7,7 +7,9 @@ import Notice from '@components/classDetail/Notice';
 import Overview from '@components/classDetail/Overview';
 import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
-import {Text} from '@components/common/Text';
+import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
+import { iconSize } from '@theme/iconSize';
+import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 
 interface ClassDetailScreenProp {
   closeBook: () => void;
@@ -16,21 +18,60 @@ interface ClassDetailScreenProp {
 function ClassDetailScreen({
   closeBook,
 }: ClassDetailScreenProp): React.JSX.Element {
+  const isTeacher = true;
+
+  if (isTeacher) {
+    // 선생님용
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
+          <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
+        </TouchableOpacity>
+        <ClassHeader isTeacher={isTeacher} />
+        <View style={styles.content}>
+          <View style={styles.firstRow}>
+            <View style={styles.overviewLayout}>
+              <Overview isTeacher={isTeacher} />
+              <Notice isTeacher={isTeacher} />
+            </View>
+            <View style={styles.mainContentLayout}>
+              <View style={styles.teacherLayout}>
+                <Teacher isTeacher={isTeacher} />
+              </View>
+              <View style={styles.chartLayout}>
+                <ClassHandleButtonList />
+              </View>
+            </View>
+          </View>
+          <View style={styles.secondRow}>
+            <View style={styles.replayLayout}>
+              <Replay />
+            </View>
+            <View style={styles.homeworkLayout}>
+              <Homework />
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  // 학생용
   return (
     <View style={styles.container}>
-      <ClassHeader />
-      <Pressable onPress={() => closeBook()}>
-        <Text>닫기</Text>
-      </Pressable>
+      <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
+        <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
+      </TouchableOpacity>
+      <ClassHeader isTeacher={isTeacher} />
       <View style={styles.content}>
         <View style={styles.firstRow}>
           <View style={styles.overviewLayout}>
-            <Overview />
-            <Notice />
+            <Overview isTeacher={isTeacher} />
+            <Notice isTeacher={isTeacher} />
           </View>
           <View style={styles.mainContentLayout}>
             <View style={styles.teacherLayout}>
-              <Teacher />
+              <Teacher isTeacher={isTeacher} />
             </View>
             <View style={styles.chartLayout}>
               <Chart />
@@ -55,6 +96,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.lg,
+    position: 'relative',
+  },
+  bookmarkIcon: {
+    position: 'absolute',
+    top: -6,
+    right: 12,
   },
   content: {
     flex: 1,
@@ -75,7 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     paddingTop: spacing.md,
     paddingBottom: spacing.xl,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   mainContentLayout: {
@@ -84,22 +131,22 @@ const styles = StyleSheet.create({
   },
   teacherLayout: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   chartLayout: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   replayLayout: {
     flex: 2,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   homeworkLayout: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fafaff',
     borderRadius: 8,
   },
 });

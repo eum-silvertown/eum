@@ -1,15 +1,20 @@
 import React from 'react';
-import {Text} from '@components/common/Text';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {spacing} from '@theme/spacing';
-
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { Text } from '@components/common/Text';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { spacing } from '@theme/spacing';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import VerticalMenuicon from '@assets/icons/verticalMenuIcon.svg';
+import { iconSize } from '@theme/iconSize';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
-function ClassHeader(): React.JSX.Element {
+type IsTeacherProps = {
+  isTeacher: boolean;
+};
+
+function ClassHeader({ isTeacher }: IsTeacherProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
   const isLive = true;
 
@@ -19,17 +24,23 @@ function ClassHeader(): React.JSX.Element {
         이게 뭐여, 수학이여?
       </Text>
       <View style={styles.rightSection}>
-        <View
-          style={[styles.chip, isLive ? styles.liveChip : styles.defaultChip]}>
+        <View style={[styles.chip, isLive ? styles.liveChip : styles.defaultChip]}>
           <Text style={[isLive ? styles.liveChipText : styles.defaultChipText]}>
             LIVE
           </Text>
         </View>
+
         <TouchableOpacity
           style={styles.enterButton}
-          onPress={() => navigation.navigate('LessoningStudentListScreen')}>
+          onPress={() => navigation.navigate('LessoningStudentListScreen')}
+        >
           <Text style={styles.enterButtonText}>수업 입장</Text>
         </TouchableOpacity>
+        {isTeacher && (
+          <TouchableOpacity style={styles.menuIconContainer}>
+            <VerticalMenuicon width={iconSize.md} height={iconSize.md} />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -39,23 +50,23 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.xl,
     paddingHorizontal: spacing.lg,
+    marginBottom: spacing.xl,
   },
   title: {
-    flex: 1,
-    textAlign: 'left',
+    marginRight: spacing.sm,
   },
   rightSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   chip: {
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 12,
-    marginRight: spacing.sm,
+    marginRight: spacing.xs,
   },
   defaultChip: {
     backgroundColor: '#E0E0E0',
@@ -77,10 +88,15 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 8,
+    marginRight: spacing.xs,
   },
   enterButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  menuIconContainer: {
+    marginLeft: spacing.sm,
+    marginRight: spacing.xxl,
   },
 });
 

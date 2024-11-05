@@ -1,15 +1,28 @@
 import React from 'react';
-import {Text} from '@components/common/Text';
-import {View, StyleSheet, ImageBackground} from 'react-native';
-import {spacing} from '@theme/spacing';
+import { Text } from '@components/common/Text';
+import { View, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { spacing } from '@theme/spacing';
 import teacherPhoto from '@assets/images/teacher.png';
+import PencilIcon from '@assets/icons/pencilIcon.svg';
+import { iconSize } from '@theme/iconSize';
 
-function Teacher(): React.JSX.Element {
+type IsTeacherProps = {
+  isTeacher: boolean;
+}
+
+function Teacher({ isTeacher }: IsTeacherProps): React.JSX.Element {
   return (
     <View style={styles.teacher}>
-      <Text variant="subtitle" weight="bold" style={styles.subtitle}>
-        선생님 소개
-      </Text>
+      <View style={styles.header}>
+        <Text variant="subtitle" weight="bold" style={styles.subtitle}>
+          선생님 소개
+        </Text>
+        {isTeacher && (
+          <TouchableOpacity style={styles.pencilIcon}>
+            <PencilIcon width={iconSize.sm} height={iconSize.sm} />
+          </TouchableOpacity>
+        )}
+      </View>
       <View style={styles.profileContainer}>
         <View style={styles.photoContainer}>
           <ImageBackground
@@ -34,9 +47,18 @@ const styles = StyleSheet.create({
   teacher: {
     paddingVertical: spacing.md,
   },
-  subtitle: {
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginStart: spacing.xl,
     marginBottom: spacing.md,
+  },
+  subtitle: {
+    fontWeight: 'bold',
+  },
+  pencilIcon: {
+    marginLeft: spacing.md,
+    marginTop: spacing.sm,
   },
   profileContainer: {
     flexDirection: 'row',

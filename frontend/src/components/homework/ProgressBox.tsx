@@ -1,11 +1,13 @@
-import {StyleSheet, View} from 'react-native';
-import {Text} from '../common/Text';
-import {spacing} from '@theme/spacing';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
-import {iconSize} from '@theme/iconSize';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text } from '../common/Text';
+import { spacing } from '@theme/spacing';
+import { borderRadius } from '@theme/borderRadius';
+import { getResponsiveSize } from '@utils/responsive';
+import { iconSize } from '@theme/iconSize';
 import CompleteHomeworkIcon from '@assets/icons/completeHomeworkIcon.svg';
 import IncompleteHomeworkIcon from '@assets/icons/incompleteHomeworkIcon.svg';
+import HomeworkCheckIcon from '@assets/icons/homeworkCheckIcon.svg';
+import FolderCheckIcon from '@assets/icons/folderCheckIcon.svg';
 import AvarageScoreIcon from '@assets/icons/scoreIcon.svg';
 import {
   withTiming,
@@ -13,17 +15,19 @@ import {
   useAnimatedReaction,
   runOnJS,
 } from 'react-native-reanimated';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
+import IntoIcon from '@assets/icons/intoIcon.svg';
 
 interface ProgressBoxProps {
   color: 'blue' | 'red' | 'green';
   title: string;
   content: string;
   unit: string;
-  icon: 'complete' | 'incomplete' | 'avarageScore';
+  icon: 'complete' | 'incomplete' | 'avarageScore' | 'homeworkCheck' | 'folderCheck';
+  isTeacher?: boolean;
 }
 
-const AnimatedNumber = ({value}: {value: number}) => {
+const AnimatedNumber = ({ value }: { value: number }) => {
   const progress = useSharedValue(0);
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -55,11 +59,14 @@ function ProgressBox({
   content,
   unit,
   icon,
+  isTeacher,
 }: ProgressBoxProps): React.JSX.Element {
   const icons = {
     complete: CompleteHomeworkIcon,
     incomplete: IncompleteHomeworkIcon,
     avarageScore: AvarageScoreIcon,
+    homeworkCheck: HomeworkCheckIcon,
+    folderCheck: FolderCheckIcon,
   } as const;
 
   const Icon = icons[icon];
@@ -67,7 +74,14 @@ function ProgressBox({
 
   return (
     <View style={[styles.common, styles[color]]}>
-      <Text weight="bold">{title}</Text>
+      <View style={styles.titleContainer}>
+        <Text weight="bold">{title}</Text>
+        {isTeacher && (
+          <TouchableOpacity style={styles.addButton}>
+            <IntoIcon width={iconSize.sm} height={iconSize.sm} />
+          </TouchableOpacity>
+        )}
+      </View>
       <View style={styles.content}>
         <Icon width={iconSize.md} height={iconSize.md} />
         <View style={styles.contentText}>
@@ -97,6 +111,12 @@ const styles = StyleSheet.create({
   green: {
     backgroundColor: '#DAEAEA',
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.sm,
+  },
   content: {
     flex: 1,
     flexDirection: 'row',
@@ -109,5 +129,8 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     gap: spacing.xs,
     overflow: 'hidden',
+  },
+  addButton: {
+    padding: spacing.xs,
   },
 });
