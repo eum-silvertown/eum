@@ -1,12 +1,16 @@
-import { useState } from 'react';
-import { Skia, useCanvasRef } from '@shopify/react-native-skia';
-import { Socket } from 'socket.io-client';
+import {useState} from 'react';
+import {Skia, useCanvasRef} from '@shopify/react-native-skia';
+import {Socket} from 'socket.io-client';
 import CanvasDrawingTool from './CanvasDrawingTool';
 import RightCanvasRefSection from './RightCanvasRefSection';
 import LessoningInteractionToolForStudent from './LessoningInteractionToolForStudent';
 
 interface RightCanvasSectionProps {
   socket: Socket;
+  currentPage: number;
+  totalPages: number;
+  onNextPage: () => void;
+  onPrevPage: () => void;
 }
 
 // Path 데이터 구조
@@ -31,6 +35,10 @@ const MAX_STACK_SIZE = 5; // 최대 스택 크기
 // 오른쪽 캔버스 컴포넌트
 function RightCanvasSection({
   socket,
+  currentPage,
+  totalPages,
+  onNextPage,
+  onPrevPage,
 }: RightCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [pathGroups, setPathGroups] = useState<PathData[][]>([]);
@@ -195,7 +203,7 @@ function RightCanvasSection({
               dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
             if (isInEraseArea) {
-              addToUndoStack({ type: 'erase', pathData });
+              addToUndoStack({type: 'erase', pathData});
             }
             return !isInEraseArea;
           }),
@@ -264,9 +272,9 @@ function RightCanvasSection({
   };
 
   const handleTouchStart = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -276,9 +284,9 @@ function RightCanvasSection({
   };
 
   const handleTouchMove = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -298,7 +306,7 @@ function RightCanvasSection({
         timestamp: Date.now(),
       };
       addPathToGroup(newPathData);
-      addToUndoStack({ type: 'draw', pathData: newPathData });
+      addToUndoStack({type: 'draw', pathData: newPathData});
       setCurrentPath(null);
       setRedoStack([]);
     }
@@ -328,7 +336,13 @@ function RightCanvasSection({
         isErasing={isErasing}
         eraserPosition={eraserPosition}
       />
-      <LessoningInteractionToolForStudent onToggleScreen={handleToggleScreen} />
+      <LessoningInteractionToolForStudent
+        onToggleScreen={handleToggleScreen}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onNextPage={onNextPage}
+        onPrevPage={onPrevPage}
+      />
     </>
   );
 }
