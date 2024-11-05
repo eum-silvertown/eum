@@ -10,6 +10,7 @@ import {getResponsiveSize} from '@utils/responsive';
 import DropdownArrowIcon from '@assets/icons/dropdownArrowIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {useRef} from 'react';
+import Book from '@components/common/Book';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -42,46 +43,16 @@ function ClassListScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <ScreenInfo title="수업" />
-      <View style={styles.header}>
-        <View style={styles.filter}>
-          <Text>진행중인 수업</Text>
-          <DropdownArrowIcon width={iconSize.xs} height={iconSize.xs} />
-        </View>
-      </View>
-      <View style={styles.classList}>
-        {classData.map((data, index) => (
-          <View
-            style={[styles.classCard3D, {backgroundColor: 'gray'}]}
-            key={data.id}>
-            <Pressable
-              onPress={() => handlePress()}
-              onPressIn={() => animatePress(index, true)}
-              onPressOut={() => animatePress(index, false)}
-              style={({}) => [styles.classCard, {}]}>
-              {({}) => (
-                <Animated.View
-                  style={[
-                    styles.cardContent,
-                    {
-                      backgroundColor: pressAnimations[index].interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [data.color, `${data.color}cc`],
-                      }),
-                    },
-                  ]}>
-                  <View style={styles.bookTitle}>
-                    <Text variant="title" color="white" weight="medium">
-                      {data.title}
-                    </Text>
-                  </View>
-                  <View style={styles.bookDesc}>
-                    <Text>설명</Text>
-                  </View>
-                </Animated.View>
-              )}
-            </Pressable>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <View style={styles.filter}>
+            <Text>진행중인 수업</Text>
+            <DropdownArrowIcon width={iconSize.xs} height={iconSize.xs} />
           </View>
-        ))}
+        </View>
+        <View style={styles.classList}>
+          <Book />
+        </View>
       </View>
     </View>
   );
@@ -96,11 +67,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
     paddingHorizontal: spacing.xxl,
   },
-  classList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    flex: 1,
-    gap: spacing.xxl,
+  content: {
+    position: 'relative',
+    width: '100%',
+    height: '90%',
+    backgroundColor: 'yellow',
   },
   header: {
     height: '7.5%',
@@ -116,35 +87,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#EBEBEB',
     borderRadius: borderRadius.md,
   },
-  classCard3D: {
-    width: `${(100 - 5 * 3) / 4}%`,
-    height: '50%',
-    borderRadius: borderRadius.md,
-  },
-  classCard: {
+  classList: {
     position: 'absolute',
     width: '100%',
     height: '100%',
-    bottom: spacing.md,
-    right: spacing.md,
-    borderRadius: borderRadius.md,
-    elevation: getResponsiveSize(2),
-    overflow: 'hidden',
-  },
-  cardContent: {
-    width: '100%',
-    height: '100%',
-    borderRadius: borderRadius.md,
-  },
-  bookTitle: {
-    height: '66%',
-    padding: spacing.lg,
-  },
-  bookDesc: {
-    flex: 1,
-    padding: spacing.md,
-    backgroundColor: 'white',
-    borderBottomLeftRadius: borderRadius.md,
-    borderBottomRightRadius: borderRadius.md,
   },
 });
