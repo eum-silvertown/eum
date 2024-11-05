@@ -55,11 +55,11 @@ const TeacherLessoningInteractionTool = ({
           {/* 녹화 시작/중지 */}
           {isRecording ? (
             <TouchableOpacity onPress={stopRecording}>
-              <RecordOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+              <RecordOnIcon width={iconSize.md} height={iconSize.md} />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={startRecording}>
-              <RecordOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+              <RecordOffIcon width={iconSize.md} height={iconSize.md} />
             </TouchableOpacity>
           )}
           {/* 문제 페이지 설정 */}
@@ -97,7 +97,7 @@ const TeacherLessoningInteractionTool = ({
 
           {/* 퇴장 버튼 */}
           <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
-            <Text style={styles.exitButtonText}>수업 퇴장하기</Text>
+            <Text style={styles.exitButtonText}>수업 종료하기</Text>
           </TouchableOpacity>
         </View>
       </View>
