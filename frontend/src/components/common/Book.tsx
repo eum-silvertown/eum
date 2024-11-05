@@ -94,6 +94,9 @@ function Book({rightPosition, title, color}: BookProp): React.JSX.Element {
   const closeBook = () => {
     // DetailScreen을 서서히 사라지게 함
     detailOpacity.value = withTiming(0, {duration: ANIM_DURATION / 2});
+    setTimeout(() => {
+      setShowDetail(false);
+    }, ANIM_DURATION / 2);
 
     rotateY.value = withTiming(0, {
       duration: ANIM_DURATION * 2,
@@ -118,7 +121,6 @@ function Book({rightPosition, title, color}: BookProp): React.JSX.Element {
     setTimeout(() => {
       setSelected(false);
       // 애니메이션이 완전히 끝난 후 DetailScreen 언마운트
-      setShowDetail(false);
     }, 3000);
   };
 
