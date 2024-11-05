@@ -141,9 +141,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public MemberInfoResponse getMemberInfo(Long memberId, Role role) {
         MemberInfoResponse memberInfoResponse = null;
+        ImageResponse imageResponse = null;
         Member member = userRepository.findById(memberId)
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
-        ImageResponse imageResponse = fileService.getPresignedUrlForRead(member.getUserId()+role.name());
+        if(member.getImage() != null) {
+            imageResponse = fileService.getPresignedUrlForRead(member.getImage());
+        }
+
         if(role.equals(Role.TEACHER)) {
             ClassInfo classInfo = classInfoRepository.findByTeacherId(memberId)
                     .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));

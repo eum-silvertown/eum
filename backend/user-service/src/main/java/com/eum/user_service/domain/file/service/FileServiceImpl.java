@@ -34,8 +34,7 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public ImageResponse getPresignedUrlForRead(String imageName) {
-        String key = PREFIX + imageName;
+    public ImageResponse getPresignedUrlForRead(String key) {
         GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlForRead(bucket, key);
         URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
         return ImageResponse.from(url,key);
