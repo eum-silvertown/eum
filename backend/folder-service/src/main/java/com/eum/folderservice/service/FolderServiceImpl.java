@@ -1,10 +1,12 @@
 package com.eum.folderservice.service;
 
 import com.eum.folderservice.domain.Folder;
+import com.eum.folderservice.domain.SavedFile;
 import com.eum.folderservice.dto.request.CreateFolderRequestDTO;
 import com.eum.folderservice.dto.request.ModifyTitleRequestDTO;
 import com.eum.folderservice.dto.request.MoveFolderRequestDTO;
 import com.eum.folderservice.dto.response.FolderResponseDTO;
+import com.eum.folderservice.dto.response.SavedFileResponseDTO;
 import com.eum.folderservice.dto.response.SubFolderResponseDTO;
 import com.eum.folderservice.repository.FolderRepository;
 import com.eum.folderservice.common.exception.ErrorCode;
@@ -13,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -43,15 +45,25 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
+    public SubFolderResponseDTO getRootFolder(Long memberId) {
+        Folder rootFolder = folderRepository.findByMemberIdAndParentFolderIsNull(memberId)
+                .orElseThrow(() -> new FolderException(ErrorCode.FOLDER_NOT_FOUND_ERROR));
+
+        List<Folder> subFolders = rootFolder.getSubFolders() == null ? new ArrayList<>() : rootFolder.getSubFolders();
+        List<SavedFile> subFiles = rootFolder.getSavedFiles() == null ? new ArrayList<>() : rootFolder.getSavedFiles();
+
+        return SubFolderResponseDTO.builder()
+                .folderId(rootFolder.getId())
+                .subFolders(subFolders.stream().map(FolderResponseDTO::of).toList())
+                .subFiles(subFiles.stream().map(SavedFileResponseDTO::of).toList())
+                .build();
+    }
+
+
+    @Override
     @Transactional(readOnly = true)
-    public List<SubFolderResponseDTO> getSubFolders(Long folderId, Long memberId) {
-        if (folderId == 0) {
-            return folderRepository.findAllByMemberIdAndParentFolderIsNull(memberId).stream()
-                    .map(SubFolderResponseDTO::of).toList();
-        }
-        
-        return findFolderByIdAndMemberId(folderId, memberId).getSubFolders().stream()
-                .map(SubFolderResponseDTO::of).toList();
+    public SubFolderResponseDTO getSubFolders(Long folderId, Long memberId) {
+        return null;
     }
 
     @Override
@@ -79,18 +91,11 @@ public class FolderServiceImpl implements FolderService {
     public void moveFolder(MoveFolderRequestDTO requestDTO, Long memberId) {
         Folder folder = findFolderByIdAndMemberId(requestDTO.getFolderId(), memberId);
 
-        if (folder.getParentFolder() != null) {
-            folder.getParentFolder().removeChildFolder(folder);
-        }
+        folder.getParentFolder().removeChildFolder(folder);
 
-        // 최상위 폴더로 이동하는 경우
-        if (requestDTO.getToId() == 0) {
-            folder.setParentFolder(null);
-        } else {
-            Folder toFolder = findFolderByIdAndMemberId(requestDTO.getToId(), memberId);
-            folder.setParentFolder(toFolder);
-            toFolder.addChildFolder(folder);
-        }
+        Folder toFolder = findFolderByIdAndMemberId(requestDTO.getToId(), memberId);
+        folder.setParentFolder(toFolder);
+        toFolder.addChildFolder(folder);
     }
 
     @Transactional

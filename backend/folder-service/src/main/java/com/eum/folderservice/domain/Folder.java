@@ -35,6 +35,9 @@ public class Folder extends BaseEntity {
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL)
     private List<Folder> subFolders = new ArrayList<>();
 
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL)
+    private List<SavedFile> savedFiles = new ArrayList<>();
+
     public void addChildFolder(Folder folder) {
         this.subFolders.add(folder);
         this.childrenCount = (long) this.subFolders.size();
