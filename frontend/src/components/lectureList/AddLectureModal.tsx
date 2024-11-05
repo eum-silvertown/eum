@@ -21,6 +21,10 @@ import Lecture from '@components/main/Lecture';
 import {getResponsiveSize} from '@utils/responsive';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import StatusMessage from '@components/account/StatusMessage';
+import { useModalStore } from '@store/useModalStore';
+
+interface AddLectureModalProps {
+}
 
 interface Schedule {
   day: string;
@@ -40,7 +44,7 @@ interface LectureProps {
   };
 }
 
-const AddLectureModal = (): React.JSX.Element => {
+const AddLectureModal = ({ }: AddLectureModalProps): React.JSX.Element => {
   const [title, setTitle] = useState('');
   const [subjects, setSubjects] = useState('');
   const [introduction, setIntroduction] = useState('');
@@ -70,8 +74,7 @@ const AddLectureModal = (): React.JSX.Element => {
   const [subjectError, setSubjectError] = useState('');
   const [introductionError, setIntroductionError] = useState('');
   const [gradeError, setGradeError] = useState('');
-  const [scheduleError, setScheduleError] = useState('');
-
+  const [scheduleError, setScheduleError] = useState('');  
 
   useEffect(() => {
     const currentYear = new Date().getFullYear().toString();

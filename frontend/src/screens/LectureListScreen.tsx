@@ -11,7 +11,7 @@ import AddLectureModal from '@components/lectureList/AddLectureModal';
 import {colors} from 'src/hooks/useColors';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
-import {useModalStore} from '@store/useModalStore';
+import {useModal} from '@store/useModalStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -31,7 +31,7 @@ function ClassListScreen(): React.JSX.Element {
   >();
   const [lectureModalVisible, setAddLectureModalVisible] =
     useState<boolean>(false);
-  const {setIsModalOpened, setModalTitle, setModalContent} = useModalStore();
+  const {open} = useModal();
 
   // 현재 연도와 학기 계산
   const currentYear = new Date().getFullYear().toString();
@@ -83,18 +83,18 @@ function ClassListScreen(): React.JSX.Element {
             현재 학기
           </Text>
         </TouchableOpacity>
-        
 
         <TouchableOpacity
           onPress={() => {
-            setIsModalOpened(true);
-            setModalTitle('수업 생성');            
-            setModalContent(<AddLectureModal />);
+            open(<AddLectureModal />, {
+              title: '수업 생성',
+              onClose: () => {
+                console.log('수업 생성 모달 종료');
+              },
+            });
           }}>
           <Text>수업 생성</Text>
         </TouchableOpacity>
-
-        
       </View>
 
       <View style={styles.classList}>
@@ -109,6 +109,9 @@ function ClassListScreen(): React.JSX.Element {
                 {data.title}
               </Text>
             </TouchableOpacity>
+
+            
+            
           ))}
       </View>
     </View>
