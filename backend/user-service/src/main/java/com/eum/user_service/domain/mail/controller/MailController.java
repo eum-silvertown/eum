@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/mail")
-public class MailController {
+public class MailController implements MailApiDocumentation{
 
     private final MailService mailService;
 
