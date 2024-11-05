@@ -3,9 +3,9 @@ import {View, StyleSheet} from 'react-native';
 import {io, Socket} from 'socket.io-client';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
-import LeftCanvasSection from '@components/classLessoning/LeftCanvasSection';
+import TeacherCanvasSection from '@components/classLessoning/TeacherCanvasSection';
 // import LeftRecordCanvasSection from '@components/classLessoning/LeftRecordCanvasSection';
-import RightCanvasSection from '@components/classLessoning/RightCanvasSection';
+import StudentCanvasSection from '@components/classLessoning/StudentCanvasSection';
 // import RightRecordCanvasSection from '@components/classLessoning/RightRecordCanvasSection';
 
 import {useFocusEffect} from '@react-navigation/native';
@@ -80,7 +80,7 @@ function LessoningScreen(): React.JSX.Element {
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
         <ProblemSection problemText={problems[currentPage]} />
-        <LeftCanvasSection
+        <TeacherCanvasSection
           socket={socket}
           onRecordingEnd={handleRecordingEnd}
           currentPage={currentPage + 1}
@@ -93,7 +93,7 @@ function LessoningScreen(): React.JSX.Element {
 
       <View style={styles.sectionContainer}>
         <ProblemSection problemText={problems[currentPage]} />
-        <RightCanvasSection
+        <StudentCanvasSection
           socket={socket}
           currentPage={currentPage + 1}
           totalPages={problems.length}

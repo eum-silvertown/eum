@@ -1,9 +1,9 @@
 import ParticipantCard from '@components/classLessoning/ParticipantCard';
 import {useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
-import LessoningInteractionTool from '@components/classLessoning/LessoningInteractionTool';
 import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import TeacherLessoningGridInteractionTool from '@components/classLessoning/TeacherLessoningGridInteractionTool';
 
 interface Participant {
   id: string;
@@ -75,7 +75,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
     <View style={styles.mainContainer}>
       {/* 상단 바 */}
       <View style={styles.interactionToolContainer}>
-        <LessoningInteractionTool />
+        <TeacherLessoningGridInteractionTool />
       </View>
 
       {/* 총 인원수 */}

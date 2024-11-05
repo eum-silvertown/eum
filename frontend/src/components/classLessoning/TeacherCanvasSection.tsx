@@ -1,12 +1,14 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Skia, useCanvasRef} from '@shopify/react-native-skia';
-import {Socket} from 'socket.io-client';
 import CanvasDrawingTool from './CanvasDrawingTool';
-import RightCanvasRefSection from './RightCanvasRefSection';
-import LessoningInteractionToolForStudent from './LessoningInteractionToolForStudent';
+import {Socket} from 'socket.io-client';
 
-interface RightCanvasSectionProps {
+import pako from 'pako';
+import TeacherLessoningInteractionTool from './TeacherLessoningInteractionTool';
+
+interface LeftCanvasSectionProps {
   socket: Socket;
+  onRecordingEnd: (recordedPaths: PathData[]) => void;
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
@@ -19,7 +21,7 @@ type PathData = {
   color: string;
   strokeWidth: number;
   opacity: number;
-  timestamp: number; // 단일 타임스탬프
+  timestamp: number;
 };
 
 // 스택 데이터 구조
@@ -28,18 +30,18 @@ type ActionData = {
   pathData: PathData;
 };
 
-// 지우개 범위 상수
+// 상수
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5; // 최대 스택 크기
 
-// 오른쪽 캔버스 컴포넌트
-function RightCanvasSection({
+function TeacherCanvasSection({
   socket,
+  onRecordingEnd,
   currentPage,
   totalPages,
   onNextPage,
   onPrevPage,
-}: RightCanvasSectionProps): React.JSX.Element {
+}: LeftCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [pathGroups, setPathGroups] = useState<PathData[][]>([]);
   const [currentPath, setCurrentPath] = useState<any | null>(null);
@@ -53,15 +55,39 @@ function RightCanvasSection({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
-  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
-  const handleToggleScreen = () => {
-    setIsTeacherScreenOn(prev => !prev);
-  };
+  // 2초마다 pathGroups를 SVG 문자열로 변환해 소켓으로 전송
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // pathGroups 데이터를 SVG 문자열로 변환
+      const dataToSend = pathGroups.map(group =>
+        group.map(pathData => ({
+          ...pathData,
+          path: pathData.path.toSVGString(), // path를 SVG 문자열로 변환
+        })),
+      );
+
+      const compressedData = pako.deflate(JSON.stringify(dataToSend));
+      socket.emit('left_to_right', compressedData);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [pathGroups, socket]);
+
+  // 녹화 데이터 저장
+  const recordedPathsRef = useRef<PathData[]>([]);
+
+  useEffect(() => {
+    if (isRecording) {
+      recordedPathsRef.current = []; // 녹화 시작 시 초기화
+    }
+  }, [isRecording]);
 
   const togglePenOpacity = () => {
-    setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1));
+    setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
   };
+
   const toggleEraserMode = () => {
     setIsErasing(!isErasing);
 
@@ -291,6 +317,16 @@ function RightCanvasSection({
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
+      const pathData = {
+        path: currentPath.toSVGString(),
+        color: penColor,
+        strokeWidth: penSize,
+        opacity: penOpacity,
+        timestamp: Date.now(),
+      };
+      if (isRecording) {
+        recordedPathsRef.current.push(pathData);
+      }
     }
   };
 
@@ -305,6 +341,9 @@ function RightCanvasSection({
         opacity: penOpacity,
         timestamp: Date.now(),
       };
+      if (isRecording) {
+        recordedPathsRef.current.push(newPathData);
+      }
       addPathToGroup(newPathData);
       addToUndoStack({type: 'draw', pathData: newPathData});
       setCurrentPath(null);
@@ -312,9 +351,14 @@ function RightCanvasSection({
     }
   };
 
+  const startRecording = () => setIsRecording(true);
+  const stopRecording = () => {
+    setIsRecording(false);
+    onRecordingEnd(recordedPathsRef.current);
+  };
+
   return (
     <>
-      {isTeacherScreenOn && <RightCanvasRefSection socket={socket} />}
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={pathGroups.flat()}
@@ -330,14 +374,16 @@ function RightCanvasSection({
         togglePenOpacity={togglePenOpacity}
         undo={undo}
         redo={redo}
-        redoStack={redoStack.length}
         undoStack={undoStack.length}
+        redoStack={redoStack.length}
         toggleEraserMode={toggleEraserMode}
         isErasing={isErasing}
         eraserPosition={eraserPosition}
       />
-      <LessoningInteractionToolForStudent
-        onToggleScreen={handleToggleScreen}
+      <TeacherLessoningInteractionTool
+        isRecording={isRecording}
+        startRecording={startRecording}
+        stopRecording={stopRecording}
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}
@@ -347,4 +393,4 @@ function RightCanvasSection({
   );
 }
 
-export default RightCanvasSection;
+export default TeacherCanvasSection;

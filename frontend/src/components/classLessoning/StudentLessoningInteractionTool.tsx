@@ -2,8 +2,6 @@ import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import TeacherScreenMoveIcon from '@assets/icons/teacherScreenMoveIcon.svg';
 import TeacherScreenOffIcon from '@assets/icons/teacherScreenOffIcon.svg';
 import TeacherScreenOnIcon from '@assets/icons/teacherScreenOnIcon.svg';
-import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
-import DrawingTabletIcon from '@assets/icons/drawingTabletIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {ScreenType} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -20,7 +18,7 @@ interface LessoningInteractionToolForStudentProps {
   onPrevPage: () => void;
 }
 
-const LessoningInteractionToolForStudent = ({
+const StudentLessoningInteractionTool = ({
   onToggleScreen,
   currentPage,
   totalPages,
@@ -60,19 +58,6 @@ const LessoningInteractionToolForStudent = ({
           {/* 선생님 화면으로 이동 */}
           <TouchableOpacity>
             <TeacherScreenMoveIcon
-              width={iconSize.mdPlus}
-              height={iconSize.mdPlus}
-            />
-          </TouchableOpacity>
-          {/* 학생 화면 Grid 보기 */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('LessoningStudentListScreen')}>
-            <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-          </TouchableOpacity>
-          {/* 필기 화면 닫기 */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('LessoningScreen')}>
-            <DrawingTabletIcon
               width={iconSize.mdPlus}
               height={iconSize.mdPlus}
             />
@@ -120,7 +105,7 @@ const LessoningInteractionToolForStudent = ({
   );
 };
 
-export default LessoningInteractionToolForStudent;
+export default StudentLessoningInteractionTool;
 
 const styles = StyleSheet.create({
   InteractionToolBar: {
@@ -172,13 +157,13 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   exitButton: {
-    padding: 8,
+    padding: 4,
     borderRadius: 8,
     backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
     alignItems: 'center',
   },
   exitButtonText: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#D32F2F',
     fontWeight: 'bold',
   },

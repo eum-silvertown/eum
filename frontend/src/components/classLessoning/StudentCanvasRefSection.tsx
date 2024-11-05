@@ -18,7 +18,7 @@ type PathData = {
 };
 
 // 오른쪽 캔버스 컴포넌트
-function RightCanvasRefSection({
+function StudentCanvasRefSection({
   socket,
 }: RightCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
@@ -85,7 +85,7 @@ function RightCanvasRefSection({
   );
 }
 
-export default RightCanvasRefSection;
+export default StudentCanvasRefSection;
 const styles = StyleSheet.create({
   canvasLayout: {
     ...StyleSheet.absoluteFillObject,
