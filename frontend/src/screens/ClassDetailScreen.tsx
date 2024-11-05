@@ -1,5 +1,5 @@
-import {View, StyleSheet, Pressable} from 'react-native';
-import {spacing} from '@theme/spacing';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { spacing } from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -7,7 +7,8 @@ import Notice from '@components/classDetail/Notice';
 import Overview from '@components/classDetail/Overview';
 import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
-import {Text} from '@components/common/Text';
+import { iconSize } from '@theme/iconSize';
+import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 
 interface ClassDetailScreenProp {
   closeBook: () => void;
@@ -16,12 +17,49 @@ interface ClassDetailScreenProp {
 function ClassDetailScreen({
   closeBook,
 }: ClassDetailScreenProp): React.JSX.Element {
+  const isTeacher = true;
+
+  if (isTeacher) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
+          <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
+        </TouchableOpacity>
+        <ClassHeader />
+        <View style={styles.content}>
+          <View style={styles.firstRow}>
+            <View style={styles.overviewLayout}>
+              <Overview />
+              <Notice />
+            </View>
+            <View style={styles.mainContentLayout}>
+              <View style={styles.teacherLayout}>
+                <Teacher />
+              </View>
+              <View style={styles.chartLayout}>
+                <Chart />
+              </View>
+            </View>
+          </View>
+          <View style={styles.secondRow}>
+            <View style={styles.replayLayout}>
+              <Replay />
+            </View>
+            <View style={styles.homeworkLayout}>
+              <Homework />
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
+        <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
+      </TouchableOpacity>
       <ClassHeader />
-      <Pressable onPress={() => closeBook()}>
-        <Text>닫기</Text>
-      </Pressable>
       <View style={styles.content}>
         <View style={styles.firstRow}>
           <View style={styles.overviewLayout}>
@@ -55,6 +93,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.lg,
+    position: 'relative',
+  },
+  bookmarkIcon: {
+    position: 'absolute',
+    top: -6,
+    right: 12,
   },
   content: {
     flex: 1,
