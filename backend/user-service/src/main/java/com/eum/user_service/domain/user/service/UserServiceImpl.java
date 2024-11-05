@@ -1,9 +1,11 @@
 package com.eum.user_service.domain.user.service;
 
+import com.eum.user_service.domain.file.dto.ImageRequest;
+import com.eum.user_service.domain.file.dto.ImageResponse;
+import com.eum.user_service.domain.file.service.FileService;
 import com.eum.user_service.domain.token.dto.TokenRequest;
 import com.eum.user_service.domain.token.dto.TokenResponse;
 import com.eum.user_service.domain.token.entity.RefreshToken;
-import com.eum.user_service.domain.token.service.BlacklistTokenService;
 import com.eum.user_service.domain.token.service.TokenService;
 import com.eum.user_service.domain.user.dto.*;
 import com.eum.user_service.domain.user.entity.*;
@@ -27,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final MemberClassRepository memberClassRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final FileService fileService;
 
     @Override
     @Transactional
@@ -120,6 +123,30 @@ public class UserServiceImpl implements UserService {
     public void deleteMemberInfo(Long memberId) {
         userRepository.findById(memberId)
                 .ifPresent(userRepository::delete);
+    }
+
+    @Override
+    @Transactional
+    public ImageResponse updateMemberProfile(Long memberId, ImageRequest imageRequest) {
+        Member member = userRepository.findById(memberId)
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+
+        ImageResponse imageResponse = fileService
+                .getPresignedUrlForUpload(member.getUserId()+imageRequest.image());
+        member.updateUserImage(imageResponse.image());
+        return imageResponse;
+    }
+
+    @Override
+    @Transactional
+    public MemberInfoResponse getMemberInfo(Long memberId, Role role) {
+        Member member = userRepository.findById(memberId)
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+        ClassInfo classInfo = classInfoRepository.findByTeacherId(memberId)
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+        log.info(role.name());
+
+        return null;
     }
 
     private void checkDuplicateIdAndEmail(SignUpRequest signUpRequest) {

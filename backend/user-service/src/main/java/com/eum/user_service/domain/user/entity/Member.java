@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -47,10 +49,10 @@ public class Member extends BaseEntity {
     private String image;
 
     @OneToMany(mappedBy = "teacher")
-    private Set<ClassInfo> classInfos = new LinkedHashSet<>();
+    private final List<ClassInfo> classInfos = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private Set<MembersClass> membersClasses = new LinkedHashSet<>();
+    private final List<MembersClass> membersClasses = new ArrayList<>();
 
     @Builder
     public Member(String userId, String password, String name, Role role, LocalDate birth, String email, String tel) {
@@ -77,5 +79,9 @@ public class Member extends BaseEntity {
                 .tel(signUpRequest.tel())
                 .birth(signUpRequest.birth())
                 .build();
+    }
+
+    public void updateUserImage(String image) {
+        this.image = image;
     }
 }

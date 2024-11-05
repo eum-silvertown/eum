@@ -1,8 +1,11 @@
 package com.eum.user_service.domain.user.controller;
 
+import com.eum.user_service.domain.file.dto.ImageRequest;
+import com.eum.user_service.domain.file.dto.ImageResponse;
 import com.eum.user_service.domain.token.dto.TokenRequest;
 import com.eum.user_service.domain.token.dto.TokenResponse;
 import com.eum.user_service.domain.user.dto.*;
+import com.eum.user_service.domain.user.entity.Role;
 import com.eum.user_service.domain.user.service.UserService;
 import com.eum.user_service.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -66,4 +69,17 @@ public class UserController {
         return CommonResponse.success("성공적으로 탈퇴 되었습니다.");
     }
 
+    @GetMapping("/info")
+    public CommonResponse<?> getUserInfo(@RequestHeader(value = "X-MEMBER-ID") String memberId,
+                                         @RequestHeader(value = "X-MEMBER-ROLE") Role role) {
+        MemberInfoResponse userInfoResponse = userService.getMemberInfo(Long.valueOf(memberId), role);
+        return CommonResponse.success("성공적으로 탈퇴 되었습니다.");
+    }
+
+    @PatchMapping("/info/image")
+    public CommonResponse<?> updateMemberProfileImage(@RequestHeader(value = "X-MEMBER-ID") String memberId,
+                                                  @RequestBody ImageRequest imageRequest) {
+        ImageResponse imageResponse = userService.updateMemberProfile(Long.valueOf(memberId), imageRequest);
+        return CommonResponse.success(imageResponse,"프로필 사진이 성공적으로 변경되었습니다.");
+    }
 }
