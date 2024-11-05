@@ -1,58 +1,34 @@
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
-import {Text} from '@components/common/Text';
-import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
-import {borderRadius} from '@theme/borderRadius';
-import {colors} from 'src/hooks/useColors';
-import {getResponsiveSize} from '@utils/responsive';
+import { Text } from '@components/common/Text';
+import { borderWidth } from '@theme/borderWidth';
+import { spacing } from '@theme/spacing';
+import { borderRadius } from '@theme/borderRadius';
+import { colors } from 'src/hooks/useColors';
+import { getResponsiveSize } from '@utils/responsive';
+import type { LectureType } from '@store/useLectureStore'; // useLectureStore에서 Lecture 타입을 가져옴
 
 interface LectureProps {
-  item: {
-    title: string;
-    subject: string;
-    backgroundColor: string;
-    fontColor: string;
-    grade: string;
-    classNumber: string;
-    teacherName?: string;
-    lecturePeriod?: number;
-    days?: string[];
-  };
+  item: LectureType;
 }
 
-export default function Lecture({
-  item = {
-    title: '',
-    subject: '',
-    backgroundColor: '#FFFFFF',
-    fontColor: '#000000',
-    grade: '',
-    classNumber: '',
-    teacherName: '',
-    lecturePeriod: undefined,
-    days: ['월', '화'],
-  },
-}: LectureProps): React.JSX.Element {
-  const pages = 15; // 총 페이지 수 (표지 포함)
+export default function Lecture({ item }: LectureProps): React.JSX.Element {
+  const pages = 15;
 
-  const calculateLectureTime = (lecturePeriod: number) => {
-    const baseHour = 9; // 첫 번째 교시 시작 시간 (9시)
-    const hour = baseHour + (lecturePeriod - 1); // 교시별로 시간 증가
-    const formattedTime = `${hour.toString().padStart(2, '0')}:00`; // 시간 형식으로 반환
-    return formattedTime;
+  const calculateLectureTime = (lecturePeriod?: number) => {
+    if (!lecturePeriod) return null;
+    const baseHour = 9;
+    const hour = baseHour + (lecturePeriod - 1);
+    return `${hour.toString().padStart(2, '0')}:00`;
   };
 
-  const lectureTime = item.lecturePeriod
-    ? calculateLectureTime(item.lecturePeriod)
-    : null;
+  const lectureTime = calculateLectureTime(item.lecturePeriod);
 
   return (
     <View style={styles.container}>
       <View style={styles.lectureContainer}>
         <View style={styles.pagesContainer}>
-          {/* 페이지들을 겹쳐서 배치 */}
-          {Array.from({length: pages}).map((_, index) => (
+          {Array.from({ length: pages }).map((_, index) => (
             <View
               key={index}
               style={[
@@ -61,42 +37,38 @@ export default function Lecture({
                   backgroundColor:
                     index === pages - 1 ? item.backgroundColor : 'white',
                   transform: [
-                    {translateY: index * -2}, // 페이지 겹침 효과
-                    {translateX: index * 3}, // 깊이감 추가
+                    { translateY: index * -2 },
+                    { translateX: index * 3 },
                   ],
                   zIndex: -index,
                 },
               ]}
             />
           ))}
-          {/* 책 표지 */}
           <View
             style={[
               styles.lectureCover,
-              {backgroundColor: item.backgroundColor},
-            ]}>
-            {item.days &&
-              item.days.map((day, index) => (
-                <Text key={index}>{day}</Text>
-              ))}
-
+              { backgroundColor: item.backgroundColor },
+            ]}
+          >            
             <Text
               variant="subtitle"
               weight="bold"
-              style={[styles.lectureTitle, {color: item.fontColor}]}>
+              style={[styles.lectureTitle, { color: item.fontColor }]}
+            >
               {item.title}
             </Text>
             <View style={styles.lectureInfo}>
-              <Text weight="bold" style={{color: item.fontColor}}>
+              <Text weight="bold" style={{ color: item.fontColor }}>
                 {item.subject}
               </Text>
-              <View style={{alignItems: 'flex-end'}}>
+              <View style={{ alignItems: 'flex-end' }}>
                 <View style={styles.chip}>
                   <Text variant="caption" color="white" weight="bold">
                     {item.grade}-{item.classNumber}
                   </Text>
                 </View>
-                <Text style={{color: item.fontColor}} weight="bold">
+                <Text style={{ color: item.fontColor }} weight="bold">
                   {item.teacherName} 선생님
                 </Text>
               </View>
@@ -127,7 +99,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     flex: 1,
     alignItems: 'center',
-    padding: spacing.xl,    
+    padding: spacing.xl,
   },
   pagesContainer: {
     width: '100%',

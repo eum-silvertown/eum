@@ -1,12 +1,11 @@
 import React from 'react';
 import {Text} from '@components/common/Text';
 import ContentLayout from './ContentLayout';
-import Lecture from './Lecture';
+import Lecture from '@components/main/Lecture';
 import {
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
-  Pressable,
+  TouchableOpacity,  
 } from 'react-native';
 import {spacing} from '@theme/spacing';
 
