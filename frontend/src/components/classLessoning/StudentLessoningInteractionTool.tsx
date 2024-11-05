@@ -36,7 +36,7 @@ const StudentLessoningInteractionTool = ({
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
 
   const handleExit = () => {
-    navigation.navigate('ClassDetailScreen');
+    navigation.goBack();
   };
 
   const handleToggle = () => {

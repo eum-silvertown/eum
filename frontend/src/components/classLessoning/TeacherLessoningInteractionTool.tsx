@@ -33,7 +33,7 @@ const TeacherLessoningInteractionTool = ({
   const navigation = useNavigation<NavigationProps>();
 
   const handleExit = () => {
-    navigation.navigate('ClassDetailScreen');
+    navigation.goBack();
   };
 
   return (

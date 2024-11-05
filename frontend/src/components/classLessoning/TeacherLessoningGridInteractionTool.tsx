@@ -25,7 +25,7 @@ const TeacherLessoningGridInteractionTool = ({
   const navigation = useNavigation<NavigationProps>();
 
   const handleExit = () => {
-    navigation.navigate('ClassDetailScreen');
+    navigation.goBack();
   };
 
   return (
