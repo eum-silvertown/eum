@@ -140,13 +140,26 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public MemberInfoResponse getMemberInfo(Long memberId, Role role) {
+        MemberInfoResponse memberInfoResponse = null;
         Member member = userRepository.findById(memberId)
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
-        ClassInfo classInfo = classInfoRepository.findByTeacherId(memberId)
-                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
-        log.info(role.name());
-
-        return null;
+        ImageResponse imageResponse = fileService.getPresignedUrlForRead(member.getUserId()+role.name());
+        if(role.equals(Role.TEACHER)) {
+            ClassInfo classInfo = classInfoRepository.findByTeacherId(memberId)
+                    .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+            School school = classInfo.getSchool();
+            memberInfoResponse = MemberInfoResponse
+                    .from(member,ClassInfoResponse.from(classInfo,school),imageResponse);
+        } else if(role.equals(Role.STUDENT)) {
+            MembersClass membersClass = memberClassRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+            ClassInfo classInfo = classInfoRepository.findByMembersClassesId(membersClass.getId())
+                    .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+            School school = classInfo.getSchool();
+            memberInfoResponse = MemberInfoResponse
+                    .from(member,ClassInfoResponse.from(classInfo,school),imageResponse);
+        }
+        return memberInfoResponse;
     }
 
     private void checkDuplicateIdAndEmail(SignUpRequest signUpRequest) {

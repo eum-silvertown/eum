@@ -73,7 +73,7 @@ public class UserController {
     public CommonResponse<?> getUserInfo(@RequestHeader(value = "X-MEMBER-ID") String memberId,
                                          @RequestHeader(value = "X-MEMBER-ROLE") Role role) {
         MemberInfoResponse userInfoResponse = userService.getMemberInfo(Long.valueOf(memberId), role);
-        return CommonResponse.success("성공적으로 탈퇴 되었습니다.");
+        return CommonResponse.success(userInfoResponse,"유저 정보를 성공적으로 조회했습니다.");
     }
 
     @PatchMapping("/info/image")
