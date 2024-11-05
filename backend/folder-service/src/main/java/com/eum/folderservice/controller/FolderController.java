@@ -2,6 +2,7 @@ package com.eum.folderservice.controller;
 
 import com.eum.folderservice.dto.request.CreateFolderRequestDTO;
 import com.eum.folderservice.dto.request.ModifyTitleRequestDTO;
+import com.eum.folderservice.dto.request.MoveFolderRequestDTO;
 import com.eum.folderservice.dto.response.FolderResponseDTO;
 import com.eum.folderservice.service.FolderService;
 import com.eum.folderservice.common.util.CommonResponse;
@@ -45,5 +46,13 @@ public class FolderController {
         folderService.deleteFolder(folderId, memberId);
 
         return CommonResponse.success("폴더 삭제 성공");
+    }
+
+    @PostMapping("/move")
+    public CommonResponse<?> moveFolder(@RequestBody MoveFolderRequestDTO requestDTO, HttpServletRequest request) {
+        Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
+        folderService.moveFolder(requestDTO, memberId);
+
+        return CommonResponse.success("폴더 이동 성공");
     }
 }

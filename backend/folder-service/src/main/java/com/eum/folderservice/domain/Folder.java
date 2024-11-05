@@ -2,10 +2,7 @@ package com.eum.folderservice.domain;
 
 import com.eum.folderservice.common.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
@@ -30,6 +27,7 @@ public class Folder extends BaseEntity {
     @ColumnDefault("0")
     private Long childrenCount;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_folder_id")
     private Folder parentFolder;

@@ -3,6 +3,7 @@ package com.eum.folderservice.service;
 import com.eum.folderservice.domain.Folder;
 import com.eum.folderservice.dto.request.CreateFolderRequestDTO;
 import com.eum.folderservice.dto.request.ModifyTitleRequestDTO;
+import com.eum.folderservice.dto.request.MoveFolderRequestDTO;
 import com.eum.folderservice.dto.response.FolderResponseDTO;
 import com.eum.folderservice.dto.response.SubFolderResponseDTO;
 import com.eum.folderservice.repository.FolderRepository;
@@ -34,8 +35,8 @@ public class FolderServiceImpl implements FolderService {
         else {
             Folder parentFolder = findFolderByIdAndMemberId(createFolderDTO.getParentId(), createFolderDTO.getMemberId());
 
-            for(Folder subFolder : parentFolder.getSubFolders()) {
-                if(subFolder.getTitle().equals(createFolderDTO.getTitle())) {
+            for (Folder subFolder : parentFolder.getSubFolders()) {
+                if (subFolder.getTitle().equals(createFolderDTO.getTitle())) {
                     throw new FolderException(ErrorCode.FOLDER_ALREADY_EXISTS_ERROR);
                 }
             }
@@ -70,10 +71,29 @@ public class FolderServiceImpl implements FolderService {
         Folder folder = findFolderByIdAndMemberId(folderId, memberId);
         Folder parentFolder = folder.getParentFolder();
 
-        if(parentFolder != null) {
+        if (parentFolder != null) {
             parentFolder.removeChildFolder(folder);
         }
         folderRepository.delete(folder);
+    }
+
+    @Override
+    @Transactional
+    public void moveFolder(MoveFolderRequestDTO requestDTO, Long memberId) {
+        Folder folder = findFolderByIdAndMemberId(requestDTO.getFolderId(), memberId);
+
+        if (folder.getParentFolder() != null) {
+            folder.getParentFolder().removeChildFolder(folder);
+        }
+
+        // 최상위 폴더로 이동하는 경우
+        if (requestDTO.getToId() == 0) {
+            folder.setParentFolder(null);
+        } else {
+            Folder toFolder = findFolderByIdAndMemberId(requestDTO.getToId(), memberId);
+            folder.setParentFolder(toFolder);
+            toFolder.addChildFolder(folder);
+        }
     }
 
     @Transactional
