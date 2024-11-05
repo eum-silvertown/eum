@@ -8,9 +8,12 @@ import EraserOffIcon from '@assets/icons/eraserOffIcon.svg';
 import EraserOnIcon from '@assets/icons/eraserOnIcon.svg';
 import HighlighterOffIcon from '@assets/icons/highlighterOffIcon.svg';
 import HighlighterOnIcon from '@assets/icons/highlighterOnIcon.svg';
+import ToolBarToLeftIcon from '@assets/icons/toolBarToLeftIcon.svg';
+import ToolBarToRightIcon from '@assets/icons/toolBarToRightIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {getResponsiveSize} from '@utils/responsive';
 import {spacing} from '@theme/spacing';
+import {useState} from 'react';
 
 type CanvasComponentProps = {
   canvasRef: React.RefObject<any>;
@@ -57,127 +60,146 @@ const CanvasDrawingTool = ({
   toggleEraserMode,
   isErasing,
   eraserPosition,
-}: CanvasComponentProps) => (
-  <View style={styles.canvasLayout}>
-    <View style={styles.canvasContainer}>
-      <Canvas
-        ref={canvasRef}
-        style={styles.canvas}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}>
-        {paths.map(({path, color, strokeWidth, opacity}, index) => (
-          <Path
-            key={index}
-            path={path}
-            color={Skia.Color(color)}
-            style="stroke"
-            strokeWidth={strokeWidth}
-            strokeCap="round"
-            strokeJoin="round"
-            opacity={opacity}
-          />
-        ))}
-        {currentPath && (
-          <Path
-            path={currentPath}
-            color={Skia.Color(penColor)}
-            style="stroke"
-            strokeWidth={penSize}
-            strokeCap="round"
-            strokeJoin="round"
-            opacity={penOpacity}
-          />
-        )}
-        {/* 지우개 범위 시각화 */}
-        {isErasing && eraserPosition && (
-          <Circle
-            cx={eraserPosition.x}
-            cy={eraserPosition.y}
-            r={10}
-            color="rgba(0, 0, 0, 0.1)"
-            style="stroke"
-            strokeWidth={2}
-          />
-        )}
-      </Canvas>
+}: CanvasComponentProps) => {
+  const [isRightHanded, setIsRightHanded] = useState(true);
 
-      {/* 툴바 */}
-      <View style={styles.floatingToolbar}>
-        <View style={styles.paletteContainer}>
-          {COLOR_PALETTE.map(color => (
-            <TouchableOpacity
-              key={color}
-              style={[
-                styles.colorPalette,
-                {backgroundColor: color},
-                penColor === color && styles.selectedColor,
-              ]}
-              onPress={() => setPenColor(color)}
+  const toggleHandedness = () => setIsRightHanded(!isRightHanded);
+
+  return (
+    <View style={styles.canvasLayout}>
+      <View style={styles.canvasContainer}>
+        <Canvas
+          ref={canvasRef}
+          style={styles.canvas}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}>
+          {paths.map(({path, color, strokeWidth, opacity}, index) => (
+            <Path
+              key={index}
+              path={path}
+              color={Skia.Color(color)}
+              style="stroke"
+              strokeWidth={strokeWidth}
+              strokeCap="round"
+              strokeJoin="round"
+              opacity={opacity}
             />
           ))}
-        </View>
+          {currentPath && (
+            <Path
+              path={currentPath}
+              color={Skia.Color(penColor)}
+              style="stroke"
+              strokeWidth={penSize}
+              strokeCap="round"
+              strokeJoin="round"
+              opacity={penOpacity}
+            />
+          )}
+          {/* 지우개 범위 시각화 */}
+          {isErasing && eraserPosition && (
+            <Circle
+              cx={eraserPosition.x}
+              cy={eraserPosition.y}
+              r={10}
+              color="rgba(0, 0, 0, 0.1)"
+              style="stroke"
+              strokeWidth={2}
+            />
+          )}
+        </Canvas>
 
-        <View style={styles.penSizeContainer}>
-          {PEN_SIZES.map(size => (
-            <TouchableOpacity
-              key={size}
-              style={[
-                styles.penSize,
-                penSize === size && styles.selectedPenSize,
-              ]}
-              onPress={() => setPenSize(size)}>
-              <View
-                style={{
-                  width: size,
-                  height: size,
-                  borderRadius: size / 2,
-                  backgroundColor: penColor,
-                }}
+        {/* 툴바 */}
+        <View
+          style={[
+            styles.floatingToolbar,
+            isRightHanded ? {left: 8} : {right: 8},
+          ]}>
+          {/* 왼손 잡이, 오른손잡이 toolbar 위치 변경 */}
+          <TouchableOpacity onPress={toggleHandedness}>
+            {isRightHanded ? (
+              <ToolBarToRightIcon width={iconSize.md} height={iconSize.md} />
+            ) : (
+              <ToolBarToLeftIcon width={iconSize.md} height={iconSize.md} />
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.paletteContainer}>
+            {COLOR_PALETTE.map(color => (
+              <TouchableOpacity
+                key={color}
+                style={[
+                  styles.colorPalette,
+                  {backgroundColor: color},
+                  penColor === color && styles.selectedColor,
+                ]}
+                onPress={() => setPenColor(color)}
               />
-            </TouchableOpacity>
-          ))}
+            ))}
+          </View>
+
+          <View style={styles.penSizeContainer}>
+            {PEN_SIZES.map(size => (
+              <TouchableOpacity
+                key={size}
+                style={[
+                  styles.penSize,
+                  penSize === size && styles.selectedPenSize,
+                ]}
+                onPress={() => setPenSize(size)}>
+                <View
+                  style={{
+                    width: size,
+                    height: size,
+                    borderRadius: size / 2,
+                    backgroundColor: penColor,
+                  }}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* 형광펜 아이콘 */}
+          <TouchableOpacity onPress={togglePenOpacity}>
+            {penOpacity < 1 ? (
+              <HighlighterOnIcon width={iconSize.lg} height={iconSize.lg} />
+            ) : (
+              <HighlighterOffIcon width={iconSize.lg} height={iconSize.lg} />
+            )}
+          </TouchableOpacity>
+
+          {/* 지우개 아이콘 */}
+          <TouchableOpacity onPress={toggleEraserMode}>
+            {isErasing ? (
+              <EraserOnIcon width={iconSize.lg} height={iconSize.lg} />
+            ) : (
+              <EraserOffIcon width={iconSize.lg} height={iconSize.lg} />
+            )}
+          </TouchableOpacity>
+
+          {/* Undo 아이콘 */}
+          <TouchableOpacity onPress={undo}>
+            {undoStack ? (
+              <UndoOnIcon width={iconSize.lg} height={iconSize.lg} />
+            ) : (
+              <UndoOffIcon width={iconSize.lg} height={iconSize.lg} />
+            )}
+          </TouchableOpacity>
+
+          {/* Redo 아이콘 */}
+          <TouchableOpacity onPress={redo}>
+            {redoStack ? (
+              <RedoOnIcon width={iconSize.lg} height={iconSize.lg} />
+            ) : (
+              <RedoOffIcon width={iconSize.lg} height={iconSize.lg} />
+            )}
+          </TouchableOpacity>
         </View>
-
-        {/* 형광펜 아이콘 */}
-        <TouchableOpacity onPress={togglePenOpacity}>
-          {penOpacity < 1 ? (
-            <HighlighterOnIcon width={iconSize.lg} height={iconSize.lg} />
-          ) : (
-            <HighlighterOffIcon width={iconSize.lg} height={iconSize.lg} />
-          )}
-        </TouchableOpacity>
-
-        {/* 지우개 아이콘 */}
-        <TouchableOpacity onPress={toggleEraserMode}>
-          {isErasing ? (
-            <EraserOnIcon width={iconSize.lg} height={iconSize.lg} />
-          ) : (
-            <EraserOffIcon width={iconSize.lg} height={iconSize.lg} />
-          )}
-        </TouchableOpacity>
-
-        {/* Undo 아이콘 */}
-        <TouchableOpacity onPress={undo}>
-          {undoStack ? (
-            <UndoOnIcon width={iconSize.lg} height={iconSize.lg} />
-          ) : (
-            <UndoOffIcon width={iconSize.lg} height={iconSize.lg} />
-          )}
-        </TouchableOpacity>
-
-        {/* Redo 아이콘 */}
-        <TouchableOpacity onPress={redo}>
-          {redoStack ? (
-            <RedoOnIcon width={iconSize.lg} height={iconSize.lg} />
-          ) : (
-            <RedoOffIcon width={iconSize.lg} height={iconSize.lg} />
-          )}
-        </TouchableOpacity>
       </View>
     </View>
-  </View>
-);
+  );
+};
 
 export default CanvasDrawingTool;
 
@@ -192,14 +214,14 @@ const styles = StyleSheet.create({
   canvas: {flex: 1},
   floatingToolbar: {
     position: 'absolute',
-    left: 8,
     top: '50%',
-    transform: [{translateY: -250}],
+    transform: [{translateY: -280}],
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
     borderRadius: 12,
-    padding: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 16,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
