@@ -114,6 +114,7 @@ const CanvasDrawingTool = ({
         <View
           style={[
             styles.floatingToolbar,
+            // eslint-disable-next-line react-native/no-inline-styles
             isRightHanded ? {left: 8} : {right: 8},
           ]}>
           {/* 왼손 잡이, 오른손잡이 toolbar 위치 변경 */}

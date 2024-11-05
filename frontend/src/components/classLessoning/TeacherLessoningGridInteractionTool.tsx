@@ -50,11 +50,11 @@ const TeacherLessoningGridInteractionTool = ({
           {/* 녹화 시작/중지 */}
           {isRecording ? (
             <TouchableOpacity onPress={stopRecording}>
-              <RecordOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+              <RecordOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={startRecording}>
-              <RecordOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+              <RecordOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
             </TouchableOpacity>
           )}
 
