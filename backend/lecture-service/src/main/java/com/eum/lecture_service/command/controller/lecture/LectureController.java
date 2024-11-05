@@ -30,7 +30,7 @@ public class LectureController {
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestBody LectureDto lectureDto) {
 		if(!role.equals("TEACHER")) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		Long lectureId = lectureService.createLecture(lectureDto, memberId);
 		return CommonResponse.success(lectureId, "수업 생성 성공");
@@ -42,7 +42,7 @@ public class LectureController {
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long lectureId,  @RequestBody LectureDto lectureDto) {
 		if(!role.equals("TEACHER")) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		Long updateLectureId = lectureService.updateLecture(lectureDto, lectureId);
 		return CommonResponse.success(updateLectureId, "수업 수정 성공");
@@ -54,7 +54,7 @@ public class LectureController {
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long lectureId) {
 		if(!role.equals("TEACHER")) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		lectureService.deleteLecture(lectureId);
 		return CommonResponse.success("수업 삭제 성공");
