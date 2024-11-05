@@ -29,7 +29,7 @@ public class TokenServiceImpl implements TokenService {
         refreshTokenRepository.save(
                 RefreshToken.of(refreshToken,member.getId(),jwtUtil.getRefreshExpiration()));
 
-        return TokenResponse.from(accessToken, refreshToken);
+        return TokenResponse.from(accessToken, refreshToken,member.getRole());
     }
 
     @Override
