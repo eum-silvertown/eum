@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { spacing } from '@theme/spacing';
 import { ScreenType } from '@store/useCurrentScreenStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import PencilIcon from '@assets/icons/pencilIcon.svg';
+import { iconSize } from '@theme/iconSize';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -17,7 +19,9 @@ function ClassHeader(): React.JSX.Element {
       <Text style={styles.title} variant="title" weight="bold">
         이게 뭐여, 수학이여?
       </Text>
-
+      <TouchableOpacity>
+        <PencilIcon width={iconSize.md} height={iconSize.md} />
+      </TouchableOpacity>
       <View style={styles.rightSection}>
         <View style={[styles.chip, isLive ? styles.liveChip : styles.defaultChip]}>
           <Text style={[isLive ? styles.liveChipText : styles.defaultChipText]}>
