@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
   overviewLayout: {
     flex: 2,
     flexDirection: 'column',
-    paddingVertical: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl,
     backgroundColor: 'white',
     borderRadius: 8,
   },

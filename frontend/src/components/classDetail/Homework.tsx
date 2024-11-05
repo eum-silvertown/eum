@@ -52,7 +52,7 @@ function Homework(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   homework: {
-    paddingVertical: spacing.lg,
+    paddingVertical: spacing.md,
   },
   subtitle: {
     marginStart: spacing.xl,
