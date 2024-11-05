@@ -1,6 +1,6 @@
 import {View, StyleSheet, Pressable, Animated} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {ScreenType} from '@store/useCurrentScreenStore';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {spacing} from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
@@ -16,6 +16,14 @@ type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
+
+  const setCurrentScreen = useCurrentScreenStore(
+    state => state.setCurrentScreen,
+  );
+
+  useFocusEffect(() => {
+    setCurrentScreen('ClassListScreen');
+  });
 
   // 샘플 데이터 (클래스 리스트)
   const classData = [
