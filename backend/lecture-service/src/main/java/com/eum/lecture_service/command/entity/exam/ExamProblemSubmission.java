@@ -13,31 +13,27 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "exam_problem_submissions")
+@Table(name = "exam_question_submissions")
 public class ExamProblemSubmission {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "exam_problem_submission_id")
+	@Column(name = "exam_question_submission_id")
 	private Long examProblemSubmissionId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "exam_submission_id")
 	private ExamSubmission examSubmission;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "homework_id", nullable = false)
-	private Homework homework;
-
-	@Column(name = "problem_id", nullable = false)
-	private Long problemId;
+	@Column(name = "question_id", nullable = false)
+	private Long questionId;
 
 	@Column(name = "student_id", nullable = false)
 	private Long studentId;

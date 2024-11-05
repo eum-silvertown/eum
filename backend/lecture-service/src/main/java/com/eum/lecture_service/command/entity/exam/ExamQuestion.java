@@ -1,4 +1,4 @@
-package com.eum.lecture_service.command.entity.homework;
+package com.eum.lecture_service.command.entity.exam;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,33 +11,26 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "homework_question_submissions")
-public class HomeworkProblemSubmission {
+@Table(name = "exam_questions")
+public class ExamQuestion {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "homework_question_submission_id")
-	private Long homeworkProblemSubmissionId;
+	@Column(name = "exam_question_id")
+	private Long examQuestionId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "homework_submission_id")
-	private HomeworkSubmission homeworkSubmission;
+	@JoinColumn(name = "exam_id", nullable = false)
+	private Exam exam;
 
 	@Column(name = "question_id", nullable = false)
 	private Long questionId;
-
-	@Column(name = "student_id", nullable = false)
-	private Long studentId;
-
-	@Column(name = "is_correct")
-	private Boolean isCorrect;
 }
-

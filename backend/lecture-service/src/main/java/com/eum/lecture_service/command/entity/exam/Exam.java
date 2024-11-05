@@ -1,10 +1,11 @@
 package com.eum.lecture_service.command.entity.exam;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.eum.lecture_service.command.entity.folder.Folder;
 import com.eum.lecture_service.command.entity.lecture.Lecture;
+import com.eum.lecture_service.command.entity.lesson.LessonQuestion;
 import com.eum.lecture_service.config.global.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -39,10 +40,6 @@ public class Exam extends BaseEntity {
 	@JoinColumn(name = "lecture_id", nullable = false)
 	private Lecture lecture;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "folder_id", nullable = false)
-	private Folder folder;
-
 	@Column(name = "title", nullable = false, length = 100)
 	private String title;
 
@@ -53,5 +50,8 @@ public class Exam extends BaseEntity {
 	private LocalDateTime endTime;
 
 	@OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ExamSubmission> examSubmissions;
+	private List<ExamQuestion> examQuestions = new ArrayList<>();
+
+	@OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ExamSubmission> examSubmissions = new ArrayList<>();
 }

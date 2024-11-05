@@ -1,10 +1,11 @@
 package com.eum.lecture_service.command.entity.homework;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.eum.lecture_service.command.entity.folder.Folder;
 import com.eum.lecture_service.command.entity.lecture.Lecture;
+import com.eum.lecture_service.command.entity.lesson.LessonQuestion;
 import com.eum.lecture_service.config.global.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -20,10 +21,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,10 +41,6 @@ public class Homework extends BaseEntity {
 	@JoinColumn(name = "lecture_id", nullable = false)
 	private Lecture lecture;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "folder_id", nullable = false)
-	private Folder folder;
-
 	@Column(name = "title", nullable = false, length = 100)
 	private String title;
 
@@ -53,5 +51,8 @@ public class Homework extends BaseEntity {
 	private LocalDateTime endTime;
 
 	@OneToMany(mappedBy = "homework", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<HomeworkSubmission> homeworkSubmissions;
+	private List<HomeworkQuestion> homeworkQuestions = new ArrayList<>();
+
+	@OneToMany(mappedBy = "homework", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<HomeworkSubmission> homeworkSubmissions = new ArrayList<>();
 }

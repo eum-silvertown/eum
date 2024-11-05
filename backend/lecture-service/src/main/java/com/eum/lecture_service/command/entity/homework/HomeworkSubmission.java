@@ -16,10 +16,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,10 +42,10 @@ public class HomeworkSubmission {
 	private Double score;
 
 	@Column(name = "correct_count")
-	private Integer correctCount;
+	private Long correctCount;
 
 	@Column(name = "total_count")
-	private Integer totalCount;
+	private Long totalCount;
 
 	@Column(name = "is_completed")
 	private Boolean isCompleted;
