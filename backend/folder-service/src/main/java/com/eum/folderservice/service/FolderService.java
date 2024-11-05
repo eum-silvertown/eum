@@ -6,13 +6,11 @@ import com.eum.folderservice.dto.request.MoveFolderRequestDTO;
 import com.eum.folderservice.dto.response.FolderResponseDTO;
 import com.eum.folderservice.dto.response.SubFolderResponseDTO;
 
-import java.util.List;
-
 public interface FolderService {
 
     FolderResponseDTO createFolder(CreateFolderRequestDTO createFolderDTO);
 
-    List<SubFolderResponseDTO> getSubFolders(Long folderId, Long memberId);
+    SubFolderResponseDTO getSubFolders(Long folderId, Long memberId);
 
     FolderResponseDTO modifyFolderTitle(ModifyTitleRequestDTO requestDTO, Long memberId);
 

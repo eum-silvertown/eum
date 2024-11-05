@@ -26,26 +26,18 @@ public class FolderServiceImpl implements FolderService {
     @Transactional
     public FolderResponseDTO createFolder(CreateFolderRequestDTO createFolderDTO) {
         Folder newFolder = null;
+        Folder parentFolder = findFolderByIdAndMemberId(createFolderDTO.getParentId(), createFolderDTO.getMemberId());
 
-        // 최상위 폴더인 경우
-        if (createFolderDTO.getParentId() == 0) {
-            newFolder = createFolderDTO.from(null);
-        }
-        // 상위 폴더가 존재하는 경우
-        else {
-            Folder parentFolder = findFolderByIdAndMemberId(createFolderDTO.getParentId(), createFolderDTO.getMemberId());
-
-            for (Folder subFolder : parentFolder.getSubFolders()) {
-                if (subFolder.getTitle().equals(createFolderDTO.getTitle())) {
-                    throw new FolderException(ErrorCode.FOLDER_ALREADY_EXISTS_ERROR);
-                }
+        // 중복된 폴더명이 있는지 확인
+        for (Folder subFolder : parentFolder.getSubFolders()) {
+            if (subFolder.getTitle().equals(createFolderDTO.getTitle())) {
+                throw new FolderException(ErrorCode.FOLDER_ALREADY_EXISTS_ERROR);
             }
-
-            newFolder = createFolderDTO.from(parentFolder);
-            parentFolder.addChildFolder(newFolder);
         }
 
+        newFolder = createFolderDTO.from(parentFolder);
         Folder savedFolder = folderRepository.save(newFolder);
+        parentFolder.addChildFolder(newFolder);
 
         return FolderResponseDTO.of(savedFolder);
     }
