@@ -38,4 +38,12 @@ public class FolderController {
 
         return CommonResponse.success(folderService.modifyFolderTitle(requestDTO, memberId), "폴더 이름 변경 성공");
     }
+
+    @DeleteMapping("/{folderId}")
+    public CommonResponse<?> deleteFolder(@PathVariable Long folderId, HttpServletRequest request) {
+        Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
+        folderService.deleteFolder(folderId, memberId);
+
+        return CommonResponse.success("폴더 삭제 성공");
+    }
 }

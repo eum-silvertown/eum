@@ -14,4 +14,6 @@ public interface FolderService {
     List<SubFolderResponseDTO> getSubFolders(Long folderId, Long memberId);
 
     FolderResponseDTO modifyFolderTitle(ModifyTitleRequestDTO requestDTO, Long memberId);
+
+    void deleteFolder(Long folderId, Long memberId);
 }

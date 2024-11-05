@@ -42,6 +42,11 @@ public class Folder extends BaseEntity {
         this.childrenCount = (long) this.subFolders.size();
     }
 
+    public void removeChildFolder(Folder folder) {
+        this.subFolders.remove(folder);
+        this.childrenCount = (long) this.subFolders.size();
+    }
+
     public void modifyTitle(String title) {
         this.title = title;
     }

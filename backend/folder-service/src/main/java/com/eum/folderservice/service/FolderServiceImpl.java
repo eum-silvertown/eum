@@ -64,6 +64,18 @@ public class FolderServiceImpl implements FolderService {
         return FolderResponseDTO.of(folder);
     }
 
+    @Override
+    @Transactional
+    public void deleteFolder(Long folderId, Long memberId) {
+        Folder folder = findFolderByIdAndMemberId(folderId, memberId);
+        Folder parentFolder = folder.getParentFolder();
+
+        if(parentFolder != null) {
+            parentFolder.removeChildFolder(folder);
+        }
+        folderRepository.delete(folder);
+    }
+
     @Transactional
     protected Folder findFolderByIdAndMemberId(Long folderId, Long memberId) {
         return folderRepository.findByIdAndMemberId(folderId, memberId)
