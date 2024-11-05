@@ -53,8 +53,13 @@ public class FolderServiceImpl implements FolderService {
     @Override
     @Transactional(readOnly = true)
     public List<SubFolderResponseDTO> getSubFolders(Long folderId, Long memberId) {
-        Folder folder = findFolderByIdAndMemberId(folderId, memberId);
-        return folder.getSubFolders().stream().map(SubFolderResponseDTO::of).toList();
+        if (folderId == 0) {
+            return folderRepository.findAllByMemberIdAndParentFolderIsNull(memberId).stream()
+                    .map(SubFolderResponseDTO::of).toList();
+        }
+        
+        return findFolderByIdAndMemberId(folderId, memberId).getSubFolders().stream()
+                .map(SubFolderResponseDTO::of).toList();
     }
 
     @Override
