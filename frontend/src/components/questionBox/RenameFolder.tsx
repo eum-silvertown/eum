@@ -1,5 +1,8 @@
 import Button from '@components/common/Button';
-import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
+import {
+  QuestionBoxType,
+  useQuestionExplorerStore,
+} from '@store/useQuestionExplorerStore';
 import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
@@ -8,27 +11,28 @@ import {useState} from 'react';
 import {Pressable, StyleSheet, TextInput, View} from 'react-native';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {colors} from 'src/hooks/useColors';
-import {createFolder} from 'src/services/questionBox';
+import {renameFolder} from 'src/services/questionBox';
 
-function CreateFolder(): React.JSX.Element {
-  const [folderName, setFolderName] = useState('');
-  const {createItem, getCurrentFolderId} = useQuestionExplorerStore();
+interface RenameFolderProp {
+  item: QuestionBoxType;
+}
+
+function RenameFolder({item}: RenameFolderProp): React.JSX.Element {
   const {close} = useModalContext();
+  const renameItem = useQuestionExplorerStore(state => state.renameItem);
+  const [folderName, setFolderName] = useState(item.title);
 
   const onChangeText = (inputText: string) => {
     setFolderName(inputText);
   };
 
   const onPress = async () => {
-    const parentId = getCurrentFolderId();
-    console.log('title: ', folderName, ' parentId: ', parentId);
     try {
-      const data = await createFolder(folderName, parentId);
-      createItem(data);
+      const newTitle = await renameFolder(item.id, folderName);
+      renameItem(item.id, newTitle);
       close();
     } catch (error) {
       console.error(error);
-      close();
     }
   };
 
@@ -44,7 +48,7 @@ function CreateFolder(): React.JSX.Element {
       <Pressable onPress={onPress}>
         <Button
           onPress={onPress}
-          content="생성 완료"
+          content="변경"
           variant="pressable"
           size="full"
         />
@@ -53,7 +57,7 @@ function CreateFolder(): React.JSX.Element {
   );
 }
 
-export default CreateFolder;
+export default RenameFolder;
 
 const styles = StyleSheet.create({
   container: {

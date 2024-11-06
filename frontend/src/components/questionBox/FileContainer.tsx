@@ -6,19 +6,29 @@ import {iconSize} from '@theme/iconSize';
 import {Text} from '../common/Text';
 import {spacing} from '@theme/spacing';
 import {QuestionBoxType} from '@store/useQuestionExplorerStore';
+import {useCutStore} from '@store/useCutStore';
 
 interface FileContainerProps {
   file: QuestionBoxType;
 }
 
 function FileContainer({file}: FileContainerProps): React.JSX.Element {
+  const cutFolderId = useCutStore(state => state.folderId);
   return (
     <View style={styles.container}>
       {file.type === 'folder' ? (
-        file.children ? (
-          <FilledFolderIcon width={iconSize.xxl} height={iconSize.xxl} />
+        file.childrenCount > 0 ? (
+          <FilledFolderIcon
+            opacity={cutFolderId === file.id ? 0.5 : 1}
+            width={iconSize.xxl}
+            height={iconSize.xxl}
+          />
         ) : (
-          <FolderIcon width={iconSize.xxl} height={iconSize.xxl} />
+          <FolderIcon
+            opacity={cutFolderId === file.id ? 0.5 : 1}
+            width={iconSize.xxl}
+            height={iconSize.xxl}
+          />
         )
       ) : (
         <FileIcon width={iconSize.xxl} height={iconSize.xxl} />
