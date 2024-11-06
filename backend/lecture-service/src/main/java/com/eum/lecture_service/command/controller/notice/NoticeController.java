@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.eum.lecture_service.command.dto.notice.NoticeDto;
 import com.eum.lecture_service.command.service.notice.NoticeService;
+import com.eum.lecture_service.common.RoleType;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.config.global.CommonResponse;
@@ -29,7 +30,12 @@ public class NoticeController {
 	public CommonResponse<?> createNotice(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestBody NoticeDto noticeDto) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		noticeService.createNotice(noticeDto);
@@ -41,7 +47,12 @@ public class NoticeController {
 	public CommonResponse<?> updateNotice(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long noticeId, @RequestBody NoticeDto noticeDto) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		noticeService.updateNotice(noticeId, noticeDto);
@@ -52,7 +63,12 @@ public class NoticeController {
 	public CommonResponse<?> deleteNotice(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long noticeId) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		noticeService.deleteNotice(noticeId);

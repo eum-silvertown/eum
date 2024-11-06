@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.eum.lecture_service.command.dto.lecture.LectureDto;
 import com.eum.lecture_service.command.service.lecture.LectureService;
+import com.eum.lecture_service.common.RoleType;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.config.global.CommonResponse;
@@ -29,7 +30,12 @@ public class LectureController {
 	public CommonResponse<?> createLecture(@RequestHeader("X-MEMBER-ID") Long memberId,
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestBody LectureDto lectureDto) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		Long lectureId = lectureService.createLecture(lectureDto, memberId);
@@ -41,7 +47,12 @@ public class LectureController {
 	public CommonResponse<?> updateLecture(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long lectureId,  @RequestBody LectureDto lectureDto) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		Long updateLectureId = lectureService.updateLecture(lectureDto, lectureId);
@@ -53,7 +64,12 @@ public class LectureController {
 	public CommonResponse<?> deleteLecture(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long lectureId) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		lectureService.deleteLecture(lectureId);

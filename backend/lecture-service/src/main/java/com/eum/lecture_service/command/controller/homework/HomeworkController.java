@@ -16,6 +16,7 @@ import com.eum.lecture_service.command.dto.homework.HomeworkProblemSubmissionDto
 import com.eum.lecture_service.command.entity.homework.HomeworkSubmission;
 import com.eum.lecture_service.command.service.homework.HomeworkService;
 import com.eum.lecture_service.command.service.homework.HomeworkSubmissionService;
+import com.eum.lecture_service.common.RoleType;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.config.global.CommonResponse;
@@ -35,7 +36,12 @@ public class HomeworkController {
 	public CommonResponse<?> createHomework(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestBody HomeworkDto homeworkDto) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		Long homeworkId = homeworkService.createHomework(homeworkDto);
@@ -48,7 +54,12 @@ public class HomeworkController {
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long homeworkId,
 		@RequestBody HomeworkDto homeworkDto) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		Long updateHomeworkId = homeworkService.updateHomework(homeworkId, homeworkDto);
@@ -59,7 +70,12 @@ public class HomeworkController {
 	public CommonResponse<Void> deleteHomework(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long homeworkId) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		homeworkService.deleteHomework(homeworkId);
@@ -72,7 +88,12 @@ public class HomeworkController {
 		@RequestHeader("X-MEMBER-ID") Long studentId,
 		@PathVariable Long homeworkId,
 		@RequestBody List<HomeworkProblemSubmissionDto> homeworkProblemSubmissions) {
-		if(!role.equals("STUDENT")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.TEACHER) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		HomeworkSubmission homeworkSubmission = homeworkSubmissionService.submitHomeworkProblems(homeworkId, studentId, homeworkProblemSubmissions);

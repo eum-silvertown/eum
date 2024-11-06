@@ -11,7 +11,7 @@ public enum ErrorCode {
 	// Server
 	INTERNAL_SERVER_ERROR("S001", "내부 서버 오류", HttpStatus.INTERNAL_SERVER_ERROR),
 
-	// Commoon
+	// Common
 	AUTHORITY_PERMISSION_ERROR("C001", "권한 오류", HttpStatus.UNAUTHORIZED),
 
 	// Lecture
@@ -31,7 +31,7 @@ public enum ErrorCode {
 	EXAM_ALREADY_SUBMITTED("E003","이미 제출한 시험", HttpStatus.BAD_REQUEST),
 
 	// HOMEWORK
-	HOMEWORK_NOT_FOUND("H001", "숙제 없음" , HttpStatus.BAD_REQUEST );
+	HOMEWORK_NOT_FOUND("H001", "숙제 없음" , HttpStatus.BAD_REQUEST ),;
 
 	private final String code;
 	private final String message;

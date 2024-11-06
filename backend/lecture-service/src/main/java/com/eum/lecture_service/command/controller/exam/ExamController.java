@@ -17,6 +17,7 @@ import com.eum.lecture_service.command.entity.exam.Exam;
 import com.eum.lecture_service.command.entity.exam.ExamSubmission;
 import com.eum.lecture_service.command.service.exam.ExamService;
 import com.eum.lecture_service.command.service.exam.ExamSubmissionService;
+import com.eum.lecture_service.common.RoleType;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.config.global.CommonResponse;
@@ -36,7 +37,12 @@ public class ExamController {
     public CommonResponse<?> createExam(
             @RequestHeader("X-MEMBER-ROLE") String role,
             @RequestBody ExamDto examDTO) {
-        if(!role.equals("TEACHER")) {
+        try {
+            RoleType roleType = RoleType.fromString(role);
+            if (roleType == RoleType.STUDENT) {
+                throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+            }
+        } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
         }
         Long examId = examService.creerExam(examDTO);
@@ -49,7 +55,12 @@ public class ExamController {
             @RequestHeader("X-MEMBER-ROLE") String role,
             @PathVariable Long examId,
             @RequestBody ExamDto examDTO) {
-        if(!role.equals("TEACHER")) {
+        try {
+            RoleType roleType = RoleType.fromString(role);
+            if (roleType == RoleType.STUDENT) {
+                throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+            }
+        } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
         }
         Long updatedExamId = examService.updateExam(examId, examDTO);
@@ -61,7 +72,12 @@ public class ExamController {
     public CommonResponse<Void> deleteExam(
             @RequestHeader("X-MEMBER-ROLE") String role,
             @PathVariable Long examId) {
-        if(!role.equals("TEACHER")) {
+        try {
+            RoleType roleType = RoleType.fromString(role);
+            if (roleType == RoleType.STUDENT) {
+                throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+            }
+        } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
         }
         examService.deleteExam(examId);
@@ -75,7 +91,12 @@ public class ExamController {
         @RequestHeader("X-MEMBER-ID") Long studentId,
         @PathVariable Long examId,
         @RequestBody List<ExamProblemSubmissionDto> examProblemSubmissions) {
-        if(!role.equals("STUDENT")) {
+        try {
+            RoleType roleType = RoleType.fromString(role);
+            if (roleType == RoleType.TEACHER) {
+                throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+            }
+        } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
         }
         ExamSubmission examSubmission = examSubmissionService.submitExamProblems(examId, studentId, examProblemSubmissions);

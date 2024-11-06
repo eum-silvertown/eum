@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.eum.lecture_service.command.dto.lesson.LessonDto;
 import com.eum.lecture_service.command.repository.lesson.LessonRepository;
 import com.eum.lecture_service.command.service.lesson.LessonService;
+import com.eum.lecture_service.common.RoleType;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.config.global.CommonResponse;
@@ -42,7 +43,12 @@ public class LessonController {
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long lessonId,
 		@RequestBody LessonDto lessonDto) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		Long updatedLessonId = lessonService.updateLesson(lessonId, lessonDto);
@@ -53,7 +59,12 @@ public class LessonController {
 	public CommonResponse<?> deleteLesson(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long lessonId) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 		lessonService.deleteLesson(lessonId);
