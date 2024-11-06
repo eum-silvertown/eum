@@ -41,11 +41,13 @@ public class HomeworkController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			Long homeworkId = homeworkService.createHomework(homeworkDto);
+			return CommonResponse.success(homeworkId, "숙제 생성 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		Long homeworkId = homeworkService.createHomework(homeworkDto);
-		return CommonResponse.success(homeworkId, "숙제 생성 성공");
 	}
 
 	// 숙제 수정
@@ -59,11 +61,13 @@ public class HomeworkController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			Long updateHomeworkId = homeworkService.updateHomework(homeworkId, homeworkDto);
+			return CommonResponse.success(updateHomeworkId, "숙제 수정 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		Long updateHomeworkId = homeworkService.updateHomework(homeworkId, homeworkDto);
-		return CommonResponse.success(updateHomeworkId, "숙제 수정 성공");
 	}
 
 	@DeleteMapping("/{homeworkId}")
@@ -75,11 +79,13 @@ public class HomeworkController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			homeworkService.deleteHomework(homeworkId);
+			return CommonResponse.success("시험 삭제 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		homeworkService.deleteHomework(homeworkId);
-		return CommonResponse.success("시험 삭제 성공");
 	}
 
 	@PostMapping("/{homeworkId}/submission")
@@ -93,11 +99,13 @@ public class HomeworkController {
 			if (roleType == RoleType.TEACHER) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			HomeworkSubmission homeworkSubmission = homeworkSubmissionService.submitHomeworkProblems(homeworkId, studentId, homeworkProblemSubmissions);
+			return CommonResponse.success(homeworkSubmission, "제출 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		HomeworkSubmission homeworkSubmission = homeworkSubmissionService.submitHomeworkProblems(homeworkId, studentId, homeworkProblemSubmissions);
-		return CommonResponse.success(homeworkSubmission, "제출 성공");
 	}
 
 }

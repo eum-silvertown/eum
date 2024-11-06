@@ -35,11 +35,14 @@ public class NoticeController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			noticeService.createNotice(noticeDto);
+			return CommonResponse.success("공지사항 생성 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		noticeService.createNotice(noticeDto);
-		return CommonResponse.success("공지사항 생성 성공");
+
 	}
 
 	//공지사항 수정
@@ -52,11 +55,14 @@ public class NoticeController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			noticeService.updateNotice(noticeId, noticeDto);
+			return CommonResponse.success("공지사항 수정 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		noticeService.updateNotice(noticeId, noticeDto);
-		return CommonResponse.success("공지사항 수정 성공");
+
 	}
 
 	@DeleteMapping("/{noticeId}")
@@ -68,10 +74,13 @@ public class NoticeController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			noticeService.deleteNotice(noticeId);
+			return CommonResponse.success("공지사항 삭제 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		noticeService.deleteNotice(noticeId);
-		return CommonResponse.success("공지사항 삭제 성공");
+
 	}
 }
