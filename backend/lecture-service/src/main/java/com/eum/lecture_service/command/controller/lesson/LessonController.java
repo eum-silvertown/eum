@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/lesson")
+@RequestMapping("/lesson")
 public class LessonController {
 
 	private final LessonService lessonService;
