@@ -1,6 +1,7 @@
 package com.eum.lecture_service.command.service.lesson;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.eum.lecture_service.command.dto.lesson.LessonDto;
 import com.eum.lecture_service.command.entity.homework.HomeworkQuestion;
@@ -22,6 +23,7 @@ public class LessonServiceImpl implements LessonService {
 	private final LessonRepository lessonRepository;
 
 	@Override
+	@Transactional
 	public Long createLesson(LessonDto lessonDto) {
 		Lecture lecture = lectureRepository.findById(lessonDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
@@ -41,6 +43,7 @@ public class LessonServiceImpl implements LessonService {
 	}
 
 	@Override
+	@Transactional
 	public Long updateLesson(Long lessonId, LessonDto lessonDto) {
 		Lesson lesson = lessonRepository.findById(lessonId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
