@@ -13,6 +13,7 @@ import com.eum.user_service.global.exception.ErrorCode;
 import com.eum.user_service.global.exception.EumException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    private static final String SIGN_UP_TOPIC = "signup-topic";
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
     private final UserRepository userRepository;
     private final ClassInfoRepository classInfoRepository;
     private final SchoolRepository schoolRepository;
@@ -60,8 +64,9 @@ public class UserServiceImpl implements UserService {
             }
             classInfo.updateTeacher(member);
         }
-
-        return tokenService.createTokenResponse(member);
+        TokenResponse tokenResponse = tokenService.createTokenResponse(member);
+        kafkaTemplate.send(SIGN_UP_TOPIC,String.valueOf(member.getId()));
+        return tokenResponse;
     }
 
     @Override
