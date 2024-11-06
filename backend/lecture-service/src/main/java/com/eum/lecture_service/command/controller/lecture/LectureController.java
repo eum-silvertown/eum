@@ -19,7 +19,7 @@ import com.eum.lecture_service.config.global.CommonResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/lecture")
+@RequestMapping("/lecture")
 @RequiredArgsConstructor
 public class LectureController {
 
