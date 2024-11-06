@@ -3,6 +3,8 @@ spring:
     config:
       uri: http://config-service:8888  # Config 서버 URI
       name: eum-folder
+  profiles:
+    active: folder
 
 eureka:
   instance:
