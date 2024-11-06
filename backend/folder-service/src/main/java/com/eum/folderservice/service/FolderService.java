@@ -10,6 +10,8 @@ public interface FolderService {
 
     FolderResponseDTO createFolder(CreateFolderRequestDTO createFolderDTO);
 
+    void createRootFolder(Long memberId);
+
     SubFolderResponseDTO getRootFolder(Long memberId);
 
     SubFolderResponseDTO getSubFolders(Long folderId, Long memberId);

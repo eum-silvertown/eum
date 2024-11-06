@@ -45,6 +45,17 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
+    public void createRootFolder(Long memberId) {
+        Folder rootFolder = Folder.builder()
+                .memberId(memberId)
+                .title("root")
+                .childrenCount(0L)
+                .parentFolder(null)
+                .build();
+        folderRepository.save(rootFolder);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public SubFolderResponseDTO getRootFolder(Long memberId) {
         Folder rootFolder = folderRepository.findByMemberIdAndParentFolderIsNull(memberId)
