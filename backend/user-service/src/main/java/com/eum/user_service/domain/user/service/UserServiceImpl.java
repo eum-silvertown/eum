@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
 
         ImageResponse imageResponse = fileService
-                .getPresignedUrlForUpload(member.getUserId()+imageRequest.image());
+                .getPresignedUrlForUpload(member.getUserId());
         member.updateUserImage(imageResponse.image());
         return imageResponse;
     }

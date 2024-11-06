@@ -23,12 +23,12 @@ public class FileServiceImpl implements FileService{
 
     private final AmazonS3 amazonS3;
 
-    private static final String PREFIX = "image";
+    private static final String PREFIX = "image/";
 
     @Override
     public ImageResponse getPresignedUrlForUpload(String imageName) {
         String key = PREFIX + imageName;
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlForUpload(bucket, imageName);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlForUpload(bucket, key);
         URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
         return ImageResponse.from(url,key);
     }
