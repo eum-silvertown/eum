@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   classList: {
+    flexDirection: 'row',
     width: '100%',
     height: '100%',
   },

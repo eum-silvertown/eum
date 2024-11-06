@@ -6,6 +6,8 @@ import {useAuthStore} from '@store/useAuthStore';
 import {useColors} from 'src/hooks/useColors';
 import Modals from './Modals';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import BookModal from './BookModal';
+import {useBookModalStore} from '@store/useBookModalStore';
 
 interface MainLayoutProps {
   children: React.ReactElement;
@@ -18,6 +20,7 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
   const sidebarWidthAnim = useRef(
     new Animated.Value(isExpanded ? 17.5 : 5),
   ).current;
+  const bookPosition = useBookModalStore(state => state.bookPosition);
 
   // 현재 스크린
   const currentScreen = useCurrentScreenStore(state => state.currentScreen);
@@ -60,6 +63,7 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
             styles.content,
             {backgroundColor: colors.background.content},
           ]}>
+          {bookPosition && <BookModal />}
           {children}
         </View>
       </View>

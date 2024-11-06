@@ -1,5 +1,4 @@
 import {StyleSheet, View} from 'react-native';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
 import DrawingCanvas from './DrawingCanvas';
