@@ -24,28 +24,24 @@ public class UserController implements UserApiDocumentation{
 
     @PostMapping("/sign-up")
     public CommonResponse<?> signUp(@RequestBody SignUpRequest signUpRequest) {
-        log.info("Sign up request: {}", signUpRequest);
         TokenResponse token = userService.signUp(signUpRequest);
         return CommonResponse.success(token, "회원가입에 성공했습니다.");
     }
 
     @PostMapping("/sign-in")
     public CommonResponse<?> signIn(@RequestBody SignInRequest signInRequest) {
-        log.info("Sign In request: {}", signInRequest);
         TokenResponse token = userService.signIn(signInRequest);
         return CommonResponse.success(token,"로그인에 성공했습니다.");
     }
 
     @PostMapping("/check/id")
     public CommonResponse<?> checkId(@RequestBody UserIdRequest userIdRequest) {
-        log.info("check userId request: {}", userIdRequest);
         userService.checkId(userIdRequest);
         return CommonResponse.success("사용가능한 id입니다.");
     }
 
     @PostMapping("/access")
     public CommonResponse<?> getToken(@RequestBody TokenRequest tokenRequest) {
-        log.info("generate access token request: {}", tokenRequest);
         TokenResponse token = userService.generateAccessToken(tokenRequest);
         return CommonResponse.success(token,"토큰 발급에 성공했습니다.");
     }
@@ -53,7 +49,6 @@ public class UserController implements UserApiDocumentation{
     @GetMapping("/logout")
     public CommonResponse<?> logout(@RequestHeader(value = "X-MEMBER-ID") String memberId,
                                     @RequestHeader(value = "Authorization") String token) {
-        log.info("access token request: {}", token);
         userService.logout(Long.valueOf(memberId), token);
         return CommonResponse.success("로그아웃에 성공했습니다.");
     }
@@ -79,8 +74,7 @@ public class UserController implements UserApiDocumentation{
     }
 
     @PatchMapping("/info/image")
-    public CommonResponse<?> updateMemberProfileImage(@RequestHeader(value = "X-MEMBER-ID") String memberId
-                                                  ) {
+    public CommonResponse<?> updateMemberProfileImage(@RequestHeader(value = "X-MEMBER-ID") String memberId) {
         ImageResponse imageResponse = userService.updateMemberProfile(Long.valueOf(memberId));
         return CommonResponse.success(imageResponse,"프로필 사진이 성공적으로 변경되었습니다.");
     }

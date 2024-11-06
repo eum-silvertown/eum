@@ -34,7 +34,7 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("Eum API Reference for Developers")
-                .description("SSAFY 특화 PJT D101")
+                .description("SSAFY 자율 PJT D101")
                 .version("1.0.0");
     }
 }
