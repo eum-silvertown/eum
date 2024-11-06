@@ -42,11 +42,13 @@ public class ExamController {
             if (roleType == RoleType.STUDENT) {
                 throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
             }
+            Long examId = examService.creerExam(examDTO);
+            return CommonResponse.success(examId, "시험 생성 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+        } catch (Exception e) {
+            throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
-        Long examId = examService.creerExam(examDTO);
-        return CommonResponse.success(examId, "시험 생성 성공");
     }
 
     // 시험 수정
@@ -60,11 +62,13 @@ public class ExamController {
             if (roleType == RoleType.STUDENT) {
                 throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
             }
+            Long updatedExamId = examService.updateExam(examId, examDTO);
+            return CommonResponse.success(updatedExamId, "시험 수정 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+        } catch (Exception e) {
+            throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
-        Long updatedExamId = examService.updateExam(examId, examDTO);
-        return CommonResponse.success(updatedExamId, "시험 수정 성공");
     }
 
     // 시험 삭제
@@ -77,11 +81,13 @@ public class ExamController {
             if (roleType == RoleType.STUDENT) {
                 throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
             }
+            examService.deleteExam(examId);
+            return CommonResponse.success("시험 삭제 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+        } catch (Exception e) {
+            throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
-        examService.deleteExam(examId);
-        return CommonResponse.success("시험 삭제 성공");
     }
 
     // 시험 문제 제출
@@ -96,10 +102,12 @@ public class ExamController {
             if (roleType == RoleType.TEACHER) {
                 throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
             }
+            ExamSubmission examSubmission = examSubmissionService.submitExamProblems(examId, studentId, examProblemSubmissions);
+            return CommonResponse.success(examSubmission, "시험 제출 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+        } catch (Exception e) {
+            throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
-        ExamSubmission examSubmission = examSubmissionService.submitExamProblems(examId, studentId, examProblemSubmissions);
-        return CommonResponse.success(examSubmission, "시험 제출 성공");
     }
 }

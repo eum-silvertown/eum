@@ -35,11 +35,13 @@ public class LectureController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			Long lectureId = lectureService.createLecture(lectureDto, memberId);
+			return CommonResponse.success(lectureId, "수업 생성 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		Long lectureId = lectureService.createLecture(lectureDto, memberId);
-		return CommonResponse.success(lectureId, "수업 생성 성공");
 	}
 
 	//수업 수정
@@ -52,11 +54,13 @@ public class LectureController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			Long updateLectureId = lectureService.updateLecture(lectureDto, lectureId);
+			return CommonResponse.success(updateLectureId, "수업 수정 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		Long updateLectureId = lectureService.updateLecture(lectureDto, lectureId);
-		return CommonResponse.success(updateLectureId, "수업 수정 성공");
 	}
 
 	//수업 삭제
@@ -69,10 +73,12 @@ public class LectureController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			lectureService.deleteLecture(lectureId);
+			return CommonResponse.success("수업 삭제 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		lectureService.deleteLecture(lectureId);
-		return CommonResponse.success("수업 삭제 성공");
 	}
 }

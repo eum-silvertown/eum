@@ -31,11 +31,18 @@ public class LessonController {
 	public CommonResponse<?> createLesson(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestBody LessonDto lessonDto) {
-		if(!role.equals("TEACHER")) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+			Long lessonId = lessonService.createLesson(lessonDto);
+			return CommonResponse.success(lessonId, "레슨 생성 성공");
+		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		Long lessonId = lessonService.createLesson(lessonDto);
-		return CommonResponse.success(lessonId, "레슨 생성 성공");
 	}
 
 	@PutMapping
@@ -48,11 +55,13 @@ public class LessonController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			Long updatedLessonId = lessonService.updateLesson(lessonId, lessonDto);
+			return CommonResponse.success(updatedLessonId, "레슨 수정 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		Long updatedLessonId = lessonService.updateLesson(lessonId, lessonDto);
-		return CommonResponse.success(updatedLessonId, "레슨 수정 성공");
 	}
 
 	@DeleteMapping
@@ -64,11 +73,13 @@ public class LessonController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
+			lessonService.deleteLesson(lessonId);
+			return CommonResponse.success("레슨 삭제 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
-		lessonService.deleteLesson(lessonId);
-		return CommonResponse.success("레슨 삭제 성공");
 	}
 
 }
