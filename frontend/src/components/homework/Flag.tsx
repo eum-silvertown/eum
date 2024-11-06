@@ -24,15 +24,12 @@ function Flag({
   selected,
   setSelectedFlag,
 }: FlagProps): React.JSX.Element {
-  const leftPercentage = useSharedValue(90);
   const widthPercentage = useSharedValue(10);
 
   useEffect(() => {
     if (selected) {
-      leftPercentage.value = withTiming(87.5, {duration: 200});
       widthPercentage.value = withTiming(12.5, {duration: 200});
     } else {
-      leftPercentage.value = withTiming(90, {duration: 200});
       widthPercentage.value = withTiming(10, {duration: 200});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,7 +37,6 @@ function Flag({
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      left: `${leftPercentage.value}%`,
       width: `${widthPercentage.value}%`,
     };
   });
@@ -51,7 +47,7 @@ function Flag({
         styles.flag,
         animatedStyle,
         {
-          top: `${index * 10}%`,
+          top: `${2.5 + index * 10}%`,
           backgroundColor: color,
         },
       ]}>
@@ -67,11 +63,12 @@ export default memo(Flag);
 const styles = StyleSheet.create({
   flag: {
     position: 'absolute',
-    height: '8.5%',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    elevation: getResponsiveSize(2),
     zIndex: 1,
+    left: '87.5%',
+    height: '8.5%',
+    elevation: getResponsiveSize(2),
   },
   press: {
     width: '100%',
