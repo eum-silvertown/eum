@@ -1,8 +1,8 @@
 spring:
   cloud:
     config:
-      #uri: http://config-service:8888  # Config 서버 URI
-      uri: http://localhost:8888
+      uri: http://config-service:8888  # Config 서버 URI
+      #uri: http://localhost:8888
       name: eum-lecture
   profiles:
     active: lecture
@@ -10,7 +10,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      #defaultZone: http://discovery-service:8761/eureka/  # Eureka 서버 URI
-      defaultZone: http://localhost:8761/eureka/  # Eureka 서버 URI
+      defaultZone: http://discovery-service:8761/eureka/  # Eureka 서버 URI
+      #defaultZone: http://localhost:8761/eureka/  # Eureka 서버 URI
     registerWithEureka: true
     fetchRegistry: true
