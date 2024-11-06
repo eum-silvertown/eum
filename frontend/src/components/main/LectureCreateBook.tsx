@@ -4,14 +4,17 @@ import {Text} from '@components/common/Text';
 import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
-import type {LectureType} from '@store/useLectureStore'; // useLectureStore에서 Lecture 타입을 가져옴
+import {getResponsiveSize} from '@utils/responsive';
+import type {LectureType} from '@store/useLectureStore';
 
 interface LectureProps {
   item: LectureType;
 }
 
-export default function Lecture({item}: LectureProps): React.JSX.Element {
-  const pages = 6;
+export default function LectureCreateBook({
+  item,
+}: LectureProps): React.JSX.Element {
+  const pages = 7;
 
   return (
     <View style={styles.container}>
@@ -22,7 +25,6 @@ export default function Lecture({item}: LectureProps): React.JSX.Element {
               key={index}
               style={[
                 styles.page,
-                // eslint-disable-next-line react-native/no-inline-styles
                 {
                   backgroundColor:
                     index === pages - 1 ? item.backgroundColor : 'white',
@@ -70,16 +72,14 @@ export default function Lecture({item}: LectureProps): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: 'transparent',
+    gap: spacing.md,
+    padding: spacing.md,
   },
   lectureContainer: {
-    flex: 1,
+    width: getResponsiveSize(170),
+    height: getResponsiveSize(200),
     alignItems: 'center',
-    paddingTop: spacing.lg,
-    marginTop: spacing.lg,
-    paddingRight: spacing.lg,
-    marginRight: spacing.lg,
+    padding: spacing.lg,
   },
   pagesContainer: {
     width: '100%',

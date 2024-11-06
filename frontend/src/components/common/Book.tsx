@@ -1,4 +1,4 @@
-import {Text} from '@components/common/Text';
+import Lecture from '@components/main/Lecture';
 import ClassDetailScreen from '@screens/ClassDetailScreen';
 import {spacing} from '@theme/spacing';
 import {useState} from 'react';
@@ -14,10 +14,24 @@ import Animated, {
 interface BookProp {
   rightPosition: number;
   title: string;
-  color: string;
+  subtitle: string;
+  backgroundColor: string;
+  fontColor: string;
+  grade: string;
+  classNumber: string;
+  teacherName: string;
 }
 
-function Book({rightPosition, title, color}: BookProp): React.JSX.Element {
+function Book({
+  rightPosition,
+  title,
+  subtitle,
+  backgroundColor,
+  fontColor,
+  grade,
+  classNumber,
+  teacherName,
+}: BookProp): React.JSX.Element {
   const rotateY = useSharedValue(0);
   const containerWidth = useSharedValue(0);
   const right = useSharedValue(75 - rightPosition);
@@ -28,6 +42,16 @@ function Book({rightPosition, title, color}: BookProp): React.JSX.Element {
   const [selected, setSelected] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const ANIM_DURATION = 500;
+
+  const lectureItem = {
+    title,
+    backgroundColor,
+    fontColor,
+    grade,
+    classNumber,
+    teacherName,
+    subject: subtitle, // 예: 과목명을 subtitle로 사용
+  };
 
   // 배경 DetailScreen 애니메이션 스타일
   const detailScreenStyle = useAnimatedStyle(() => ({
@@ -140,7 +164,6 @@ function Book({rightPosition, title, color}: BookProp): React.JSX.Element {
           zIndex: selected ? 1 : 0,
         },
       ]}>
-      {/* ClassDetailScreen 조건부 렌더링 */}
       {showDetail && (
         <Animated.View style={detailScreenStyle}>
           <ClassDetailScreen closeBook={closeBook} />
@@ -158,11 +181,8 @@ function Book({rightPosition, title, color}: BookProp): React.JSX.Element {
           </View>
           {/* 표지 */}
           <Animated.View style={[styles.page, frontAnimatedStyles]}>
-            <View style={[styles.content, {backgroundColor: color}]}>
-              <Text>{title}</Text>
-            </View>
+            <Lecture item={lectureItem} />
           </Animated.View>
-
           {/* 왼쪽 페이지 (펼침) */}
           <Animated.View style={[styles.page, backAnimatedStyles]}>
             <View style={[styles.content, styles.backContent]} />
@@ -199,14 +219,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
   backContent: {
     backgroundColor: 'white',
