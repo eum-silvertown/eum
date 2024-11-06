@@ -5,16 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   KeyboardTypeOptions,
-  Dimensions,
+  ViewStyle,
 } from 'react-native';
-import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {borderWidth} from '@theme/borderWidth';
-
-const {height: screenHeight} = Dimensions.get('window');
+import {Text} from '@components/common/Text';
+import StatusMessage from '@components/account/StatusMessage';
+import { getResponsiveSize } from '@utils/responsive';
 
 interface InputFieldProps {
+  label?: string;
   value?: string;
   placeholder?: string;
   onChangeText?: (text: string) => void;
@@ -24,10 +25,16 @@ interface InputFieldProps {
   onIconPress?: () => void;
   maxLength?: number;
   keyboardType?: KeyboardTypeOptions;
-  multiline?: boolean;  
+  multiline?: boolean;
+  style?: ViewStyle;
+  buttonText?: string;
+  onButtonPress?: () => void;
+  errorText?: string;
+  errorStatus?: 'error' | 'success' | 'info'; // StatusMessage의 상태 전달
 }
 
 function InputField({
+  label,
   value,
   placeholder,
   onChangeText,
@@ -37,26 +44,42 @@ function InputField({
   onIconPress,
   maxLength,
   keyboardType = 'default',
-  multiline = false,  
-}: InputFieldProps): React.JSX.Element {  
+  multiline = false,
+  style,
+  buttonText,
+  onButtonPress,
+  errorText,
+  errorStatus = 'error',
+}: InputFieldProps): React.JSX.Element {
   return (
-    <View style={[styles.inputBox,]}>
-      <TextInput
-        style={styles.inputField}
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
-        maxLength={maxLength}
-        keyboardType={keyboardType}
-        multiline={multiline}
-        textAlignVertical={multiline ? 'top' : 'center'}
-      />
-      {showIcon && iconComponent && (
-        <TouchableOpacity style={styles.iconButton} onPress={onIconPress}>
-          {iconComponent}
-        </TouchableOpacity>
-      )}
+    <View style={[styles.inputContainer, style]}>
+      {label && <Text variant='subtitle' weight='bold' style={styles.inputLabel}>{label}</Text>}
+      <View style={[styles.inputBox]}>
+        <TextInput
+          style={styles.inputField}
+          placeholder={placeholder}
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry}
+          maxLength={maxLength}
+          keyboardType={keyboardType}
+          multiline={multiline}
+          textAlignVertical={multiline ? 'top' : 'center'}
+        />
+        {iconComponent && (
+          <TouchableOpacity style={styles.iconButton} onPress={onIconPress}>
+            {iconComponent}
+          </TouchableOpacity>
+        )}
+        {buttonText && onButtonPress && (
+          <TouchableOpacity style={styles.smallButton} onPress={onButtonPress}>
+            <Text weight="bold" color="white">
+              {buttonText}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      {errorText && <StatusMessage message={errorText} status={errorStatus} />}
     </View>
   );
 }
@@ -64,20 +87,21 @@ function InputField({
 export default InputField;
 
 const styles = StyleSheet.create({
-  inputContainer: {
+  inputContainer: {    
     width: '100%',
     marginBottom: spacing.md,
   },
   inputLabel: {
     marginBottom: spacing.sm,
   },
-  inputBox: {    
+  inputBox: {
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
   },
   inputField: {
     flex: 1,
-    height: '100%',
+    height: getResponsiveSize(30),
     backgroundColor: '#f2f4f8',
     borderBottomWidth: borderWidth.sm,
     borderBottomColor: colors.light.borderColor.cardBorder,
@@ -89,4 +113,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  smallButton: {
+    backgroundColor: colors.light.background.main,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 0,    
+    width: '15%',
+    height: '100%',
+  },  
 });
