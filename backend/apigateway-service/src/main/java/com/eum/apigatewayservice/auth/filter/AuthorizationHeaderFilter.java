@@ -10,7 +10,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -21,14 +20,14 @@ import com.eum.apigatewayservice.auth.filter.AuthorizationHeaderFilter.Config;
 @Component
 public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Config> {
 
-    @Autowired
-    private JwtUtil jwtUtil;
 
-    @Autowired
-    private BlacklistTokenService blacklistTokenService;
+    private final JwtUtil jwtUtil;
+    private final BlacklistTokenService blacklistTokenService;
 
-    public AuthorizationHeaderFilter() {
+    public AuthorizationHeaderFilter(BlacklistTokenService blacklistTokenService, JwtUtil jwtUtil) {
         super(Config.class);
+        this.blacklistTokenService = blacklistTokenService;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
