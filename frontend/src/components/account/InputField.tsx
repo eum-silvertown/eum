@@ -19,8 +19,7 @@ interface InputFieldProps {
   value?: string;
   placeholder?: string;
   onChangeText?: (text: string) => void;
-  secureTextEntry?: boolean;
-  showIcon?: boolean;
+  secureTextEntry?: boolean;  
   iconComponent?: React.ReactNode;
   onIconPress?: () => void;
   maxLength?: number;
@@ -30,7 +29,8 @@ interface InputFieldProps {
   buttonText?: string;
   onButtonPress?: () => void;
   errorText?: string;
-  errorStatus?: 'error' | 'success' | 'info'; // StatusMessage의 상태 전달
+  statusText?: string | undefined;
+  status?: 'error' | 'success' | 'info' | '';
 }
 
 function InputField({
@@ -38,8 +38,7 @@ function InputField({
   value,
   placeholder,
   onChangeText,
-  secureTextEntry = false,
-  showIcon = false,
+  secureTextEntry = false,  
   iconComponent,
   onIconPress,
   maxLength,
@@ -47,9 +46,9 @@ function InputField({
   multiline = false,
   style,
   buttonText,
-  onButtonPress,
-  errorText,
-  errorStatus = 'error',
+  onButtonPress,  
+  statusText,
+  status
 }: InputFieldProps): React.JSX.Element {
   return (
     <View style={[styles.inputContainer, style]}>
@@ -79,7 +78,7 @@ function InputField({
           </TouchableOpacity>
         )}
       </View>
-      {errorText && <StatusMessage message={errorText} status={errorStatus} />}
+      {statusText && <StatusMessage message={statusText} status={status} />}
     </View>
   );
 }
