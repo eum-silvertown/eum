@@ -12,15 +12,19 @@ function Modals(): React.JSX.Element {
           key={modal.id}
           style={[
             styles.overlay,
+            // eslint-disable-next-line react-native/no-inline-styles
+            index === 0 && {
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            },
             {
-              zIndex: 1000 + index,
+              zIndex: 1000 + index * 2,
             },
           ]}>
           <View
             style={[
               styles.wrapper,
               {
-                zIndex: 1001 + index,
+                zIndex: 1001 + index * 2,
               },
             ]}>
             <Modal modal={modal} />
@@ -38,7 +42,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   wrapper: {
     position: 'absolute',
