@@ -15,13 +15,21 @@ spring:
   cloud:
     gateway:
         routes:
-          - id: test-service
+          - id: logout
             uri: lb://user-service
             predicates:
-              - Path=/api/user/test
+              - Path=/api/user/logout
             filters:
               - StripPrefix=1
-              - AuthorizationHeaderFilter # 특정 라우트에만 필터 적용
+              - name: AuthorizationHeaderFilter # 특정 라우트에만 필터 적용
+              - name: LogoutAuthorizationHeaderFilter
+          - id: user-service
+            uri: lb://user-service
+            predicates:
+              - Path=/api/user/info/**
+            filters:
+              - StripPrefix=1 # "/api/u
+              - name: AuthorizationHeaderFilter
           - id: user-service
             uri: lb://user-service
             predicates:
