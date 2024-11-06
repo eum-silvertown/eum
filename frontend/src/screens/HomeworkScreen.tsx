@@ -7,7 +7,8 @@ import {useEffect, useState} from 'react';
 import {Image, ScrollView, StyleSheet, View} from 'react-native';
 import ScreenInfo from '@components/common/ScreenInfo';
 import ProgressBoxes from '@components/homework/ProgressBoxes';
-import noteSpringImage from '@assets/images/noteSpring.png';
+// import noteSpringImage from '@assets/images/noteSpring.png';
+import notebookImage from '@assets/images/notebook.png';
 
 export type HomeworkType = {
   state: '완료' | '미제출';
@@ -88,9 +89,10 @@ function HomeworkScreen(): React.JSX.Element {
             setSelectedFlag={setSelectedFlag}
           />
         ))}
-        <View style={[styles.content]}>
-          <Image source={noteSpringImage} style={styles.noteSpringImage} />
-          <View style={{flex: 1, gap: spacing.xl}}>
+        <View style={[styles.notebookContainer]}>
+          <Image source={notebookImage} style={styles.notebook} />
+          {/* <Image source={noteSpringImage} style={styles.noteSpringImage} /> */}
+          <View style={styles.content}>
             <ProgressBoxes />
             <View style={styles.homeworkContainer}>
               <ScrollView
@@ -121,16 +123,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: '92%',
   },
-  content: {
+  notebook: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    objectFit: 'fill',
+  },
+  notebookContainer: {
     flexDirection: 'row',
     gap: spacing.xl,
     width: '90%',
-    padding: spacing.xl,
-    paddingRight: spacing.xxl,
-    backgroundColor: 'white',
     borderBottomEndRadius: borderRadius.sm,
     borderTopEndRadius: borderRadius.sm,
-    elevation: getResponsiveSize(3),
+  },
+  content: {
+    flex: 1,
+    gap: spacing.xl,
+    padding: spacing.xl,
+    paddingRight: spacing.xxl * 1.2,
+    paddingLeft: spacing.xxl * 1.6,
   },
   noteSpringImage: {
     marginLeft: -spacing.xxl,
