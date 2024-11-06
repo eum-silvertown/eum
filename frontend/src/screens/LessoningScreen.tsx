@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { io, Socket } from 'socket.io-client';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {io, Socket} from 'socket.io-client';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherCanvasSection from '@components/classLessoning/TeacherCanvasSection';
 import StudentCanvasSection from '@components/classLessoning/StudentCanvasSection';
 
-import { useFocusEffect } from '@react-navigation/native';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-
-type PathData = {
-  path: any;
-  color: string;
-  strokeWidth: number;
-  opacity: number;
-  timestamp: number;
-};
+import {useFocusEffect} from '@react-navigation/native';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 
 function LessoningScreen(): React.JSX.Element {
   // 문제 텍스트와 이미지 URL이 포함된 예제
@@ -56,16 +48,6 @@ function LessoningScreen(): React.JSX.Element {
     transports: ['websocket'],
   });
 
-  const handleRecordingEnd = (paths: PathData[]) => {
-    const formattedPaths = paths.map(pathData => ({
-      ...pathData,
-      path: pathData.path.toSVGString
-        ? pathData.path.toSVGString()
-        : pathData.path,
-    }));
-    console.log('중간단계 데이터 확인용', formattedPaths);
-  };
-
   useEffect(() => {
     socket.on('connect_error', err => console.log('연결 오류:', err.message));
 
@@ -77,19 +59,30 @@ function LessoningScreen(): React.JSX.Element {
   // 선생님일 경우
   if (isTeacher) {
     return (
-      <View style={styles.container}>
-        <View style={styles.sectionContainer}>
-          <ProblemSection problemText={problems[currentPage]} />
-          <TeacherCanvasSection
-            socket={socket}
-            onRecordingEnd={handleRecordingEnd}
-            currentPage={currentPage + 1}
-            totalPages={problems.length}
-            onNextPage={handleNextPage}
-            onPrevPage={handlePrevPage}
-          />
+      <>
+        <View style={styles.container}>
+          <View style={styles.sectionContainer}>
+            <ProblemSection problemText={problems[currentPage]} />
+            <TeacherCanvasSection
+              socket={socket}
+              currentPage={currentPage + 1}
+              totalPages={problems.length}
+              onNextPage={handleNextPage}
+              onPrevPage={handlePrevPage}
+            />
+          </View>
+          <View style={styles.sectionContainer}>
+            <ProblemSection problemText={problems[currentPage]} />
+            <StudentCanvasSection
+              socket={socket}
+              currentPage={currentPage + 1}
+              totalPages={problems.length}
+              onNextPage={handleNextPage}
+              onPrevPage={handlePrevPage}
+            />
+          </View>
         </View>
-      </View>
+      </>
     );
   }
 
