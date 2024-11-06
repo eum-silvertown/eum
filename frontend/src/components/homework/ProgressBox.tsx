@@ -77,7 +77,7 @@ function ProgressBox({
       <View style={styles.titleContainer}>
         <Text weight="bold">{title}</Text>
         {isTeacher && (
-          <TouchableOpacity style={styles.addButton}>
+          <TouchableOpacity style={styles.intoButton}>
             <IntoIcon width={iconSize.sm} height={iconSize.sm} />
           </TouchableOpacity>
         )}
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     overflow: 'hidden',
   },
-  addButton: {
+  intoButton: {
     padding: spacing.xs,
   },
 });

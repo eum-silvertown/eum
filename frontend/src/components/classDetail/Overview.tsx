@@ -5,11 +5,13 @@ import ProgressBox from '@components/homework/ProgressBox';
 import { spacing } from '@theme/spacing';
 import { getResponsiveSize } from '@utils/responsive';
 
-type IsTeacherProps = {
-  isTeacher: boolean;
-}
+type OverviewProps = {
+  homeworkCnt?: number;
+  examCnt?: number;
+  problemBoxCnt?: number;
+};
 
-function Overview({ isTeacher }: IsTeacherProps): React.JSX.Element {
+function Overview({ homeworkCnt = 0, examCnt = 0, problemBoxCnt = 0 }: OverviewProps): React.JSX.Element {
   return (
     <View style={styles.overview}>
       <Text variant="subtitle" weight="bold" style={styles.subtitle}>
@@ -19,26 +21,23 @@ function Overview({ isTeacher }: IsTeacherProps): React.JSX.Element {
         <ProgressBox
           color="red"
           title="시험"
-          content="10"
+          content={`${examCnt}`}
           unit="번"
           icon="complete"
-          isTeacher={isTeacher}
         />
         <ProgressBox
           color="blue"
           title="숙제"
-          content="10"
+          content={`${homeworkCnt}`}
           unit="개"
           icon="homeworkCheck"
-          isTeacher={isTeacher}
         />
         <ProgressBox
           color="green"
           title="문제 보관함"
-          content="10"
+          content={`${problemBoxCnt}`}
           unit="개"
           icon="folderCheck"
-          isTeacher={isTeacher}
         />
       </View>
     </View>

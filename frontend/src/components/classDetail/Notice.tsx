@@ -10,27 +10,19 @@ import { useModal } from 'src/hooks/useModal';
 import NoticeCreateModal from './NoticeCreateModal';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 
-type IsTeacherProps = {
+type NoticeData = {
+  title: string;
+  content: string;
+};
+
+type NoticeProps = {
   isTeacher: boolean;
-}
+  notices?: NoticeData[];
+};
 
-function Notice({ isTeacher }: IsTeacherProps): React.JSX.Element {
+function Notice({ isTeacher, notices = [] }: NoticeProps): React.JSX.Element {
   const { open } = useModal();
-
-  const noticeDatas = [
-    {
-      title: '공지사항 1',
-      content: '공지사항 내용 1@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@',
-    },
-    {
-      title: '공지사항 2',
-      content: '공지사항 내용 2',
-    },
-    {
-      title: '공지사항 3',
-      content: '공지사항 내용 3',
-    },
-  ];
+  const displayedNotices = notices.slice(0, 3); // 최대 3개의 공지사항만 표시
 
   return (
     <View style={styles.notice}>
@@ -53,20 +45,25 @@ function Notice({ isTeacher }: IsTeacherProps): React.JSX.Element {
         )}
       </View>
       <View style={styles.noticeLayout}>
-        {noticeDatas.map((notice, index) => (
-          <View key={index} style={styles.imageWrapper}>
-            <Image source={postit} alt="postit" style={styles.imageContainer} />
-            <View style={styles.textIconContainer}>
-              <Text style={styles.overlayText}>{notice.title}</Text>
-              {isTeacher &&
-                <TouchableOpacity style={styles.cancelIcon}>
-                  <CancelIcon width={iconSize.xxs} height={iconSize.xxs} />
-                </TouchableOpacity>
-              }
+        {Array.from({ length: 3 }).map((_, index) => {
+          const notice = displayedNotices[index];
+          return (
+            <View key={index} style={styles.imageWrapper}>
+              <Image source={postit} alt="postit" style={styles.imageContainer} />
+              <View style={styles.textIconContainer}>
+                <Text style={styles.overlayText}>
+                  {notice ? notice.title : '등록된 공지가 없습니다.'}
+                </Text>
+                {isTeacher && notice && (
+                  <TouchableOpacity style={styles.cancelIcon}>
+                    <CancelIcon width={iconSize.xxs} height={iconSize.xxs} />
+                  </TouchableOpacity>
+                )}
+              </View>
+              {notice && <Text style={styles.noticeContent}>{notice.content}</Text>}
             </View>
-            <Text style={styles.noticeContent}>{notice.content}</Text>
-          </View>
-        ))}
+          );
+        })}
       </View>
     </View>
   );
@@ -101,7 +98,8 @@ const styles = StyleSheet.create({
   textIconContainer: {
     position: 'absolute',
     left: 12,
-    top: 16,
+    top: 24,
+    right: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -113,7 +111,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 12,
     right: 12,
-    top: 42,
+    top: 54,
     color: '#333',
   },
   cancelIcon: {

@@ -1,35 +1,37 @@
-import React, {useState} from 'react';
-import {View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
-import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
+import React, { useState } from 'react';
+import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text } from '@components/common/Text';
+import { spacing } from '@theme/spacing';
 import LeftArrowOffIcon from '@assets/icons/leftArrowOffIcon.svg';
 import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 
-function Replay(): React.JSX.Element {
-  const [reviewData] = useState([
-    {id: '6', title: '수업 다시보기 6', date: '10-24', duration: '28:00'},
-    {id: '5', title: '수업 다시보기 5', date: '10-24', duration: '28:00'},
-    {id: '4', title: '수업 다시보기 4', date: '10-24', duration: '28:00'},
-    {id: '3', title: '수업 다시보기 3', date: '10-23', duration: '32:00'},
-    {id: '2', title: '수업 다시보기 2', date: '10-22', duration: '35:00'},
-    {id: '1', title: '수업 다시보기 1', date: '10-21', duration: '29:00'},
-  ]);
+type LessonType = {
+  lessonId: number;
+  title: string;
+  questions: number[];
+};
 
+type ReplayProps = {
+  lesson?: LessonType[];
+};
+
+function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const totalPages = Math.ceil(reviewData.length / itemsPerPage);
+  // 데이터를 최대 5개의 항목으로 제한하여 페이징 처리
+  const totalPages = Math.ceil(lesson.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = reviewData.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = lesson.slice(startIndex, startIndex + itemsPerPage);
 
-  const renderItem = ({item}: {item: (typeof reviewData)[0]}) => (
+  const renderItem = ({ item }: { item: LessonType }) => (
     <TouchableOpacity style={styles.item} onPress={() => handleItemPress(item)}>
       <View style={[styles.textContainer, styles.idContainer]}>
         <Text variant="caption" weight="bold">
-          {item.id}
+          {item.lessonId}
         </Text>
       </View>
       <View style={[styles.textContainer, styles.titleContainer]}>
@@ -37,26 +39,16 @@ function Replay(): React.JSX.Element {
           {item.title}
         </Text>
       </View>
-      <View style={[styles.textContainer, styles.dateContainer]}>
+      <View style={[styles.textContainer, styles.questionsContainer]}>
         <Text variant="caption" weight="bold">
-          {item.date}
-        </Text>
-      </View>
-      <View style={[styles.textContainer, styles.durationContainer]}>
-        <Text variant="caption" weight="bold">
-          {item.duration}
+          {item.questions.length} 문제
         </Text>
       </View>
     </TouchableOpacity>
   );
 
-  const handleItemPress = (item: {
-    id: string;
-    title: string;
-    date: string;
-    duration: string;
-  }) => {
-    console.log(`Clicked on ${item.title}`);
+  const handleItemPress = (item: LessonType) => {
+    console.log(`Clicked on ${item.lessonId}`);
   };
 
   const handlePrevPage = () => {
@@ -78,22 +70,15 @@ function Replay(): React.JSX.Element {
           다시보기
         </Text>
         <View style={styles.pagination}>
-          <TouchableOpacity
-            onPress={handlePrevPage}
-            disabled={currentPage === 1}>
+          <TouchableOpacity onPress={handlePrevPage} disabled={currentPage === 1}>
             {currentPage === 1 ? (
               <LeftArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
             ) : (
               <LeftArrowOnIcon width={iconSize.sm} height={iconSize.sm} />
             )}
           </TouchableOpacity>
-          <Text
-            style={
-              styles.pageIndicator
-            }>{`${currentPage} / ${totalPages}`}</Text>
-          <TouchableOpacity
-            onPress={handleNextPage}
-            disabled={currentPage === totalPages}>
+          <Text style={styles.pageIndicator}>{`${currentPage} / ${totalPages}`}</Text>
+          <TouchableOpacity onPress={handleNextPage} disabled={currentPage === totalPages}>
             {currentPage === totalPages ? (
               <RightArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
             ) : (
@@ -104,9 +89,9 @@ function Replay(): React.JSX.Element {
       </View>
       <FlatList
         style={styles.listStyle}
-        data={paginatedData}
+        data={paginatedData.length > 0 ? paginatedData : [{ lessonId: 0, title: '등록된 수업이 없습니다', questions: [] }]}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.lessonId.toString()}
       />
     </View>
   );
@@ -120,7 +105,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
+    paddingRight: spacing.md,
   },
   subtitle: {
     marginStart: spacing.xl,
@@ -155,11 +140,8 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 5,
   },
-  dateContainer: {
+  questionsContainer: {
     flex: 2,
-  },
-  durationContainer: {
-    flex: 1,
   },
   listStyle: {
     borderBlockColor: 'none',
