@@ -145,7 +145,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 4,
     borderRadius: 10,
-    elevation: 1,
   },
   textContainer: {
     paddingHorizontal: 4,

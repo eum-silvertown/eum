@@ -103,6 +103,7 @@ function Replay(): React.JSX.Element {
         </View>
       </View>
       <FlatList
+        style={styles.listStyle}
         data={paginatedData}
         renderItem={renderItem}
         keyExtractor={item => item.id}
@@ -143,7 +144,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 4,
     borderRadius: 10,
-    elevation: 1,
   },
   textContainer: {
     paddingHorizontal: 4,
@@ -160,6 +160,9 @@ const styles = StyleSheet.create({
   },
   durationContainer: {
     flex: 1,
+  },
+  listStyle: {
+    borderBlockColor: 'none',
   },
 });
 

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { spacing } from '@theme/spacing';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {Text} from '@components/common/Text';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {spacing} from '@theme/spacing';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import VerticalMenuicon from '@assets/icons/verticalMenuIcon.svg';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -14,7 +14,7 @@ type IsTeacherProps = {
   isTeacher: boolean;
 };
 
-function ClassHeader({ isTeacher }: IsTeacherProps): React.JSX.Element {
+function ClassHeader({isTeacher}: IsTeacherProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
   const isLive = true;
 
@@ -24,7 +24,8 @@ function ClassHeader({ isTeacher }: IsTeacherProps): React.JSX.Element {
         이게 뭐여, 수학이여?
       </Text>
       <View style={styles.rightSection}>
-        <View style={[styles.chip, isLive ? styles.liveChip : styles.defaultChip]}>
+        <View
+          style={[styles.chip, isLive ? styles.liveChip : styles.defaultChip]}>
           <Text style={[isLive ? styles.liveChipText : styles.defaultChipText]}>
             LIVE
           </Text>
@@ -32,8 +33,7 @@ function ClassHeader({ isTeacher }: IsTeacherProps): React.JSX.Element {
 
         <TouchableOpacity
           style={styles.enterButton}
-          onPress={() => navigation.navigate('LessoningStudentListScreen')}
-        >
+          onPress={() => navigation.navigate('LessoningStudentListScreen')}>
           <Text style={styles.enterButtonText}>수업 입장</Text>
         </TouchableOpacity>
         {isTeacher && (
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 8,
-    marginRight: spacing.xs,
+    marginRight: spacing.lg,
   },
   enterButtonText: {
     color: '#fff',
