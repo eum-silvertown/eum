@@ -31,10 +31,8 @@ public class FolderServiceImpl implements FolderService {
         Folder parentFolder = findFolderByIdAndMemberId(createFolderDTO.getParentId(), createFolderDTO.getMemberId());
 
         // 중복된 폴더명이 있는지 확인
-        for (Folder subFolder : parentFolder.getSubFolders()) {
-            if (subFolder.getTitle().equals(createFolderDTO.getTitle())) {
-                throw new FolderException(ErrorCode.FOLDER_ALREADY_EXISTS_ERROR);
-            }
+        if (isDuplicateFolderName(parentFolder, createFolderDTO.getTitle())) {
+            throw new FolderException(ErrorCode.FOLDER_ALREADY_EXISTS_ERROR);
         }
 
         newFolder = createFolderDTO.from(parentFolder);
@@ -91,6 +89,11 @@ public class FolderServiceImpl implements FolderService {
     @Transactional
     public FolderResponseDTO modifyFolderTitle(ModifyTitleRequestDTO requestDTO, Long memberId) {
         Folder folder = findFolderByIdAndMemberId(requestDTO.getFolderId(), memberId);
+
+        if(isDuplicateFolderName(folder.getParentFolder(), requestDTO.getTitle())) {
+            throw new FolderException(ErrorCode.FOLDER_ALREADY_EXISTS_ERROR);
+        }
+
         folder.modifyTitle(requestDTO.getTitle());
         return FolderResponseDTO.of(folder);
     }
@@ -121,6 +124,11 @@ public class FolderServiceImpl implements FolderService {
         folder.getParentFolder().removeChildFolder(folder);
 
         Folder toFolder = findFolderByIdAndMemberId(requestDTO.getToId(), memberId);
+
+        if(isDuplicateFolderName(toFolder, folder.getTitle())) {
+            throw new FolderException(ErrorCode.FOLDER_ALREADY_EXISTS_ERROR);
+        }
+
         folder.setParentFolder(toFolder);
         toFolder.addChildFolder(folder);
     }
@@ -129,5 +137,14 @@ public class FolderServiceImpl implements FolderService {
     protected Folder findFolderByIdAndMemberId(Long folderId, Long memberId) {
         return folderRepository.findByIdAndMemberId(folderId, memberId)
                 .orElseThrow(() -> new FolderException(ErrorCode.FOLDER_NOT_FOUND_ERROR));
+    }
+
+    private boolean isDuplicateFolderName(Folder parentFolder, String title) {
+        for (Folder subFolder : parentFolder.getSubFolders()) {
+            if (subFolder.getTitle().equals(title)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
