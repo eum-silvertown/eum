@@ -96,16 +96,16 @@ pipeline {
         success {
             script {
                 if (env.BUILD_REQUIRED == 'true') {
-                    mattermostSend(color: 'good', message: "User Service 배포 성공.")
+                    mattermostSend(color: 'good', message: "Lecture Service 배포 성공.")
                 } else {
-                    echo "User Service 변경 사항 없음. 빌드 및 배포를 건너뜁니다."
+                    echo "Lecture Service 변경 사항 없음. 빌드 및 배포를 건너뜁니다."
                 }
             }
         }
         failure {
             script {
                 if (env.BUILD_REQUIRED == 'true') {
-                    mattermostSend(color: 'danger', message: "User Service 배포 실패. 수동 확인이 필요합니다.")
+                    mattermostSend(color: 'danger', message: "Lecture Service 배포 실패. 수동 확인이 필요합니다.")
                 }
             }
         }
