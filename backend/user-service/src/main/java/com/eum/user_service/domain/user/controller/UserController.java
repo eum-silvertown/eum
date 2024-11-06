@@ -77,9 +77,9 @@ public class UserController implements UserApiDocumentation{
     }
 
     @PatchMapping("/info/image")
-    public CommonResponse<?> updateMemberProfileImage(@RequestHeader(value = "X-MEMBER-ID") String memberId,
-                                                  @RequestBody ImageRequest imageRequest) {
-        ImageResponse imageResponse = userService.updateMemberProfile(Long.valueOf(memberId), imageRequest);
+    public CommonResponse<?> updateMemberProfileImage(@RequestHeader(value = "X-MEMBER-ID") String memberId
+                                                  ) {
+        ImageResponse imageResponse = userService.updateMemberProfile(Long.valueOf(memberId));
         return CommonResponse.success(imageResponse,"프로필 사진이 성공적으로 변경되었습니다.");
     }
 }

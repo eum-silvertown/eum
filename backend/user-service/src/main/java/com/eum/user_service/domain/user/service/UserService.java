@@ -1,6 +1,5 @@
 package com.eum.user_service.domain.user.service;
 
-import com.eum.user_service.domain.file.dto.ImageRequest;
 import com.eum.user_service.domain.file.dto.ImageResponse;
 import com.eum.user_service.domain.token.dto.TokenRequest;
 import com.eum.user_service.domain.token.dto.TokenResponse;
@@ -23,7 +22,7 @@ public interface UserService {
 
     void deleteMemberInfo(Long memberId);
 
-    ImageResponse updateMemberProfile(Long memberId, ImageRequest imageRequest);
+    ImageResponse updateMemberProfile(Long memberId);
 
     MemberInfoResponse getMemberInfo(Long memberId, Role role);
 }

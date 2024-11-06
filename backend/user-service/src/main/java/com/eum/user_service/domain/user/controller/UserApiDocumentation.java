@@ -88,5 +88,5 @@ public interface UserApiDocumentation {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 유저 입니다"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    CommonResponse<?> updateMemberProfileImage(String memberId, ImageRequest imageRequest);
+    CommonResponse<?> updateMemberProfileImage(String memberId);
 }

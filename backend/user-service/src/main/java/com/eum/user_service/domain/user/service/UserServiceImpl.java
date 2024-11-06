@@ -1,6 +1,5 @@
 package com.eum.user_service.domain.user.service;
 
-import com.eum.user_service.domain.file.dto.ImageRequest;
 import com.eum.user_service.domain.file.dto.ImageResponse;
 import com.eum.user_service.domain.file.service.FileService;
 import com.eum.user_service.domain.token.dto.TokenRequest;
@@ -127,7 +126,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ImageResponse updateMemberProfile(Long memberId, ImageRequest imageRequest) {
+    public ImageResponse updateMemberProfile(Long memberId) {
         Member member = userRepository.findById(memberId)
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
 
