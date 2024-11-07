@@ -1,5 +1,5 @@
 import {QuestionBoxType} from '@store/useQuestionExplorerStore';
-import axios from 'axios';
+import {authApiClient} from './apiClient';
 
 // API 응답 타입 정의
 type ApiResponse<T> = {
@@ -27,11 +27,9 @@ type GetFolderResponse = {
   subFiles: FileType[];
 };
 
-axios.defaults.headers['X-MEMBER-ID'] = 1;
-
 export const getRootFolder = async (): Promise<QuestionBoxType> => {
   try {
-    const {data} = await axios.get<ApiResponse<GetFolderResponse>>(
+    const {data} = await authApiClient.get<ApiResponse<GetFolderResponse>>(
       'folder/root',
     );
     console.log(data.data.subFolders);
@@ -82,7 +80,7 @@ export const createFolder = async (
   parentId: number,
 ): Promise<QuestionBoxType> => {
   try {
-    const {data} = await axios.post<ApiResponse<CreateFolderResponse>>(
+    const {data} = await authApiClient.post<ApiResponse<CreateFolderResponse>>(
       'folder',
       {
         title: title,
@@ -107,7 +105,7 @@ export const getFolder = async (
   folderId: number,
 ): Promise<QuestionBoxType[]> => {
   try {
-    const {data} = await axios.get<ApiResponse<GetFolderResponse>>(
+    const {data} = await authApiClient.get<ApiResponse<GetFolderResponse>>(
       `folder/${folderId}`,
     );
     let children: QuestionBoxType[] = [];
@@ -141,7 +139,9 @@ export const getFolder = async (
 
 export const deleteFolder = async (folderId: number) => {
   try {
-    const {data} = await axios.delete<ApiResponse<null>>(`folder/${folderId}`);
+    const {data} = await authApiClient.delete<ApiResponse<null>>(
+      `folder/${folderId}`,
+    );
     console.log(data);
   } catch (error) {
     throw error;
@@ -153,7 +153,7 @@ export const renameFolder = async (
   title: string,
 ): Promise<string> => {
   try {
-    const {data} = await axios.patch<ApiResponse<CreateFolderResponse>>(
+    const {data} = await authApiClient.patch<ApiResponse<CreateFolderResponse>>(
       'folder',
       {
         folderId,
@@ -168,7 +168,7 @@ export const renameFolder = async (
 
 export const moveFolder = async (folderId: number, toId: number) => {
   try {
-    const {data} = await axios.post<ApiResponse<null>>('folder/move', {
+    const {data} = await authApiClient.post<ApiResponse<null>>('folder/move', {
       folderId: folderId,
       toId: toId,
     });
