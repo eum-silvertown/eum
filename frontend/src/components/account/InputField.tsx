@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   inputField: {
     flex: 1,
-    height: getResponsiveSize(30),
+    height: getResponsiveSize(40),
     backgroundColor: '#f2f4f8',
     borderBottomWidth: borderWidth.sm,
     borderBottomColor: colors.light.borderColor.cardBorder,

@@ -1,6 +1,7 @@
 import {authApiClient, publicApiClient} from '@services/apiClient';
 import {setToken, getToken, clearToken} from '@utils/secureStorage';
 import {useAuthStore} from '@store/useAuthStore';
+import axios from 'axios';
 
 interface LoginCredentials {
   id: string;
@@ -46,10 +47,26 @@ function handleApiError(error: any): string {
 // 로그인
 export const logIn = async (credentials: LoginCredentials): Promise<any> => {
   try {
-    console.log(credentials)
     const response = await publicApiClient.post('/user/sign-in', credentials);
-    
-    await setToken(response.data.data);
+
+    await setToken(response.data.data.tokenResponse);
+
+    console.log(response.data.data);
+
+    const authStore = useAuthStore.getState();
+
+    // 사용자 정보 추출
+    if (response.data.data.imageResponse) {
+      const profileImageUrl = response.data.data.imageResponse.url;
+      authStore.setUserProfileImage(profileImageUrl);
+    }
+    const userName = response.data.data.name;
+    const role = response.data.data.tokenResponse.role;
+
+    // 상태 업데이트
+    authStore.setIsLoggedIn(true);
+    authStore.setUsername(userName);
+    authStore.setRole(role);
 
     // 로그인 상태를 true로 설정
     useAuthStore.getState().setIsLoggedIn(true);
@@ -68,7 +85,6 @@ export const logOut = async (): Promise<any> => {
 
     // 로그인 상태를 false로 설정
     useAuthStore.getState().setIsLoggedIn(false);
-
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
@@ -77,7 +93,6 @@ export const logOut = async (): Promise<any> => {
 // 회원가입
 export const signUp = async (userData: SignupCredentials): Promise<any> => {
   try {
-    console.log(userData);
     const response = await publicApiClient.post('/user/sign-up', userData);
 
     // 회원가입 성공 시 토큰을 저장하고 로그인 상태로 전환
@@ -127,14 +142,12 @@ export const getUserInfo = async (): Promise<any> => {
   }
 };
 
-// 회원 프로필 사진 업데이트
-export const updateProfilePicture = async (
-  formData: FormData,
-): Promise<any> => {
+// 회원 프로필 사진 업데이트용 S3 URL 받기
+export const updateProfilePicture = async (): Promise<any> => {
   try {
-    return await authApiClient.put('/user/profile-picture', formData, {
-      headers: {'Content-Type': 'multipart/form-data'},
-    });
+    const response = await authApiClient.patch('/user/info/image');
+    const s3Url = response.data.data.url;
+    return s3Url;
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
