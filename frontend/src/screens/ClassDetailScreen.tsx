@@ -1,5 +1,5 @@
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {spacing} from '@theme/spacing';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { spacing } from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -8,9 +8,11 @@ import Overview from '@components/classDetail/Overview';
 import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
 import OverviewForTeacher from '@components/classDetail/OverviewForTeacher';
+import StudentRank from '@components/classDetail/StudentRank';
+import StudentsChart from '@components/classDetail/StudentsChart';
 
 import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 import {
   getLectureDetail,
@@ -20,9 +22,17 @@ import {
   LectureStudentDetailType,
   LectureTeacherDetailType,
 } from 'src/services/lectureInformation';
-import {useQuery} from '@tanstack/react-query';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {useFocusEffect} from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { useFocusEffect } from '@react-navigation/native';
+import { useState } from 'react';
+
+
+type ClassAverageScores = {
+  homeworkAvgScore: number;
+  testAvgScore: number;
+  attitudeAvgScore: number;
+};
 
 interface ClassDetailScreenProp {
   closeBook: () => void;
@@ -42,18 +52,18 @@ function ClassDetailScreen({
   const lectureId = 1;
   const isTeacher = true;
 
-  const {data: lectureDetail} = useQuery<LectureDetailType>({
+  const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId),
   });
 
-  const {data: studentLectureDetail} = useQuery<LectureStudentDetailType>({
+  const { data: studentLectureDetail } = useQuery<LectureStudentDetailType>({
     queryKey: ['studentLectureDetail', lectureId],
     queryFn: () => getStudentLectureDetail(lectureId),
     enabled: !isTeacher,
   });
 
-  const {data: teacherLectureDetail} = useQuery<LectureTeacherDetailType>({
+  const { data: teacherLectureDetail } = useQuery<LectureTeacherDetailType>({
     queryKey: ['teacherLectureDetail', lectureId],
     queryFn: () => getTeacherLectureDetail(lectureId),
     enabled: isTeacher,
@@ -62,6 +72,14 @@ function ClassDetailScreen({
   console.log('lectureDetail', lectureDetail);
   console.log('studentLectureDetail', studentLectureDetail);
   console.log('teacherLectureDetail', teacherLectureDetail);
+
+  const [selectedStudentScores, setSelectedStudentScores] = useState<ClassAverageScores | null>(null);
+  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(null);
+
+  const handleStudentSelect = (scores: ClassAverageScores, name: string) => {
+    setSelectedStudentScores(scores);
+    setSelectedStudentName(name);
+  };
 
   if (isTeacher) {
     // 선생님용
@@ -123,9 +141,18 @@ function ClassDetailScreen({
             <View style={styles.replayLayout}>
               <Replay lesson={lectureDetail?.lesson} />
             </View>
-            <View style={styles.homeworkLayout}>
-              <Homework homework={lectureDetail?.homework} />
-            </View>
+            {teacherLectureDetail &&
+              <View style={styles.homeworkLayout}>
+                <StudentsChart
+                  classAverageScores={selectedStudentScores || teacherLectureDetail.classAverageScores}
+                  studentName={selectedStudentName || '학급 평균'}
+                />
+                <StudentRank
+                  studentsInfo={teacherLectureDetail.students}
+                  onStudentSelect={handleStudentSelect}
+                />
+              </View>
+            }
           </View>
         </View>
       </View>

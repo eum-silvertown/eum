@@ -407,76 +407,96 @@ export const getTeacherLectureDetail = async (
 ): Promise<LectureTeacherDetailType> => {
   console.log(`선생님용 강의 상세 조회 요청: lectureId = ${lectureId}`);
   try {
-    const dummydata = {
+    const dummyData = {
       students: [
         {
           studentId: 1,
-          studentImage: 'path/to/student.jpg',
-          studentName: '홍길동',
+          studentImage: 'path/to/student1.jpg',
+          studentName: '이영희',
           studentScores: {
-            homeworkAvgScore: 85.0,
-            testAvgScore: 90.0,
-            attitudeAvgScore: 95.0,
+            homeworkAvgScore: 78.0,
+            testAvgScore: 82.0,
+            attitudeAvgScore: 88.0,
           },
         },
         {
           studentId: 2,
           studentImage: 'path/to/student2.jpg',
-          studentName: '김철수',
+          studentName: '박민수',
           studentScores: {
-            homeworkAvgScore: 88.0,
-            testAvgScore: 87.0,
-            attitudeAvgScore: 92.0,
+            homeworkAvgScore: 91.0,
+            testAvgScore: 89.0,
+            attitudeAvgScore: 84.0,
           },
         },
         {
           studentId: 3,
-          studentImage: 'path/to/student.jpg',
-          studentName: '홍길동',
+          studentImage: 'path/to/student3.jpg',
+          studentName: '김수진',
           studentScores: {
             homeworkAvgScore: 85.0,
             testAvgScore: 90.0,
-            attitudeAvgScore: 95.0,
+            attitudeAvgScore: 92.0,
           },
         },
         {
           studentId: 4,
-          studentImage: 'path/to/student2.jpg',
-          studentName: '김철수',
+          studentImage: 'path/to/student4.jpg',
+          studentName: '최지훈',
           studentScores: {
-            homeworkAvgScore: 88.0,
-            testAvgScore: 87.0,
-            attitudeAvgScore: 92.0,
+            homeworkAvgScore: 72.0,
+            testAvgScore: 77.0,
+            attitudeAvgScore: 80.0,
           },
         },
         {
           studentId: 5,
-          studentImage: 'path/to/student.jpg',
-          studentName: '홍길동',
+          studentImage: 'path/to/student5.jpg',
+          studentName: '정다연',
           studentScores: {
-            homeworkAvgScore: 85.0,
-            testAvgScore: 90.0,
-            attitudeAvgScore: 95.0,
+            homeworkAvgScore: 95.0,
+            testAvgScore: 93.0,
+            attitudeAvgScore: 97.0,
           },
         },
         {
           studentId: 6,
-          studentImage: 'path/to/student2.jpg',
-          studentName: '김철수',
+          studentImage: 'path/to/student6.jpg',
+          studentName: '오준영',
           studentScores: {
-            homeworkAvgScore: 88.0,
-            testAvgScore: 87.0,
-            attitudeAvgScore: 92.0,
+            homeworkAvgScore: 84.0,
+            testAvgScore: 88.0,
+            attitudeAvgScore: 90.0,
+          },
+        },
+        {
+          studentId: 7,
+          studentImage: 'path/to/student7.jpg',
+          studentName: '유미나',
+          studentScores: {
+            homeworkAvgScore: 90.0,
+            testAvgScore: 85.0,
+            attitudeAvgScore: 88.0,
+          },
+        },
+        {
+          studentId: 8,
+          studentImage: 'path/to/student8.jpg',
+          studentName: '한지성',
+          studentScores: {
+            homeworkAvgScore: 76.0,
+            testAvgScore: 80.0,
+            attitudeAvgScore: 85.0,
           },
         },
       ],
       classAverageScores: {
-        homeworkAvgScore: 80.0,
-        testAvgScore: 85.0,
-        attitudeAvgScore: 90.0,
+        homeworkAvgScore: 83.0,
+        testAvgScore: 86.0,
+        attitudeAvgScore: 89.0,
       },
     };
-    return dummydata;
+    return dummyData;
     // eslint-disable-next-line no-unreachable
     const {data} = await axios.get<{
       status: string;
