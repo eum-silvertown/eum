@@ -14,6 +14,7 @@ import com.eum.lecture_service.query.document.TeacherOverviewModel;
 import com.eum.lecture_service.query.document.eventModel.TeacherModel;
 import com.eum.lecture_service.query.dto.lecture.LectureDetailResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureListResponse;
+import com.eum.lecture_service.query.dto.lecture.LectureUpdateResponse;
 import com.eum.lecture_service.query.dto.lecture.TodayDto;
 import com.eum.lecture_service.query.repository.LectureReadRepository;
 import com.eum.lecture_service.query.repository.StudentOverviewRepository;
@@ -98,5 +99,13 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 				.collect(Collectors.toList());
 		}
 		return Collections.emptyList();
+	}
+
+	@Override
+	public LectureUpdateResponse getLectureForUpdate(Long lectureId) {
+		LectureModel lecture = lectureReadRepository.findById(lectureId)
+			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+
+		return LectureUpdateResponse.fromLectureModel(lecture);
 	}
 }
