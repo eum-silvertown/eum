@@ -29,14 +29,20 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 	private final StudentReadRepository studentReadRepository;
 
 	@Override
-	public LectureDetailResponse getLectureDetail(Long lectureId) {
+	public LectureDetailResponse getLectureDetail(String role, Long lectureId) {
 		LectureModel lecture = lectureReadRepository.findById(lectureId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
 		TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
-		return LectureDetailResponse.fromLectureModel(lecture, teacherModel);
+		if(ROLE_STUDENT.equals(role)) {
+			return LectureDetailResponse.fromLectureModelForStudent(lecture, teacherModel);
+		}
+		else if(ROLE_TEACHER.equals(role)) {
+			return LectureDetailResponse.fromLectureModelForTeacher(lecture, teacherModel);
+		}
+		return null;
 	}
 
 	//이거, 클래스id가 같은 거로 주는거로 바꾸장

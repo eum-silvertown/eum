@@ -7,7 +7,7 @@ import com.eum.lecture_service.query.dto.lecture.LectureListResponse;
 
 public interface LectureQueryService {
 
-	LectureDetailResponse getLectureDetail(Long lectureId);
+	LectureDetailResponse getLectureDetail(String role, Long lectureId);
 
 	List<LectureListResponse> getLectureList(String role, Long memberId);
 

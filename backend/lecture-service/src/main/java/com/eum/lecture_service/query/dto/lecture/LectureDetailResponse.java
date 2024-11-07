@@ -3,6 +3,8 @@ package com.eum.lecture_service.query.dto.lecture;
 import java.util.List;
 
 import com.eum.lecture_service.query.document.LectureModel;
+import com.eum.lecture_service.query.document.StudentOverviewModel;
+import com.eum.lecture_service.query.document.TeacherOverviewModel;
 import com.eum.lecture_service.query.document.eventModel.TeacherModel;
 import com.eum.lecture_service.query.document.lectureInfo.ExamInfo;
 import com.eum.lecture_service.query.document.lectureInfo.HomeworkInfo;
@@ -31,8 +33,10 @@ public class LectureDetailResponse {
 	private List<ExamInfo> exams;
 	private List<HomeworkInfo> homeworks;
 	private List<LessonInfo> lessons;
+	private StudentOverviewModel studentOverviewModel;
+	private TeacherOverviewModel teacherOverviewModel;
 
-	public static LectureDetailResponse fromLectureModel(LectureModel lecture, TeacherModel teacherModel) {
+	public static LectureDetailResponse fromLectureModelForStudent(LectureModel lecture, TeacherModel teacherModel) {
 		LectureDetailResponse response = new LectureDetailResponse();
 		response.setLectureId(lecture.getLectureId());
 		response.setTitle(lecture.getTitle());
@@ -48,6 +52,28 @@ public class LectureDetailResponse {
 		response.setExams(lecture.getExams());
 		response.setHomeworks(lecture.getHomeworks());
 		response.setLessons(lecture.getLessons());
+		response.setStudentOverviewModel(lecture.getStudentOverviewModel());
+		return response;
+	}
+
+
+	public static LectureDetailResponse fromLectureModelForTeacher(LectureModel lecture, TeacherModel teacherModel) {
+		LectureDetailResponse response = new LectureDetailResponse();
+		response.setLectureId(lecture.getLectureId());
+		response.setTitle(lecture.getTitle());
+		response.setSubject(lecture.getSubject());
+		response.setBackgroundColor(lecture.getBackgroundColor());
+		response.setFontColor(lecture.getFontColor());
+		response.setYear(lecture.getYear());
+		response.setSemester(lecture.getSemester());
+		response.setClassId(lecture.getClassId());
+		response.setTeacherModel(teacherModel);
+		response.setSchedule(lecture.getSchedule());
+		response.setNotices(lecture.getNotices());
+		response.setExams(lecture.getExams());
+		response.setHomeworks(lecture.getHomeworks());
+		response.setLessons(lecture.getLessons());
+		response.setTeacherOverviewModel(lecture.getTeacherOverviewModel());
 		return response;
 	}
 }
