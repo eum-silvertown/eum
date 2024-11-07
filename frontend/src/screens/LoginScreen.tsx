@@ -51,7 +51,7 @@ function LoginScreen(): React.JSX.Element {
   useEffect(() => {
     const initializeAuth = async () => {
       const autoLoginEnabled = await getAutoLoginStatus();
-      console.log('자동로그인 여부', autoLoginEnabled);
+      
       if (autoLoginEnabled) {
         try {
           // 리프레시 토큰을 사용해 새 액세스 토큰을 요청
@@ -61,8 +61,7 @@ function LoginScreen(): React.JSX.Element {
 
           // 유저 정보 불러오기 및 상태에 저장
           await getUserInfo();
-
-          console.log(authStore.userInfo);
+          
           navigation.navigate('HomeScreen');
         } catch (error) {
           console.log('Token refresh error:', error);

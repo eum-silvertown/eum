@@ -51,16 +51,12 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
 
     await setToken(response.data.data.tokenResponse);
 
-    console.log(response.data.data);
-
     const authStore = useAuthStore.getState();
     authStore.setIsLoggedIn(true);
 
-    // 사용자 정보 갱신 후 userInfo 데이터 직접 확인
-    const userInfo = await getUserInfo(); // getUserInfo의 반환값 사용
-    console.log('갱신된 유저 정보:', userInfo);
+    // 사용자 정보 갱신
+    await getUserInfo();
 
-    console.log(authStore.userInfo)
     return response.data;
   } catch (error) {
     return Promise.reject(handleApiError(error));
@@ -113,18 +109,17 @@ export const checkUsername = async (userId: string): Promise<any> => {
 export const refreshAuthToken = async (): Promise<any> => {
   try {
     const Tokens = await getToken();
-    console.log('리프레쉬 토큰', Tokens.refreshToken);
 
     const refreshToken = Tokens.refreshToken;
     if (!refreshToken) throw new Error('No refresh token available');
 
     const response = await publicApiClient.post('/user/access', {refreshToken});
-    console.log(response.data.data)
+
     await setToken(response.data.data);
-    console.log('리프레시, 액세스 토큰 갱신 완료');
+
     return response.data.accessToken;
   } catch (error) {
-    console.log('리프레시토큰 갱신 에러');
+    console.log('리프레시 토큰 갱신 에러');
     return Promise.reject(handleApiError(error));
   }
 };
@@ -136,11 +131,11 @@ export const getUserInfo = async (): Promise<any> => {
     const userInfo = response.data.data;
 
     const authStore = useAuthStore.getState();
-    
+
     // 유저정보 갱신
     await authStore.setUserInfo(userInfo);
 
-    return response.data
+    return response.data;
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
