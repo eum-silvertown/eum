@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.query.document.LectureModel;
+import com.eum.lecture_service.query.document.eventModel.TeacherModel;
 import com.eum.lecture_service.query.dto.lecture.LectureDetailResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureListResponse;
 import com.eum.lecture_service.query.repository.LectureReadRepository;
+import com.eum.lecture_service.query.repository.TeacherReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,13 +21,17 @@ import lombok.RequiredArgsConstructor;
 public class LectureQueryServiceImpl implements LectureQueryService {
 
 	private final LectureReadRepository lectureReadRepository;
+	private final TeacherReadRepository teacherReadRepository;
 
 	@Override
 	public LectureDetailResponse getLectureDetail(Long lectureId) {
 		LectureModel lecture = lectureReadRepository.findById(lectureId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
-		return LectureDetailResponse.fromLectureModel(lecture);
+		TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
+			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+
+		return LectureDetailResponse.fromLectureModel(lecture, teacherModel);
 	}
 
 	//이거, 클래스id가 같은 거로 주는거로 바꾸장
