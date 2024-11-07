@@ -1,3 +1,4 @@
+import { getResponsiveSize } from '@utils/responsive';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
 interface StudentScore {
@@ -51,7 +52,7 @@ const StudentRank = ({ studentsInfo = [], onStudentSelect }: StudentRankProps): 
 
 const styles = StyleSheet.create({
     container: {
-        padding: 12,
+        padding: getResponsiveSize(12),
         borderRadius: 8,
     },
     listContainer: {
@@ -59,20 +60,20 @@ const styles = StyleSheet.create({
     },
     studentItem: {
         alignItems: 'center',
-        marginRight: 12,
+        marginRight: getResponsiveSize(12),
     },
     rank: {
         fontSize: 10,
         fontWeight: 'bold',
-        marginBottom: 4,
+        marginBottom: getResponsiveSize(4),
     },
     studentImage: {
-        width: 40,
-        height: 40,
+        width: getResponsiveSize(40),
+        height: getResponsiveSize(40),
         borderRadius: 30,
         borderWidth: 1,
         borderColor: '#ddd',
-        marginBottom: 8,
+        marginBottom: getResponsiveSize(8),
     },
     studentName: {
         fontSize: 12,

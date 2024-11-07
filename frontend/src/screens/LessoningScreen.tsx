@@ -8,6 +8,7 @@ import StudentCanvasSection from '@components/classLessoning/StudentCanvasSectio
 
 import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { getResponsiveSize } from '@utils/responsive';
 
 function LessoningScreen(): React.JSX.Element {
   // 문제 텍스트와 이미지 URL이 포함된 예제
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     flex: 1,
-    padding: 10,
+    padding: getResponsiveSize(10),
     position: 'relative',
   },
   problemSection: {

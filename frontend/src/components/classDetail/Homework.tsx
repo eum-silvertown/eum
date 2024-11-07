@@ -8,6 +8,7 @@ import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import moment from 'moment';
+import { getResponsiveSize } from '@utils/responsive';
 
 type HomeworkItem = {
   homeworkId: number;
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginRight: 12,
+    marginRight: getResponsiveSize(12),
   },
   pageIndicator: {
     fontSize: 16,
@@ -202,10 +203,10 @@ const styles = StyleSheet.create({
   },
   item: {
     flexDirection: 'row',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginHorizontal: 16,
-    marginVertical: 4,
+    paddingVertical: getResponsiveSize(8),
+    paddingHorizontal: getResponsiveSize(12),
+    marginHorizontal: getResponsiveSize(16),
+    marginVertical: getResponsiveSize(4),
     borderRadius: 10,
   },
   textContainer: {

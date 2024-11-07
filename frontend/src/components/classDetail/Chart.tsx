@@ -5,6 +5,7 @@ import { spacing } from '@theme/spacing';
 import { Canvas, vec } from '@shopify/react-native-skia';
 import { Ring } from './Ring';
 import { typography } from '@theme/typography';
+import { getResponsiveSize } from '@utils/responsive';
 
 const width = 120;
 const height = 120;
@@ -109,8 +110,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   chartContainer: {
-    width: 120,
-    height: 120,
+    width: getResponsiveSize(120),
+    height: getResponsiveSize(120),
   },
   legendContainer: {
     marginLeft: spacing.xxl,
@@ -138,8 +139,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   colorDot: {
-    width: 12,
-    height: 12,
+    width: getResponsiveSize(12),
+    height: getResponsiveSize(12),
     borderRadius: 6,
     marginRight: spacing.sm,
   },

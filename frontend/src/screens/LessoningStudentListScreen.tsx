@@ -1,9 +1,10 @@
 import ParticipantCard from '@components/classLessoning/ParticipantCard';
-import {useState} from 'react';
-import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { useState } from 'react';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import TeacherLessoningGridInteractionTool from '@components/classLessoning/TeacherLessoningGridInteractionTool';
+import { getResponsiveSize } from '@utils/responsive';
 
 interface Participant {
   id: string;
@@ -25,30 +26,30 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const PARTICIPANTS_PER_PAGE = ROWS * COLUMNS;
 
   const [participants] = useState<Participant[]>([
-    {id: '1', name: '학생 1'},
-    {id: '2', name: '학생 2'},
-    {id: '3', name: '학생 3'},
-    {id: '4', name: '학생 4'},
-    {id: '5', name: '학생 5'},
-    {id: '6', name: '학생 6'},
-    {id: '7', name: '학생 7'},
-    {id: '8', name: '학생 8'},
-    {id: '9', name: '학생 9'},
-    {id: '10', name: '학생 10'},
-    {id: '11', name: '학생 11'},
-    {id: '12', name: '학생 12'},
-    {id: '13', name: '학생 13'},
-    {id: '14', name: '학생 14'},
-    {id: '15', name: '학생 15'},
-    {id: '16', name: '학생 16'},
-    {id: '17', name: '학생 17'},
-    {id: '18', name: '학생 18'},
-    {id: '19', name: '학생 19'},
-    {id: '20', name: '학생 20'},
-    {id: '21', name: '학생 21'},
-    {id: '22', name: '학생 22'},
-    {id: '23', name: '학생 23'},
-    {id: '24', name: '학생 24'},
+    { id: '1', name: '학생 1' },
+    { id: '2', name: '학생 2' },
+    { id: '3', name: '학생 3' },
+    { id: '4', name: '학생 4' },
+    { id: '5', name: '학생 5' },
+    { id: '6', name: '학생 6' },
+    { id: '7', name: '학생 7' },
+    { id: '8', name: '학생 8' },
+    { id: '9', name: '학생 9' },
+    { id: '10', name: '학생 10' },
+    { id: '11', name: '학생 11' },
+    { id: '12', name: '학생 12' },
+    { id: '13', name: '학생 13' },
+    { id: '14', name: '학생 14' },
+    { id: '15', name: '학생 15' },
+    { id: '16', name: '학생 16' },
+    { id: '17', name: '학생 17' },
+    { id: '18', name: '학생 18' },
+    { id: '19', name: '학생 19' },
+    { id: '20', name: '학생 20' },
+    { id: '21', name: '학생 21' },
+    { id: '22', name: '학생 22' },
+    { id: '23', name: '학생 23' },
+    { id: '24', name: '학생 24' },
   ]);
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -88,7 +89,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
         data={currentParticipants}
         keyExtractor={item => item.id}
         numColumns={COLUMNS}
-        renderItem={({item}) => <ParticipantCard participant={item} />}
+        renderItem={({ item }) => <ParticipantCard participant={item} />}
         contentContainerStyle={styles.grid}
       />
 
@@ -129,10 +130,10 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 60,
-    left: 20,
+    top: getResponsiveSize(60),
+    left: getResponsiveSize(20),
     backgroundColor: '#fff',
-    padding: 10,
+    padding: getResponsiveSize(10),
     borderRadius: 8,
   },
   closeButtonText: {
@@ -142,10 +143,10 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 60,
-    right: 20,
+    top: getResponsiveSize(60),
+    right: getResponsiveSize(20),
     backgroundColor: '#fff',
-    padding: 8,
+    padding: getResponsiveSize(8),
     borderRadius: 8,
   },
   totalText: {
@@ -155,22 +156,22 @@ const styles = StyleSheet.create({
   grid: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 60,
+    marginTop: getResponsiveSize(60),
   },
   pageControls: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 40,
+    paddingBottom: getResponsiveSize(40),
   },
   pageText: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginHorizontal: 16,
+    marginHorizontal: getResponsiveSize(16),
     color: '#fff',
   },
   arrow: {
-    padding: 2,
+    padding: getResponsiveSize(2),
   },
   arrowText: {
     fontSize: 20,
