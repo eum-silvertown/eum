@@ -3,6 +3,7 @@ package com.eum.user_service.domain.event.service;
 import com.eum.user_service.domain.event.dto.ClassEvent;
 import com.eum.user_service.domain.event.dto.StudentInfoEvent;
 import com.eum.user_service.domain.event.dto.TeacherInfoEvent;
+import com.eum.user_service.domain.event.entity.KafkaTopics;
 import com.eum.user_service.domain.user.entity.Member;
 import com.eum.user_service.global.exception.ErrorCode;
 import com.eum.user_service.global.exception.EumException;
@@ -15,26 +16,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EventProducerImpl implements EventProducer {
 
-    private static final String SIGN_UP_TOPIC = "signup-topic";
-    private static final String CREATE_TEACHER_TOPIC = "create_teacher";
-    private static final String UPDATE_TEACHER_TOPIC = "update_teacher";
-    private static final String CREATE_CLASS_TOPIC = "create_class";
-    private static final String CREATE_STUDENT_TOPIC = "create_student";
-    private static final String UPDATE_STUDENT_TOPIC = "update_student";
-
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
     @Override
     public void sendMemberCreatedEvent(Member member) {
-        kafkaTemplate.send(SIGN_UP_TOPIC,String.valueOf(member.getId()));
+        kafkaTemplate.send(KafkaTopics.SIGN_UP.getTopicName(), String.valueOf(member.getId()));
     }
 
     @Override
     public void sendTeacherCreatedEvent(TeacherInfoEvent event) {
         try {
             String eventToJson = objectMapper.writeValueAsString(event); // JSON 문자열로 변환
-            kafkaTemplate.send(CREATE_TEACHER_TOPIC, eventToJson);
+            kafkaTemplate.send(KafkaTopics.CREATE_TEACHER.getTopicName(), eventToJson);
         } catch (Exception e) {
             throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -44,7 +38,7 @@ public class EventProducerImpl implements EventProducer {
     public void sendTeacherUpdatedEvent(TeacherInfoEvent event) {
         try {
             String eventToJson = objectMapper.writeValueAsString(event); // JSON 문자열로 변환
-            kafkaTemplate.send(UPDATE_TEACHER_TOPIC, eventToJson);
+            kafkaTemplate.send(KafkaTopics.UPDATE_TEACHER.getTopicName(), eventToJson);
         } catch (Exception e) {
             throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -54,7 +48,7 @@ public class EventProducerImpl implements EventProducer {
     public void sendClassCreatedEvent(ClassEvent event) {
         try {
             String eventToJson = objectMapper.writeValueAsString(event); // JSON 문자열로 변환
-            kafkaTemplate.send(CREATE_CLASS_TOPIC, eventToJson);
+            kafkaTemplate.send(KafkaTopics.CREATE_CLASS.getTopicName(), eventToJson);
         } catch (Exception e) {
             throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -64,7 +58,7 @@ public class EventProducerImpl implements EventProducer {
     public void sendStudentCreatedEvent(StudentInfoEvent event) {
         try {
             String eventToJson = objectMapper.writeValueAsString(event); // JSON 문자열로 변환
-            kafkaTemplate.send(CREATE_STUDENT_TOPIC, eventToJson);
+            kafkaTemplate.send(KafkaTopics.CREATE_STUDENT.getTopicName(), eventToJson);
         } catch (Exception e) {
             throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
@@ -74,7 +68,7 @@ public class EventProducerImpl implements EventProducer {
     public void sendStudentUpdatedEvent(StudentInfoEvent event) {
         try {
             String eventToJson = objectMapper.writeValueAsString(event); // JSON 문자열로 변환
-            kafkaTemplate.send(UPDATE_STUDENT_TOPIC, eventToJson);
+            kafkaTemplate.send(KafkaTopics.UPDATE_STUDENT.getTopicName(), eventToJson);
         } catch (Exception e) {
             throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
