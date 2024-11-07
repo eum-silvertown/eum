@@ -114,34 +114,36 @@ export default function ProfileScreen(): React.JSX.Element {
   // S3 업로드용 함수
   const uploadImageToS3 = async (image: UploadResponse) => {
     try {
-        // 백엔드 서버에서 S3 업로드용 URL 가져오기
-        const s3Url = await updateProfilePicture();
-    
-        // FormData에 이미지 파일 추가
-        const formData = new FormData();
-        formData.append('file', {
+      // 백엔드 서버에서 S3 업로드용 URL 가져오기
+      const s3Url = await updateProfilePicture();
+
+      console.log(image);
+      // PUT 요청에 이미지 데이터 전송
+
+      const response = await axios.put(
+        s3Url,
+        {
           uri: image.uri,
           name: image.fileName,
           type: image.type,
-        });
-    
-        // PUT 요청을 통해 FormData를 S3에 업로드
-        const response = await axios.put(s3Url, formData, {
+        },
+        {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': image.type, // S3에 요구되는 Content-Type 설정
           },
-        });
-    
-        if (response.status === 200) {
-          Alert.alert('업로드 성공', '이미지가 S3에 업로드되었습니다.');
-        } else {
-          Alert.alert('업로드 실패', '이미지 업로드에 실패했습니다.');
-        }
-      } catch (error) {
-        console.error('S3 업로드 오류:', error);
-        Alert.alert('업로드 오류', 'S3 업로드 중 오류가 발생했습니다.');
+        },
+      );
+
+      if (response.status === 200) {
+        Alert.alert('업로드 성공', '이미지가 S3에 업로드되었습니다.');
+      } else {
+        Alert.alert('업로드 실패', '이미지 업로드에 실패했습니다.');
       }
-    };
+    } catch (error) {
+      console.error('S3 업로드 오류:', error);
+      Alert.alert('업로드 오류', 'S3 업로드 중 오류가 발생했습니다.');
+    }
+  };
 
   // 로그아웃 버튼
   const handleLogOut = () => {};
