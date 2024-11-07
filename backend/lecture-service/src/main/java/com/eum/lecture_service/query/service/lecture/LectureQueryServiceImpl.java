@@ -9,11 +9,15 @@ import org.springframework.stereotype.Service;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.query.document.LectureModel;
+import com.eum.lecture_service.query.document.StudentOverviewModel;
+import com.eum.lecture_service.query.document.TeacherOverviewModel;
 import com.eum.lecture_service.query.document.eventModel.TeacherModel;
 import com.eum.lecture_service.query.dto.lecture.LectureDetailResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureListResponse;
 import com.eum.lecture_service.query.repository.LectureReadRepository;
+import com.eum.lecture_service.query.repository.StudentOverviewRepository;
 import com.eum.lecture_service.query.repository.StudentReadRepository;
+import com.eum.lecture_service.query.repository.TeacherOverviewRepository;
 import com.eum.lecture_service.query.repository.TeacherReadRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,9 +31,11 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 	private final LectureReadRepository lectureReadRepository;
 	private final TeacherReadRepository teacherReadRepository;
 	private final StudentReadRepository studentReadRepository;
+	private final TeacherOverviewRepository teacherOverviewRepository;
+	private final StudentOverviewRepository studentOverviewRepository;
 
 	@Override
-	public LectureDetailResponse getLectureDetail(String role, Long lectureId) {
+	public LectureDetailResponse getLectureDetail(String role, Long memberId, Long lectureId) {
 		LectureModel lecture = lectureReadRepository.findById(lectureId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
@@ -37,10 +43,18 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
 		if(ROLE_STUDENT.equals(role)) {
-			return LectureDetailResponse.fromLectureModelForStudent(lecture, teacherModel);
+			StudentOverviewModel studentOverviewModel = studentOverviewRepository.findByStudentIdAndClassId(memberId,
+					lecture.getClassId())
+				.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+
+			return LectureDetailResponse.fromLectureModelForStudent(lecture,  teacherModel, studentOverviewModel);
 		}
 		else if(ROLE_TEACHER.equals(role)) {
-			return LectureDetailResponse.fromLectureModelForTeacher(lecture, teacherModel);
+			TeacherOverviewModel teacherOverviewModel = teacherOverviewRepository.findByTeacherIdAndClassId(memberId,
+					lecture.getClassId())
+				.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+
+			return LectureDetailResponse.fromLectureModelForTeacher(lecture, teacherModel, teacherOverviewModel);
 		}
 		return null;
 	}

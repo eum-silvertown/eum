@@ -36,7 +36,7 @@ public class LectureDetailResponse {
 	private StudentOverviewModel studentOverviewModel;
 	private TeacherOverviewModel teacherOverviewModel;
 
-	public static LectureDetailResponse fromLectureModelForStudent(LectureModel lecture, TeacherModel teacherModel) {
+	public static LectureDetailResponse fromLectureModelForStudent(LectureModel lecture, TeacherModel teacherModel, StudentOverviewModel studentOverviewModel) {
 		LectureDetailResponse response = new LectureDetailResponse();
 		response.setLectureId(lecture.getLectureId());
 		response.setTitle(lecture.getTitle());
@@ -52,12 +52,12 @@ public class LectureDetailResponse {
 		response.setExams(lecture.getExams());
 		response.setHomeworks(lecture.getHomeworks());
 		response.setLessons(lecture.getLessons());
-		response.setStudentOverviewModel(lecture.getStudentOverviewModel());
+		response.setStudentOverviewModel(studentOverviewModel);
 		return response;
 	}
 
 
-	public static LectureDetailResponse fromLectureModelForTeacher(LectureModel lecture, TeacherModel teacherModel) {
+	public static LectureDetailResponse fromLectureModelForTeacher(LectureModel lecture, TeacherModel teacherModel, TeacherOverviewModel teacherOverviewModel) {
 		LectureDetailResponse response = new LectureDetailResponse();
 		response.setLectureId(lecture.getLectureId());
 		response.setTitle(lecture.getTitle());
@@ -73,7 +73,7 @@ public class LectureDetailResponse {
 		response.setExams(lecture.getExams());
 		response.setHomeworks(lecture.getHomeworks());
 		response.setLessons(lecture.getLessons());
-		response.setTeacherOverviewModel(lecture.getTeacherOverviewModel());
+		response.setTeacherOverviewModel(teacherOverviewModel);
 		return response;
 	}
 }

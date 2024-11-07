@@ -1,5 +1,6 @@
 package com.eum.lecture_service.query.document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -24,7 +25,8 @@ public class TeacherOverviewModel {
 
     @Id
     private Long teacherId;
-    private List<StudentInfo> students;
+    private Long classId;
+    private List<StudentInfo> students = new ArrayList<>();
     private ClassAverageScores classAverageScores;
 
 }

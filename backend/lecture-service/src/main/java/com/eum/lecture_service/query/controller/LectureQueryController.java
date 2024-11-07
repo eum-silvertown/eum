@@ -26,8 +26,9 @@ public class LectureQueryController {
 	@GetMapping("/{lectureId}")
 	public CommonResponse<?> getLecture(
 		@RequestHeader("X-MEMBER-ROLE") String role,
+		@RequestHeader("X-MEMBER-ID") Long memberId,
 		@PathVariable Long lectureId) {
-		LectureDetailResponse lectureDetail = lectureQueryService.getLectureDetail(role, lectureId);
+		LectureDetailResponse lectureDetail = lectureQueryService.getLectureDetail(role, memberId, lectureId);
 		return CommonResponse.success(lectureDetail, "성공적 조회");
 	}
 

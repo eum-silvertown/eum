@@ -22,6 +22,7 @@ public class StudentOverviewModel {
 
     @Id
     private Long studentId;
+    private Long classId;
     private Overview overview;
     private StudentScores studentScores;
 
