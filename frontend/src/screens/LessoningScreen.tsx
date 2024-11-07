@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {io, Socket} from 'socket.io-client';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { io, Socket } from 'socket.io-client';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherCanvasSection from '@components/classLessoning/TeacherCanvasSection';
 import StudentCanvasSection from '@components/classLessoning/StudentCanvasSection';
 
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import { getResponsiveSize } from '@utils/responsive';
 
 function LessoningScreen(): React.JSX.Element {
@@ -65,16 +65,6 @@ function LessoningScreen(): React.JSX.Element {
           <View style={styles.sectionContainer}>
             <ProblemSection problemText={problems[currentPage]} />
             <TeacherCanvasSection
-              socket={socket}
-              currentPage={currentPage + 1}
-              totalPages={problems.length}
-              onNextPage={handleNextPage}
-              onPrevPage={handlePrevPage}
-            />
-          </View>
-          <View style={styles.sectionContainer}>
-            <ProblemSection problemText={problems[currentPage]} />
-            <StudentCanvasSection
               socket={socket}
               currentPage={currentPage + 1}
               totalPages={problems.length}
