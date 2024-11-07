@@ -37,7 +37,7 @@ export const updateLectureDetail = async (
   try {
     console.log('강의 수정 요청 데이터:', lectureData);
     const {data} = await axios.put<ApiResponse<UpdateLectureResponse>>(
-      `/api/lecture/${lectureId}`,
+      `lecture/${lectureId}`,
       lectureData,
     );
     console.log('강의 수정 응답:', data);
@@ -52,7 +52,7 @@ export const updateLectureDetail = async (
 export const deleteLecture = async (lectureId: number): Promise<void> => {
   try {
     console.log(`강의 삭제 요청: lectureId = ${lectureId}`);
-    await axios.delete<void>(`/api/lecture/${lectureId}`);
+    await axios.delete<void>(`lecture/${lectureId}`);
     console.log('강의 삭제 성공');
   } catch (error) {
     console.error('강의 삭제 실패:', error);
@@ -290,7 +290,7 @@ export const getLectureDetail = async (
       status: string;
       data: LectureDetailType;
       message: string;
-    }>(`/api/lecture/${lectureId}`);
+    }>(`lecture/${lectureId}`);
 
     console.log('강의 상세 조회 응답:', data);
 
@@ -352,7 +352,7 @@ export const getStudentLectureDetail = async (
       status: string;
       data: LectureStudentDetailType;
       message: string;
-    }>(`/api/lecture/${lectureId}/student`);
+    }>(`lecture/${lectureId}/student`);
 
     console.log('학생용 강의 상세 조회 응답:', data);
 
@@ -478,7 +478,7 @@ export const getTeacherLectureDetail = async (
       status: string;
       data: LectureTeacherDetailType;
       message: string;
-    }>(`/api/lecture/${lectureId}/teacher`);
+    }>(`lecture/${lectureId}/teacher`);
 
     console.log('선생님용 강의 상세 조회 응답:', data.message);
 
