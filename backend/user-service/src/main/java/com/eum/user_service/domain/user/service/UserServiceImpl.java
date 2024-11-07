@@ -1,5 +1,9 @@
 package com.eum.user_service.domain.user.service;
 
+import com.eum.user_service.domain.event.dto.ClassEvent;
+import com.eum.user_service.domain.event.dto.StudentInfoEvent;
+import com.eum.user_service.domain.event.dto.TeacherInfoEvent;
+import com.eum.user_service.domain.event.service.EventProducer;
 import com.eum.user_service.domain.file.dto.ImageResponse;
 import com.eum.user_service.domain.file.service.FileService;
 import com.eum.user_service.domain.token.dto.TokenRequest;
@@ -13,7 +17,6 @@ import com.eum.user_service.global.exception.ErrorCode;
 import com.eum.user_service.global.exception.EumException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static final String SIGN_UP_TOPIC = "signup-topic";
-
-    private final KafkaTemplate<String, String> kafkaTemplate;
     private final UserRepository userRepository;
     private final ClassInfoRepository classInfoRepository;
     private final SchoolRepository schoolRepository;
@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final FileService fileService;
+    private final EventProducer eventProducer;
 
     @Override
     @Transactional
@@ -63,12 +64,17 @@ public class UserServiceImpl implements UserService {
                 throw new EumException(ErrorCode.CLASS_TEACHER_ALREADY_EXISTED);
             }
             classInfo.updateTeacher(member);
+
         }
 
         TokenResponse tokenResponse = tokenService.createTokenResponse(member);
         ImageResponse imageResponse = member.getImage() != null ?
                 fileService.getPresignedUrlForRead(member.getImage()) : null;
-        kafkaTemplate.send(SIGN_UP_TOPIC,String.valueOf(member.getId()));
+        eventProducer.sendMemberCreatedEvent(member);
+        if(signUpRequest.role() == Role.STUDENT) {
+            eventProducer.sendStudentCreatedEvent(StudentInfoEvent.from(member,classInfo));
+        } else
+            eventProducer.sendTeacherCreatedEvent(TeacherInfoEvent.from(member));
         return SimpleMemberInfoResponse.from(member,imageResponse,tokenResponse);
     }
 
@@ -197,8 +203,12 @@ public class UserServiceImpl implements UserService {
     private ClassInfo getClassInfo(SignUpRequest signUpRequest, School school) {
         return classInfoRepository
                 .findBySchoolAndGradeAndClassNumber(school, signUpRequest.grade(), signUpRequest.classNumber())
-                .orElseGet(() -> classInfoRepository
-                        .save(ClassInfo.from(school, signUpRequest.grade(), signUpRequest.classNumber())));
+                .orElseGet(() -> {
+                    ClassInfo classInfo = classInfoRepository
+                            .save(ClassInfo.from(school, signUpRequest.grade(), signUpRequest.classNumber()));
+                    eventProducer.sendClassCreatedEvent(ClassEvent.from(classInfo,school));
+                    return classInfo;
+                });
     }
 
 }
