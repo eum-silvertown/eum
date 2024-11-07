@@ -1,13 +1,13 @@
-import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import RecordOffIcon from '@assets/icons/recordOffIcon.svg';
 import RecordOnIcon from '@assets/icons/recordOnIcon.svg';
 import MikeOffIcon from '@assets/icons/mikeOffIcon.svg';
 import MikeOnIcon from '@assets/icons/mikeOnIcon.svg';
 import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNavigation} from '@react-navigation/native';
+import { iconSize } from '@theme/iconSize';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import { getResponsiveSize } from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
@@ -46,14 +46,12 @@ const TeacherLessoningInteractionTool = ({
             onPress={() => navigation.navigate('LessoningStudentListScreen')}>
             <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
           </TouchableOpacity>
-          {/* 녹음 시작/중지 */}
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <MikeOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
           </TouchableOpacity>
           <TouchableOpacity>
             <MikeOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
           </TouchableOpacity>
-          {/* 녹화 시작/중지 */}
           {isRecording ? (
             <TouchableOpacity onPress={stopRecording}>
               <RecordOnIcon width={iconSize.md} height={iconSize.md} />
@@ -62,7 +60,7 @@ const TeacherLessoningInteractionTool = ({
             <TouchableOpacity onPress={startRecording}>
               <RecordOffIcon width={iconSize.md} height={iconSize.md} />
             </TouchableOpacity>
-          )}
+          )} */}
           {/* 문제 페이지 설정 */}
           <View style={styles.pageControlContainer}>
             <TouchableOpacity
@@ -121,7 +119,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: getResponsiveSize(8),
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
