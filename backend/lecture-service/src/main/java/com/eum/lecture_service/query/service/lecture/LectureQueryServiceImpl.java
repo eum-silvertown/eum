@@ -14,6 +14,7 @@ import com.eum.lecture_service.query.document.TeacherOverviewModel;
 import com.eum.lecture_service.query.document.eventModel.TeacherModel;
 import com.eum.lecture_service.query.dto.lecture.LectureDetailResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureListResponse;
+import com.eum.lecture_service.query.dto.lecture.LectureUpdateResponse;
 import com.eum.lecture_service.query.dto.lecture.TodayDto;
 import com.eum.lecture_service.query.repository.LectureReadRepository;
 import com.eum.lecture_service.query.repository.StudentOverviewRepository;
@@ -88,15 +89,23 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 				.map(student -> lectureReadRepository.findByClassIdAndSchedule_DayAndYearAndSemester(
 						student.getClassId(), todayDto.getDay(), todayDto.getYear(), todayDto.getSemester())
 					.stream()
-					.map(LectureListResponse::fromLectureModelWithPeriod)
+					.map(lecture -> LectureListResponse.fromLectureModelWithPeriod(lecture, todayDto.getDay())) // 해당 요일의 period만 가져오기
 					.collect(Collectors.toList()))
 				.orElseGet(Collections::emptyList);
 		} else if (ROLE_TEACHER.equals(role)) {
 			return lectureReadRepository.findByTeacherIdAndSchedule_DayAndYearAndSemester(
 					memberId, todayDto.getDay(), todayDto.getYear(), todayDto.getSemester()).stream()
-				.map(LectureListResponse::fromLectureModelWithPeriod)
+				.map(lecture -> LectureListResponse.fromLectureModelWithPeriod(lecture, todayDto.getDay())) // 해당 요일의 period만 가져오기
 				.collect(Collectors.toList());
 		}
 		return Collections.emptyList();
+	}
+
+	@Override
+	public LectureUpdateResponse getLectureForUpdate(Long lectureId) {
+		LectureModel lecture = lectureReadRepository.findById(lectureId)
+			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+
+		return LectureUpdateResponse.fromLectureModel(lecture);
 	}
 }
