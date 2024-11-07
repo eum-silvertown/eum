@@ -37,7 +37,7 @@ export const getRootFolder = async (): Promise<QuestionBoxType> => {
       id: data.data.folderId,
       type: 'folder',
       parentId: null,
-      title: '홈',
+      title: '문제 보관함',
       children: [],
       childrenCount: 0,
     };
