@@ -88,13 +88,13 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 				.map(student -> lectureReadRepository.findByClassIdAndSchedule_DayAndYearAndSemester(
 						student.getClassId(), todayDto.getDay(), todayDto.getYear(), todayDto.getSemester())
 					.stream()
-					.map(LectureListResponse::fromLectureModelWithPeriod)
+					.map(lecture -> LectureListResponse.fromLectureModelWithPeriod(lecture, todayDto.getDay())) // 해당 요일의 period만 가져오기
 					.collect(Collectors.toList()))
 				.orElseGet(Collections::emptyList);
 		} else if (ROLE_TEACHER.equals(role)) {
 			return lectureReadRepository.findByTeacherIdAndSchedule_DayAndYearAndSemester(
 					memberId, todayDto.getDay(), todayDto.getYear(), todayDto.getSemester()).stream()
-				.map(LectureListResponse::fromLectureModelWithPeriod)
+				.map(lecture -> LectureListResponse.fromLectureModelWithPeriod(lecture, todayDto.getDay())) // 해당 요일의 period만 가져오기
 				.collect(Collectors.toList());
 		}
 		return Collections.emptyList();

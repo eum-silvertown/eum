@@ -42,7 +42,7 @@ public class LectureQueryController {
 		return CommonResponse.success(lectureList, "목록 조회 성공");
 	}
 
-	@GetMapping
+	@GetMapping("/day")
 	public CommonResponse<?> getLectures(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestHeader("X-MEMBER-ID") Long memberId,

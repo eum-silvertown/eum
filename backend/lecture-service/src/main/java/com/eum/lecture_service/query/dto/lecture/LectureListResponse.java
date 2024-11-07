@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.eum.lecture_service.query.document.LectureModel;
+import com.eum.lecture_service.query.document.lectureInfo.ScheduleInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class LectureListResponse {
 	private Long classId;
 	private Long teacherId;
 	private List<String> scheduleDays;
+	private Long lecture_period;
 
 	public static LectureListResponse fromLectureModel(LectureModel lecture) {
 		LectureListResponse response = new LectureListResponse();
@@ -44,9 +46,15 @@ public class LectureListResponse {
 	}
 
 	// 특정 요일의 수업 목록 조회를 위한 메서드
-	public static LectureListResponse fromLectureModelWithPeriod(LectureModel lecture) {
+	public static LectureListResponse fromLectureModelWithPeriod(LectureModel lecture, String day) {
 		LectureListResponse response = fromLectureModel(lecture);
-		// 필요한 경우 period 정보 추가
+		response.setLecture_period(
+			lecture.getSchedule().stream()
+				.filter(s -> s.getDay().equals(day))
+				.map(ScheduleInfo::getPeriod)
+				.findFirst()
+				.orElse(null)
+		);
 		return response;
 	}
 }
