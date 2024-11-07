@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,9 @@ import com.eum.lecture_service.command.repository.lecture.LectureRepository;
 import com.eum.lecture_service.command.repository.lecture.LectureScheduleRepository;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
+import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
+import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
+import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +27,7 @@ public class LectureServiceImpl implements LectureService{
 
 	private final LectureRepository lectureRepository;
 	private final LectureScheduleRepository lectureScheduleRepository;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
 	@Transactional
@@ -38,6 +43,10 @@ public class LectureServiceImpl implements LectureService{
 		lecture.setLectureSchedules(schedules);
 
 		Lecture savedLecture = lectureRepository.save(lecture);
+
+		//이벤트 발행
+		LectureCreatedEvent event = new LectureCreatedEvent(savedLecture);
+		kafkaTemplate.send("lecture-created-topic", event);
 
 		return savedLecture.getLectureId();
 	}
@@ -71,6 +80,10 @@ public class LectureServiceImpl implements LectureService{
 
 		Lecture savedLecture = lectureRepository.save(lecture);
 
+		//이벤트 발생
+		LectureUpdatedEvent event = new LectureUpdatedEvent(savedLecture);
+		kafkaTemplate.send("lecture-updated-topic", event);
+
 		return savedLecture.getLectureId();
 	}
 
@@ -80,6 +93,9 @@ public class LectureServiceImpl implements LectureService{
 			throw new EumException(ErrorCode.LECTURE_NOT_FOUND);
 		}
 		lectureRepository.deleteById(lectureId);
+
+		LectureDeletedEvent event = new LectureDeletedEvent(lectureId);
+		kafkaTemplate.send("lecture-deleted-topic", event);
 	}
 
 	@Override
