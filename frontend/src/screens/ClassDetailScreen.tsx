@@ -105,9 +105,9 @@ function ClassDetailScreen({
           <View style={styles.firstRow}>
             <View style={styles.overviewLayout}>
               <Overview
-                homeworkCnt={studentLectureDetail?.overview.homeworkCnt}
-                examCnt={studentLectureDetail?.overview.examCnt}
-                problemBoxCnt={studentLectureDetail?.overview.problemBoxCnt}
+                homeworkCnt={lectureDetail?.homework.length}
+                examCnt={lectureDetail?.exams.length}
+                lessonCnt={lectureDetail?.lesson.length}
               />
               <Notice
                 lectureId={lectureDetail?._id}
@@ -173,9 +173,9 @@ function ClassDetailScreen({
         <View style={styles.firstRow}>
           <View style={styles.overviewLayout}>
             <Overview
-              homeworkCnt={studentLectureDetail?.overview.homeworkCnt}
-              examCnt={studentLectureDetail?.overview.examCnt}
-              problemBoxCnt={studentLectureDetail?.overview.problemBoxCnt}
+              homeworkCnt={lectureDetail?.homework.length}
+              examCnt={lectureDetail?.exams.length}
+              lessonCnt={lectureDetail?.lesson.length}
             />
             <Notice
               lectureId={lectureDetail?._id}
