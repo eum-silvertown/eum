@@ -7,7 +7,6 @@ import Notice from '@components/classDetail/Notice';
 import Overview from '@components/classDetail/Overview';
 import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
-import OverviewForTeacher from '@components/classDetail/OverviewForTeacher';
 import StudentRank from '@components/classDetail/StudentRank';
 import StudentsChart from '@components/classDetail/StudentsChart';
 
@@ -26,6 +25,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import { useFocusEffect } from '@react-navigation/native';
 import { useState } from 'react';
+import { getResponsiveSize } from '@utils/responsive';
 
 
 type ClassAverageScores = {
@@ -50,7 +50,7 @@ function ClassDetailScreen({
   });
 
   const lectureId = 1;
-  const isTeacher = true;
+  const isTeacher = false;
 
   const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
@@ -104,17 +104,10 @@ function ClassDetailScreen({
         <View style={styles.content}>
           <View style={styles.firstRow}>
             <View style={styles.overviewLayout}>
-              <OverviewForTeacher
-                isTeacher={isTeacher}
-                homeworkAvgScore={
-                  teacherLectureDetail?.classAverageScores.homeworkAvgScore
-                }
-                testAvgScore={
-                  teacherLectureDetail?.classAverageScores.testAvgScore
-                }
-                attitudeAvgScore={
-                  teacherLectureDetail?.classAverageScores.attitudeAvgScore
-                }
+              <Overview
+                homeworkCnt={studentLectureDetail?.overview.homeworkCnt}
+                examCnt={studentLectureDetail?.overview.examCnt}
+                problemBoxCnt={studentLectureDetail?.overview.problemBoxCnt}
               />
               <Notice
                 lectureId={lectureDetail?._id}
@@ -227,8 +220,8 @@ const styles = StyleSheet.create({
   },
   bookmarkIcon: {
     position: 'absolute',
-    top: -6,
-    right: 12,
+    top: getResponsiveSize(-6),
+    right: getResponsiveSize(12),
   },
   content: {
     flex: 1,

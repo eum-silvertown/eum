@@ -19,6 +19,14 @@ function Overview({ homeworkCnt = 0, examCnt = 0, problemBoxCnt = 0 }: OverviewP
       </Text>
       <View style={styles.progressLayout}>
         <ProgressBox
+          color="green"
+          title="수업"
+          content={`${problemBoxCnt}`}
+          unit="번"
+          icon="folderCheck"
+          isLessonDetail={true}
+        />
+        <ProgressBox
           color="red"
           title="시험"
           content={`${examCnt}`}
@@ -32,14 +40,6 @@ function Overview({ homeworkCnt = 0, examCnt = 0, problemBoxCnt = 0 }: OverviewP
           content={`${homeworkCnt}`}
           unit="개"
           icon="homeworkCheck"
-          isLessonDetail={true}
-        />
-        <ProgressBox
-          color="green"
-          title="수업"
-          content={`${problemBoxCnt}`}
-          unit="번"
-          icon="folderCheck"
           isLessonDetail={true}
         />
       </View>

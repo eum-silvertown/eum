@@ -22,7 +22,6 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // 데이터를 최대 5개의 항목으로 제한하여 페이징 처리
   const totalPages = Math.ceil(lesson.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = lesson.slice(startIndex, startIndex + itemsPerPage);
@@ -67,7 +66,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
     <View style={styles.replay}>
       <View style={styles.header}>
         <Text variant="subtitle" weight="bold" style={styles.subtitle}>
-          다시보기
+          수업 필기 다시보기
         </Text>
         <View style={styles.pagination}>
           <TouchableOpacity onPress={handlePrevPage} disabled={currentPage === 1}>
