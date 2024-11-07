@@ -23,7 +23,7 @@ public class ExamServiceImpl implements ExamService{
 
 	@Override
 	@Transactional
-	public Long creerExam(ExamDto examDto) {
+	public Long createExam(ExamDto examDto) {
 		Lecture lecture = lectureRepository.findById(examDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
