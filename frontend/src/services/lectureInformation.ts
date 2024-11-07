@@ -208,6 +208,13 @@ export const getLectureDetail = async (
           endTime: '2024-12-05T16:00:00Z',
           questions: [4, 19, 26],
         },
+        {
+          examId: 7,
+          title: '실전 대비 시험',
+          startTime: '2024-12-05T14:00:00Z',
+          endTime: '2024-12-05T16:00:00Z',
+          questions: [4, 19, 26],
+        },
       ],
       homework: [
         {
@@ -252,6 +259,20 @@ export const getLectureDetail = async (
           endTime: '2024-11-05T08:00:00Z',
           questions: [15, 16, 17],
         },
+        {
+          homeworkId: 7,
+          title: '수학 문제 풀이 숙제 7',
+          startTime: '2024-11-04T08:00:00Z',
+          endTime: '2024-11-10T08:00:00Z',
+          questions: [15, 16, 17],
+        },
+        {
+          homeworkId: 8,
+          title: '수학 문제 풀이 숙제 8',
+          startTime: '2024-11-04T08:00:00Z',
+          endTime: '2024-11-12T08:00:00Z',
+          questions: [15, 16, 17],
+        },
       ],
       lesson: [
         {
@@ -281,6 +302,31 @@ export const getLectureDetail = async (
         },
         {
           lessonId: 6,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 7,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 8,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 9,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 10,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 11,
           title: '확률과 통계 파트 2',
           questions: [116, 117, 118],
         },
