@@ -85,7 +85,7 @@ function Chart({ studentScores }: ChartProps): React.JSX.Element {
               <View
                 style={[styles.colorDot, { backgroundColor: ring.colors[0] }]}
               />
-              <Text>{ring.label}</Text>
+              <Text>{ring.label} {ring.totalProgress * 100}점</Text>
             </View>
           ))}
         </View>
