@@ -17,6 +17,7 @@ import {
 } from 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import IntoIcon from '@assets/icons/intoIcon.svg';
+import { useNavigation } from '@react-navigation/native';
 
 interface ProgressBoxProps {
   color: 'blue' | 'red' | 'green';
@@ -24,7 +25,7 @@ interface ProgressBoxProps {
   content: string;
   unit: string;
   icon: 'complete' | 'incomplete' | 'avarageScore' | 'homeworkCheck' | 'folderCheck';
-  isTeacher?: boolean;
+  isLessonDetail?: boolean;
 }
 
 const AnimatedNumber = ({ value }: { value: number }) => {
@@ -59,8 +60,15 @@ function ProgressBox({
   content,
   unit,
   icon,
-  isTeacher,
+  isLessonDetail,
 }: ProgressBoxProps): React.JSX.Element {
+
+  const navigation = useNavigation();
+
+  const handleNavigate = () => {
+    // navigation.navigate('리스트 페이지');
+    console.log('이동할 페이지를 추가해주세요', navigation);
+  };
   const icons = {
     complete: CompleteHomeworkIcon,
     incomplete: IncompleteHomeworkIcon,
@@ -76,8 +84,8 @@ function ProgressBox({
     <View style={[styles.common, styles[color]]}>
       <View style={styles.titleContainer}>
         <Text weight="bold">{title}</Text>
-        {isTeacher && (
-          <TouchableOpacity style={styles.intoButton}>
+        {isLessonDetail && (
+          <TouchableOpacity style={styles.intoButton} onPress={handleNavigate}>
             <IntoIcon width={iconSize.sm} height={iconSize.sm} />
           </TouchableOpacity>
         )}
