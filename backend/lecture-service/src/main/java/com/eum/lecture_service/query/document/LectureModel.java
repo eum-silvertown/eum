@@ -41,5 +41,7 @@ public class LectureModel {
 	private List<ExamInfo> exams = new ArrayList<>();
 	private List<HomeworkInfo> homeworks = new ArrayList<>();
 	private List<LessonInfo> lessons = new ArrayList<>();
+	private StudentOverviewModel studentOverviewModel;
+	private TeacherOverviewModel teacherOverviewModel;
 
 }

@@ -10,6 +10,8 @@ public interface LectureReadRepository extends MongoRepository<LectureModel, Lon
 
 	List<LectureModel> findByClassId(Long classId);
 
+	List<LectureModel> findByTeacherId(Long teacherId);
+
 	List<LectureModel> findByYearAndSemester(Long year, Long semester);
 
 	List<LectureModel> findBySchedule_DayAndYearAndSemester(String day, Long year, Long semester);

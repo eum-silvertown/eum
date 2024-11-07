@@ -9,7 +9,7 @@ public interface LectureQueryService {
 
 	LectureDetailResponse getLectureDetail(Long lectureId);
 
-	List<LectureListResponse> getLectureList(Long classId);
+	List<LectureListResponse> getLectureList(String role, Long memberId);
 
 	List<LectureListResponse> getLectureListByDay(String day, Long year, Long semester);
 }
