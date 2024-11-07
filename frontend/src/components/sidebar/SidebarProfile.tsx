@@ -24,7 +24,7 @@ function SidebarProfile(): React.JSX.Element {
         <Image style={styles.profileImage} source={defaultProfileImage} />
       </View>
       <Animated.View style={[styles.username, {opacity: contentOpacity}]}>
-        <Text variant="subtitle" color="white" weight="bold" numberOfLines={1}>
+        <Text variant="subtitle" color="main" weight="bold" numberOfLines={1}>
           박효진
         </Text>
       </Animated.View>
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '12.5%',
     gap: spacing.lg,
+    marginBottom: spacing.lg,
     padding: spacing.lg,
     overflow: 'hidden',
   },
