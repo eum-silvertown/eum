@@ -12,16 +12,19 @@ import com.eum.lecture_service.query.document.lectureInfo.LessonInfo;
 import com.eum.lecture_service.query.document.lectureInfo.NoticeInfo;
 import com.eum.lecture_service.query.document.lectureInfo.ScheduleInfo;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
+@Builder
 public class LectureDetailResponse {
 
 	private Long lectureId;
 	private String title;
 	private String subject;
+	private String introduction;
 	private String backgroundColor;
 	private String fontColor;
 	private Long year;
@@ -37,43 +40,44 @@ public class LectureDetailResponse {
 	private TeacherOverviewModel teacherOverviewModel;
 
 	public static LectureDetailResponse fromLectureModelForStudent(LectureModel lecture, TeacherModel teacherModel, StudentOverviewModel studentOverviewModel) {
-		LectureDetailResponse response = new LectureDetailResponse();
-		response.setLectureId(lecture.getLectureId());
-		response.setTitle(lecture.getTitle());
-		response.setSubject(lecture.getSubject());
-		response.setBackgroundColor(lecture.getBackgroundColor());
-		response.setFontColor(lecture.getFontColor());
-		response.setYear(lecture.getYear());
-		response.setSemester(lecture.getSemester());
-		response.setClassId(lecture.getClassId());
-		response.setTeacherModel(teacherModel);
-		response.setSchedule(lecture.getSchedule());
-		response.setNotices(lecture.getNotices());
-		response.setExams(lecture.getExams());
-		response.setHomeworks(lecture.getHomeworks());
-		response.setLessons(lecture.getLessons());
-		response.setStudentOverviewModel(studentOverviewModel);
-		return response;
+		return LectureDetailResponse.builder()
+			.lectureId(lecture.getLectureId())
+			.title(lecture.getTitle())
+			.subject(lecture.getSubject())
+			.introduction(lecture.getIntroduction())
+			.backgroundColor(lecture.getBackgroundColor())
+			.fontColor(lecture.getFontColor())
+			.year(lecture.getYear())
+			.semester(lecture.getSemester())
+			.classId(lecture.getClassId())
+			.teacherModel(teacherModel)
+			.schedule(lecture.getSchedule())
+			.notices(lecture.getNotices())
+			.exams(lecture.getExams())
+			.homeworks(lecture.getHomeworks())
+			.lessons(lecture.getLessons())
+			.studentOverviewModel(studentOverviewModel)
+			.build();
 	}
 
-
 	public static LectureDetailResponse fromLectureModelForTeacher(LectureModel lecture, TeacherModel teacherModel, TeacherOverviewModel teacherOverviewModel) {
-		LectureDetailResponse response = new LectureDetailResponse();
-		response.setLectureId(lecture.getLectureId());
-		response.setTitle(lecture.getTitle());
-		response.setSubject(lecture.getSubject());
-		response.setBackgroundColor(lecture.getBackgroundColor());
-		response.setFontColor(lecture.getFontColor());
-		response.setYear(lecture.getYear());
-		response.setSemester(lecture.getSemester());
-		response.setClassId(lecture.getClassId());
-		response.setTeacherModel(teacherModel);
-		response.setSchedule(lecture.getSchedule());
-		response.setNotices(lecture.getNotices());
-		response.setExams(lecture.getExams());
-		response.setHomeworks(lecture.getHomeworks());
-		response.setLessons(lecture.getLessons());
-		response.setTeacherOverviewModel(teacherOverviewModel);
-		return response;
+		return LectureDetailResponse.builder()
+			.lectureId(lecture.getLectureId())
+			.title(lecture.getTitle())
+			.subject(lecture.getSubject())
+			.introduction(lecture.getIntroduction())
+			.backgroundColor(lecture.getBackgroundColor())
+			.fontColor(lecture.getFontColor())
+			.year(lecture.getYear())
+			.semester(lecture.getSemester())
+			.classId(lecture.getClassId())
+			.teacherModel(teacherModel)
+			.schedule(lecture.getSchedule())
+			.notices(lecture.getNotices())
+			.exams(lecture.getExams())
+			.homeworks(lecture.getHomeworks())
+			.lessons(lecture.getLessons())
+			.teacherOverviewModel(teacherOverviewModel)
+			.build();
 	}
 }

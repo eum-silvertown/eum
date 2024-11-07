@@ -22,6 +22,7 @@ public class LectureCreatedEvent {
 	private Long lectureId;
 	private String title;
 	private String subject;
+	private String introduction;
 	private String backgroundColor;
 	private String fontColor;
 	private Long year;
@@ -34,6 +35,7 @@ public class LectureCreatedEvent {
 		this.lectureId = lecture.getLectureId();
 		this.title = lecture.getTitle();
 		this.subject = lecture.getSubject();
+		this.introduction = lecture.getIntroduction();
 		this.backgroundColor = lecture.getBackgroundColor();
 		this.fontColor = lecture.getFontColor();
 		this.year = lecture.getYear();

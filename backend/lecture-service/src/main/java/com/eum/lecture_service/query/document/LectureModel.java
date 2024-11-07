@@ -30,6 +30,7 @@ public class LectureModel {
 	private Long lectureId;
 	private String title;
 	private String subject;
+	private String introduction;
 	private String backgroundColor;
 	private String fontColor;
 	private Long year;

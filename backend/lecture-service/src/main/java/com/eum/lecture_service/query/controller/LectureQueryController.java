@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.eum.lecture_service.common.RoleType;
+import com.eum.lecture_service.config.exception.ErrorCode;
+import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.config.global.CommonResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureDetailResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureListResponse;
+import com.eum.lecture_service.query.dto.lecture.LectureUpdateResponse;
 import com.eum.lecture_service.query.dto.lecture.TodayDto;
 import com.eum.lecture_service.query.service.lecture.LectureQueryService;
 
@@ -42,12 +46,32 @@ public class LectureQueryController {
 		return CommonResponse.success(lectureList, "목록 조회 성공");
 	}
 
-	@GetMapping
+	@GetMapping("/day")
 	public CommonResponse<?> getLectures(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestHeader("X-MEMBER-ID") Long memberId,
 		@RequestBody TodayDto todayDto) {
 		List<LectureListResponse> lectureList = lectureQueryService.getLectureListByDay(todayDto, role, memberId);
 		return CommonResponse.success(lectureList, "목록조회 성공");
+	}
+
+	//수정용 조회
+	@GetMapping("/update/{lectureId}")
+	public CommonResponse<?> getLectureForUpdate(
+		@RequestHeader("X-MEMBER-ROLE") String role,
+		@PathVariable Long lectureId) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+			LectureUpdateResponse lectureForUpdate = lectureQueryService.getLectureForUpdate(lectureId);
+			return CommonResponse.success(lectureForUpdate, "수업 업데이트용 조회 성공");
+		} catch (IllegalArgumentException e) {
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
