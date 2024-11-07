@@ -52,7 +52,7 @@ const StudentRank = ({ studentsInfo = [], onStudentSelect }: StudentRankProps): 
 
 const styles = StyleSheet.create({
     container: {
-        padding: getResponsiveSize(12),
+        padding: getResponsiveSize(8),
         borderRadius: 8,
     },
     listContainer: {
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
         marginBottom: getResponsiveSize(4),
     },
     studentImage: {
-        width: getResponsiveSize(40),
-        height: getResponsiveSize(40),
+        width: getResponsiveSize(32),
+        height: getResponsiveSize(32),
         borderRadius: 30,
         borderWidth: 1,
         borderColor: '#ddd',

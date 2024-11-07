@@ -103,7 +103,7 @@ function StudentsChart({ classAverageScores, studentName }: ChartProps): React.J
 
 const styles = StyleSheet.create({
   chart: {
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.sm,
   },
   subtitle: {
     marginStart: spacing.xl,

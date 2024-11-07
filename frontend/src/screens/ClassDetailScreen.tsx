@@ -50,7 +50,7 @@ function ClassDetailScreen({
   });
 
   const lectureId = 1;
-  const isTeacher = false;
+  const isTeacher = true;
 
   const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
