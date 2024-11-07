@@ -143,8 +143,8 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: getResponsiveSize(60),
-    right: getResponsiveSize(20),
+    top: getResponsiveSize(40),
+    right: getResponsiveSize(54),
     backgroundColor: '#fff',
     padding: getResponsiveSize(8),
     borderRadius: 8,
@@ -156,13 +156,13 @@ const styles = StyleSheet.create({
   grid: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: getResponsiveSize(60),
+    marginTop: getResponsiveSize(30),
   },
   pageControls: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: getResponsiveSize(40),
+    paddingBottom: getResponsiveSize(30),
   },
   pageText: {
     fontSize: 16,
