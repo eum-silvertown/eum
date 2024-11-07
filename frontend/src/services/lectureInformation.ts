@@ -497,3 +497,50 @@ export const getTeacherLectureDetail = async (
     throw error;
   }
 };
+
+export type ToUpdateLectureResponse = {
+  title: string;
+  subject: string;
+  introduction: string;
+  backgroundColor: string;
+  fontColor: string;
+  classId: number;
+  schedule: LectureScheduleType[];
+};
+// 강의 수정용 조회 함수
+export const toupdateLectureDetail = async (
+  lectureId: number,
+): Promise<ToUpdateLectureResponse> => {
+  try {
+    console.log('강의 수정 Id : ', lectureId);
+    const dummydata = {
+      'title': '수정예제 제목',
+      'subject': '수정과목',
+      'introduction': '수정할 소개 칸 입니다.',
+      'backgroundColor': '#000000',
+      'fontColor': '#ffffff',
+      'classId': 5,
+      'schedule': [
+        {
+          'day': '수요일',
+          'period': 1,
+        },
+        {
+          'day': '금요일',
+          'period': 2,
+        },
+      ],
+    };
+    return dummydata;
+
+    // eslint-disable-next-line no-unreachable
+    const { data } = await axios.get<{ status: string; data: ToUpdateLectureResponse; message: string;}>(
+      `lecture/update/${lectureId}`);
+
+    console.log('강의 수정용 데이터 조회: ', data);
+    return data.data;
+  } catch (error) {
+    console.error('강의 정보 조회 실패:', error);
+    throw error;
+  }
+};

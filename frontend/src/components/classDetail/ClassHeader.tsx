@@ -1,14 +1,14 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {Text} from '@components/common/Text';
-import {useNavigation} from '@react-navigation/native';
-import {spacing} from '@theme/spacing';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Text } from '@components/common/Text';
+import { useNavigation } from '@react-navigation/native';
+import { spacing } from '@theme/spacing';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import AddLectureModal from '@components/lectureList/AddLectureModal';
-import {useModal} from 'src/hooks/useModal';
+import { iconSize } from '@theme/iconSize';
+import UpdateLectureModal from './UpdateLectureModal';
+import { useModal } from 'src/hooks/useModal';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -17,26 +17,30 @@ type ClassHeaderProps = {
   lectureId?: number;
   title?: string;
   subtitle?: string;
-  schedule?: {day: string; period: number}[];
+  schedule?: { day: string; period: number }[];
   semester?: number;
   grade?: number;
+  classNumber?: number;
   backgroundColor?: string;
   fontColor?: string;
+  pastTeacherName?: string;
 };
 
 function ClassHeader({
   isTeacher,
-  // lectureId,
+  lectureId,
   title,
   subtitle,
   schedule,
   semester,
   grade,
+  classNumber,
   backgroundColor,
   fontColor,
+  pastTeacherName,
 }: ClassHeaderProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const {open} = useModal();
+  const { open } = useModal();
   const showDeleteConfirmation = () => {
     Alert.alert(
       '경고',
@@ -55,7 +59,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -67,7 +71,7 @@ function ClassHeader({
         {
           text: '수정하기',
           onPress: () =>
-            open(<AddLectureModal />, {
+            open(<UpdateLectureModal lectureId={lectureId!} grade={grade!} classNumber={classNumber!} pastTeacherName={pastTeacherName!} />, {
               title: '수업 생성',
               onClose: () => {
                 console.log('수업 생성 모달 종료');
@@ -84,7 +88,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -105,8 +109,8 @@ function ClassHeader({
           {schedule?.map((item, index) => (
             <View
               key={index}
-              style={[styles.scheduleChip, {backgroundColor: backgroundColor}]}>
-              <Text style={[styles.scheduleChipText, {color: fontColor}]}>
+              style={[styles.scheduleChip, { backgroundColor: backgroundColor }]}>
+              <Text style={[styles.scheduleChipText, { color: fontColor }]}>
                 {item.day}
               </Text>
             </View>

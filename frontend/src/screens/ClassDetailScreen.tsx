@@ -78,6 +78,8 @@ function ClassDetailScreen({
           schedule={lectureDetail?.schedule}
           semester={lectureDetail?.semester}
           grade={lectureDetail?.grade}
+          classNumber={lectureDetail?.classNumber}
+          pastTeacherName={lectureDetail?.teacher.name}
           backgroundColor={lectureDetail?.backgroundColor}
           fontColor={lectureDetail?.fontColor}
         />
