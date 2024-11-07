@@ -7,6 +7,8 @@ import {ScreenType} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
 import {iconSize} from '@theme/iconSize';
+import AddLectureModal from '@components/lectureList/AddLectureModal';
+import {useModal} from 'src/hooks/useModal';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -24,7 +26,7 @@ type ClassHeaderProps = {
 
 function ClassHeader({
   isTeacher,
-  lectureId,
+  // lectureId,
   title,
   subtitle,
   schedule,
@@ -34,7 +36,7 @@ function ClassHeader({
   fontColor,
 }: ClassHeaderProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-
+  const {open} = useModal();
   const showDeleteConfirmation = () => {
     Alert.alert(
       '경고',
@@ -59,12 +61,18 @@ function ClassHeader({
 
   const showOptions = () => {
     Alert.alert(
-      '옵션 선택',
+      '수업 설정',
       '원하는 작업을 선택하세요.',
       [
         {
           text: '수정하기',
-          onPress: () => console.log('수정하기 선택됨'),
+          onPress: () =>
+            open(<AddLectureModal />, {
+              title: '수업 생성',
+              onClose: () => {
+                console.log('수업 생성 모달 종료');
+              },
+            }),
         },
         {
           text: '삭제하기',

@@ -16,7 +16,7 @@ export const createNotice = async (
     console.log('정보 전달 완료 noticeData:', noticeData);
     return;
     // eslint-disable-next-line no-unreachable
-    await axios.post<void>('/api/notice', noticeData);
+    await axios.post<void>('notice', noticeData);
   } catch (error) {
     throw error;
   }
@@ -25,7 +25,8 @@ export const createNotice = async (
 // 공지사항 삭제
 export const deleteNotice = async (noticeId: number): Promise<void> => {
   try {
-    await axios.delete<void>(`/api/notice/${noticeId}`);
+    console.log('공지사항 삭제 요청:', noticeId);
+    await axios.delete<void>(`notice/${noticeId}`);
   } catch (error) {
     throw error;
   }
@@ -43,7 +44,7 @@ export const updateNotice = async (
   noticeData: UpdateNoticeType,
 ): Promise<void> => {
   try {
-    await axios.put<void>(`/api/notice/${noticeId}`, noticeData);
+    await axios.put<void>(`notice/${noticeId}`, noticeData);
   } catch (error) {
     throw error;
   }

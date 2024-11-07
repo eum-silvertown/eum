@@ -40,6 +40,7 @@ function ClassDetailScreen({
   });
 
   const lectureId = 1;
+  const isTeacher = true;
 
   const {data: lectureDetail} = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
@@ -49,14 +50,14 @@ function ClassDetailScreen({
   const {data: studentLectureDetail} = useQuery<LectureStudentDetailType>({
     queryKey: ['studentLectureDetail', lectureId],
     queryFn: () => getStudentLectureDetail(lectureId),
+    enabled: !isTeacher,
   });
 
   const {data: teacherLectureDetail} = useQuery<LectureTeacherDetailType>({
     queryKey: ['teacherLectureDetail', lectureId],
     queryFn: () => getTeacherLectureDetail(lectureId),
+    enabled: isTeacher,
   });
-
-  const isTeacher = true;
 
   console.log('lectureDetail', lectureDetail);
   console.log('studentLectureDetail', studentLectureDetail);
@@ -154,7 +155,11 @@ function ClassDetailScreen({
               examCnt={studentLectureDetail?.overview.examCnt}
               problemBoxCnt={studentLectureDetail?.overview.problemBoxCnt}
             />
-            <Notice isTeacher={isTeacher} notices={lectureDetail?.notices} />
+            <Notice
+              lectureId={lectureDetail?._id}
+              isTeacher={isTeacher}
+              notices={lectureDetail?.notices}
+            />
           </View>
           <View style={styles.mainContentLayout}>
             <View style={styles.teacherLayout}>
