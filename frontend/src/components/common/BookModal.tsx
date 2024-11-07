@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useEffect, useRef} from 'react';
 import Lecture from '@components/main/Lecture';
+import {spacing} from '@theme/spacing';
 
 function BookModal(): React.JSX.Element {
   const containerRef = useRef<View>(null);
@@ -15,21 +16,19 @@ function BookModal(): React.JSX.Element {
   const setContainerPosition = useBookModalStore(
     state => state.setContainerPosition,
   );
-  const setIsBookOpened = useBookModalStore(state => state.setIsBookOpened);
-  const clearBookPosition = useBookModalStore(state => state.clearBookPosition);
-  const clearBookInfo = useBookModalStore(state => state.clearBookInfo);
   const isBookOpened = useBookModalStore(state => state.isBookOpened);
   const bookPosition = useBookModalStore(state => state.bookPosition);
   const bookInfo = useBookModalStore(state => state.bookInfo);
+  const closeBook = useBookModalStore(state => state.closeBook);
 
   // 애니메이션 속성
   const ANIM_DURATION = 300;
   const rotateY = useSharedValue(0);
   const containerWidth = useSharedValue(0);
-  const top = useSharedValue(bookPosition ? bookPosition.y : 0);
+  const top = useSharedValue(bookPosition ? bookPosition.y - spacing.lg : 0);
   const left = useSharedValue(
     bookPosition && containerPosition
-      ? bookPosition.x - containerPosition.x
+      ? bookPosition.x - containerPosition.x + spacing.xl
       : 0,
   );
   const width = useSharedValue(bookPosition ? bookPosition.width : 0);
@@ -87,13 +86,13 @@ function BookModal(): React.JSX.Element {
         });
         top.value = withDelay(
           ANIM_DURATION * 2,
-          withTiming(bookPosition.y, {
+          withTiming(bookPosition.y - spacing.lg, {
             duration: ANIM_DURATION,
           }),
         );
         left.value = withDelay(
           ANIM_DURATION * 2,
-          withTiming(bookPosition.x - containerPosition.x, {
+          withTiming(bookPosition.x - containerPosition.x + spacing.xl, {
             duration: ANIM_DURATION,
           }),
         );
@@ -107,8 +106,17 @@ function BookModal(): React.JSX.Element {
         );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isBookOpened]);
+  }, [
+    bookInfo,
+    bookPosition,
+    containerPosition,
+    height,
+    isBookOpened,
+    left,
+    rotateY,
+    top,
+    width,
+  ]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -153,14 +161,7 @@ function BookModal(): React.JSX.Element {
       }}>
       <Animated.View style={[bookStyles]}>
         <Pressable
-          onPress={() => {
-            console.log('닫혀라');
-            setIsBookOpened(false);
-            setTimeout(() => {
-              clearBookInfo();
-              clearBookPosition();
-            }, ANIM_DURATION * 3);
-          }}
+          onPress={() => closeBook(ANIM_DURATION)}
           style={styles.bookContainer}>
           <View style={styles.rightPageContainer}>
             {/* 오른쪽 페이지 (펼침)*/}
