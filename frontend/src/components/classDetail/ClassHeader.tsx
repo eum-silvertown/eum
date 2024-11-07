@@ -9,6 +9,9 @@ import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import UpdateLectureModal from './UpdateLectureModal';
 import { useModal } from 'src/hooks/useModal';
+import { deleteLecture } from '@services/lectureInformation';
+import { useMutation } from '@tanstack/react-query';
+
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -41,6 +44,13 @@ function ClassHeader({
 }: ClassHeaderProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
   const { open } = useModal();
+
+  const { mutate: deleteMutation } = useMutation({
+    mutationFn: (deleteLectureId: number) => deleteLecture(deleteLectureId),
+    onSuccess: () => {
+      navigation.navigate('LectureListScreen');
+    },
+  });
   const showDeleteConfirmation = () => {
     Alert.alert(
       '경고',
@@ -51,6 +61,7 @@ function ClassHeader({
           onPress: () => {
             console.log('삭제 확정');
             // 삭제 작업 실행 코드
+            deleteMutation(lectureId!);
           },
           style: 'destructive',
         },

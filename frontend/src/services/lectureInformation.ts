@@ -52,6 +52,10 @@ export const updateLectureDetail = async (
 export const deleteLecture = async (lectureId: number): Promise<void> => {
   try {
     console.log(`강의 삭제 요청: lectureId = ${lectureId}`);
+
+    return;
+
+    // eslint-disable-next-line no-unreachable
     await axios.delete<void>(`lecture/${lectureId}`);
     console.log('강의 삭제 성공');
   } catch (error) {
