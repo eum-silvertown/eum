@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
-import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
+import React, { useState } from 'react';
+import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text } from '@components/common/Text';
+import { spacing } from '@theme/spacing';
 import LeftArrowOffIcon from '@assets/icons/leftArrowOffIcon.svg';
 import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 import moment from 'moment';
 
 type HomeworkItem = {
@@ -17,7 +17,7 @@ type HomeworkItem = {
   questions: number[];
 };
 
-type HomeworkWithStatus = HomeworkItem & {status: 'D-Day' | '종료' | '일반'};
+type HomeworkWithStatus = HomeworkItem & { status: 'D-Day' | '종료' | '일반' };
 
 type HomeworkProps = {
   homework?: HomeworkItem[];
@@ -35,15 +35,17 @@ function getHomeworkStatus(endTime: string): 'D-Day' | '종료' | '일반' {
   return '일반';
 }
 
-function Homework({homework = []}: HomeworkProps): React.JSX.Element {
+function Homework({ homework = [] }: HomeworkProps): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // 이미 종료된 항목을 제외하고 정렬
   const sortedHomework: HomeworkWithStatus[] = homework
     .map(item => ({
       ...item,
       status: getHomeworkStatus(item.endTime),
     }))
+    .filter(item => item.status !== '종료') // 종료된 항목 제외
     .sort((a, b) => {
       const aMoment = moment(a.endTime);
       const bMoment = moment(b.endTime);
@@ -65,32 +67,25 @@ function Homework({homework = []}: HomeworkProps): React.JSX.Element {
     startIndex + itemsPerPage,
   );
 
-  const renderItem = ({item}: {item: HomeworkWithStatus}) => {
+  const renderItem = ({ item }: { item: HomeworkWithStatus }) => {
     const backgroundColor =
       item.status === 'D-Day'
         ? '#ffe6e6'
         : item.status === '종료'
-        ? '#f0f0f0'
-        : '#fdfeff';
+          ? '#f0f0f0'
+          : '#fdfeff';
 
     const dueDateDisplay =
       item.status === 'D-Day'
         ? `${moment(item.endTime).format('MM-DD')} (D-Day)`
-        : item.status === '종료'
-        ? `${moment(item.endTime).format('MM-DD')} (종료)`
         : `${moment(item.endTime).format('MM-DD')} (D-${moment(
-            item.endTime,
-          ).diff(moment(), 'days')})`;
+          item.endTime,
+        ).diff(moment(), 'days')})`;
 
     return (
       <TouchableOpacity
-        style={[styles.item, {backgroundColor}]}
+        style={[styles.item, { backgroundColor }]}
         onPress={() => handleItemPress(item)}>
-        <View style={[styles.textContainer, styles.idContainer]}>
-          <Text variant="caption" weight="bold">
-            {item.homeworkId}
-          </Text>
-        </View>
         <View style={[styles.textContainer, styles.titleContainer]}>
           <Text variant="caption" weight="bold">
             {item.title}
@@ -130,7 +125,7 @@ function Homework({homework = []}: HomeworkProps): React.JSX.Element {
     <View style={styles.homework}>
       <View style={styles.header}>
         <Text variant="subtitle" weight="bold" style={styles.subtitle}>
-          숙제
+          남은 숙제
         </Text>
         {totalPages > 1 && (
           <View style={styles.pagination}>
@@ -164,15 +159,15 @@ function Homework({homework = []}: HomeworkProps): React.JSX.Element {
           paginatedData.length > 0
             ? paginatedData
             : [
-                {
-                  homeworkId: 0,
-                  title: '등록된 숙제가 없습니다',
-                  startTime: '',
-                  endTime: '',
-                  questions: [],
-                  status: '일반',
-                },
-              ]
+              {
+                homeworkId: 0,
+                title: '등록된 숙제가 없습니다',
+                startTime: '',
+                endTime: '',
+                questions: [],
+                status: '일반',
+              },
+            ]
         }
         renderItem={renderItem}
         keyExtractor={item => item.homeworkId.toString()}
