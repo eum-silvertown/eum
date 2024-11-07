@@ -1,15 +1,19 @@
 import axios from 'axios';
 import {getToken, clearToken} from '@utils/secureStorage';
 import {refreshAuthToken} from '../services/authService';
+import Config from 'react-native-config';
+
+const baseURL = `${Config.BACKEND_API_URL}`
+;
 
 // 인증이 필요 없는 요청용 클라이언트
 const publicApiClient = axios.create({
-  baseURL: 'https://api.example.com/api',
+  baseURL: baseURL,
 });
 
 // 인증이 필요한 요청용 클라이언트
 const authApiClient = axios.create({
-  baseURL: 'https://api.example.com/api',
+  baseURL: baseURL,
 });
 
 // 요청 인터셉터
