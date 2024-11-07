@@ -1,4 +1,4 @@
-package com.eum.lecture_service.query.document.info;
+package com.eum.lecture_service.query.document.lectureInfo;
 
 import java.time.LocalDateTime;
 import java.util.List;

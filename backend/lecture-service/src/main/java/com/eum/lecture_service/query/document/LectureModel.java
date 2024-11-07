@@ -1,17 +1,16 @@
 package com.eum.lecture_service.query.document;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.eum.lecture_service.query.document.info.ExamInfo;
-import com.eum.lecture_service.query.document.info.HomeworkInfo;
-import com.eum.lecture_service.query.document.info.LessonInfo;
-import com.eum.lecture_service.query.document.info.NoticeInfo;
-import com.eum.lecture_service.query.document.info.ScheduleInfo;
+import com.eum.lecture_service.query.document.lectureInfo.ExamInfo;
+import com.eum.lecture_service.query.document.lectureInfo.HomeworkInfo;
+import com.eum.lecture_service.query.document.lectureInfo.LessonInfo;
+import com.eum.lecture_service.query.document.lectureInfo.NoticeInfo;
+import com.eum.lecture_service.query.document.lectureInfo.ScheduleInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
