@@ -27,7 +27,7 @@ public class MemberEventHandler {
 	private final ClassReadRepository classReadRepository;
 	private final StudentReadRepository studentReadRepository;
 
-	@KafkaListener(topics = "create_teacher", groupId = "lecture-group")
+	@KafkaListener(topics = "create_teacher", groupId = "lecture-group", containerFactory = "teacherKafkaListenerContainerFactory")
 	public void createTeacher(TeacherInfoEvent event) {
 		TeacherModel teacher = TeacherModel.builder()
 			.teacherId(event.getTeacherId())
@@ -40,8 +40,7 @@ public class MemberEventHandler {
 		teacherReadRepository.save(teacher);
 	}
 
-	@KafkaListener(topics = "update_teacher", groupId = "lecture-group")
-	public void updateTeacher(TeacherInfoUpdatedEvent event) {
+	@KafkaListener(topics = "update_teacher", groupId = "lecture-group", containerFactory = "teacherUpdateKafkaListenerContainerFactory")	public void updateTeacher(TeacherInfoUpdatedEvent event) {
 		teacherReadRepository.findById(event.getTeacherId()).ifPresentOrElse(
 			teacher -> {
 				teacher.setName(event.getName());
@@ -55,8 +54,7 @@ public class MemberEventHandler {
 		);
 	}
 
-	@KafkaListener(topics = "create_class", groupId = "lecture-group")
-	public void createClass(ClassCreatedEvent event) {
+	@KafkaListener(topics = "create_class", groupId = "lecture-group", containerFactory = "classKafkaListenerContainerFactory")	public void createClass(ClassCreatedEvent event) {
 		ClassModel classModel = ClassModel.builder()
 			.classId(event.getClassId())
 			.grade(event.getGrade())
@@ -67,8 +65,7 @@ public class MemberEventHandler {
 		classReadRepository.save(classModel);
 	}
 
-	@KafkaListener(topics = "create_student", groupId = "lecture-group")
-	public void createStudent(StudentInfoEvent event) {
+	@KafkaListener(topics = "create_student", groupId = "lecture-group", containerFactory = "studentKafkaListenerContainerFactory")	public void createStudent(StudentInfoEvent event) {
 		StudentModel student = StudentModel.builder()
 			.studentId(event.getStudentId())
 			.name(event.getName())
@@ -81,8 +78,7 @@ public class MemberEventHandler {
 		studentReadRepository.save(student);
 	}
 
-	@KafkaListener(topics = "update_student", groupId = "lecture-group")
-	public void updateStudent(StudentInfoUpdatedEvent event) {
+	@KafkaListener(topics = "update_student", groupId = "lecture-group", containerFactory = "studentUpdateKafkaListenerContainerFactory")	public void updateStudent(StudentInfoUpdatedEvent event) {
 		studentReadRepository.findById(event.getStudentId()).ifPresentOrElse(
 			student -> {
 				student.setName(event.getName());
