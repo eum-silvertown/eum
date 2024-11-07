@@ -66,8 +66,9 @@ export default MyClassScreen;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.xxl,
+    backgroundColor: 'white',
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
   },
   contentContainer: {
     width: '100%',
@@ -82,7 +83,6 @@ const styles = StyleSheet.create({
   notice: {
     width: '33%',
     padding: spacing.lg,
-    backgroundColor: 'white',
     elevation: getResponsiveSize(4),
     borderRadius: borderRadius.lg,
     borderWidth: borderWidth.xl,

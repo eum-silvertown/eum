@@ -4,11 +4,14 @@ import {borderRadius} from '@theme/borderRadius';
 import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import {useEffect, useState} from 'react';
-import {Image, ScrollView, StyleSheet, View} from 'react-native';
-import ScreenInfo from '@components/common/ScreenInfo';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import ProgressBoxes from '@components/homework/ProgressBoxes';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 // import noteSpringImage from '@assets/images/noteSpring.png';
-import notebookImage from '@assets/images/notebook.png';
 
 export type HomeworkType = {
   state: '완료' | '미제출';
@@ -26,8 +29,18 @@ function HomeworkScreen(): React.JSX.Element {
     {name: '영어', color: '#bedcff'},
     {name: '과학', color: '#ffbeec'},
   ];
-  const [selectedFlag, setSelectedFlag] = useState('전체');
+  const [selectedFlag, setSelectedFlag] = useState(0);
   const [homeworkList, setHomeworkList] = useState<HomeworkType[]>([]);
+
+  const left = useSharedValue(0);
+  const selectedAnimatedStyles = useAnimatedStyle(() => ({
+    left: `${left.value}%`,
+  }));
+
+  useEffect(() => {
+    left.value = withTiming(selectedFlag * 10, {duration: 300});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFlag]);
 
   useEffect(() => {
     setHomeworkList([
@@ -77,32 +90,41 @@ function HomeworkScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <ScreenInfo title="숙제" />
-      <View style={styles.contentContainer}>
+      {/* <ScreenInfo title="숙제" /> */}
+      <View style={styles.flags}>
+        <Animated.View
+          style={[
+            selectedAnimatedStyles,
+            {
+              position: 'absolute',
+              width: '10%',
+              height: '100%',
+              backgroundColor: 'yellow',
+              borderRadius: borderRadius.lg,
+            },
+          ]}
+        />
         {flag.map((_, index) => (
           <Flag
             key={index}
-            color={flag[index].color}
             index={index}
             title={flag[index].name}
-            selected={flag[index].name === selectedFlag}
             setSelectedFlag={setSelectedFlag}
           />
         ))}
-        <View style={[styles.notebookContainer]}>
-          <Image source={notebookImage} style={styles.notebook} />
-          {/* <Image source={noteSpringImage} style={styles.noteSpringImage} /> */}
-          <View style={styles.content}>
-            <ProgressBoxes />
-            <View style={styles.homeworkContainer}>
-              <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollViewContent}>
-                {homeworkList.map((homework, index) => (
-                  <HomeworkItem key={index} homework={homework} />
-                ))}
-              </ScrollView>
-            </View>
+      </View>
+      <View style={[styles.notebookContainer]}>
+        {/* <Image source={noteSpringImage} style={styles.noteSpringImage} /> */}
+        <View style={styles.content}>
+          <ProgressBoxes />
+          <View style={styles.homeworkContainer}>
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollViewContent}>
+              {homeworkList.map((homework, index) => (
+                <HomeworkItem key={index} homework={homework} />
+              ))}
+            </ScrollView>
           </View>
         </View>
       </View>
@@ -115,13 +137,18 @@ export default HomeworkScreen;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingVertical: spacing.xl,
-    paddingLeft: spacing.xxl,
-    paddingRight: spacing.xl,
+    height: '100%',
+    gap: spacing.lg,
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
   },
-  contentContainer: {
+  flags: {
     flexDirection: 'row',
-    height: '92%',
+    height: '10%',
+    borderRadius: borderRadius.lg,
+    backgroundColor: 'white',
+    overflow: 'hidden',
+    elevation: getResponsiveSize(2),
   },
   notebook: {
     position: 'absolute',
@@ -130,28 +157,17 @@ const styles = StyleSheet.create({
     objectFit: 'fill',
   },
   notebookContainer: {
+    flex: 1,
     flexDirection: 'row',
-    gap: spacing.xl,
-    width: '90%',
     borderBottomEndRadius: borderRadius.sm,
     borderTopEndRadius: borderRadius.sm,
   },
   content: {
     flex: 1,
-    gap: spacing.xl,
-    padding: spacing.xl,
-    paddingRight: spacing.xxl * 1.2,
-    paddingLeft: spacing.xxl * 1.6,
-  },
-  noteSpringImage: {
-    marginLeft: -spacing.xxl,
-    width: getResponsiveSize(40),
-    height: '100%',
-    objectFit: 'fill',
+    gap: spacing.lg,
   },
   homeworkContainer: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: 'white',
     elevation: getResponsiveSize(2),
     borderRadius: borderRadius.lg,

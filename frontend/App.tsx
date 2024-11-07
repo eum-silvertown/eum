@@ -9,7 +9,6 @@ import SignUpSelectScreen from '@screens/SignUpSelectScreen';
 import SignUpScreen from '@screens/SignUpScreen';
 import HomeScreen from '@screens/HomeScreen';
 import LessoningScreen from '@screens/LessoningScreen';
-import LectureListScreen from '@screens/LectureListScreen';
 import ClassListScreen from '@screens/ClassListScreen';
 import HomeworkScreen from '@screens/HomeworkScreen';
 import QuestionBoxScreen from '@screens/QuestionBoxScreen';
@@ -19,6 +18,7 @@ import LessoningStudentListScreen from '@screens/LessoningStudentListScreen';
 import MainLayout from '@components/common/MainLayout';
 import ProfileScreen from '@screens/ProfileScreen';
 import {Platform, UIManager} from 'react-native';
+import React from 'react';
 
 // 안드로이드 기본 Navbar 없애기
 SystemNavigationBar.stickyImmersive();
@@ -62,7 +62,7 @@ function App(): React.JSX.Element {
           screenOptions={{
             headerShown: false,
             animation: 'slide_from_right',
-            animationDuration: 200,
+            animationDuration: 300,
             contentStyle: {
               backgroundColor: 'transparent',
             },
