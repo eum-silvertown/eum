@@ -9,7 +9,7 @@ import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
 import com.eum.lecture_service.query.document.LectureModel;
-import com.eum.lecture_service.query.document.info.ScheduleInfo;
+import com.eum.lecture_service.query.document.lectureInfo.ScheduleInfo;
 import com.eum.lecture_service.query.repository.LectureReadRepository;
 
 import lombok.RequiredArgsConstructor;
