@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public TokenResponse signUp(SignUpRequest signUpRequest){
+    public SimpleMemberInfoResponse signUp(SignUpRequest signUpRequest){
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 
@@ -64,19 +64,26 @@ public class UserServiceImpl implements UserService {
             }
             classInfo.updateTeacher(member);
         }
+
         TokenResponse tokenResponse = tokenService.createTokenResponse(member);
+        ImageResponse imageResponse = member.getImage() != null ?
+                fileService.getPresignedUrlForRead(member.getImage()) : null;
         kafkaTemplate.send(SIGN_UP_TOPIC,String.valueOf(member.getId()));
-        return tokenResponse;
+        return SimpleMemberInfoResponse.from(member,imageResponse,tokenResponse);
     }
 
     @Override
-    public TokenResponse signIn(SignInRequest signInRequest) {
+    public SimpleMemberInfoResponse signIn(SignInRequest signInRequest) {
         Member member = userRepository.findByUserId(signInRequest.id())
                 .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
         if(!passwordEncoder.matches(signInRequest.password(), member.getPassword())) {
             throw new EumException(ErrorCode.PASSWORD_NOT_MATCH);
         }
-        return tokenService.createTokenResponse(member);
+
+        TokenResponse tokenResponse = tokenService.createTokenResponse(member);
+        ImageResponse imageResponse = member.getImage() != null ?
+                fileService.getPresignedUrlForRead(member.getImage()) : null;
+        return SimpleMemberInfoResponse.from(member,imageResponse,tokenResponse);
     }
 
     @Override

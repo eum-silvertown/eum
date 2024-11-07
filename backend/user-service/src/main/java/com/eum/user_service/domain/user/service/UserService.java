@@ -8,9 +8,9 @@ import com.eum.user_service.domain.user.entity.Role;
 
 public interface UserService {
 
-    TokenResponse signUp(SignUpRequest signUpRequest);
+    SimpleMemberInfoResponse signUp(SignUpRequest signUpRequest);
 
-    TokenResponse signIn(SignInRequest signInRequest);
+    SimpleMemberInfoResponse signIn(SignInRequest signInRequest);
 
     void checkId(UserIdRequest userIdRequest);
 

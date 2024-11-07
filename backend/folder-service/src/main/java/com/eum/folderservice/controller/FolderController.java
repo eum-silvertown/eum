@@ -6,6 +6,7 @@ import com.eum.folderservice.dto.request.MoveFolderRequestDTO;
 import com.eum.folderservice.dto.response.FolderResponseDTO;
 import com.eum.folderservice.service.FolderService;
 import com.eum.folderservice.common.util.CommonResponse;
+import io.micrometer.core.annotation.Timed;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ public class FolderController {
     private final FolderService folderService;
 
     @PostMapping
+    @Timed(value = "folders.create", longTask = true)
     public CommonResponse<?> createFolder(@RequestBody CreateFolderRequestDTO requestDTO, HttpServletRequest request) {
         Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
         requestDTO.setMemberId(memberId);
@@ -27,6 +29,7 @@ public class FolderController {
     }
 
     @GetMapping("/root")
+    @Timed(value = "folders.root", longTask = true)
     public CommonResponse<?> getMemberRootFolder(HttpServletRequest request) {
         Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
 
@@ -34,6 +37,7 @@ public class FolderController {
     }
 
     @GetMapping("/{folderId}")
+    @Timed(value = "folders.get", longTask = true)
     public CommonResponse<?> getFolder(@PathVariable Long folderId, HttpServletRequest request) {
         Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
 
@@ -41,6 +45,7 @@ public class FolderController {
     }
 
     @PatchMapping
+    @Timed(value = "folders.modify", longTask = true)
     public CommonResponse<?> modifyFolderTitle(@RequestBody ModifyTitleRequestDTO requestDTO, HttpServletRequest request) {
         Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
 
@@ -48,6 +53,7 @@ public class FolderController {
     }
 
     @DeleteMapping("/{folderId}")
+    @Timed(value = "folders.delete", longTask = true)
     public CommonResponse<?> deleteFolder(@PathVariable Long folderId, HttpServletRequest request) {
         Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
         folderService.deleteFolder(folderId, memberId);
@@ -56,6 +62,7 @@ public class FolderController {
     }
 
     @PostMapping("/move")
+    @Timed(value = "folders.move", longTask = true)
     public CommonResponse<?> moveFolder(@RequestBody MoveFolderRequestDTO requestDTO, HttpServletRequest request) {
         Long memberId = Long.parseLong(request.getHeader("X-MEMBER-ID"));
         folderService.moveFolder(requestDTO, memberId);
