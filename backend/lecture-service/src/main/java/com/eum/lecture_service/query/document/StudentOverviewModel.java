@@ -21,6 +21,7 @@ import lombok.Setter;
 public class StudentOverviewModel {
 
     @Id
+    private String id;
     private Long studentId;
     private Long classId;
     private Overview overview;

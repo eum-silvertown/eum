@@ -24,6 +24,7 @@ import lombok.Setter;
 public class TeacherOverviewModel {
 
     @Id
+    private String id;
     private Long teacherId;
     private Long classId;
     private List<StudentInfo> students = new ArrayList<>();
