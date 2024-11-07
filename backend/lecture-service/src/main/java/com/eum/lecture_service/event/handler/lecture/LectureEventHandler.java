@@ -44,6 +44,7 @@ public class LectureEventHandler {
 			.lectureId(event.getLectureId())
 			.title(event.getTitle())
 			.subject(event.getSubject())
+			.introduction(event.getIntroduction())
 			.backgroundColor(event.getBackgroundColor())
 			.fontColor(event.getFontColor())
 			.year(event.getYear())
@@ -132,6 +133,7 @@ public class LectureEventHandler {
 	private void updateLectureModel(LectureModel lecture, LectureUpdatedEvent event) {
 		lecture.setTitle(event.getTitle());
 		lecture.setSubject(event.getSubject());
+		lecture.setIntroduction(event.getIntroduction());
 		lecture.setBackgroundColor(event.getBackgroundColor());
 		lecture.setFontColor(event.getFontColor());
 		lecture.setYear(event.getYear());
