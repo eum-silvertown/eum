@@ -1,6 +1,5 @@
 package com.eum.user_service.domain.user.controller;
 
-import com.eum.user_service.domain.file.dto.ImageRequest;
 import com.eum.user_service.domain.file.dto.ImageResponse;
 import com.eum.user_service.domain.token.dto.TokenRequest;
 import com.eum.user_service.domain.token.dto.TokenResponse;
@@ -10,8 +9,6 @@ import com.eum.user_service.domain.user.service.UserService;
 import com.eum.user_service.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,14 +21,14 @@ public class UserController implements UserApiDocumentation{
 
     @PostMapping("/sign-up")
     public CommonResponse<?> signUp(@RequestBody SignUpRequest signUpRequest) {
-        TokenResponse token = userService.signUp(signUpRequest);
-        return CommonResponse.success(token, "회원가입에 성공했습니다.");
+        SimpleMemberInfoResponse simpleMemberInfoResponse = userService.signUp(signUpRequest);
+        return CommonResponse.success(simpleMemberInfoResponse, "회원가입에 성공했습니다.");
     }
 
     @PostMapping("/sign-in")
     public CommonResponse<?> signIn(@RequestBody SignInRequest signInRequest) {
-        TokenResponse token = userService.signIn(signInRequest);
-        return CommonResponse.success(token,"로그인에 성공했습니다.");
+        SimpleMemberInfoResponse simpleMemberInfoResponse = userService.signIn(signInRequest);
+        return CommonResponse.success(simpleMemberInfoResponse,"로그인에 성공했습니다.");
     }
 
     @PostMapping("/check/id")
