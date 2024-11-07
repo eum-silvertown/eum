@@ -1,4 +1,4 @@
-import {Animated, Image, Pressable, StyleSheet} from 'react-native';
+import {Animated, Pressable, StyleSheet} from 'react-native';
 import SidebarProfile from './SidebarProfile';
 import SidebarMenus from './SidebarMenus';
 import {spacing} from '@theme/spacing';
@@ -6,8 +6,8 @@ import SidebarExpandIcon from '@assets/icons/sidebarExpandIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
-import SidebarImage from '@assets/images/sidebarLogo.png';
 import {getResponsiveSize} from '@utils/responsive';
+import {borderRadius} from '@theme/borderRadius';
 
 function Sidebar(): React.JSX.Element {
   const {isExpanded, toggleSidebar} = useSidebarStore();
@@ -19,8 +19,7 @@ function Sidebar(): React.JSX.Element {
       duration: 300,
       useNativeDriver: true, // 네이티브 드라이버 사용
     }).start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isExpanded]);
+  }, [iconRotateAnim, isExpanded]);
 
   const spin = iconRotateAnim.interpolate({
     inputRange: [0, 1],
@@ -36,10 +35,14 @@ function Sidebar(): React.JSX.Element {
           style={{
             transform: [{rotate: spin}],
           }}>
-          <SidebarExpandIcon width={iconSize.md} height={iconSize.md} />
+          <SidebarExpandIcon
+            width={iconSize.md}
+            height={iconSize.md}
+            color="#2E2559"
+          />
         </Animated.View>
       </Pressable>
-      <Image source={SidebarImage} style={styles.sidebarImage} />
+      {/* <Image source={SidebarImage} style={styles.sidebarImage} /> */}
     </Animated.View>
   );
 }
@@ -50,7 +53,9 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'flex-start',
     height: '100%',
-    backgroundColor: '#2E2559',
+    backgroundColor: 'white',
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
   },
   sidebarExpandIcon: {
     position: 'absolute',

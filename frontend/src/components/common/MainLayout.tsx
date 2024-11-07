@@ -3,18 +3,19 @@ import Sidebar from '../sidebar/Sidebar';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
 import {useAuthStore} from '@store/useAuthStore';
-import {useColors} from 'src/hooks/useColors';
 import Modals from './Modals';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import BookModal from './BookModal';
 import {useBookModalStore} from '@store/useBookModalStore';
+import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
+import {borderRadius} from '@theme/borderRadius';
 
 interface MainLayoutProps {
   children: React.ReactElement;
 }
 
 function MainLayout({children}: MainLayoutProps): React.JSX.Element {
-  const colors = useColors();
   const isLoggedIn = useAuthStore(state => state.isLoggedIn); // 로그인 상태 확인
   const {isExpanded} = useSidebarStore();
   const sidebarWidthAnim = useRef(
@@ -58,14 +59,8 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
         </Animated.View>
       )}
       <View style={styles.contentWrapper}>
-        <View
-          style={[
-            styles.content,
-            {backgroundColor: colors.background.content},
-          ]}>
-          {bookPosition && <BookModal />}
-          {children}
-        </View>
+        {bookPosition && <BookModal />}
+        {children}
       </View>
       <Modals />
     </View>
@@ -78,15 +73,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
+    gap: spacing.lg,
+    padding: spacing.lg,
+    backgroundColor: '#555588',
   },
   sidebarContainer: {
-    zIndex: 1,
+    backgroundColor: 'white',
+    borderRadius: borderRadius.lg,
+    elevation: getResponsiveSize(4),
   },
   contentWrapper: {
     flex: 1,
-    overflow: 'hidden', // 애니메이션이 Sidebar를 넘어가지 않도록
-  },
-  content: {
-    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: spacing.lg,
+    overflow: 'hidden',
+    elevation: getResponsiveSize(4),
   },
 });
