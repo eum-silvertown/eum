@@ -10,7 +10,6 @@ import {
 } from '@store/useQuestionExplorerStore';
 import {borderRadius} from '@theme/borderRadius';
 import {spacing} from '@theme/spacing';
-import {getResponsiveSize} from '@utils/responsive';
 import React, {useEffect} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {useModal} from 'src/hooks/useModal';
@@ -98,15 +97,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.xxl,
+    backgroundColor: 'white',
+    borderRadius: borderRadius.lg,
+    padding: spacing.xl,
   },
   contentContainer: {
     flex: 1,
-    padding: spacing.xl,
-    backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
-    elevation: getResponsiveSize(2),
   },
   header: {
     marginBottom: spacing.lg,

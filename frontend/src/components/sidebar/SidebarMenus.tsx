@@ -13,7 +13,8 @@ import {Text} from '../common/Text';
 import {SvgProps} from 'react-native-svg';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
-import {useCallback, useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {borderRadius} from '@theme/borderRadius';
 
 interface MenuItem {
   name: string;
@@ -36,9 +37,11 @@ function SidebarMenus(): React.JSX.Element {
   const {setCurrentScreen, currentScreen} = useCurrentScreenStore();
   const {isExpanded} = useSidebarStore();
   const textOpacity = useRef(new Animated.Value(1)).current;
+  const [selected, setSelected] = useState(0);
 
   const handlePress = useCallback(
-    (screen: keyof ScreenType) => {
+    (index: number, screen: keyof ScreenType) => {
+      setSelected(index);
       if (currentScreen !== screen) {
         setCurrentScreen(screen);
         requestAnimationFrame(() => {
@@ -59,17 +62,28 @@ function SidebarMenus(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {menuItems.map(item => (
+      <View
+        style={[
+          styles.selectedBackgroundContainer,
+          {
+            transform: [
+              {translateY: selected * (iconSize.md + spacing.lg * 2.5)},
+            ],
+          },
+        ]}>
+        <View style={styles.selectedBackground} />
+      </View>
+      {menuItems.map((item, index) => (
         <Pressable
-          style={({pressed}) => [
-            styles.menuContainer,
-            pressed && {opacity: 0.7},
-          ]}
-          android_ripple={{color: 'rgba(255, 255, 255, 0.1)'}}
-          key={item.screen}
-          onPress={() => handlePress(item.screen)}>
+          style={styles.menuContainer}
+          key={index}
+          onPress={() => handlePress(index, item.screen)}>
           <View style={styles.icon}>
-            <item.icon width={iconSize.md} height={iconSize.md} />
+            <item.icon
+              width={iconSize.md}
+              height={iconSize.md}
+              color={selected === index ? 'white' : '#2E2559'}
+            />
           </View>
           <Animated.View
             style={[
@@ -78,7 +92,10 @@ function SidebarMenus(): React.JSX.Element {
                 opacity: textOpacity,
               },
             ]}>
-            <Text weight={'bold'} color={'white'} numberOfLines={1}>
+            <Text
+              weight={'bold'}
+              color={selected === index ? 'white' : 'main'}
+              numberOfLines={1}>
               {item.name}
             </Text>
           </Animated.View>
@@ -92,9 +109,21 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
+  selectedBackgroundContainer: {
+    position: 'absolute',
+    width: '100%',
+    height: iconSize.md + spacing.lg * 2.5,
+    padding: spacing.md,
+  },
+  selectedBackground: {
+    flex: 1,
+    backgroundColor: '#2e2559',
+    borderRadius: borderRadius.lg,
+  },
   icon: {
     alignItems: 'center',
-    padding: spacing.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   menuContainer: {
     flexDirection: 'row',
