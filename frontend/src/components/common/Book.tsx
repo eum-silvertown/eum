@@ -1,5 +1,6 @@
 import Lecture from '@components/main/Lecture';
 import {useBookModalStore} from '@store/useBookModalStore';
+import {spacing} from '@theme/spacing';
 import {useRef} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 
@@ -73,7 +74,9 @@ export default Book;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    width: '20%',
-    height: 400,
+    width: '25%',
+    height: undefined,
+    aspectRatio: 0.95,
+    paddingHorizontal: spacing.xl,
   },
 });

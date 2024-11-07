@@ -1,4 +1,3 @@
-import ScreenInfo from '@components/common/ScreenInfo';
 import FileContainer from '@components/questionBox/FileContainer';
 import FileOptionModal from '@components/questionBox/FileOptionModal';
 import FolderHeader from '@components/questionBox/FolderHeader';
@@ -9,9 +8,12 @@ import {
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
 import {borderRadius} from '@theme/borderRadius';
+import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
 import React, {useEffect} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
+import {colors} from 'src/hooks/useColors';
 import {useModal} from 'src/hooks/useModal';
 import {getFolder, getRootFolder} from 'src/services/questionBox';
 
@@ -65,7 +67,6 @@ function QuestionBoxScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <ScreenInfo title="문제 보관함" />
       <View style={styles.contentContainer}>
         {cutFolderId !== 0 && <MoveMenu />}
         <FolderHeader />
@@ -103,11 +104,14 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-  },
-  header: {
-    marginBottom: spacing.lg,
+    backgroundColor: 'white',
+    borderWidth: borderWidth.sm,
+    borderRadius: borderRadius.lg,
+    borderColor: `${colors.light.background.main}7f`,
+    elevation: getResponsiveSize(2),
   },
   fileList: {
+    flex: 1,
     flexWrap: 'wrap',
     flexDirection: 'row',
   },

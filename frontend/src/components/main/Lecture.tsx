@@ -5,6 +5,7 @@ import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import type {LectureType} from '@store/useLectureStore'; // useLectureStore에서 Lecture 타입을 가져옴
+import {colors} from 'src/hooks/useColors';
 
 interface LectureProps {
   item: LectureType;
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: 'white',
-    borderColor: 'gray',
+    borderColor: `${colors.light.borderColor.cardBorder}7f`,
     borderRadius: borderRadius.sm,
     borderWidth: borderWidth.sm,
   },
