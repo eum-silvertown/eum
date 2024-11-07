@@ -42,7 +42,7 @@ public class ExamController {
             if (roleType == RoleType.STUDENT) {
                 throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
             }
-            Long examId = examService.creerExam(examDTO);
+            Long examId = examService.createExam(examDTO);
             return CommonResponse.success(examId, "시험 생성 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);

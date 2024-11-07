@@ -5,7 +5,7 @@ import com.eum.lecture_service.command.entity.exam.Exam;
 
 public interface ExamService {
 
-	Long creerExam(ExamDto examDto);
+	Long createExam(ExamDto examDto);
 
 	Long updateExam(Long examId, ExamDto examDto);
 

@@ -1,15 +1,16 @@
-package com.eum.lecture_service.command.dto.lecture;
+package com.eum.lecture_service.event.event.lecture;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@Builder
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LectureScheduleDto {
-    private String day;
-    private Long period;
+@Builder
+public class LectureDeletedEvent {
+	private Long lectureId;
 }

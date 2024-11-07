@@ -1,15 +1,15 @@
-package com.eum.lecture_service.command.dto.lecture;
+package com.eum.lecture_service.query.document.lectureInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class LectureScheduleDto {
+@AllArgsConstructor
+@Builder
+public class ScheduleInfo {
     private String day;
     private Long period;
 }
