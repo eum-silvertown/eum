@@ -1,12 +1,12 @@
 import React from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import {Text} from '@components/common/Text';
+import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import postit from '@assets/images/postit.png';
-import { spacing } from '@theme/spacing';
-import { getResponsiveSize } from '@utils/responsive';
+import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { useModal } from 'src/hooks/useModal';
+import {iconSize} from '@theme/iconSize';
+import {useModal} from 'src/hooks/useModal';
 import NoticeCreateModal from './NoticeCreateModal';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 
@@ -17,11 +17,16 @@ type NoticeData = {
 
 type NoticeProps = {
   isTeacher: boolean;
+  lectureId?: number;
   notices?: NoticeData[];
 };
 
-function Notice({ isTeacher, notices = [] }: NoticeProps): React.JSX.Element {
-  const { open } = useModal();
+function Notice({
+  isTeacher,
+  lectureId,
+  notices = [],
+}: NoticeProps): React.JSX.Element {
+  const {open} = useModal();
   const displayedNotices = notices.slice(0, 3); // 최대 3개의 공지사항만 표시
 
   return (
@@ -33,7 +38,7 @@ function Notice({ isTeacher, notices = [] }: NoticeProps): React.JSX.Element {
         {isTeacher && (
           <TouchableOpacity
             onPress={() => {
-              open(<NoticeCreateModal />, {
+              open(<NoticeCreateModal lectureId={lectureId} />, {
                 title: '공지사항 생성',
                 onClose: () => {
                   console.log('공지사항 생성 닫기');
@@ -45,11 +50,15 @@ function Notice({ isTeacher, notices = [] }: NoticeProps): React.JSX.Element {
         )}
       </View>
       <View style={styles.noticeLayout}>
-        {Array.from({ length: 3 }).map((_, index) => {
+        {Array.from({length: 3}).map((_, index) => {
           const notice = displayedNotices[index];
           return (
             <View key={index} style={styles.imageWrapper}>
-              <Image source={postit} alt="postit" style={styles.imageContainer} />
+              <Image
+                source={postit}
+                alt="postit"
+                style={styles.imageContainer}
+              />
               <View style={styles.textIconContainer}>
                 <Text style={styles.overlayText}>
                   {notice ? notice.title : '등록된 공지가 없습니다.'}
@@ -60,7 +69,9 @@ function Notice({ isTeacher, notices = [] }: NoticeProps): React.JSX.Element {
                   </TouchableOpacity>
                 )}
               </View>
-              {notice && <Text style={styles.noticeContent}>{notice.content}</Text>}
+              {notice && (
+                <Text style={styles.noticeContent}>{notice.content}</Text>
+              )}
             </View>
           );
         })}
@@ -115,7 +126,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   cancelIcon: {
-    marginLeft: '46%',
+    right: 4,
   },
 });
 

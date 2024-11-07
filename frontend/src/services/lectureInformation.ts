@@ -36,7 +36,7 @@ export const updateLectureDetail = async (
 ): Promise<UpdateLectureResponse> => {
   try {
     console.log('강의 수정 요청 데이터:', lectureData);
-    const { data } = await axios.put<ApiResponse<UpdateLectureResponse>>(
+    const {data} = await axios.put<ApiResponse<UpdateLectureResponse>>(
       `/api/lecture/${lectureId}`,
       lectureData,
     );
@@ -74,14 +74,14 @@ export type ScheduleType = {
 };
 
 export type NoticeType = {
-  noticeId: string;
+  noticeId: number;
   title: string;
   content: string;
   createdAt: string;
 };
 
 export type ExamType = {
-  examId: string;
+  examId: number;
   title: string;
   startTime: string;
   endTime: string;
@@ -89,7 +89,7 @@ export type ExamType = {
 };
 
 export type HomeworkType = {
-  homeworkId: string;
+  homeworkId: number;
   title: string;
   startTime: string;
   endTime: string;
@@ -103,7 +103,7 @@ export type LessonType = {
 };
 
 export type LectureDetailType = {
-  _id: string;
+  _id: number;
   title: string;
   subject: string;
   backgroundColor: string;
@@ -121,7 +121,7 @@ export type LectureDetailType = {
 };
 
 export const getLectureDetail = async (
-  lectureId: string,
+  lectureId: number,
 ): Promise<LectureDetailType> => {
   console.log(`강의 상세 조회 요청: lectureId = ${lectureId}`);
 
@@ -143,19 +143,19 @@ export const getLectureDetail = async (
         photo: 'src/assets/images/teacher.png',
       },
       schedule: [
-        { day: '월요일', period: 2 },
-        { day: '수요일', period: 4 },
-        { day: '금요일', period: 1 },
+        {day: '월요일', period: 2},
+        {day: '수요일', period: 4},
+        {day: '금요일', period: 1},
       ],
       notices: [
         {
-          noticeId: '001',
+          noticeId: 1,
           title: '기말고사 준비 안내',
           content: '기말고사 날짜는 12월 1일입니다. 범위는 전체 단원입니다.',
           createdAt: '2024-11-10T08:00:00Z',
         },
         {
-          noticeId: '002',
+          noticeId: 2,
           title: '보충 수업 안내',
           content: '보충 수업이 금요일 오후 3시에 진행됩니다.',
           createdAt: '2024-11-03T08:00:00Z',
@@ -163,42 +163,42 @@ export const getLectureDetail = async (
       ],
       exams: [
         {
-          examId: '1',
+          examId: 1,
           title: '중간고사',
           startTime: '2024-10-20T08:30:00Z',
           endTime: '2024-10-20T10:30:00Z',
           questions: [5, 12, 20],
         },
         {
-          examId: '2',
+          examId: 2,
           title: '기말고사',
           startTime: '2024-12-01T09:00:00Z',
           endTime: '2024-12-01T11:00:00Z',
           questions: [8, 15, 23],
         },
         {
-          examId: '3',
+          examId: 3,
           title: '복습 시험',
           startTime: '2024-12-10T13:00:00Z',
           endTime: '2024-12-10T14:30:00Z',
           questions: [16, 18, 21],
         },
         {
-          examId: '4',
+          examId: 4,
           title: '연습 문제 풀이',
           startTime: '2024-11-15T10:00:00Z',
           endTime: '2024-11-15T11:00:00Z',
           questions: [9, 14, 27],
         },
         {
-          examId: '5',
+          examId: 5,
           title: '모의고사',
           startTime: '2024-11-20T09:30:00Z',
           endTime: '2024-11-20T12:00:00Z',
           questions: [11, 22, 33],
         },
         {
-          examId: '6',
+          examId: 6,
           title: '실전 대비 시험',
           startTime: '2024-12-05T14:00:00Z',
           endTime: '2024-12-05T16:00:00Z',
@@ -207,42 +207,42 @@ export const getLectureDetail = async (
       ],
       homework: [
         {
-          homeworkId: '1',
+          homeworkId: 1,
           title: '수학 문제 풀이 숙제 1',
           startTime: '2024-10-25T08:00:00Z',
           endTime: '2024-10-26T08:00:00Z',
           questions: [2, 3, 7],
         },
         {
-          homeworkId: '2',
+          homeworkId: 2,
           title: '수학 문제 풀이 숙제 2',
           startTime: '2024-10-27T08:00:00Z',
           endTime: '2024-10-28T08:00:00Z',
           questions: [5, 6, 8],
         },
         {
-          homeworkId: '3',
+          homeworkId: 3,
           title: '수학 문제 풀이 숙제 3',
           startTime: '2024-10-29T08:00:00Z',
           endTime: '2024-10-30T08:00:00Z',
           questions: [1, 4, 9],
         },
         {
-          homeworkId: '4',
+          homeworkId: 4,
           title: '수학 문제 풀이 숙제 4',
           startTime: '2024-10-31T08:00:00Z',
           endTime: '2024-11-07T08:00:00Z',
           questions: [2, 10, 11],
         },
         {
-          homeworkId: '5',
+          homeworkId: 5,
           title: '수학 문제 풀이 숙제 5',
           startTime: '2024-11-02T08:00:00Z',
           endTime: '2024-11-08T08:00:00Z',
           questions: [12, 13, 14],
         },
         {
-          homeworkId: '6',
+          homeworkId: 6,
           title: '수학 문제 풀이 숙제 6',
           startTime: '2024-11-04T08:00:00Z',
           endTime: '2024-11-05T08:00:00Z',
@@ -286,7 +286,7 @@ export const getLectureDetail = async (
     return dummydata;
 
     // eslint-disable-next-line no-unreachable
-    const { data } = await axios.get<{
+    const {data} = await axios.get<{
       status: string;
       data: LectureDetailType;
       message: string;
@@ -295,7 +295,6 @@ export const getLectureDetail = async (
     console.log('강의 상세 조회 응답:', data);
 
     return data.data;
-
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error Message:', error.message);
@@ -330,7 +329,7 @@ export type LectureStudentDetailType = {
 };
 
 export const getStudentLectureDetail = async (
-  lectureId: string,
+  lectureId: number,
 ): Promise<LectureStudentDetailType> => {
   console.log(`학생용 강의 상세 조회 요청: lectureId = ${lectureId}`);
   try {
@@ -349,7 +348,7 @@ export const getStudentLectureDetail = async (
     return dummydata;
 
     // eslint-disable-next-line no-unreachable
-    const { data } = await axios.get<{
+    const {data} = await axios.get<{
       status: string;
       data: LectureStudentDetailType;
       message: string;
@@ -358,7 +357,6 @@ export const getStudentLectureDetail = async (
     console.log('학생용 강의 상세 조회 응답:', data);
 
     return data.data;
-
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error Message:', error.message);
@@ -383,7 +381,7 @@ export type StudentAvgScoresType = {
 };
 
 export type StudentType = {
-  studentId: string;
+  studentId: number;
   studentImage: string;
   studentName: string;
   studentScores: StudentAvgScoresType;
@@ -401,14 +399,14 @@ export type LectureTeacherDetailType = {
 };
 
 export const getTeacherLectureDetail = async (
-  lectureId: string,
+  lectureId: number,
 ): Promise<LectureTeacherDetailType> => {
   console.log(`선생님용 강의 상세 조회 요청: lectureId = ${lectureId}`);
   try {
     const dummydata = {
       students: [
         {
-          studentId: 'student_id',
+          studentId: 1,
           studentImage: 'path/to/student.jpg',
           studentName: '홍길동',
           studentScores: {
@@ -418,7 +416,7 @@ export const getTeacherLectureDetail = async (
           },
         },
         {
-          studentId: 'student_id_2',
+          studentId: 2,
           studentImage: 'path/to/student2.jpg',
           studentName: '김철수',
           studentScores: {
@@ -428,7 +426,7 @@ export const getTeacherLectureDetail = async (
           },
         },
         {
-          studentId: 'student_id',
+          studentId: 3,
           studentImage: 'path/to/student.jpg',
           studentName: '홍길동',
           studentScores: {
@@ -438,7 +436,7 @@ export const getTeacherLectureDetail = async (
           },
         },
         {
-          studentId: 'student_id_2',
+          studentId: 4,
           studentImage: 'path/to/student2.jpg',
           studentName: '김철수',
           studentScores: {
@@ -448,7 +446,7 @@ export const getTeacherLectureDetail = async (
           },
         },
         {
-          studentId: 'student_id',
+          studentId: 5,
           studentImage: 'path/to/student.jpg',
           studentName: '홍길동',
           studentScores: {
@@ -458,7 +456,7 @@ export const getTeacherLectureDetail = async (
           },
         },
         {
-          studentId: 'student_id_2',
+          studentId: 6,
           studentImage: 'path/to/student2.jpg',
           studentName: '김철수',
           studentScores: {
@@ -476,7 +474,7 @@ export const getTeacherLectureDetail = async (
     };
     return dummydata;
     // eslint-disable-next-line no-unreachable
-    const { data } = await axios.get<{
+    const {data} = await axios.get<{
       status: string;
       data: LectureTeacherDetailType;
       message: string;
@@ -485,7 +483,6 @@ export const getTeacherLectureDetail = async (
     console.log('선생님용 강의 상세 조회 응답:', data.message);
 
     return data.data;
-
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error Message:', error.message);

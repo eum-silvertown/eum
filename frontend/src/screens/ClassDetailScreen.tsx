@@ -1,5 +1,5 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { spacing } from '@theme/spacing';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -10,12 +10,19 @@ import Teacher from '@components/classDetail/Teacher';
 import OverviewForTeacher from '@components/classDetail/OverviewForTeacher';
 
 import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
-import { getLectureDetail, getStudentLectureDetail, getTeacherLectureDetail, LectureDetailType, LectureStudentDetailType, LectureTeacherDetailType } from 'src/services/lectureInformation';
-import { useQuery } from '@tanstack/react-query';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { useFocusEffect } from '@react-navigation/native';
+import {
+  getLectureDetail,
+  getStudentLectureDetail,
+  getTeacherLectureDetail,
+  LectureDetailType,
+  LectureStudentDetailType,
+  LectureTeacherDetailType,
+} from 'src/services/lectureInformation';
+import {useQuery} from '@tanstack/react-query';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface ClassDetailScreenProp {
   closeBook: () => void;
@@ -24,7 +31,6 @@ interface ClassDetailScreenProp {
 function ClassDetailScreen({
   closeBook,
 }: ClassDetailScreenProp): React.JSX.Element {
-
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
   );
@@ -33,19 +39,19 @@ function ClassDetailScreen({
     setCurrentScreen('ClassDetailScreen');
   });
 
-  const lectureId = '1';
+  const lectureId = 1;
 
-  const { data: lectureDetail } = useQuery<LectureDetailType>({
+  const {data: lectureDetail} = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId),
   });
 
-  const { data: studentLectureDetail } = useQuery<LectureStudentDetailType>({
+  const {data: studentLectureDetail} = useQuery<LectureStudentDetailType>({
     queryKey: ['studentLectureDetail', lectureId],
     queryFn: () => getStudentLectureDetail(lectureId),
   });
 
-  const { data: teacherLectureDetail } = useQuery<LectureTeacherDetailType>({
+  const {data: teacherLectureDetail} = useQuery<LectureTeacherDetailType>({
     queryKey: ['teacherLectureDetail', lectureId],
     queryFn: () => getTeacherLectureDetail(lectureId),
   });
@@ -56,7 +62,6 @@ function ClassDetailScreen({
   console.log('studentLectureDetail', studentLectureDetail);
   console.log('teacherLectureDetail', teacherLectureDetail);
 
-
   if (isTeacher) {
     // 선생님용
     return (
@@ -64,7 +69,8 @@ function ClassDetailScreen({
         <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
           <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
         </TouchableOpacity>
-        <ClassHeader isTeacher={isTeacher}
+        <ClassHeader
+          isTeacher={isTeacher}
           lectureId={lectureDetail?._id}
           title={lectureDetail?.title}
           subtitle={lectureDetail?.subject}
@@ -77,18 +83,28 @@ function ClassDetailScreen({
         <View style={styles.content}>
           <View style={styles.firstRow}>
             <View style={styles.overviewLayout}>
-              <OverviewForTeacher isTeacher={isTeacher}
-                homeworkAvgScore={teacherLectureDetail?.classAverageScores.homeworkAvgScore}
-                testAvgScore={teacherLectureDetail?.classAverageScores.testAvgScore}
-                attitudeAvgScore={teacherLectureDetail?.classAverageScores.attitudeAvgScore}
+              <OverviewForTeacher
+                isTeacher={isTeacher}
+                homeworkAvgScore={
+                  teacherLectureDetail?.classAverageScores.homeworkAvgScore
+                }
+                testAvgScore={
+                  teacherLectureDetail?.classAverageScores.testAvgScore
+                }
+                attitudeAvgScore={
+                  teacherLectureDetail?.classAverageScores.attitudeAvgScore
+                }
               />
-              <Notice isTeacher={isTeacher}
+              <Notice
+                lectureId={lectureDetail?._id}
+                isTeacher={isTeacher}
                 notices={lectureDetail?.notices}
               />
             </View>
             <View style={styles.mainContentLayout}>
               <View style={styles.teacherLayout}>
-                <Teacher isTeacher={isTeacher}
+                <Teacher
+                  isTeacher={isTeacher}
                   name={lectureDetail?.teacher.name}
                   telephone={lectureDetail?.teacher.telephone}
                   email={lectureDetail?.teacher.email}
@@ -119,7 +135,8 @@ function ClassDetailScreen({
       <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
         <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
       </TouchableOpacity>
-      <ClassHeader isTeacher={isTeacher}
+      <ClassHeader
+        isTeacher={isTeacher}
         lectureId={lectureDetail?._id}
         title={lectureDetail?.title}
         subtitle={lectureDetail?.subject}
@@ -137,13 +154,12 @@ function ClassDetailScreen({
               examCnt={studentLectureDetail?.overview.examCnt}
               problemBoxCnt={studentLectureDetail?.overview.problemBoxCnt}
             />
-            <Notice isTeacher={isTeacher}
-              notices={lectureDetail?.notices}
-            />
+            <Notice isTeacher={isTeacher} notices={lectureDetail?.notices} />
           </View>
           <View style={styles.mainContentLayout}>
             <View style={styles.teacherLayout}>
-              <Teacher isTeacher={isTeacher}
+              <Teacher
+                isTeacher={isTeacher}
                 name={lectureDetail?.teacher.name}
                 telephone={lectureDetail?.teacher.telephone}
                 email={lectureDetail?.teacher.email}

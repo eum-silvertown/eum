@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { Text } from '@components/common/Text';
-import { spacing } from '@theme/spacing';
+import React, {useState} from 'react';
+import {View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text} from '@components/common/Text';
+import {spacing} from '@theme/spacing';
 import LeftArrowOffIcon from '@assets/icons/leftArrowOffIcon.svg';
 import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 import moment from 'moment';
 
 type HomeworkItem = {
-  homeworkId: string;
+  homeworkId: number;
   title: string;
   startTime: string;
   endTime: string;
   questions: number[];
 };
+
+type HomeworkWithStatus = HomeworkItem & {status: 'D-Day' | '종료' | '일반'};
 
 type HomeworkProps = {
   homework?: HomeworkItem[];
@@ -33,13 +35,12 @@ function getHomeworkStatus(endTime: string): 'D-Day' | '종료' | '일반' {
   return '일반';
 }
 
-function Homework({ homework = [] }: HomeworkProps): React.JSX.Element {
+function Homework({homework = []}: HomeworkProps): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // 숙제 리스트를 endTime 및 D-Day 상태에 따라 정렬
-  const sortedHomework = homework
-    .map((item) => ({
+  const sortedHomework: HomeworkWithStatus[] = homework
+    .map(item => ({
       ...item,
       status: getHomeworkStatus(item.endTime),
     }))
@@ -47,34 +48,44 @@ function Homework({ homework = [] }: HomeworkProps): React.JSX.Element {
       const aMoment = moment(a.endTime);
       const bMoment = moment(b.endTime);
 
-      if (a.status === 'D-Day' && b.status !== 'D-Day') { return -1; }
-      if (a.status !== 'D-Day' && b.status === 'D-Day') { return 1; }
+      if (a.status === 'D-Day' && b.status !== 'D-Day') {
+        return -1;
+      }
+      if (a.status !== 'D-Day' && b.status === 'D-Day') {
+        return 1;
+      }
 
-      // D-Day가 아니거나 동일한 경우, endTime 기준으로 정렬 (오름차순)
       return aMoment.diff(bMoment);
     });
 
   const totalPages = Math.ceil(sortedHomework.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = sortedHomework.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = sortedHomework.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
-  const renderItem = ({ item }: { item: HomeworkItem & { status: string } }) => {
+  const renderItem = ({item}: {item: HomeworkWithStatus}) => {
     const backgroundColor =
       item.status === 'D-Day'
         ? '#ffe6e6'
         : item.status === '종료'
-          ? '#f0f0f0'
-          : '#fdfeff';
+        ? '#f0f0f0'
+        : '#fdfeff';
 
     const dueDateDisplay =
       item.status === 'D-Day'
         ? `${moment(item.endTime).format('MM-DD')} (D-Day)`
         : item.status === '종료'
-          ? `${moment(item.endTime).format('MM-DD')} (종료)`
-          : `${moment(item.endTime).format('MM-DD')} (D-${moment(item.endTime).diff(moment(), 'days')})`;
+        ? `${moment(item.endTime).format('MM-DD')} (종료)`
+        : `${moment(item.endTime).format('MM-DD')} (D-${moment(
+            item.endTime,
+          ).diff(moment(), 'days')})`;
 
     return (
-      <TouchableOpacity style={[styles.item, { backgroundColor }]} onPress={() => handleItemPress(item)}>
+      <TouchableOpacity
+        style={[styles.item, {backgroundColor}]}
+        onPress={() => handleItemPress(item)}>
         <View style={[styles.textContainer, styles.idContainer]}>
           <Text variant="caption" weight="bold">
             {item.homeworkId}
@@ -123,15 +134,22 @@ function Homework({ homework = [] }: HomeworkProps): React.JSX.Element {
         </Text>
         {totalPages > 1 && (
           <View style={styles.pagination}>
-            <TouchableOpacity onPress={handlePrevPage} disabled={currentPage === 1}>
+            <TouchableOpacity
+              onPress={handlePrevPage}
+              disabled={currentPage === 1}>
               {currentPage === 1 ? (
                 <LeftArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
               ) : (
                 <LeftArrowOnIcon width={iconSize.sm} height={iconSize.sm} />
               )}
             </TouchableOpacity>
-            <Text style={styles.pageIndicator}>{`${currentPage} / ${totalPages}`}</Text>
-            <TouchableOpacity onPress={handleNextPage} disabled={currentPage === totalPages}>
+            <Text
+              style={
+                styles.pageIndicator
+              }>{`${currentPage} / ${totalPages}`}</Text>
+            <TouchableOpacity
+              onPress={handleNextPage}
+              disabled={currentPage === totalPages}>
               {currentPage === totalPages ? (
                 <RightArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
               ) : (
@@ -146,18 +164,18 @@ function Homework({ homework = [] }: HomeworkProps): React.JSX.Element {
           paginatedData.length > 0
             ? paginatedData
             : [
-              {
-                homeworkId: 'no-homework',
-                title: '등록된 숙제가 없습니다',
-                startTime: '',
-                endTime: '',
-                questions: [],
-                status: '일반',
-              },
-            ]
+                {
+                  homeworkId: 0,
+                  title: '등록된 숙제가 없습니다',
+                  startTime: '',
+                  endTime: '',
+                  questions: [],
+                  status: '일반',
+                },
+              ]
         }
         renderItem={renderItem}
-        keyExtractor={(item) => item.homeworkId}
+        keyExtractor={item => item.homeworkId.toString()}
       />
     </View>
   );

@@ -1,21 +1,21 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { Text } from '@components/common/Text';
-import { useNavigation } from '@react-navigation/native';
-import { spacing } from '@theme/spacing';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {Text} from '@components/common/Text';
+import {useNavigation} from '@react-navigation/native';
+import {spacing} from '@theme/spacing';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type ClassHeaderProps = {
   isTeacher: boolean;
-  lectureId?: string;
+  lectureId?: number;
   title?: string;
   subtitle?: string;
-  schedule?: { day: string; period: number }[];
+  schedule?: {day: string; period: number}[];
   semester?: number;
   grade?: number;
   backgroundColor?: string;
@@ -53,7 +53,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      { cancelable: true }
+      {cancelable: true},
     );
   };
 
@@ -64,7 +64,7 @@ function ClassHeader({
       [
         {
           text: '수정하기',
-          onPress: () => console.log("수정하기 선택됨"),
+          onPress: () => console.log('수정하기 선택됨'),
         },
         {
           text: '삭제하기',
@@ -76,7 +76,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      { cancelable: true }
+      {cancelable: true},
     );
   };
 
@@ -97,11 +97,8 @@ function ClassHeader({
           {schedule?.map((item, index) => (
             <View
               key={index}
-              style={[
-                styles.scheduleChip,
-                { backgroundColor: backgroundColor },
-              ]}>
-              <Text style={[styles.scheduleChipText, { color: fontColor }]}>
+              style={[styles.scheduleChip, {backgroundColor: backgroundColor}]}>
+              <Text style={[styles.scheduleChipText, {color: fontColor}]}>
                 {item.day}
               </Text>
             </View>
@@ -120,7 +117,9 @@ function ClassHeader({
           <Text style={styles.enterButtonText}>수업 입장</Text>
         </TouchableOpacity>
         {isTeacher && (
-          <TouchableOpacity style={styles.menuIconContainer} onPress={showOptions}>
+          <TouchableOpacity
+            style={styles.menuIconContainer}
+            onPress={showOptions}>
             <VerticalMenuIcon width={iconSize.md} height={iconSize.md} />
           </TouchableOpacity>
         )}
