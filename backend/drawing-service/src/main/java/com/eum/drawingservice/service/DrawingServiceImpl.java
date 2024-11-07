@@ -1,0 +1,36 @@
+package com.eum.drawingservice.service;
+
+import com.eum.drawingservice.dto.DrawingRequestDTO;
+import com.eum.drawingservice.entity.Drawing;
+import com.eum.drawingservice.repository.DrawingRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class DrawingServiceImpl implements DrawingService {
+
+    private final DrawingRepository drawingRepository;
+
+    @Override
+    public void saveDrawing(DrawingRequestDTO requestDTO) {
+        Drawing existingDrawing = drawingRepository.findByMemberIdAndLessonIdAndQuestionId(
+                String.valueOf(requestDTO.getMemberId()),
+                String.valueOf(requestDTO.getLessonId()),
+                String.valueOf(requestDTO.getQuestionId())
+        ).orElse(null);
+
+        if(existingDrawing == null) {
+            existingDrawing = Drawing.builder()
+                    .memberId(String.valueOf(requestDTO.getMemberId()))
+                    .lessonId(String.valueOf(requestDTO.getLessonId()))
+                    .questionId(String.valueOf(requestDTO.getQuestionId()))
+                    .drawingData(requestDTO.getDrawingData())
+                    .build();
+        } else {
+            existingDrawing.setDrawingData(requestDTO.getDrawingData());
+        }
+
+        drawingRepository.save(existingDrawing);
+    }
+}
