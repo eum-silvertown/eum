@@ -596,7 +596,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     flex: 1,
     borderRadius: spacing.sm,
-    height: getResponsiveSize(30),
+    height: getResponsiveSize(40),
     justifyContent: 'center',
     marginBottom: spacing.md,
     backgroundColor: '#f2f4f8',
@@ -614,7 +614,7 @@ const styles = StyleSheet.create({
   },
   genderContainer: {
     flex: 1,
-    height: getResponsiveSize(30),
+    height: getResponsiveSize(40),
     flexDirection: 'row',
     marginVertical: spacing.md,
   },
