@@ -1,59 +1,23 @@
-import {create} from 'zustand';
-import * as Keychain from 'react-native-keychain';
+import { create } from 'zustand';
 
 interface AuthState {
   isLoggedIn: boolean;
+  setIsLoggedIn: (status: boolean) => void;
   username: string | null;
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  autoLogin: () => Promise<void>;
+  setUsername: (username: string) => void;
+  role: string | null;
+  setRole: (role: string) => void;
+  userProfileImage: string | null;
+  setUserProfileImage: (image: string) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
+  setIsLoggedIn: (status) => set({ isLoggedIn: status }),
   username: null,
-
-  // 로그인 기능
-  login: async (username: string, password: string): Promise<void> => {
-    try {
-      // 키체인에 로그인 정보 저장
-      await Keychain.setGenericPassword(username, password);
-      set({
-        isLoggedIn: true,
-        username,
-      });
-    } catch (error) {
-      console.error('Failed to save login credentials', error);
-    }
-  },
-
-  // 로그아웃 기능
-  logout: async (): Promise<void> => {
-    try {
-      // 키체인에서 로그인 정보 삭제
-      await Keychain.resetGenericPassword();
-      set({
-        isLoggedIn: false,
-        username: null,
-      });
-    } catch (error) {
-      console.error('Failed to reset login credentials', error);
-    }
-  },
-
-  // 자동 로그인 기능
-  autoLogin: async (): Promise<void> => {
-    try {
-      // 키체인에서 로그인 정보 불러오기
-      const credentials = await Keychain.getGenericPassword();
-      if (credentials) {
-        set({
-          isLoggedIn: true,
-          username: credentials.username,
-        });
-      }
-    } catch (error) {
-      console.error('Failed to load login credentials', error);
-    }
-  },
+  setUsername: (username) => set({ username }),
+  role: null,
+  setRole: (role) => set({ role }),
+  userProfileImage: null,
+  setUserProfileImage: (image) => set({ userProfileImage: image }),
 }));
