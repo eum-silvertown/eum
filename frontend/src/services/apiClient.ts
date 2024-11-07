@@ -19,8 +19,9 @@ const authApiClient = axios.create({
 // 요청 인터셉터
 authApiClient.interceptors.request.use(async (config) => {
   const {accessToken} = await getToken();
+  console.log("저장소에서 가져온 액세스 토큰:" , accessToken)
   if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+    config.headers.Authorization = `${accessToken}`;
   }
   return config;
 });
