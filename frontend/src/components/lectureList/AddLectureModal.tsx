@@ -17,7 +17,7 @@ import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
-import Lecture from '@components/main/Lecture';
+import LectureCreateBook from '@components/main/LectureCreateBook';
 import {getResponsiveSize} from '@utils/responsive';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import StatusMessage from '@components/account/StatusMessage';
@@ -185,7 +185,7 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
       })),
     };
 
-    console.log('Lecture Data:', lectureData); // 콘솔에 JSON 데이터 출력
+    console.log('LectureCreateBook Data:', lectureData); // 콘솔에 JSON 데이터 출력
     close();
   };
 
@@ -380,7 +380,7 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
               생성된 수업 예시
             </Text>
             <View style={{alignItems: 'center'}}>
-              {lecturePreview && <Lecture item={lecturePreview} />}
+              {lecturePreview && <LectureCreateBook item={lecturePreview} />}
             </View>
             <View>
               <Text
@@ -473,10 +473,10 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,    
+    flex: 1,
     gap: spacing.md,
   },
-  content: {    
+  content: {
     flex: 1,
     flexDirection: 'row',
     gap: spacing.xl,
@@ -558,6 +558,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    height: getResponsiveSize(40), // 원하는 높이로 설정
   },
   picker: {
     flex: 1,
