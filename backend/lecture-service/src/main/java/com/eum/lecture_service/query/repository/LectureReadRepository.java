@@ -1,5 +1,6 @@
 package com.eum.lecture_service.query.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -14,6 +15,7 @@ public interface LectureReadRepository extends MongoRepository<LectureModel, Lon
 
 	List<LectureModel> findByYearAndSemester(Long year, Long semester);
 
-	List<LectureModel> findBySchedule_DayAndYearAndSemester(String day, Long year, Long semester);
+	Collection<LectureModel> findByClassIdAndSchedule_DayAndYearAndSemester(Long classId, String day, Long year, Long semester);
 
+	Collection<LectureModel> findByTeacherIdAndSchedule_DayAndYearAndSemester(Long memberId, String day, Long year, Long semester);
 }

@@ -14,6 +14,7 @@ import com.eum.lecture_service.query.document.TeacherOverviewModel;
 import com.eum.lecture_service.query.document.eventModel.TeacherModel;
 import com.eum.lecture_service.query.dto.lecture.LectureDetailResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureListResponse;
+import com.eum.lecture_service.query.dto.lecture.TodayDto;
 import com.eum.lecture_service.query.repository.LectureReadRepository;
 import com.eum.lecture_service.query.repository.StudentOverviewRepository;
 import com.eum.lecture_service.query.repository.StudentReadRepository;
@@ -39,21 +40,23 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 		LectureModel lecture = lectureReadRepository.findById(lectureId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
-		TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
-			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+		// TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
+		// 	.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
+
+		TeacherModel teacherModel = null;
 
 		if(ROLE_STUDENT.equals(role)) {
 			StudentOverviewModel studentOverviewModel = studentOverviewRepository.findByStudentIdAndClassId(memberId,
 					lecture.getClassId())
-				.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+				.orElseThrow(() -> new EumException(ErrorCode.STUDENTMODEL_NOT_FOUND));
 
 			return LectureDetailResponse.fromLectureModelForStudent(lecture,  teacherModel, studentOverviewModel);
 		}
 		else if(ROLE_TEACHER.equals(role)) {
-			TeacherOverviewModel teacherOverviewModel = teacherOverviewRepository.findByTeacherIdAndClassId(memberId,
-					lecture.getClassId())
-				.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
-
+			// TeacherOverviewModel teacherOverviewModel = teacherOverviewRepository.findByTeacherIdAndClassId(memberId,
+			// 		lecture.getClassId())
+			// 	.orElseThrow(() -> new EumException(ErrorCode.TEACHERMODEL_NOT_FOUND));
+			TeacherOverviewModel teacherOverviewModel = null;
 			return LectureDetailResponse.fromLectureModelForTeacher(lecture, teacherModel, teacherOverviewModel);
 		}
 		return null;
@@ -79,10 +82,21 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 
 
 	@Override
-	public List<LectureListResponse> getLectureListByDay(String day, Long year, Long semester) {
-		List<LectureModel> lectures = lectureReadRepository.findBySchedule_DayAndYearAndSemester(day, year, semester);
-		return lectures.stream()
-			.map(LectureListResponse::fromLectureModelWithPeriod)
-			.collect(Collectors.toList());
+	public List<LectureListResponse> getLectureListByDay(TodayDto todayDto, String role, Long memberId) {
+		if (ROLE_STUDENT.equals(role)) {
+			return studentReadRepository.findById(memberId)
+				.map(student -> lectureReadRepository.findByClassIdAndSchedule_DayAndYearAndSemester(
+						student.getClassId(), todayDto.getDay(), todayDto.getYear(), todayDto.getSemester())
+					.stream()
+					.map(LectureListResponse::fromLectureModelWithPeriod)
+					.collect(Collectors.toList()))
+				.orElseGet(Collections::emptyList);
+		} else if (ROLE_TEACHER.equals(role)) {
+			return lectureReadRepository.findByTeacherIdAndSchedule_DayAndYearAndSemester(
+					memberId, todayDto.getDay(), todayDto.getYear(), todayDto.getSemester()).stream()
+				.map(LectureListResponse::fromLectureModelWithPeriod)
+				.collect(Collectors.toList());
+		}
+		return Collections.emptyList();
 	}
 }
