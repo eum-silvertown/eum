@@ -28,7 +28,7 @@ function BookModal(): React.JSX.Element {
   const top = useSharedValue(bookPosition ? bookPosition.y - spacing.lg : 0);
   const left = useSharedValue(
     bookPosition && containerPosition
-      ? bookPosition.x - containerPosition.x
+      ? bookPosition.x - containerPosition.x + spacing.xl
       : 0,
   );
   const width = useSharedValue(bookPosition ? bookPosition.width : 0);
@@ -92,7 +92,7 @@ function BookModal(): React.JSX.Element {
         );
         left.value = withDelay(
           ANIM_DURATION * 2,
-          withTiming(bookPosition.x - containerPosition.x, {
+          withTiming(bookPosition.x - containerPosition.x + spacing.xl, {
             duration: ANIM_DURATION,
           }),
         );
