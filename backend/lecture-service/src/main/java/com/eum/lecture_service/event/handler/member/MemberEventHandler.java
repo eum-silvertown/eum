@@ -4,9 +4,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import com.eum.lecture_service.event.event.member.ClassCreatedEvent;
-import com.eum.lecture_service.event.event.member.StudentCreatedEvent;
+import com.eum.lecture_service.event.event.member.StudentInfoEvent;
 import com.eum.lecture_service.event.event.member.StudentInfoUpdatedEvent;
-import com.eum.lecture_service.event.event.member.TeacherCreatedEvent;
+import com.eum.lecture_service.event.event.member.TeacherInfoEvent;
 import com.eum.lecture_service.event.event.member.TeacherInfoUpdatedEvent;
 import com.eum.lecture_service.query.document.eventModel.ClassModel;
 import com.eum.lecture_service.query.document.eventModel.StudentModel;
@@ -28,7 +28,7 @@ public class MemberEventHandler {
 	private final StudentReadRepository studentReadRepository;
 
 	@KafkaListener(topics = "create_teacher", groupId = "lecture-group")
-	public void createTeacher(TeacherCreatedEvent event) {
+	public void createTeacher(TeacherInfoEvent event) {
 		TeacherModel teacher = TeacherModel.builder()
 			.teacherId(event.getTeacherId())
 			.name(event.getName())
@@ -68,7 +68,7 @@ public class MemberEventHandler {
 	}
 
 	@KafkaListener(topics = "create_student", groupId = "lecture-group")
-	public void createStudent(StudentCreatedEvent event) {
+	public void createStudent(StudentInfoEvent event) {
 		StudentModel student = StudentModel.builder()
 			.studentId(event.getStudentId())
 			.name(event.getName())
