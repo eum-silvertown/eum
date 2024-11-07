@@ -5,8 +5,8 @@ import {colors} from 'src/hooks/useColors';
 import {spacing} from '@theme/spacing';
 
 interface StatusMessageProps {
-  message: string; // 메시지 텍스트
-  status?: 'error' | 'success' | 'info';
+  message?: string | undefined; // 메시지 텍스트
+  status?: 'error' | 'success' | 'info' | '' ;
   style?: ViewStyle | TextStyle; // 추가 스타일
 }
 
