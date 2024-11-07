@@ -181,6 +181,35 @@ export const requestEmailVerification = async (email: string): Promise<any> => {
   }
 };
 
+// 이메일 인증 요청 (아이디 찾기)
+export const requestEmailVerificationId = async (
+  email: string,
+): Promise<any> => {
+  try {
+    return (await publicApiClient.post('/mail/auth/request/find-id', {email}))
+      .data;
+  } catch (error) {
+    return Promise.reject(handleApiError(error));
+  }
+};
+
+// 이메일 인증 요청 (비밀번호 찾기)
+export const requestEmailVerificationPassword = async (
+  email: string,
+  id: string,
+): Promise<any> => {
+  try {
+    return (
+      await publicApiClient.post('/mail/auth/request/find-password', {
+        email,
+        id,
+      })
+    ).data;
+  } catch (error) {
+    return Promise.reject(handleApiError(error));
+  }
+};
+
 // 이메일 인증번호 확인
 export const verifyEmailCode = async (
   email: string,
@@ -197,11 +226,17 @@ export const verifyEmailCode = async (
 };
 
 // 인증번호로 아이디 찾기
-export const findUsernameByVerificationCode = async (
-  verificationData: any,
+export const findIdByVerificationCode = async (
+  email: string,
+  verificationCode: string,
 ): Promise<any> => {
   try {
-    return await publicApiClient.post('/mail/find-username', verificationData);
+    const response = await publicApiClient.post('/mail/auth/find-id', {
+      email,
+      code: verificationCode,
+    });
+    
+    return response.data.data.id
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
@@ -209,10 +244,14 @@ export const findUsernameByVerificationCode = async (
 
 // 인증번호로 비밀번호 찾기
 export const resetPasswordByVerificationCode = async (
-  verificationData: any,
+  email: string,
+  verificationCode: string,
 ): Promise<any> => {
   try {
-    return await publicApiClient.post('/mail/reset-password', verificationData);
+    return await publicApiClient.post('/mail/auth/find-password', {
+      email,
+      code: verificationCode,
+    });
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
