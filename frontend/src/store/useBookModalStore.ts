@@ -37,7 +37,7 @@ type BookModalState = {
   clearBookPosition: () => void;
   clearBookInfo: () => void;
 
-  closeBook: (animDuration: number) => void;
+  closeBook: () => void;
 };
 
 export const useBookModalStore = create<BookModalState>((set, get) => ({
@@ -81,12 +81,8 @@ export const useBookModalStore = create<BookModalState>((set, get) => ({
     });
   },
 
-  closeBook: animDuration => {
+  closeBook: () => {
     const state = get();
     state.setIsBookOpened(false);
-    setTimeout(() => {
-      state.clearBookInfo();
-      state.clearBookPosition();
-    }, animDuration * 3);
   },
 }));

@@ -364,14 +364,9 @@ const MainTest = (): React.JSX.Element => {
         horizontal
         style={styles.scrollView}
         showsHorizontalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {x: new Animated.Value(0)}}}],
-          {
-            useNativeDriver: false,
-            listener: handleScroll,
-          },
-        )}
-        scrollEventThrottle={16}>
+        onScroll={handleScroll} // 직접 핸들러 함수를 연결
+        scrollEventThrottle={32} // 약 30fps로 이벤트 발생
+      >
         <View style={[styles.timeContainer, {width: totalContentWidth}]}>
           {renderTimeList()}
         </View>

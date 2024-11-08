@@ -1,14 +1,16 @@
-import {LayoutChangeEvent, Pressable, StyleSheet, View} from 'react-native';
+import {LayoutChangeEvent, StyleSheet, View} from 'react-native';
 import {useBookModalStore} from '@store/useBookModalStore';
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import Lecture from '@components/main/Lecture';
 import {spacing} from '@theme/spacing';
+import ClassDetailScreen from '@screens/ClassDetailScreen';
 
 function BookModal(): React.JSX.Element {
   const containerRef = useRef<View>(null);
@@ -19,7 +21,9 @@ function BookModal(): React.JSX.Element {
   const isBookOpened = useBookModalStore(state => state.isBookOpened);
   const bookPosition = useBookModalStore(state => state.bookPosition);
   const bookInfo = useBookModalStore(state => state.bookInfo);
-  const closeBook = useBookModalStore(state => state.closeBook);
+  const clearBookPosition = useBookModalStore(state => state.clearBookPosition);
+  const clearBookInfo = useBookModalStore(state => state.clearBookInfo);
+  const [renderDetail, setRenderDetail] = useState(false);
 
   // 애니메이션 속성
   const ANIM_DURATION = 300;
@@ -31,7 +35,9 @@ function BookModal(): React.JSX.Element {
       ? bookPosition.x - containerPosition.x + spacing.xl
       : 0,
   );
-  const width = useSharedValue(bookPosition ? bookPosition.width : 0);
+  const width = useSharedValue(
+    bookPosition ? bookPosition.width - spacing.xl * 2 : 0,
+  );
   const height = useSharedValue(bookPosition ? bookPosition.height : 0);
 
   // 표지 애니메이션 스타일
@@ -80,7 +86,12 @@ function BookModal(): React.JSX.Element {
             duration: ANIM_DURATION * 2,
           }),
         );
+        // 애니메이션이 끝나면 Detail Render
+        setTimeout(() => {
+          setRenderDetail(true);
+        }, ANIM_DURATION * 3);
       } else if (bookPosition && bookInfo) {
+        setRenderDetail(false);
         rotateY.value = withTiming(0, {
           duration: ANIM_DURATION * 2,
         });
@@ -98,7 +109,18 @@ function BookModal(): React.JSX.Element {
         );
         width.value = withDelay(
           ANIM_DURATION * 2,
-          withTiming(bookPosition.width, {duration: ANIM_DURATION}),
+          withTiming(
+            bookPosition.width - spacing.xl * 2,
+            {
+              duration: ANIM_DURATION,
+            },
+            finished => {
+              if (finished) {
+                runOnJS(clearBookInfo)();
+                runOnJS(clearBookPosition)();
+              }
+            },
+          ),
         );
         height.value = withDelay(
           ANIM_DURATION * 2,
@@ -109,6 +131,8 @@ function BookModal(): React.JSX.Element {
   }, [
     bookInfo,
     bookPosition,
+    clearBookInfo,
+    clearBookPosition,
     containerPosition,
     height,
     isBookOpened,
@@ -159,10 +183,17 @@ function BookModal(): React.JSX.Element {
           });
         }
       }}>
+      <View
+        style={{
+          position: 'absolute',
+          zIndex: 1,
+          width: '100%',
+          height: '100%',
+        }}>
+        {renderDetail && <ClassDetailScreen />}
+      </View>
       <Animated.View style={[bookStyles]}>
-        <Pressable
-          onPress={() => closeBook(ANIM_DURATION)}
-          style={styles.bookContainer}>
+        <View style={styles.bookContainer}>
           <View style={styles.rightPageContainer}>
             {/* 오른쪽 페이지 (펼침)*/}
             <View style={styles.page}>
@@ -190,7 +221,7 @@ function BookModal(): React.JSX.Element {
               <View style={[styles.content, styles.backContent]} />
             </Animated.View>
           </View>
-        </Pressable>
+        </View>
       </Animated.View>
     </View>
   );
