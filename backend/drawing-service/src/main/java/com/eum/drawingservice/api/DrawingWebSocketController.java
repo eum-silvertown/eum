@@ -38,4 +38,10 @@ public class DrawingWebSocketController {
             return;
         }
     }
+
+    @MessageMapping("/test")
+    public void test() {
+        messagingTemplate.convertAndSend("/topic/test", "SUCCESS HANGNIM!!");
+        System.out.println(">>> RECEIVED");
+    }
 }
