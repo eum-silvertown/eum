@@ -27,7 +27,7 @@ public class MemberEventHandler {
 	private final ClassReadRepository classReadRepository;
 	private final StudentReadRepository studentReadRepository;
 
-	@KafkaListener(topics = "create_teacher", groupId = "lecture-group", containerFactory = "teacherKafkaListenerContainerFactory")
+	@KafkaListener(topics = "create_teacher", groupId = "lecture-group")
 	public void createTeacher(TeacherInfoEvent event) {
 		TeacherModel teacher = TeacherModel.builder()
 			.teacherId(event.getTeacherId())
@@ -40,7 +40,7 @@ public class MemberEventHandler {
 		teacherReadRepository.save(teacher);
 	}
 
-	@KafkaListener(topics = "update_teacher", groupId = "lecture-group", containerFactory = "teacherUpdateKafkaListenerContainerFactory")
+	@KafkaListener(topics = "update_teacher", groupId = "lecture-group")
 	public void updateTeacher(TeacherInfoEvent event) {
 		teacherReadRepository.findById(event.getTeacherId()).ifPresentOrElse(
 			teacher -> {
@@ -55,7 +55,7 @@ public class MemberEventHandler {
 		);
 	}
 
-	@KafkaListener(topics = "create_class", groupId = "lecture-group", containerFactory = "classKafkaListenerContainerFactory")
+	@KafkaListener(topics = "create_class", groupId = "lecture-group")
 	public void createClass(ClassEvent event) {
 		ClassModel classModel = ClassModel.builder()
 			.classId(event.getClassId())
@@ -67,7 +67,7 @@ public class MemberEventHandler {
 		classReadRepository.save(classModel);
 	}
 
-	@KafkaListener(topics = "create_student", groupId = "lecture-group", containerFactory = "studentKafkaListenerContainerFactory")
+	@KafkaListener(topics = "create_student", groupId = "lecture-group")
 	public void createStudent(StudentInfoEvent event) {
 		StudentModel student = StudentModel.builder()
 			.studentId(event.getStudentId())
@@ -81,7 +81,7 @@ public class MemberEventHandler {
 		studentReadRepository.save(student);
 	}
 
-	@KafkaListener(topics = "update_student", groupId = "lecture-group", containerFactory = "studentUpdateKafkaListenerContainerFactory")
+	@KafkaListener(topics = "update_student", groupId = "lecture-group")
 	public void updateStudent(StudentInfoEvent event) {
 		studentReadRepository.findById(event.getStudentId()).ifPresentOrElse(
 			student -> {
