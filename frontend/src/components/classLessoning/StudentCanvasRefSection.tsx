@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
-import { Socket } from 'socket.io-client';
+import {useEffect, useState} from 'react';
+import {Canvas, Path, Skia, useCanvasRef} from '@shopify/react-native-skia';
+import {Socket} from 'socket.io-client';
 import pako from 'pako';
-import { StyleSheet, View } from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import base64 from 'react-native-base64';
 
 interface RightCanvasSectionProps {
   socket: Socket;
 }
 
-// Path 데이터 구조
 type PathData = {
   path: any;
   color: string;
   strokeWidth: number;
   opacity: number;
-  timestamp: number; // 단일 타임스탬프
+  timestamps: number[]; // 개별 경로의 timestamp 배열
 };
 
 // 오른쪽 캔버스 컴포넌트
@@ -35,25 +35,32 @@ function StudentCanvasRefSection({
     });
 
     // pathGroups_data 이벤트를 통해 2초마다 전체 데이터를 수신하고 상태에 저장
-    socket.on('left_to_right', (compressedData: Uint8Array) => {
+    socket.on('left_to_right', (base64EncodedData: string) => {
       try {
-        const decompressedData = JSON.parse(
-          pako.inflate(compressedData, { to: 'string' }),
+        // 1. Base64 디코딩 후 Uint8Array로 변환
+        const binaryString = base64.decode(base64EncodedData);
+        const compressedData = Uint8Array.from(
+          binaryString.split('').map(char => char.charCodeAt(0)),
         );
-        console.log('압축 해제 데이터', decompressedData);
 
+        // 2. 압축 해제
+        const decompressedData = JSON.parse(
+          pako.inflate(compressedData, {to: 'string'}),
+        );
+
+        // 3. SVG 경로 데이터를 Skia Path 객체로 변환
         const parsedPaths = decompressedData.map((group: any) =>
           group.map((pathData: any) => ({
             ...pathData,
-            path: Skia.Path.MakeFromSVGString(pathData.path.toString()),
+            path: Skia.Path.MakeFromSVGString(pathData.path),
+            timestamps: pathData.timestamps || [], // timestamps가 배열인지 확인
           })),
         );
 
-        setPathGroups(parsedPaths);
+        setPathGroups(parsedPaths); // 상태 업데이트
       } catch (error) {
         console.error('Failed to decompress or parse data:', error);
       }
-
     });
 
     return () => {
@@ -67,7 +74,7 @@ function StudentCanvasRefSection({
         <Canvas style={styles.canvas} ref={canvasRef}>
           {pathGroups
             .flat()
-            .map(({ path, color, strokeWidth, opacity }, index) => (
+            .map(({path, color, strokeWidth, opacity}, index) => (
               <Path
                 key={index}
                 path={path}
@@ -95,5 +102,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-  canvas: { flex: 1 },
+  canvas: {flex: 1},
 });

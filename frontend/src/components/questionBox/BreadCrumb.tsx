@@ -13,7 +13,7 @@ function BreadCrumb(): React.JSX.Element {
       <Pressable
         onPress={navigateToHome}
         style={{flexDirection: 'row', gap: spacing.md}}>
-        <Text style={styles.breadcrumbText}>홈</Text>
+        <Text style={styles.breadcrumbText}>문제 보관함</Text>
         {currentPath.length > 0 && (
           <Text style={styles.breadcrumbSeparator}>/</Text>
         )}

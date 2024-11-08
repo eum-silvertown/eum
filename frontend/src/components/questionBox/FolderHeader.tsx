@@ -9,6 +9,10 @@ import {spacing} from '@theme/spacing';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
 import CreateFolder from './CreateFolder';
 import {useModal} from 'src/hooks/useModal';
+import {borderWidth} from '@theme/borderWidth';
+import {borderRadius} from '@theme/borderRadius';
+import {getResponsiveSize} from '@utils/responsive';
+import {colors} from 'src/hooks/useColors';
 
 function FolderHeader(): React.JSX.Element {
   const currentHistoryIndex = useQuestionExplorerStore(
@@ -90,9 +94,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: spacing.xxl,
-    marginBottom: spacing.xxl,
-    paddingHorizontal: spacing.lg,
     gap: spacing.xl,
+    marginBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: 'white',
+    borderBottomWidth: borderWidth.sm,
+    borderTopRightRadius: borderRadius.lg,
+    borderTopLeftRadius: borderRadius.lg,
+    borderColor: `${colors.light.background.main}7f`,
+    elevation: getResponsiveSize(2),
   },
   navigationButtons: {
     flexDirection: 'row',

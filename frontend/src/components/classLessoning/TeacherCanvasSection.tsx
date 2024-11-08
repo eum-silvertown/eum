@@ -2,13 +2,13 @@ import {useEffect, useRef, useState} from 'react';
 import {Skia, useCanvasRef} from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
 import {Socket} from 'socket.io-client';
+import base64 from 'react-native-base64';
 
 import pako from 'pako';
 import TeacherLessoningInteractionTool from './TeacherLessoningInteractionTool';
 
 interface LeftCanvasSectionProps {
   socket: Socket;
-  onRecordingEnd: (recordedPaths: PathData[]) => void;
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
@@ -21,7 +21,7 @@ type PathData = {
   color: string;
   strokeWidth: number;
   opacity: number;
-  timestamp: number;
+  timestamps: number[]; // 개별 경로의 timestamp 배열
 };
 
 // 스택 데이터 구조
@@ -30,13 +30,18 @@ type ActionData = {
   pathData: PathData;
 };
 
+type ActionRecord = {
+  type: 'draw' | 'erase' | 'undo' | 'redo';
+  data: PathData | {x: number; y: number}[] | null; // erase는 좌표 배열로 설정
+  timestamp: number;
+};
+
 // 상수
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5; // 최대 스택 크기
 
 function TeacherCanvasSection({
   socket,
-  onRecordingEnd,
   currentPage,
   totalPages,
   onNextPage,
@@ -57,32 +62,43 @@ function TeacherCanvasSection({
   const [isErasing, setIsErasing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
 
-  // 2초마다 pathGroups를 SVG 문자열로 변환해 소켓으로 전송
+  const recordedActionsRef = useRef<ActionRecord[]>([]);
+  console.log('동영상 액션 데이터 :', recordedActionsRef);
+  const recordAction = (
+    actionType: ActionRecord['type'],
+    data: PathData | {x: number; y: number}[] | null,
+  ) => {
+    recordedActionsRef.current.push({
+      type: actionType,
+      data,
+      timestamp: Date.now(),
+    });
+  };
+
+  // pathGroups 데이터를 JSON으로 압축하고 Base64로 인코딩하여 전송
   useEffect(() => {
     const interval = setInterval(() => {
-      // pathGroups 데이터를 SVG 문자열로 변환
       const dataToSend = pathGroups.map(group =>
         group.map(pathData => ({
           ...pathData,
-          path: pathData.path.toSVGString(), // path를 SVG 문자열로 변환
+          path: pathData.path.toSVGString(),
         })),
       );
 
+      // JSON 문자열로 변환 후 압축
       const compressedData = pako.deflate(JSON.stringify(dataToSend));
-      socket.emit('left_to_right', compressedData);
+
+      // Uint8Array를 문자열로 변환 후 Base64 인코딩
+      const base64EncodedData = base64.encode(
+        String.fromCharCode(...compressedData),
+      );
+
+      // 소켓을 통해 서버로 전송
+      socket.emit('left_to_right', base64EncodedData);
     }, 1000);
 
     return () => clearInterval(interval);
   }, [pathGroups, socket]);
-
-  // 녹화 데이터 저장
-  const recordedPathsRef = useRef<PathData[]>([]);
-
-  useEffect(() => {
-    if (isRecording) {
-      recordedPathsRef.current = []; // 녹화 시작 시 초기화
-    }
-  }, [isRecording]);
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1)); // 형광펜 효과
@@ -128,7 +144,9 @@ function TeacherCanvasSection({
             color: lastPath.color,
             strokeWidth: lastPath.strokeWidth,
             opacity: lastPath.opacity,
-            timestamp: lastPath.timestamp,
+            timestamps: lastMergedGroup
+              .flatMap(p => p.timestamps)
+              .concat(group.flatMap(p => p.timestamps)), // timestamps 배열 병합
           };
           mergedGroups[mergedGroups.length - 1] = [mergedPathData];
         }
@@ -158,7 +176,7 @@ function TeacherCanvasSection({
     const pathSegments = svgString.split('M').slice(1); // 'M'을 기준으로 분할하여 세그먼트 생성
 
     return pathSegments
-      .map((segment: string) => {
+      .map((segment: string, index: number) => {
         const newPath = Skia.Path.MakeFromSVGString('M' + segment);
         if (!newPath) {
           console.warn('Invalid SVG segment:', segment);
@@ -169,18 +187,32 @@ function TeacherCanvasSection({
           color: mergedPathData.color,
           strokeWidth: mergedPathData.strokeWidth,
           opacity: mergedPathData.opacity,
-          timestamp: mergedPathData.timestamp,
+          timestamps: [mergedPathData.timestamps[index]], // 각 세그먼트의 timestamp 보존
         };
       })
       .filter(Boolean) as PathData[]; // null 필터링
   };
 
   // 경로 병합 함수
-  const mergePaths = (pathsToMerge: PathData[]) => {
+  const mergePaths = (pathsToMerge: PathData[]): PathData | null => {
     const mergedPathString = pathsToMerge
       .map(p => p.path.toSVGString())
       .join(' ');
-    return Skia.Path.MakeFromSVGString(mergedPathString); // 병합된 SVG 경로로 Path 생성
+
+    const mergedPath = Skia.Path.MakeFromSVGString(mergedPathString);
+
+    if (!mergedPath) {
+      console.warn('Failed to merge paths');
+      return null;
+    }
+
+    return {
+      path: mergedPath,
+      color: pathsToMerge[0].color,
+      strokeWidth: pathsToMerge[0].strokeWidth,
+      opacity: pathsToMerge[0].opacity,
+      timestamps: pathsToMerge.flatMap(p => p.timestamps), // 각 경로의 timestamp를 배열로 병합
+    };
   };
 
   // 새로운 경로를 그룹에 추가하는 함수
@@ -197,23 +229,23 @@ function TeacherCanvasSection({
       ) {
         // 스타일이 같으면 병합
         lastGroup.push(newPath);
-        const mergedPath = mergePaths(lastGroup);
-        const mergedPathData: PathData = {
-          path: mergedPath,
-          color: newPath.color,
-          strokeWidth: newPath.strokeWidth,
-          opacity: newPath.opacity,
-          timestamp: lastGroup[0].timestamp,
-        };
-        return [...prevGroups.slice(0, -1), [mergedPathData]];
-      } else {
-        // 스타일이 다르면 새 그룹 시작
-        return [...prevGroups, [newPath]];
+        const mergedPathData = mergePaths(lastGroup);
+
+        if (mergedPathData) {
+          return [...prevGroups.slice(0, -1), [mergedPathData]];
+        }
       }
+
+      // 스타일이 다르면 새 그룹 시작
+      return [...prevGroups, [newPath]];
     });
   };
 
   const erasePath = (x: number, y: number) => {
+    const erasePositions: {x: number; y: number}[] = [];
+    if (isRecording) {
+      erasePositions.push({x, y}); // 지우기 위치 좌표 기록
+    }
     setPathGroups(prevGroups =>
       prevGroups
         .map(group =>
@@ -237,6 +269,10 @@ function TeacherCanvasSection({
         .filter(group => group.length > 0),
     );
     setRedoStack([]);
+    if (erasePositions.length > 0 && isRecording) {
+      // 지우기 액션을 기록
+      recordAction('erase', erasePositions);
+    }
   };
 
   const addToUndoStack = (action: ActionData) => {
@@ -260,6 +296,9 @@ function TeacherCanvasSection({
   };
 
   const undo = () => {
+    if (isRecording) {
+      recordAction('undo', null);
+    }
     if (undoStack.length === 0) {
       return;
     }
@@ -277,6 +316,9 @@ function TeacherCanvasSection({
   };
 
   const redo = () => {
+    if (isRecording) {
+      recordAction('redo', null);
+    }
     if (redoStack.length === 0) {
       return;
     }
@@ -322,10 +364,10 @@ function TeacherCanvasSection({
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
-        timestamp: Date.now(),
+        timestamps: [Date.now()], // 현재 시간 추가
       };
       if (isRecording) {
-        recordedPathsRef.current.push(pathData);
+        recordAction('draw', pathData); // draw 액션 기록
       }
     }
   };
@@ -339,11 +381,8 @@ function TeacherCanvasSection({
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
-        timestamp: Date.now(),
+        timestamps: [Date.now()], // 경로 완료 시점 타임스탬프
       };
-      if (isRecording) {
-        recordedPathsRef.current.push(newPathData);
-      }
       addPathToGroup(newPathData);
       addToUndoStack({type: 'draw', pathData: newPathData});
       setCurrentPath(null);
@@ -354,7 +393,6 @@ function TeacherCanvasSection({
   const startRecording = () => setIsRecording(true);
   const stopRecording = () => {
     setIsRecording(false);
-    onRecordingEnd(recordedPathsRef.current);
   };
 
   return (
