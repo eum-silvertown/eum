@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import {Text} from '@components/common/Text';
 import ContentLayout from './ContentLayout';
@@ -9,7 +9,18 @@ import Todo from './Todo';
 import AddTodoModal from './AddTodoModal';
 import {useModal} from 'src/hooks/useModal';
 
+interface TodoType {
+  id: number;
+  title: string;
+  content: string;
+  prioirty: number;
+  updatedAt: string;
+  isDone: boolean;
+}
+
 export default function TodoList(): React.JSX.Element {
+  const [todoList, setTodoList] = useState([]);
+
   const todos = [
     {title: '응애', importance: 3, description: '할일 내용1'},
     {title: '하자', importance: 1, description: '할일 내용2'},
@@ -73,7 +84,7 @@ export default function TodoList(): React.JSX.Element {
         </TouchableOpacity>
       </View>
       <ScrollView>
-        {todos.map((item, index) => (
+        {todoList.map((item, index) => (
           <Todo key={index} item={item} />
         ))}
       </ScrollView>
