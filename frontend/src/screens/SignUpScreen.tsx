@@ -635,8 +635,7 @@ const styles = StyleSheet.create({
   submitButton: {
     marginTop: spacing.lg,
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.sm,
+    paddingVertical: spacing.md,    
     alignItems: 'center',
   },
 });
