@@ -1,14 +1,18 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {Text} from '@components/common/Text';
-import {useNavigation} from '@react-navigation/native';
-import {spacing} from '@theme/spacing';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Text } from '@components/common/Text';
+import { useNavigation } from '@react-navigation/native';
+import { spacing } from '@theme/spacing';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import AddLectureModal from '@components/lectureList/AddLectureModal';
-import {useModal} from 'src/hooks/useModal';
+import { iconSize } from '@theme/iconSize';
+import UpdateLectureModal from './UpdateLectureModal';
+import { useModal } from 'src/hooks/useModal';
+import { deleteLecture } from '@services/lectureInformation';
+import { useMutation } from '@tanstack/react-query';
+import { getResponsiveSize } from '@utils/responsive';
+
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -17,26 +21,37 @@ type ClassHeaderProps = {
   lectureId?: number;
   title?: string;
   subtitle?: string;
-  schedule?: {day: string; period: number}[];
+  schedule?: { day: string; period: number }[];
   semester?: number;
   grade?: number;
+  classNumber?: number;
   backgroundColor?: string;
   fontColor?: string;
+  pastTeacherName?: string;
 };
 
 function ClassHeader({
   isTeacher,
-  // lectureId,
+  lectureId,
   title,
   subtitle,
   schedule,
   semester,
   grade,
+  classNumber,
   backgroundColor,
   fontColor,
+  pastTeacherName,
 }: ClassHeaderProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const {open} = useModal();
+  const { open } = useModal();
+
+  const { mutate: deleteMutation } = useMutation({
+    mutationFn: (deleteLectureId: number) => deleteLecture(deleteLectureId),
+    onSuccess: () => {
+      navigation.navigate('LectureListScreen');
+    },
+  });
   const showDeleteConfirmation = () => {
     Alert.alert(
       '경고',
@@ -47,6 +62,7 @@ function ClassHeader({
           onPress: () => {
             console.log('삭제 확정');
             // 삭제 작업 실행 코드
+            deleteMutation(lectureId!);
           },
           style: 'destructive',
         },
@@ -55,7 +71,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -67,7 +83,7 @@ function ClassHeader({
         {
           text: '수정하기',
           onPress: () =>
-            open(<AddLectureModal />, {
+            open(<UpdateLectureModal lectureId={lectureId!} grade={grade!} classNumber={classNumber!} pastTeacherName={pastTeacherName!} />, {
               title: '수업 생성',
               onClose: () => {
                 console.log('수업 생성 모달 종료');
@@ -84,7 +100,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -105,8 +121,8 @@ function ClassHeader({
           {schedule?.map((item, index) => (
             <View
               key={index}
-              style={[styles.scheduleChip, {backgroundColor: backgroundColor}]}>
-              <Text style={[styles.scheduleChipText, {color: fontColor}]}>
+              style={[styles.scheduleChip, { backgroundColor: backgroundColor }]}>
+              <Text style={[styles.scheduleChipText, { color: fontColor }]}>
                 {item.day}
               </Text>
             </View>
@@ -141,7 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
-    marginBottom: spacing.xl,
+    marginBottom: spacing.sm,
   },
   titleSection: {
     flex: 1,
@@ -155,9 +171,9 @@ const styles = StyleSheet.create({
   },
   gradeSemesterChip: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 4,
+    paddingVertical: getResponsiveSize(4),
     paddingHorizontal: 8,
-    borderRadius: 12,
+    borderRadius: spacing.lg,
     marginLeft: spacing.sm,
   },
   gradeSemesterText: {
@@ -165,8 +181,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   scheduleChip: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingVertical: getResponsiveSize(4),
+    paddingHorizontal: getResponsiveSize(8),
     borderRadius: 12,
     marginLeft: spacing.xs,
   },
@@ -185,8 +201,8 @@ const styles = StyleSheet.create({
   },
   enterButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: getResponsiveSize(6),
+    paddingHorizontal: getResponsiveSize(12),
     borderRadius: 8,
     marginRight: spacing.lg,
   },

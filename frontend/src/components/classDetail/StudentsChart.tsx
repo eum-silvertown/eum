@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text } from '@components/common/Text';
 import { View, StyleSheet } from 'react-native';
 import { spacing } from '@theme/spacing';
@@ -17,41 +17,47 @@ export const strokeWidth = 15;
 const color = (r: number, g: number, b: number) =>
   `rgb(${r * 255}, ${g * 255}, ${b * 255})`;
 
-type StudentScores = {
-  homeworkScore: number;
-  testScore: number;
-  attitudeScore: number;
+type ClassAverageScores = {
+  homeworkAvgScore: number;
+  testAvgScore: number;
+  attitudeAvgScore: number;
 };
 
 type ChartProps = {
-  studentScores?: StudentScores;
+  classAverageScores?: ClassAverageScores;
+  studentName?: string;
 };
 
-function Chart({ studentScores }: ChartProps): React.JSX.Element {
+function StudentsChart({ classAverageScores, studentName }: ChartProps): React.JSX.Element {
+  const [canvasKey, setCanvasKey] = useState(0);
+
+  useEffect(() => {
+    setCanvasKey((prevKey) => prevKey + 1);
+  }, [classAverageScores]);
+
   const averageScore = Math.round(
-    ((studentScores?.homeworkScore || 0) +
-      (studentScores?.testScore || 0) +
-      (studentScores?.attitudeScore || 0)) /
-    3
+    ((classAverageScores?.homeworkAvgScore || 0) +
+      (classAverageScores?.testAvgScore || 0) +
+      (classAverageScores?.attitudeAvgScore || 0)) / 3
   );
 
   const rings = [
     {
-      totalProgress: (studentScores?.homeworkScore || 0) / 100,
+      totalProgress: (classAverageScores?.homeworkAvgScore || 0) / 100,
       colors: [color(0.0, 0.9, 0.7), color(0.2, 0.7, 1)],
       background: color(0.02, 0.25, 0.25),
       size: SIZE - strokeWidth * 4,
       label: '숙제',
     },
     {
-      totalProgress: (studentScores?.testScore || 0) / 100,
+      totalProgress: (classAverageScores?.testAvgScore || 0) / 100,
       colors: [color(1, 0.8, 0), color(1, 0.6, 0.2)],
       background: color(0.3, 0.2, 0),
       size: SIZE - strokeWidth * 2,
       label: '시험',
     },
     {
-      totalProgress: (studentScores?.attitudeScore || 0) / 100,
+      totalProgress: (classAverageScores?.attitudeAvgScore || 0) / 100,
       colors: [color(1, 0.3, 0.4), color(1, 0.5, 0.6)],
       background: color(0.2, 0, 0.1),
       size: SIZE,
@@ -62,10 +68,10 @@ function Chart({ studentScores }: ChartProps): React.JSX.Element {
   return (
     <View style={styles.chart}>
       <Text variant="subtitle" weight="bold" style={styles.subtitle}>
-        나의 점수
+        {studentName ? `${studentName} 학생 점수` : '학급 평균 점수'}
       </Text>
       <View style={styles.rowContainer}>
-        <Canvas style={styles.chartContainer}>
+        <Canvas style={styles.chartContainer} key={canvasKey}>
           {rings.map((ring, index) => (
             <Ring
               key={index}
@@ -97,7 +103,7 @@ function Chart({ studentScores }: ChartProps): React.JSX.Element {
 
 const styles = StyleSheet.create({
   chart: {
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.sm,
   },
   subtitle: {
     marginStart: spacing.xl,
@@ -146,4 +152,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Chart;
+export default StudentsChart;

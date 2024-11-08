@@ -5,6 +5,7 @@ import { spacing } from '@theme/spacing';
 import defaultTeacherPhoto from '@assets/images/teacher.png';
 import PencilIcon from '@assets/icons/pencilIcon.svg';
 import { iconSize } from '@theme/iconSize';
+import { getResponsiveSize } from '@utils/responsive';
 
 type TeacherProps = {
   isTeacher: boolean;
@@ -80,8 +81,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   photoContainer: {
-    width: 90,
-    height: 90,
+    width: getResponsiveSize(80),
+    height: getResponsiveSize(80),
     borderRadius: 45,
     overflow: 'hidden',
     borderWidth: 2,
@@ -90,8 +91,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   photo: {
-    width: 90,
-    height: 90,
+    width: getResponsiveSize(90),
+    height: getResponsiveSize(90),
     justifyContent: 'center',
     alignItems: 'center',
   },

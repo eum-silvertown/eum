@@ -1,16 +1,16 @@
 import React from 'react';
-import {Text} from '@components/common/Text';
-import {View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
+import { Text } from '@components/common/Text';
+import { View, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import postit from '@assets/images/postit.png';
-import {spacing} from '@theme/spacing';
-import {getResponsiveSize} from '@utils/responsive';
+import { spacing } from '@theme/spacing';
+import { getResponsiveSize } from '@utils/responsive';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {useModal} from 'src/hooks/useModal';
+import { iconSize } from '@theme/iconSize';
+import { useModal } from 'src/hooks/useModal';
 import NoticeCreateModal from './NoticeCreateModal';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
-import {deleteNotice} from '@services/lectureNotice';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import { deleteNotice } from '@services/lectureNotice';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type NoticeData = {
   noticeId: number;
@@ -29,10 +29,10 @@ function Notice({
   lectureId,
   notices = [],
 }: NoticeProps): React.JSX.Element {
-  const {open} = useModal();
+  const { open } = useModal();
   const displayedNotices = notices.slice(0, 3); // 최대 3개의 공지사항만 표시
   const queryClient = useQueryClient();
-  const {mutate: deleteMutation} = useMutation({
+  const { mutate: deleteMutation } = useMutation({
     mutationFn: (noticeId: number) => deleteNotice(noticeId),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -60,7 +60,7 @@ function Notice({
           style: 'cancel',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -85,7 +85,7 @@ function Notice({
         )}
       </View>
       <View style={styles.noticeLayout}>
-        {Array.from({length: 3}).map((_, index) => {
+        {Array.from({ length: 3 }).map((_, index) => {
           const notice = displayedNotices[index];
           return (
             <View key={index} style={styles.imageWrapper}>
@@ -145,9 +145,9 @@ const styles = StyleSheet.create({
   },
   textIconContainer: {
     position: 'absolute',
-    left: 12,
-    top: 24,
-    right: 12,
+    left: getResponsiveSize(12),
+    top: getResponsiveSize(24),
+    right: getResponsiveSize(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -157,13 +157,13 @@ const styles = StyleSheet.create({
   },
   noticeContent: {
     position: 'absolute',
-    left: 12,
-    right: 12,
-    top: 54,
+    left: getResponsiveSize(12),
+    right: getResponsiveSize(12),
+    top: getResponsiveSize(48),
     color: '#333',
   },
   cancelIcon: {
-    right: 4,
+    right: getResponsiveSize(4),
   },
 });
 

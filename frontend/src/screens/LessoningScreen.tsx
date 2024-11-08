@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {io, Socket} from 'socket.io-client';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { io, Socket } from 'socket.io-client';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherCanvasSection from '@components/classLessoning/TeacherCanvasSection';
 import StudentCanvasSection from '@components/classLessoning/StudentCanvasSection';
 
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { getResponsiveSize } from '@utils/responsive';
 
 function LessoningScreen(): React.JSX.Element {
   // 문제 텍스트와 이미지 URL이 포함된 예제
@@ -71,16 +72,6 @@ function LessoningScreen(): React.JSX.Element {
               onPrevPage={handlePrevPage}
             />
           </View>
-          <View style={styles.sectionContainer}>
-            <ProblemSection problemText={problems[currentPage]} />
-            <StudentCanvasSection
-              socket={socket}
-              currentPage={currentPage + 1}
-              totalPages={problems.length}
-              onNextPage={handleNextPage}
-              onPrevPage={handlePrevPage}
-            />
-          </View>
         </View>
       </>
     );
@@ -111,7 +102,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     flex: 1,
-    padding: 10,
+    padding: getResponsiveSize(10),
     position: 'relative',
   },
   problemSection: {

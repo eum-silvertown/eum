@@ -7,6 +7,7 @@ import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
 import { iconSize } from '@theme/iconSize';
+import { getResponsiveSize } from '@utils/responsive';
 
 type LessonType = {
   lessonId: number;
@@ -22,7 +23,6 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // 데이터를 최대 5개의 항목으로 제한하여 페이징 처리
   const totalPages = Math.ceil(lesson.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = lesson.slice(startIndex, startIndex + itemsPerPage);
@@ -67,7 +67,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
     <View style={styles.replay}>
       <View style={styles.header}>
         <Text variant="subtitle" weight="bold" style={styles.subtitle}>
-          다시보기
+          수업 필기 다시보기
         </Text>
         <View style={styles.pagination}>
           <TouchableOpacity onPress={handlePrevPage} disabled={currentPage === 1}>
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginRight: 12,
+    marginRight: getResponsiveSize(12),
   },
   pageIndicator: {
     fontSize: 16,
@@ -124,14 +124,14 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     backgroundColor: '#fdfeff',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginHorizontal: 16,
-    marginVertical: 4,
+    paddingVertical: getResponsiveSize(8),
+    paddingHorizontal: getResponsiveSize(12),
+    marginHorizontal: getResponsiveSize(16),
+    marginVertical: getResponsiveSize(4),
     borderRadius: 10,
   },
   textContainer: {
-    paddingHorizontal: 4,
+    paddingHorizontal: getResponsiveSize(4),
     justifyContent: 'center',
   },
   idContainer: {

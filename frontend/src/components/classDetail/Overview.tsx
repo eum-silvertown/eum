@@ -8,10 +8,10 @@ import { getResponsiveSize } from '@utils/responsive';
 type OverviewProps = {
   homeworkCnt?: number;
   examCnt?: number;
-  problemBoxCnt?: number;
+  lessonCnt?: number;
 };
 
-function Overview({ homeworkCnt = 0, examCnt = 0, problemBoxCnt = 0 }: OverviewProps): React.JSX.Element {
+function Overview({ homeworkCnt = 0, examCnt = 0, lessonCnt = 0 }: OverviewProps): React.JSX.Element {
   return (
     <View style={styles.overview}>
       <Text variant="subtitle" weight="bold" style={styles.subtitle}>
@@ -19,11 +19,20 @@ function Overview({ homeworkCnt = 0, examCnt = 0, problemBoxCnt = 0 }: OverviewP
       </Text>
       <View style={styles.progressLayout}>
         <ProgressBox
+          color="green"
+          title="수업"
+          content={`${lessonCnt}`}
+          unit="번"
+          icon="folderCheck"
+          isLessonDetail={true}
+        />
+        <ProgressBox
           color="red"
           title="시험"
           content={`${examCnt}`}
           unit="번"
           icon="complete"
+          isLessonDetail={true}
         />
         <ProgressBox
           color="blue"
@@ -31,13 +40,7 @@ function Overview({ homeworkCnt = 0, examCnt = 0, problemBoxCnt = 0 }: OverviewP
           content={`${homeworkCnt}`}
           unit="개"
           icon="homeworkCheck"
-        />
-        <ProgressBox
-          color="green"
-          title="문제 보관함"
-          content={`${problemBoxCnt}`}
-          unit="개"
-          icon="folderCheck"
+          isLessonDetail={true}
         />
       </View>
     </View>

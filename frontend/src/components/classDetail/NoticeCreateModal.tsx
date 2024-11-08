@@ -36,9 +36,6 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
 
   const createNewNotice = () => {
     if (title.trim() && content.trim()) {
-      console.log('Title:', title);
-      console.log('Content:', content);
-      // TODO: 공지사항 생성 로직
       const newNoticeData = {
         lectureId: lectureId!,
         title: title,

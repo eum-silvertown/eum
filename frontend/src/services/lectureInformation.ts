@@ -52,6 +52,10 @@ export const updateLectureDetail = async (
 export const deleteLecture = async (lectureId: number): Promise<void> => {
   try {
     console.log(`강의 삭제 요청: lectureId = ${lectureId}`);
+
+    return;
+
+    // eslint-disable-next-line no-unreachable
     await axios.delete<void>(`lecture/${lectureId}`);
     console.log('강의 삭제 성공');
   } catch (error) {
@@ -204,6 +208,13 @@ export const getLectureDetail = async (
           endTime: '2024-12-05T16:00:00Z',
           questions: [4, 19, 26],
         },
+        {
+          examId: 7,
+          title: '실전 대비 시험',
+          startTime: '2024-12-05T14:00:00Z',
+          endTime: '2024-12-05T16:00:00Z',
+          questions: [4, 19, 26],
+        },
       ],
       homework: [
         {
@@ -248,6 +259,20 @@ export const getLectureDetail = async (
           endTime: '2024-11-05T08:00:00Z',
           questions: [15, 16, 17],
         },
+        {
+          homeworkId: 7,
+          title: '수학 문제 풀이 숙제 7',
+          startTime: '2024-11-04T08:00:00Z',
+          endTime: '2024-11-10T08:00:00Z',
+          questions: [15, 16, 17],
+        },
+        {
+          homeworkId: 8,
+          title: '수학 문제 풀이 숙제 8',
+          startTime: '2024-11-04T08:00:00Z',
+          endTime: '2024-11-12T08:00:00Z',
+          questions: [15, 16, 17],
+        },
       ],
       lesson: [
         {
@@ -277,6 +302,31 @@ export const getLectureDetail = async (
         },
         {
           lessonId: 6,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 7,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 8,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 9,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 10,
+          title: '확률과 통계 파트 2',
+          questions: [116, 117, 118],
+        },
+        {
+          lessonId: 11,
           title: '확률과 통계 파트 2',
           questions: [116, 117, 118],
         },
@@ -403,76 +453,96 @@ export const getTeacherLectureDetail = async (
 ): Promise<LectureTeacherDetailType> => {
   console.log(`선생님용 강의 상세 조회 요청: lectureId = ${lectureId}`);
   try {
-    const dummydata = {
+    const dummyData = {
       students: [
         {
           studentId: 1,
-          studentImage: 'path/to/student.jpg',
-          studentName: '홍길동',
+          studentImage: 'path/to/student1.jpg',
+          studentName: '이영희',
           studentScores: {
-            homeworkAvgScore: 85.0,
-            testAvgScore: 90.0,
-            attitudeAvgScore: 95.0,
+            homeworkAvgScore: 78.0,
+            testAvgScore: 82.0,
+            attitudeAvgScore: 88.0,
           },
         },
         {
           studentId: 2,
           studentImage: 'path/to/student2.jpg',
-          studentName: '김철수',
+          studentName: '박민수',
           studentScores: {
-            homeworkAvgScore: 88.0,
-            testAvgScore: 87.0,
-            attitudeAvgScore: 92.0,
+            homeworkAvgScore: 91.0,
+            testAvgScore: 89.0,
+            attitudeAvgScore: 84.0,
           },
         },
         {
           studentId: 3,
-          studentImage: 'path/to/student.jpg',
-          studentName: '홍길동',
+          studentImage: 'path/to/student3.jpg',
+          studentName: '김수진',
           studentScores: {
             homeworkAvgScore: 85.0,
             testAvgScore: 90.0,
-            attitudeAvgScore: 95.0,
+            attitudeAvgScore: 92.0,
           },
         },
         {
           studentId: 4,
-          studentImage: 'path/to/student2.jpg',
-          studentName: '김철수',
+          studentImage: 'path/to/student4.jpg',
+          studentName: '최지훈',
           studentScores: {
-            homeworkAvgScore: 88.0,
-            testAvgScore: 87.0,
-            attitudeAvgScore: 92.0,
+            homeworkAvgScore: 72.0,
+            testAvgScore: 77.0,
+            attitudeAvgScore: 80.0,
           },
         },
         {
           studentId: 5,
-          studentImage: 'path/to/student.jpg',
-          studentName: '홍길동',
+          studentImage: 'path/to/student5.jpg',
+          studentName: '정다연',
           studentScores: {
-            homeworkAvgScore: 85.0,
-            testAvgScore: 90.0,
-            attitudeAvgScore: 95.0,
+            homeworkAvgScore: 95.0,
+            testAvgScore: 93.0,
+            attitudeAvgScore: 97.0,
           },
         },
         {
           studentId: 6,
-          studentImage: 'path/to/student2.jpg',
-          studentName: '김철수',
+          studentImage: 'path/to/student6.jpg',
+          studentName: '오준영',
           studentScores: {
-            homeworkAvgScore: 88.0,
-            testAvgScore: 87.0,
-            attitudeAvgScore: 92.0,
+            homeworkAvgScore: 84.0,
+            testAvgScore: 88.0,
+            attitudeAvgScore: 90.0,
+          },
+        },
+        {
+          studentId: 7,
+          studentImage: 'path/to/student7.jpg',
+          studentName: '유미나',
+          studentScores: {
+            homeworkAvgScore: 90.0,
+            testAvgScore: 85.0,
+            attitudeAvgScore: 88.0,
+          },
+        },
+        {
+          studentId: 8,
+          studentImage: 'path/to/student8.jpg',
+          studentName: '한지성',
+          studentScores: {
+            homeworkAvgScore: 76.0,
+            testAvgScore: 80.0,
+            attitudeAvgScore: 85.0,
           },
         },
       ],
       classAverageScores: {
-        homeworkAvgScore: 80.0,
-        testAvgScore: 85.0,
-        attitudeAvgScore: 90.0,
+        homeworkAvgScore: 83.0,
+        testAvgScore: 86.0,
+        attitudeAvgScore: 89.0,
       },
     };
-    return dummydata;
+    return dummyData;
     // eslint-disable-next-line no-unreachable
     const {data} = await axios.get<{
       status: string;
@@ -494,6 +564,53 @@ export const getTeacherLectureDetail = async (
     } else {
       console.error('Unknown Error:', error);
     }
+    throw error;
+  }
+};
+
+export type ToUpdateLectureResponse = {
+  title: string;
+  subject: string;
+  introduction: string;
+  backgroundColor: string;
+  fontColor: string;
+  classId: number;
+  schedule: LectureScheduleType[];
+};
+// 강의 수정용 조회 함수
+export const toupdateLectureDetail = async (
+  lectureId: number,
+): Promise<ToUpdateLectureResponse> => {
+  try {
+    console.log('강의 수정 Id : ', lectureId);
+    const dummydata = {
+      'title': '수정예제 제목',
+      'subject': '수정과목',
+      'introduction': '수정할 소개 칸 입니다.',
+      'backgroundColor': '#000000',
+      'fontColor': '#ffffff',
+      'classId': 5,
+      'schedule': [
+        {
+          'day': '수요일',
+          'period': 1,
+        },
+        {
+          'day': '금요일',
+          'period': 2,
+        },
+      ],
+    };
+    return dummydata;
+
+    // eslint-disable-next-line no-unreachable
+    const { data } = await axios.get<{ status: string; data: ToUpdateLectureResponse; message: string;}>(
+      `lecture/update/${lectureId}`);
+
+    console.log('강의 수정용 데이터 조회: ', data);
+    return data.data;
+  } catch (error) {
+    console.error('강의 정보 조회 실패:', error);
     throw error;
   }
 };
