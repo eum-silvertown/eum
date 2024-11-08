@@ -6,7 +6,6 @@ export type ScreenType = {
   HomeworkScreen: undefined;
   QuestionBoxScreen: undefined;
   MyClassScreen: undefined;
-  ClassDetailScreen: undefined;
   LoginScreen: undefined;
   FindIdScreen: undefined;
   FindPasswordScreen: undefined | {userId?: string; email?: string};
@@ -16,6 +15,7 @@ export type ScreenType = {
   LessoningScreen: undefined;
   LessoningStudentListScreen: undefined;
   ProfileScreen: undefined;
+  ClassListScreen: undefined;
 };
 
 type ScreenName = keyof ScreenType;
