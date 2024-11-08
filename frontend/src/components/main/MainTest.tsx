@@ -16,6 +16,7 @@ import TodoList from './TodoList';
 import Weather from './Weather';
 import {spacing} from '@theme/spacing';
 import Calendar from '@components/main/MainCalendar';
+import {borderRadius} from '@theme/borderRadius';
 
 interface TimeColor {
   startHour: number;
@@ -52,11 +53,11 @@ const MainTest = (): React.JSX.Element => {
 
   // 구름 상태
   const [clouds] = useState<SkyObject[]>(
-    Array.from({length: 5}, (_, i) => ({
+    Array.from({length: 10}, (_, i) => ({
       id: i,
       x: -100,
       y: Math.random() * (screenHeight / 3),
-      size: 40 + Math.random() * 30,
+      size: getResponsiveSize(20) + Math.random() * getResponsiveSize(15),
       delay: Math.random() * 10000,
     })),
   );
@@ -67,7 +68,7 @@ const MainTest = (): React.JSX.Element => {
       id: i,
       x: Math.random() * screenWidth,
       y: Math.random() * (screenHeight * 0.7),
-      size: 2 + Math.random() * 2,
+      size: getResponsiveSize(2) + Math.random() * getResponsiveSize(2),
       delay: Math.random() * 3000,
     })),
   );
@@ -179,7 +180,7 @@ const MainTest = (): React.JSX.Element => {
   // 태양 위치 보간
   const sunTranslateX = sunAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [-60, screenWidth + 60],
+    outputRange: [getResponsiveSize(20), screenWidth + getResponsiveSize(-20)],
   });
 
   const sunTranslateY = sunAnim.interpolate({
@@ -194,7 +195,7 @@ const MainTest = (): React.JSX.Element => {
   // 달 위치 보간
   const moonTranslateX = moonAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [-60, screenWidth + 60],
+    outputRange: [getResponsiveSize(20), screenWidth + getResponsiveSize(-20)],
   });
 
   const moonTranslateY = moonAnim.interpolate({
@@ -384,15 +385,15 @@ const styles = StyleSheet.create({
   },
   celestialObject: {
     position: 'absolute',
-    width: 60,
-    height: 60,
+    width: getResponsiveSize(50),
+    height: getResponsiveSize(50),
     justifyContent: 'center',
     alignItems: 'center',
   },
   sun: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: getResponsiveSize(40),
+    height: getResponsiveSize(40),
+    borderRadius: 9999,
     backgroundColor: '#FFD700',
     shadowColor: '#FFD700',
     shadowOffset: {width: 0, height: 0},
@@ -400,20 +401,20 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
   },
   sunRays: {
-    width: 60,
-    height: 60,
+    width: getResponsiveSize(50),
+    height: getResponsiveSize(50),
     position: 'absolute',
-    top: -5,
-    left: -5,
-    borderRadius: 30,
+    top: -getResponsiveSize(5),
+    left: -getResponsiveSize(5),
+    borderRadius: 9999,
     borderWidth: 3,
     borderColor: '#FFD700',
     opacity: 0.5,
   },
   moon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: getResponsiveSize(40),
+    height: getResponsiveSize(40),
+    borderRadius: 9999,
     backgroundColor: '#F4F6F0',
     shadowColor: '#FFFFFF',
     shadowOffset: {width: 0, height: 0},
@@ -428,7 +429,7 @@ const styles = StyleSheet.create({
   cloud: {
     position: 'absolute',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 20,
+    borderRadius: borderRadius.lg,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
