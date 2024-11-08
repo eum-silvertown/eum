@@ -25,17 +25,17 @@ function Button({content, size, onPress}: ButtonProps): React.JSX.Element {
   });
   const sizes = StyleSheet.create({
     sm: {
-      width: getResponsiveSize(100),
+      width: getResponsiveSize(60),
     },
     md: {
-      width: getResponsiveSize(125),
+      width: getResponsiveSize(80),
     },
     lg: {
-      width: getResponsiveSize(150),
+      width: getResponsiveSize(100),
     },
     full: {
       width: '100%',
-      height: getResponsiveSize(40),
+      height: getResponsiveSize(25),
     },
   });
 

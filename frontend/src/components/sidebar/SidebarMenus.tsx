@@ -15,6 +15,7 @@ import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {borderRadius} from '@theme/borderRadius';
+import {getResponsiveSize} from '@utils/responsive';
 
 interface MenuItem {
   name: string;
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   icon: {
     alignItems: 'center',
     paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.md + getResponsiveSize(2),
   },
   menuContainer: {
     flexDirection: 'row',
