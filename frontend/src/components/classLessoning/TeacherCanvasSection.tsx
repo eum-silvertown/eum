@@ -1,7 +1,7 @@
-import {useEffect, useRef, useState} from 'react';
-import {Skia, useCanvasRef} from '@shopify/react-native-skia';
+import { useEffect, useState } from 'react';
+import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
-import {Socket} from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import base64 from 'react-native-base64';
 
 import pako from 'pako';
@@ -30,12 +30,6 @@ type ActionData = {
   pathData: PathData;
 };
 
-type ActionRecord = {
-  type: 'draw' | 'erase' | 'undo' | 'redo';
-  data: PathData | {x: number; y: number}[] | null; // erase는 좌표 배열로 설정
-  timestamp: number;
-};
-
 // 상수
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5; // 최대 스택 크기
@@ -60,20 +54,6 @@ function TeacherCanvasSection({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-
-  const recordedActionsRef = useRef<ActionRecord[]>([]);
-  console.log('동영상 액션 데이터 :', recordedActionsRef);
-  const recordAction = (
-    actionType: ActionRecord['type'],
-    data: PathData | {x: number; y: number}[] | null,
-  ) => {
-    recordedActionsRef.current.push({
-      type: actionType,
-      data,
-      timestamp: Date.now(),
-    });
-  };
 
   // pathGroups 데이터를 JSON으로 압축하고 Base64로 인코딩하여 전송
   useEffect(() => {
@@ -242,10 +222,6 @@ function TeacherCanvasSection({
   };
 
   const erasePath = (x: number, y: number) => {
-    const erasePositions: {x: number; y: number}[] = [];
-    if (isRecording) {
-      erasePositions.push({x, y}); // 지우기 위치 좌표 기록
-    }
     setPathGroups(prevGroups =>
       prevGroups
         .map(group =>
@@ -261,7 +237,7 @@ function TeacherCanvasSection({
               dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
             if (isInEraseArea) {
-              addToUndoStack({type: 'erase', pathData});
+              addToUndoStack({ type: 'erase', pathData });
             }
             return !isInEraseArea;
           }),
@@ -269,10 +245,6 @@ function TeacherCanvasSection({
         .filter(group => group.length > 0),
     );
     setRedoStack([]);
-    if (erasePositions.length > 0 && isRecording) {
-      // 지우기 액션을 기록
-      recordAction('erase', erasePositions);
-    }
   };
 
   const addToUndoStack = (action: ActionData) => {
@@ -296,9 +268,6 @@ function TeacherCanvasSection({
   };
 
   const undo = () => {
-    if (isRecording) {
-      recordAction('undo', null);
-    }
     if (undoStack.length === 0) {
       return;
     }
@@ -316,9 +285,6 @@ function TeacherCanvasSection({
   };
 
   const redo = () => {
-    if (isRecording) {
-      recordAction('redo', null);
-    }
     if (redoStack.length === 0) {
       return;
     }
@@ -340,9 +306,9 @@ function TeacherCanvasSection({
   };
 
   const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -352,23 +318,13 @@ function TeacherCanvasSection({
   };
 
   const handleTouchMove = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
-      const pathData = {
-        path: currentPath.toSVGString(),
-        color: penColor,
-        strokeWidth: penSize,
-        opacity: penOpacity,
-        timestamps: [Date.now()], // 현재 시간 추가
-      };
-      if (isRecording) {
-        recordAction('draw', pathData); // draw 액션 기록
-      }
     }
   };
 
@@ -384,15 +340,10 @@ function TeacherCanvasSection({
         timestamps: [Date.now()], // 경로 완료 시점 타임스탬프
       };
       addPathToGroup(newPathData);
-      addToUndoStack({type: 'draw', pathData: newPathData});
+      addToUndoStack({ type: 'draw', pathData: newPathData });
       setCurrentPath(null);
       setRedoStack([]);
     }
-  };
-
-  const startRecording = () => setIsRecording(true);
-  const stopRecording = () => {
-    setIsRecording(false);
   };
 
   return (
@@ -419,9 +370,6 @@ function TeacherCanvasSection({
         eraserPosition={eraserPosition}
       />
       <TeacherLessoningInteractionTool
-        isRecording={isRecording}
-        startRecording={startRecording}
-        stopRecording={stopRecording}
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}
