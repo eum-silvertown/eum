@@ -334,7 +334,27 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
       };
 
       const newQuestionBox = updateTree(state.questionBox);
-      state.updateHistoryAfterChange(newQuestionBox);
+
+      // 현재 폴더에 새 아이템 추가
+      let newCurrentFolder = state.currentFolder;
+      const currentParentId = state.getCurrentParentId();
+
+      if (currentParentId === newItem.parentId) {
+        newCurrentFolder = [...newCurrentFolder, newItem];
+      }
+
+      set(state => ({
+        questionBox: newQuestionBox,
+        currentFolder: newCurrentFolder,
+        history: state.history.map((entry, index) =>
+          index === state.currentHistoryIndex
+            ? {
+                ...entry,
+                folder: newCurrentFolder,
+              }
+            : entry,
+        ),
+      }));
     },
 
     deleteItem: (itemId: number) => {

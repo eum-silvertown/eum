@@ -14,7 +14,7 @@ interface LectureProps {
 export default function LectureCreateBook({
   item,
 }: LectureProps): React.JSX.Element {
-  const pages = 7;
+  const pages = 6;
 
   return (
     <View style={styles.container}>
@@ -26,13 +26,12 @@ export default function LectureCreateBook({
               style={[
                 styles.page,
                 {
-                  backgroundColor:
-                    index === pages - 1 ? item.backgroundColor : 'white',
+                  backgroundColor: index === 0 ? item.backgroundColor : 'white',
                   transform: [
-                    {translateY: index * -4},
-                    {translateX: index * 5},
+                    {translateY: (pages - (index + 1)) * -getResponsiveSize(2)},
+                    {translateX: (pages - (index + 1)) * getResponsiveSize(2)},
                   ],
-                  zIndex: -index,
+                  zIndex: -(pages - (index + 1)),
                 },
               ]}
             />
@@ -76,8 +75,8 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   lectureContainer: {
-    width: getResponsiveSize(170),
-    height: getResponsiveSize(200),
+    width: getResponsiveSize(120),
+    height: getResponsiveSize(150),
     alignItems: 'center',
     padding: spacing.lg,
   },

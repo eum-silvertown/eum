@@ -1,4 +1,10 @@
-import {Image, StyleSheet, View, Animated, TouchableOpacity} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  View,
+  Animated,
+  TouchableOpacity,
+} from 'react-native';
 import {Text} from '@components/common/Text';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
 import {spacing} from '@theme/spacing';
@@ -8,9 +14,9 @@ import {useEffect, useRef} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import { useAuthStore } from '@store/useAuthStore';
-import { borderWidth } from '@theme/borderWidth';
-import { colors } from 'src/hooks/useColors';
+import {useAuthStore} from '@store/useAuthStore';
+import {borderWidth} from '@theme/borderWidth';
+import {colors} from 'src/hooks/useColors';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -36,14 +42,20 @@ function SidebarProfile(): React.JSX.Element {
 
   return (
     <TouchableOpacity onPress={moveProfile} style={styles.container}>
-      <View style={styles.profileImageContainer}>
+      {/* <View style={styles.profileImageContainer}>
         <Image style={styles.profileImage} source={authStore.userInfo.image ? {uri: authStore.userInfo.image} : defaultProfileImage} />
-      </View>
+      </View> */}
       <Animated.View style={[styles.username, {opacity: contentOpacity}]}>
         <Text variant="subtitle" weight="bold" numberOfLines={1}>
           {authStore.userInfo.name}
         </Text>
-        <Text>{authStore.role === 'STUDENT' ? '학생' : authStore.role === 'TEACHER' ? '선생님' : '역할 없음'}</Text>
+        <Text>
+          {authStore.role === 'STUDENT'
+            ? '학생'
+            : authStore.role === 'TEACHER'
+            ? '선생님'
+            : '역할 없음'}
+        </Text>
       </Animated.View>
     </TouchableOpacity>
   );
