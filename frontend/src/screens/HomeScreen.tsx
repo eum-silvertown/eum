@@ -12,7 +12,7 @@ function HomeScreen(): React.JSX.Element {
   useEffect(() => {
     // 유저 정보 조회
     const fetchData = async () => {
-      try {        
+      try {
         const response = await getUserInfo();
       } catch (error) {}
     };
@@ -53,11 +53,11 @@ const styles = StyleSheet.create({
   },
   contentTop: {
     flexDirection: 'row',
-    flex: 3,
+    flex: 4,
     gap: spacing.lg,
   },
   contentBottom: {
-    flex: 3,
+    flex: 5,
     marginBottom: spacing.sm,
   },
 });

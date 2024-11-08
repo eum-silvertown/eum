@@ -63,12 +63,4 @@ const styles = StyleSheet.create({
     bottom: 0,
     padding: spacing.xl,
   },
-  sidebarImage: {
-    position: 'absolute',
-    zIndex: -1,
-    left: 0,
-    bottom: '12.5%',
-    width: getResponsiveSize(240),
-    height: getResponsiveSize(320),
-  },
 });

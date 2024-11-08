@@ -4,6 +4,7 @@ import ContentLayout from './ContentLayout';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
+import {spacing} from '@theme/spacing';
 
 LocaleConfig.locales['ko'] = {
   monthNames: [
@@ -56,30 +57,35 @@ export default function MainCalendar(): React.JSX.Element {
   function getTodayDate() {
     const today = new Date();
     return today.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식
-  }  
+  }
 
   return (
     <ContentLayout flex={1} padding={0}>
-      <Calendar       
-        monthFormat={'yyyy년 M월'}
-        current={getTodayDate()}
-        style={styles.calendar}
-        theme={{
-          textMonthFontSize: getResponsiveSize(15),
-          textDayHeaderFontSize: getResponsiveSize(12),
-          textDayFontSize: getResponsiveSize(12),
-          arrowColor: colors.light.text.main,
-        }}        
-        enableSwipeMonths={true}
-      />
+      <View style={styles.container}>
+        <Calendar
+          monthFormat={'yyyy년 M월'}
+          current={getTodayDate()}
+          style={styles.calendar}
+          theme={{
+            textMonthFontSize: getResponsiveSize(10),
+            textDayHeaderFontSize: getResponsiveSize(8),
+            textDayFontSize: getResponsiveSize(8),
+            arrowColor: colors.light.text.main,
+          }}
+          enableSwipeMonths={true}
+        />
+      </View>
     </ContentLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  calendar: {
+  container: {
+    width: '100%',
     height: '100%',
-
-    transform: [{scale: 0.9}],
+    alignItems: 'center',
+  },
+  calendar: {
+    flex: 1,
   },
 });

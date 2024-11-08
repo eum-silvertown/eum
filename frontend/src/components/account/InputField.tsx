@@ -12,14 +12,14 @@ import {colors} from 'src/hooks/useColors';
 import {borderWidth} from '@theme/borderWidth';
 import {Text} from '@components/common/Text';
 import StatusMessage from '@components/account/StatusMessage';
-import { getResponsiveSize } from '@utils/responsive';
+import {getResponsiveSize} from '@utils/responsive';
 
 interface InputFieldProps {
   label?: string;
   value?: string;
   placeholder?: string;
   onChangeText?: (text: string) => void;
-  secureTextEntry?: boolean;  
+  secureTextEntry?: boolean;
   iconComponent?: React.ReactNode;
   onIconPress?: () => void;
   maxLength?: number;
@@ -38,7 +38,7 @@ function InputField({
   value,
   placeholder,
   onChangeText,
-  secureTextEntry = false,  
+  secureTextEntry = false,
   iconComponent,
   onIconPress,
   maxLength,
@@ -46,13 +46,17 @@ function InputField({
   multiline = false,
   style,
   buttonText,
-  onButtonPress,  
+  onButtonPress,
   statusText,
-  status
+  status,
 }: InputFieldProps): React.JSX.Element {
   return (
     <View style={[styles.inputContainer, style]}>
-      {label && <Text variant='subtitle' weight='bold' style={styles.inputLabel}>{label}</Text>}
+      {label && (
+        <Text variant="subtitle" weight="bold" style={styles.inputLabel}>
+          {label}
+        </Text>
+      )}
       <View style={[styles.inputBox]}>
         <TextInput
           style={styles.inputField}
@@ -86,7 +90,7 @@ function InputField({
 export default InputField;
 
 const styles = StyleSheet.create({
-  inputContainer: {    
+  inputContainer: {
     width: '100%',
     marginBottom: spacing.md,
   },
@@ -100,7 +104,7 @@ const styles = StyleSheet.create({
   },
   inputField: {
     flex: 1,
-    height: getResponsiveSize(40),
+    height: getResponsiveSize(25),
     backgroundColor: '#f2f4f8',
     borderBottomWidth: borderWidth.sm,
     borderBottomColor: colors.light.borderColor.cardBorder,
@@ -119,8 +123,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    right: 0,    
+    right: 0,
     width: '15%',
     height: '100%',
-  },  
+  },
 });

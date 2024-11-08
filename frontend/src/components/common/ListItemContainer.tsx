@@ -35,12 +35,12 @@ const styles = StyleSheet.create({
   },
   homework: {
     width: '95%',
-    height: getResponsiveSize(75),
+    height: getResponsiveSize(55),
     borderBottomWidth: borderWidth.sm,
     borderColor: '#00000020',
   },
   userinfo: {
-    height: getResponsiveSize(75),
+    height: getResponsiveSize(55),
     paddingVertical: spacing.md * 1.2,
     paddingHorizontal: spacing.xxl,
   },
