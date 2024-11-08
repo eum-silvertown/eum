@@ -19,7 +19,7 @@ import LessoningStudentListScreen from '@screens/LessoningStudentListScreen';
 import MainLayout from '@components/common/MainLayout';
 import ProfileScreen from '@screens/ProfileScreen';
 import {Platform, UIManager} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {TextEncoder} from 'text-encoding';
 
@@ -43,23 +43,52 @@ interface ScreenProps {
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
-  const screens: ScreenProps[] = [
-    {name: 'LoginScreen', component: LoginScreen},
-    {name: 'FindIdScreen', component: FindIdScreen},
-    {name: 'FindPasswordScreen', component: FindPasswordScreen},
-    {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
-    {name: 'SignUpScreen', component: SignUpScreen},
-    {name: 'HomeScreen', component: HomeScreen},
-    {name: 'LectureListScreen', component: LectureListScreen},
-    {name: 'HomeworkScreen', component: HomeworkScreen},
-    {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
-    {name: 'MyClassScreen', component: MyClassScreen},
-    {name: 'NotificationScreen', component: NotificationScreen},
-    {name: 'LessoningScreen', component: LessoningScreen},
-    {name: 'LessoningStudentListScreen', component: LessoningStudentListScreen},
-    {name: 'ProfileScreen', component: ProfileScreen},
-    {name: 'ClassDetailScreen', component: ClassDetailScreen},
-  ];
+  const [screens, setScreens] = useState<ScreenProps[]>([]);
+
+  // const screens: ScreenProps[] = [
+  //   {name: 'LoginScreen', component: LoginScreen},
+  //   {name: 'HomeScreen', component: HomeScreen},
+  //   {name: 'FindIdScreen', component: FindIdScreen},
+  //   {name: 'FindPasswordScreen', component: FindPasswordScreen},
+  //   {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
+  //   {name: 'SignUpScreen', component: SignUpScreen},
+  //   {name: 'LectureListScreen', component: LectureListScreen},
+  //   {name: 'HomeworkScreen', component: HomeworkScreen},
+  //   {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
+  //   {name: 'MyClassScreen', component: MyClassScreen},
+  //   {name: 'NotificationScreen', component: NotificationScreen},
+  //   {name: 'LessoningScreen', component: LessoningScreen},
+  //   {name: 'LessoningStudentListScreen', component: LessoningStudentListScreen},
+  //   {name: 'ProfileScreen', component: ProfileScreen},
+  //   {name: 'ClassDetailScreen', component: ClassDetailScreen},
+  // ];
+
+  useEffect(() => {
+    setScreens([
+      {name: 'LoginScreen', component: LoginScreen},
+      {name: 'HomeScreen', component: HomeScreen},
+      {name: 'FindIdScreen', component: FindIdScreen},
+      {name: 'FindPasswordScreen', component: FindPasswordScreen},
+      {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
+      {name: 'SignUpScreen', component: SignUpScreen},
+      {name: 'LectureListScreen', component: LectureListScreen},
+      {name: 'HomeworkScreen', component: HomeworkScreen},
+      {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
+      {name: 'MyClassScreen', component: MyClassScreen},
+      {name: 'NotificationScreen', component: NotificationScreen},
+      {name: 'LessoningScreen', component: LessoningScreen},
+      {
+        name: 'LessoningStudentListScreen',
+        component: LessoningStudentListScreen,
+      },
+      {name: 'ProfileScreen', component: ProfileScreen},
+      {name: 'ClassDetailScreen', component: ClassDetailScreen},
+    ]);
+  }, []);
+
+  if (screens.length === 0) {
+    return <></>;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
