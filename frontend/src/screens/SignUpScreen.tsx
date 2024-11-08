@@ -1,6 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {TouchableOpacity, View, StyleSheet, Alert} from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import {
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
@@ -29,12 +34,14 @@ import {
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {borderRadius} from '@theme/borderRadius';
 import StatusMessage from '@components/account/StatusMessage';
+import CustomDropdownPicker from '@components/common/CustomDropdownPicker';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function SignUpScreen(): React.JSX.Element {
   const {open} = useModal();
   const navigation = useNavigation<NavigationProps>();
+  const {setCurrentScreen} = useCurrentScreenStore();
   const {userType} = useRoute().params as {userType: 'teacher' | 'student'};
   const headerText =
     userType === 'teacher' ? '선생님으로 가입하기' : '학생으로 가입하기';
@@ -119,6 +126,13 @@ function SignUpScreen(): React.JSX.Element {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const [isVerificationSent, setIsVerificationSent] = useState(false);
+
+  // 각 버튼의 로딩 상태를 위한 useState
+  const [idLoading, setIdLoading] = useState(false);
+  const [emailVerificationLoading, setEmailVerificationLoading] =
+    useState(false);
+  const [codeVerificationLoading, setCodeVerificationLoading] = useState(false);
+  const [signUpLoading, setSignUpLoading] = useState(false);
 
   const handleUserIdChange = (text: string) => {
     setUserId(text);
@@ -225,6 +239,7 @@ function SignUpScreen(): React.JSX.Element {
 
   // 아이디 중복 확인
   const handleDuplicateCheck = async () => {
+    setIdLoading(true); // 로딩 시작
     try {
       if (!userId) {
         setUserIdStatusText('아이디를 입력해주세요.');
@@ -239,11 +254,15 @@ function SignUpScreen(): React.JSX.Element {
       setUserIdStatusType('error');
       setUserIdStatusText(String(error));
       setIsUsernameChecked(false); // 실패 시 체크 완료 취소
+    } finally {
+      setIdLoading(false); // 로딩 종료
     }
   };
 
   // 이메일로 인증코드 전송
   const handleSendVerification = async () => {
+    setEmailVerificationLoading(true); // 로딩 시작
+
     if (!email || !email.includes('@')) {
       setEmailStatusText('유효한 이메일 주소를 입력해주세요.');
       setEmailStatusType('error');
@@ -258,11 +277,14 @@ function SignUpScreen(): React.JSX.Element {
       setIsVerificationSent(false);
       setEmailStatusType('error');
       setEmailStatusText(String(error));
+    } finally {
+      setEmailVerificationLoading(false); // 로딩 종료
     }
   };
 
   // 인증코드로 본인 인증
   const handleVerificationCodeInput = async () => {
+    setCodeVerificationLoading(true); // 로딩 시작
     if (!verificationCode) {
       setVerificationCodeStatusType('error');
       setVerificationCodeStatusText('인증번호를 입력해주세요.');
@@ -276,6 +298,8 @@ function SignUpScreen(): React.JSX.Element {
       setVerificationCodeStatusType('error');
       setVerificationCodeStatusText(String(error));
       setIsEmailVerified(false); // 실패 시 인증 완료 취소
+    } finally {
+      setCodeVerificationLoading(false); // 로딩 종료
     }
   };
 
@@ -311,8 +335,10 @@ function SignUpScreen(): React.JSX.Element {
     }
   };
 
+  // 회원 가입
   const handleSignUp = async () => {
     if (validateFields()) {
+      setSignUpLoading(true); // 로딩 시작
       const role: 'TEACHER' | 'STUDENT' =
         userType === 'teacher' ? 'TEACHER' : 'STUDENT';
       const requestData = {
@@ -336,306 +362,321 @@ function SignUpScreen(): React.JSX.Element {
           response.message || '회원가입이 완료되었습니다.',
         );
         navigation.navigate('HomeScreen');
+        setCurrentScreen('HomeScreen');
       } catch (error) {
         Alert.alert('회원가입 실패', String(error));
+      } finally {
+        setSignUpLoading(false); // 로딩 종료
       }
     }
   };
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={styles.scrollContainer}
-      enableOnAndroid={true} // Android에서도 활성화
-      extraScrollHeight={getResponsiveSize(30)} // 키보드가 활성화될 때 추가적으로 스크롤하는 높이
-    >
+    <View style={styles.layout}>
       <ScreenHeader title={headerText} />
-
-      <View style={styles.formContainer}>
-        {/* 아이디 입력 필드 */}
-        <InputField
-          label="아이디"
-          placeholder="아이디를 입력해주세요."
-          value={userId}
-          onChangeText={handleUserIdChange}
-          maxLength={20}
-          buttonText="중복 확인"
-          onButtonPress={handleDuplicateCheck}
-          statusText={userIdStatusText}
-          status={userIdStatusType}
-        />
-
-        {/* 이메일 입력 필드 */}
-        <InputField
-          label="이메일"
-          placeholder="이메일을 입력해주세요."
-          value={email}
-          onChangeText={handleEmailChange}
-          buttonText="본인 인증"
-          onButtonPress={handleSendVerification}
-          statusText={emailStatusText}
-          status={emailStatusType}
-        />
-        
-        {/* 이메일 인증코드 입력 필드 */}
-        {isVerificationSent && (
-          <InputField
-            label="인증번호"
-            placeholder="이메일로 받은 인증번호를 입력해주세요."
-            value={verificationCode}
-            onChangeText={setVerificationCode}
-            buttonText="인증하기"
-            onButtonPress={handleVerificationCodeInput}
-            statusText={verificationCodeStatusText}
-            status={verificationCodeStatusType}
-          />
-        )}
-
-        {/* 비밀번호 입력 필드 */}
-        <InputField
-          label="비밀번호"
-          placeholder="비밀번호를 입력해주세요."
-          value={password}
-          secureTextEntry={!passwordVisible}
-          onChangeText={setPassword}
-          statusText={passwordStatusText}
-          status={passwordStatusType}
-          iconComponent={
-            passwordVisible ? (
-              <PasswordVisibleIcon width={iconSize.md} height={iconSize.md} />
-            ) : (
-              <PasswordVisibleOffIcon
-                width={iconSize.md}
-                height={iconSize.md}
+      <View style={styles.container}>
+        <View>
+          <View style={styles.formContainer}>
+            <View style={styles.innerContainer}>
+              {/* 아이디 입력 필드 */}
+              <InputField
+                label="아이디"
+                placeholder="아이디를 입력해주세요."
+                value={userId}
+                onChangeText={handleUserIdChange}
+                maxLength={20}
+                buttonText={idLoading ? '확인 중...' : '중복 확인'}
+                onButtonPress={handleDuplicateCheck}
+                statusText={userIdStatusText}
+                status={userIdStatusType}
               />
-            )
-          }
-          onIconPress={() => setPasswordVisible(!passwordVisible)}
-        />
-
-        {/* 비밀번호 확인 입력 필드 */}
-        <InputField
-          label="비밀번호 확인"
-          placeholder="비밀번호를 한번 더 입력해주세요."
-          value={confirmPassword}
-          secureTextEntry={!passwordVisible}
-          onChangeText={setConfirmPassword}
-          statusText={confirmPasswordStatusText}
-          status={confirmPasswordStatusType}
-        />
-
-        {/* 이름 입력 필드 */}
-        <InputField
-          label="이름"
-          placeholder="이름을 입력해주세요."
-          value={name}
-          onChangeText={setName}
-          statusText={nameStatusText}
-          status={nameStatusType}
-        />
-
-        {/* 휴대폰 번호 입력 필드 */}
-        <InputField
-          label="휴대폰 번호"
-          placeholder="휴대폰 번호 11자리를 입력해주세요."
-          value={tel}
-          onChangeText={handleTelChange}
-          statusText={telStatusText}
-          status={telStatusType}
-          keyboardType="numeric"
-          maxLength={13}
-        />
-
-        {/* 학교 정보 입력 */}
-        <View>
-          <View style={styles.schoolInfoContainer}>
-            <InputField
-              style={{flex: 1}}
-              label="학교"
-              placeholder="학교 이름을 입력하거나 검색하세요."
-              value={school}
-              onChangeText={setSchool}
-              iconComponent={
-                <SearchIcon width={iconSize.md} height={iconSize.md} />
-              }
-              onIconPress={() =>
-                open(<SearchSchoolModal onSelectSchool={setSchool} />, {
-                  title: '학교 검색',
-                  size: 'xs',
-                  onClose: () => {
-                    console.log('학교 검색 Closed!');
-                  },
-                })
-              }
-            />
-            {/* 학년, 반 */}
-            <View style={styles.gradeClassContainer}>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  mode="dropdown"
-                  dropdownIconColor={colors.light.background.main}
-                  selectedValue={selectedGrade}
-                  onValueChange={itemValue => setSelectedGrade(itemValue)}
-                  style={styles.picker}
-                  itemStyle={{color: colors.light.text.main}}>
-                  {Array.from({length: 4}, (_, i) => (
-                    <Picker.Item
-                      key={i}
-                      label={i === 0 ? '학년' : `${i}학년`}
-                      value={`${i}`}
+              {/* 이메일 입력 필드 */}
+              <InputField
+                label="이메일"
+                placeholder="이메일을 입력해주세요."
+                value={email}
+                onChangeText={handleEmailChange}
+                buttonText={emailVerificationLoading ? '발송 중...' : '본인 인증'}
+                onButtonPress={handleSendVerification}
+                statusText={emailStatusText}
+                status={emailStatusType}
+              />
+              {/* 이메일 인증코드 입력 필드 */}
+              {isVerificationSent && (
+                <InputField
+                  label="인증번호"
+                  placeholder="이메일로 받은 인증번호를 입력해주세요."
+                  value={verificationCode}
+                  onChangeText={setVerificationCode}
+                  buttonText={codeVerificationLoading ? '인증 중...' : '인증하기'}
+                  onButtonPress={handleVerificationCodeInput}
+                  statusText={verificationCodeStatusText}
+                  status={verificationCodeStatusType}
+                />
+              )}
+              {/* 비밀번호 입력 필드 */}
+              <InputField
+                label="비밀번호"
+                placeholder="비밀번호를 입력해주세요."
+                value={password}
+                secureTextEntry={!passwordVisible}
+                onChangeText={setPassword}
+                statusText={passwordStatusText}
+                status={passwordStatusType}
+                iconComponent={
+                  passwordVisible ? (
+                    <PasswordVisibleIcon
+                      width={iconSize.md}
+                      height={iconSize.md}
                     />
-                  ))}
-                </Picker>
+                  ) : (
+                    <PasswordVisibleOffIcon
+                      width={iconSize.md}
+                      height={iconSize.md}
+                    />
+                  )
+                }
+                onIconPress={() => setPasswordVisible(!passwordVisible)}
+              />
+              {/* 비밀번호 확인 입력 필드 */}
+              <InputField
+                label="비밀번호 확인"
+                placeholder="비밀번호를 한번 더 입력해주세요."
+                value={confirmPassword}
+                secureTextEntry={!passwordVisible}
+                onChangeText={setConfirmPassword}
+                statusText={confirmPasswordStatusText}
+                status={confirmPasswordStatusType}
+              />
+            </View>
+
+            {/* 중앙 구분선 */}
+            <View style={styles.divider} />
+
+            <View style={styles.innerContainer}>
+              {/* 이름 입력 필드 */}
+              <InputField
+                label="이름"
+                placeholder="이름을 입력해주세요."
+                value={name}
+                onChangeText={setName}
+                statusText={nameStatusText}
+                status={nameStatusType}
+              />
+              {/* 휴대폰 번호 입력 필드 */}
+              <InputField
+                label="휴대폰 번호"
+                placeholder="휴대폰 번호 11자리를 입력해주세요."
+                value={tel}
+                onChangeText={handleTelChange}
+                statusText={telStatusText}
+                status={telStatusType}
+                keyboardType="numeric"
+                maxLength={13}
+              />
+              {/* 학교 정보 입력 */}
+              <View>
+                <View style={styles.schoolInfoContainer}>
+                  <InputField
+                    style={{flex: 1}}
+                    label="학교"
+                    placeholder="학교 이름을 입력하거나 검색하세요."
+                    value={school}
+                    onChangeText={setSchool}
+                    iconComponent={
+                      <SearchIcon width={iconSize.md} height={iconSize.md} />
+                    }
+                    onIconPress={() =>
+                      open(<SearchSchoolModal onSelectSchool={setSchool} />, {
+                        title: '학교 검색',
+                        size: 'xs',
+                        onClose: () => {
+                          console.log('학교 검색 Closed!');
+                        },
+                      })
+                    }
+                  />
+                  {/* 학년, 반 */}
+                  <View style={styles.gradeClassContainer}>
+                    <View style={styles.pickerContainer}>
+                      {/* 학년 선택 드롭다운 */}
+                      <CustomDropdownPicker
+                        items={Array.from({length: 4}, (_, i) => ({
+                          label: i === 0 ? '학년' : `${i}학년`,
+                          value: `${i}`,
+                        }))}
+                        placeholder="학년 선택"
+                        onSelectItem={value => setSelectedGrade(value)}
+                        defaultValue={selectedGrade}
+                      />
+                    </View>
+                    <View style={styles.pickerContainer}>
+                      {/* 반 선택 드롭다운 */}
+                      <CustomDropdownPicker
+                        items={Array.from({length: 16}, (_, i) => ({
+                          label: i === 0 ? '반' : `${i}반`,
+                          value: `${i}`,
+                        }))}
+                        placeholder="반 선택"
+                        onSelectItem={value => setSelectedClass(value)}
+                        defaultValue={selectedClass}
+                      />
+                    </View>
+                  </View>
+                </View>
+                <StatusMessage
+                  status={schoolStatusType}
+                  message={schoolStatusText}
+                />
               </View>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  mode="dropdown"
-                  dropdownIconColor={colors.light.background.main}
-                  selectedValue={selectedClass}
-                  onValueChange={itemValue => setSelectedClass(itemValue)}
-                  style={[styles.picker]}
-                  itemStyle={{color: colors.light.text.main}}>
-                  {Array.from({length: 16}, (_, i) => (
-                    <Picker.Item
-                      key={i}
-                      label={i === 0 ? '반' : `${i}반`}
-                      value={`${i}`}
-                    />
-                  ))}
-                </Picker>
+              <View>
+                <View style={styles.birthGenderContainer}>
+                  {/* 생년월일 */}
+                  <InputField
+                    style={{flex: 1}}
+                    label="생년월일"
+                    placeholder="생년월일 8자리를 입력해주세요"
+                    value={birthDate}
+                    onChangeText={handleDateChange}
+                    keyboardType="numeric"
+                    maxLength={10}
+                  />
+                  {/* 성별 선택 */}
+                  <View style={styles.genderContainer}>
+                    <TouchableOpacity
+                      style={[
+                        styles.genderButton,
+                        gender === 'male' && styles.selectedGenderButton,
+                      ]}
+                      onPress={() => setGender('male')}>
+                      <Text
+                        weight="bold"
+                        style={[
+                          gender === 'male' && styles.selectedGenderButtonText,
+                        ]}>
+                        남성
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.genderButton,
+                        gender === 'female' && styles.selectedGenderButton,
+                      ]}
+                      onPress={() => setGender('female')}>
+                      <Text
+                        weight="bold"
+                        style={[
+                          gender === 'female' &&
+                            styles.selectedGenderButtonText,
+                        ]}>
+                        여성
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <StatusMessage
+                  status={birthDateStatusType}
+                  message={birthDateStatusText}
+                />
               </View>
             </View>
           </View>
-          <StatusMessage status={schoolStatusType} message={schoolStatusText} />
+          {/* 회원가입 버튼 */}
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={handleSignUp}
+            disabled={signUpLoading} // 로딩 중 버튼 비활성화
+          >
+            {signUpLoading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text color="white" weight="bold">
+                회원가입
+              </Text>
+            )}
+          </TouchableOpacity>
         </View>
-
-        <View>
-          <View style={styles.birthGenderContainer}>
-            {/* 생년월일 */}
-            <InputField
-              style={{flex: 1}}
-              label="생년월일"
-              placeholder="생년월일 8자리를 입력해주세요"
-              value={birthDate}
-              onChangeText={handleDateChange}
-              keyboardType="numeric"
-              maxLength={10}
-            />
-            {/* 성별 선택 */}
-            <View style={styles.genderContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.genderButton,
-                  gender === 'male' && styles.selectedGenderButton,
-                ]}
-                onPress={() => setGender('male')}>
-                <Text
-                  weight="bold"
-                  style={[
-                    gender === 'male' && styles.selectedGenderButtonText,
-                  ]}>
-                  남성
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.genderButton,
-                  gender === 'female' && styles.selectedGenderButton,
-                ]}
-                onPress={() => setGender('female')}>
-                <Text
-                  weight="bold"
-                  style={[
-                    gender === 'female' && styles.selectedGenderButtonText,
-                  ]}>
-                  여성
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <StatusMessage
-            status={birthDateStatusType}
-            message={birthDateStatusText}
-          />
-        </View>
-        {/* 회원가입 제출 */}
-        <TouchableOpacity style={styles.submitButton} onPress={handleSignUp}>
-          <Text color="white" weight="bold">
-            회원가입
-          </Text>
-        </TouchableOpacity>
       </View>
-    </KeyboardAwareScrollView>
+    </View>
   );
 }
 
 export default SignUpScreen;
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
+  layout: {
+    flex: 1,
     backgroundColor: colors.light.background.white,
+  },
+  container: {
+    flex: 1,
+    width: '90%',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignSelf: 'center',
   },
   formContainer: {
+    flexDirection: 'row',
+    gap: spacing.xxl,
+  },
+  innerContainer: {
     flex: 1,
-    width: '55%',
-    justifyContent: 'center',
   },
   schoolInfoContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: spacing.md,
+    alignItems: 'center',
+    gap: spacing.xl,
+    marginBottom: spacing.md,
   },
   gradeClassContainer: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: spacing.sm,
+    gap: spacing.md,
+    alignSelf: 'flex-end',
   },
   pickerContainer: {
     flex: 1,
-    borderRadius: spacing.sm,
-    height: getResponsiveSize(40),
-    justifyContent: 'center',
-    marginBottom: spacing.md,
-    backgroundColor: '#f2f4f8',
+    justifyContent: 'flex-end',
   },
-  picker: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-  },
-
   birthGenderContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: spacing.md,
+    alignSelf: 'flex-end',
+    gap: spacing.xl,
+    marginBottom: spacing.md,
   },
   genderContainer: {
-    flex: 1,
-    height: getResponsiveSize(40),
     flexDirection: 'row',
+    flex: 1,
+    gap: spacing.md,
+    justifyContent: 'center',
+  },
+  selectedGenderButton: {
+    backgroundColor: colors.light.background.main,
+  },
+  genderButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: borderRadius.sm,
+    marginHorizontal: spacing.xs,
     marginVertical: spacing.md,
+    backgroundColor: colors.light.background.input,
+    height: getResponsiveSize(25),
+    alignSelf: 'flex-end',
   },
   selectedGenderButtonText: {
     color: 'white',
   },
-  selectedGenderButton: {
-    backgroundColor: '#2e2559',
-  },
-  genderButton: {
-    flex: 1,
-    backgroundColor: '#f2f4f8',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: spacing.sm,
-    marginHorizontal: spacing.sm,
-  },
   submitButton: {
-    marginTop: spacing.lg,
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,    
+    paddingVertical: spacing.md,
     alignItems: 'center',
+    marginVertical: spacing.xl,
+    alignSelf: 'center',
+    width: '50%',
+  },
+  divider: {
+    width: 1,
+    backgroundColor: '#C1C1C1',
+    marginHorizontal: spacing.sm,
   },
 });
