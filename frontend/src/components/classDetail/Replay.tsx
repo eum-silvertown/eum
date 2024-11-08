@@ -8,6 +8,7 @@ import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import { getResponsiveSize } from '@utils/responsive';
+import EmptyData from '@components/common/EmptyData';
 
 type LessonType = {
   lessonId: number;
@@ -69,36 +70,44 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
         <Text variant="subtitle" weight="bold" style={styles.subtitle}>
           수업 필기 다시보기
         </Text>
-        <View style={styles.pagination}>
-          <TouchableOpacity onPress={handlePrevPage} disabled={currentPage === 1}>
-            {currentPage === 1 ? (
-              <LeftArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
-            ) : (
-              <LeftArrowOnIcon width={iconSize.sm} height={iconSize.sm} />
-            )}
-          </TouchableOpacity>
-          <Text style={styles.pageIndicator}>{`${currentPage} / ${totalPages}`}</Text>
-          <TouchableOpacity onPress={handleNextPage} disabled={currentPage === totalPages}>
-            {currentPage === totalPages ? (
-              <RightArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
-            ) : (
-              <RightArrowOnIcon width={iconSize.sm} height={iconSize.sm} />
-            )}
-          </TouchableOpacity>
-        </View>
+        {lesson.length > 0 && (
+          <View style={styles.pagination}>
+            <TouchableOpacity onPress={handlePrevPage} disabled={currentPage === 1}>
+              {currentPage === 1 ? (
+                <LeftArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
+              ) : (
+                <LeftArrowOnIcon width={iconSize.sm} height={iconSize.sm} />
+              )}
+            </TouchableOpacity>
+            <Text style={styles.pageIndicator}>{`${currentPage} / ${totalPages}`}</Text>
+            <TouchableOpacity onPress={handleNextPage} disabled={currentPage === totalPages}>
+              {currentPage === totalPages ? (
+                <RightArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
+              ) : (
+                <RightArrowOnIcon width={iconSize.sm} height={iconSize.sm} />
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      <FlatList
-        style={styles.listStyle}
-        data={paginatedData.length > 0 ? paginatedData : [{ lessonId: 0, title: '등록된 수업이 없습니다', questions: [] }]}
-        renderItem={renderItem}
-        keyExtractor={item => item.lessonId.toString()}
-      />
+
+      {lesson.length === 0 ? (
+        <EmptyData message="등록된 수업이 없습니다" />
+      ) : (
+        <FlatList
+          style={styles.listStyle}
+          data={paginatedData}
+          renderItem={renderItem}
+          keyExtractor={item => item.lessonId.toString()}
+        />
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   replay: {
+    flex: 1,
     paddingVertical: spacing.md,
   },
   header: {

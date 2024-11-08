@@ -1,5 +1,5 @@
-import {View, StyleSheet, TouchableOpacity, Pressable} from 'react-native';
-import {spacing} from '@theme/spacing';
+import { View, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { spacing } from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -11,7 +11,7 @@ import StudentRank from '@components/classDetail/StudentRank';
 import StudentsChart from '@components/classDetail/StudentsChart';
 
 import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 import {
   getLectureDetail,
@@ -21,10 +21,11 @@ import {
   LectureStudentDetailType,
   LectureTeacherDetailType,
 } from 'src/services/lectureInformation';
-import {useQuery} from '@tanstack/react-query';
-import {useState} from 'react';
-import {getResponsiveSize} from '@utils/responsive';
-import {useBookModalStore} from '@store/useBookModalStore';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { getResponsiveSize } from '@utils/responsive';
+import { useBookModalStore } from '@store/useBookModalStore';
+import EmptyData from '@components/common/EmptyData';
 
 type ClassAverageScores = {
   homeworkAvgScore: number;
@@ -36,20 +37,20 @@ function ClassDetailScreen(): React.JSX.Element {
   const closeBook = useBookModalStore(state => state.closeBook);
 
   const lectureId = 1;
-  const isTeacher = true;
+  const isTeacher = false;
 
-  const {data: lectureDetail} = useQuery<LectureDetailType>({
+  const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId),
   });
 
-  const {data: studentLectureDetail} = useQuery<LectureStudentDetailType>({
+  const { data: studentLectureDetail } = useQuery<LectureStudentDetailType>({
     queryKey: ['studentLectureDetail', lectureId],
     queryFn: () => getStudentLectureDetail(lectureId),
     enabled: !isTeacher,
   });
 
-  const {data: teacherLectureDetail} = useQuery<LectureTeacherDetailType>({
+  const { data: teacherLectureDetail } = useQuery<LectureTeacherDetailType>({
     queryKey: ['teacherLectureDetail', lectureId],
     queryFn: () => getTeacherLectureDetail(lectureId),
     enabled: isTeacher,
@@ -123,21 +124,26 @@ function ClassDetailScreen(): React.JSX.Element {
             <View style={styles.replayLayout}>
               <Replay lesson={lectureDetail?.lesson} />
             </View>
-            {teacherLectureDetail && (
-              <View style={styles.homeworkLayout}>
-                <StudentsChart
-                  classAverageScores={
-                    selectedStudentScores ||
-                    teacherLectureDetail.classAverageScores
-                  }
-                  studentName={selectedStudentName || '학급 평균'}
-                />
-                <StudentRank
-                  studentsInfo={teacherLectureDetail.students}
-                  onStudentSelect={handleStudentSelect}
-                />
-              </View>
-            )}
+            <View style={styles.homeworkLayout}>
+              {teacherLectureDetail ? (
+                <>
+                  <StudentsChart
+                    classAverageScores={
+                      selectedStudentScores ||
+                      teacherLectureDetail.classAverageScores
+                    }
+                    studentName={selectedStudentName || '학급 평균'}
+                  />
+                  <StudentRank
+                    studentsInfo={teacherLectureDetail.students}
+                    onStudentSelect={handleStudentSelect}
+                  />
+                </>
+              ) : (
+                <EmptyData message="학급 정보가 없습니다." />
+              )
+              }
+            </View>
           </View>
         </View>
       </View>

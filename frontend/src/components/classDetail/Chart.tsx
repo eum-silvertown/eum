@@ -6,6 +6,7 @@ import { Canvas, vec } from '@shopify/react-native-skia';
 import { Ring } from './Ring';
 import { typography } from '@theme/typography';
 import { getResponsiveSize } from '@utils/responsive';
+import EmptyData from '@components/common/EmptyData';
 
 const width = 120;
 const height = 120;
@@ -28,75 +29,90 @@ type ChartProps = {
 };
 
 function Chart({ studentScores }: ChartProps): React.JSX.Element {
-  const averageScore = Math.round(
-    ((studentScores?.homeworkScore || 0) +
-      (studentScores?.testScore || 0) +
-      (studentScores?.attitudeScore || 0)) /
-    3
-  );
+  // 점수 데이터가 하나라도 없으면 EmptyData 메시지를 표시
+  const hasScoreData = studentScores?.homeworkScore !== undefined &&
+    studentScores?.testScore !== undefined &&
+    studentScores?.attitudeScore !== undefined;
 
-  const rings = [
-    {
-      totalProgress: (studentScores?.homeworkScore || 0) / 100,
-      colors: [color(0.0, 0.9, 0.7), color(0.2, 0.7, 1)],
-      background: color(0.02, 0.25, 0.25),
-      size: SIZE - strokeWidth * 4,
-      label: '숙제',
-    },
-    {
-      totalProgress: (studentScores?.testScore || 0) / 100,
-      colors: [color(1, 0.8, 0), color(1, 0.6, 0.2)],
-      background: color(0.3, 0.2, 0),
-      size: SIZE - strokeWidth * 2,
-      label: '시험',
-    },
-    {
-      totalProgress: (studentScores?.attitudeScore || 0) / 100,
-      colors: [color(1, 0.3, 0.4), color(1, 0.5, 0.6)],
-      background: color(0.2, 0, 0.1),
-      size: SIZE,
-      label: '태도',
-    },
-  ];
+  const averageScore = hasScoreData
+    ? Math.round(
+      ((studentScores?.homeworkScore || 0) +
+        (studentScores?.testScore || 0) +
+        (studentScores?.attitudeScore || 0)) /
+      3
+    )
+    : 0;
+
+  const rings = hasScoreData
+    ? [
+      {
+        totalProgress: (studentScores.homeworkScore || 0) / 100,
+        colors: [color(0.0, 0.9, 0.7), color(0.2, 0.7, 1)],
+        background: color(0.02, 0.25, 0.25),
+        size: SIZE - strokeWidth * 4,
+        label: '숙제',
+      },
+      {
+        totalProgress: (studentScores.testScore || 0) / 100,
+        colors: [color(1, 0.8, 0), color(1, 0.6, 0.2)],
+        background: color(0.3, 0.2, 0),
+        size: SIZE - strokeWidth * 2,
+        label: '시험',
+      },
+      {
+        totalProgress: (studentScores.attitudeScore || 0) / 100,
+        colors: [color(1, 0.3, 0.4), color(1, 0.5, 0.6)],
+        background: color(0.2, 0, 0.1),
+        size: SIZE,
+        label: '태도',
+      },
+    ]
+    : [];
 
   return (
     <View style={styles.chart}>
       <Text variant="subtitle" weight="bold" style={styles.subtitle}>
         나의 점수
       </Text>
-      <View style={styles.rowContainer}>
-        <Canvas style={styles.chartContainer}>
-          {rings.map((ring, index) => (
-            <Ring
-              key={index}
-              ring={ring}
-              center={center}
-              strokeWidth={strokeWidth}
-            />
-          ))}
-        </Canvas>
-        <View style={styles.legendContainer}>
-          <View style={styles.totalScoreContainer}>
-            <Text style={styles.totalScoreLabel}>총점</Text>
-            <Text style={styles.totalScoreValue}>{averageScore}</Text>
-            <Text style={styles.totalScoreUnit}>점</Text>
-          </View>
-          {rings.map((ring, index) => (
-            <View key={index} style={styles.legendItem}>
-              <View
-                style={[styles.colorDot, { backgroundColor: ring.colors[0] }]}
+
+      {!hasScoreData ? (
+        <EmptyData message="점수 정보가 부족합니다" />
+      ) : (
+        <View style={styles.rowContainer}>
+          <Canvas style={styles.chartContainer}>
+            {rings.map((ring, index) => (
+              <Ring
+                key={index}
+                ring={ring}
+                center={center}
+                strokeWidth={strokeWidth}
               />
-              <Text>{ring.label} {ring.totalProgress * 100}점</Text>
+            ))}
+          </Canvas>
+          <View style={styles.legendContainer}>
+            <View style={styles.totalScoreContainer}>
+              <Text style={styles.totalScoreLabel}>총점</Text>
+              <Text style={styles.totalScoreValue}>{averageScore}</Text>
+              <Text style={styles.totalScoreUnit}>점</Text>
             </View>
-          ))}
+            {rings.map((ring, index) => (
+              <View key={index} style={styles.legendItem}>
+                <View
+                  style={[styles.colorDot, { backgroundColor: ring.colors[0] }]}
+                />
+                <Text>{ring.label} {ring.totalProgress * 100}점</Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   chart: {
+    flex: 1,
     paddingVertical: spacing.md,
   },
   subtitle: {
