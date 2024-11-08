@@ -22,7 +22,6 @@ export default function ContentLayout({
 const styles = StyleSheet.create({
   container: {
     borderRadius: borderRadius.xl,
-    backgroundColor: colors.light.background.white,
-    elevation: getResponsiveSize(2),
+    backgroundColor: `${colors.light.background.white}aa`,
   },
 });
