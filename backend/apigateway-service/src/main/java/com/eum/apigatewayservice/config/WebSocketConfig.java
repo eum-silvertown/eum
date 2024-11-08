@@ -9,7 +9,7 @@ import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyReques
 @Configuration
 public class WebSocketConfig {
     @Bean
-    public WebSocketService webSocketService() {
+    public WebSocketService eumWebSocketService() {
         return new HandshakeWebSocketService(new ReactorNettyRequestUpgradeStrategy());
     }
 }
