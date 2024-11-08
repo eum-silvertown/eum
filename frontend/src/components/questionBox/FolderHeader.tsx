@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   folderHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: spacing.xxl,
+    height: spacing.xxl * 1.25,
     gap: spacing.xl,
     marginBottom: spacing.lg,
     paddingHorizontal: spacing.lg,

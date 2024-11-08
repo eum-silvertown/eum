@@ -6,6 +6,7 @@ import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import type {LectureType} from '@store/useLectureStore'; // useLectureStore에서 Lecture 타입을 가져옴
 import {colors} from 'src/hooks/useColors';
+import {getResponsiveSize} from '@utils/responsive';
 
 interface LectureProps {
   item: LectureType;
@@ -23,15 +24,13 @@ export default function Lecture({item}: LectureProps): React.JSX.Element {
               key={index}
               style={[
                 styles.page,
-                // eslint-disable-next-line react-native/no-inline-styles
                 {
-                  backgroundColor:
-                    index === pages - 1 ? item.backgroundColor : 'white',
+                  backgroundColor: index === 0 ? item.backgroundColor : 'white',
                   transform: [
-                    {translateY: index * -4},
-                    {translateX: index * 5},
+                    {translateY: (pages - (index + 1)) * -getResponsiveSize(2)},
+                    {translateX: (pages - (index + 1)) * getResponsiveSize(2)},
                   ],
-                  zIndex: -index,
+                  zIndex: -(pages - (index + 1)),
                 },
               ]}
             />
