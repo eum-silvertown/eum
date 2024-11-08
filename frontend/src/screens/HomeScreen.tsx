@@ -4,9 +4,11 @@ import MainHeader from '@components/main/MainHeader';
 import TodoList from '@components/main/TodoList';
 import Weather from '@components/main/Weather';
 import Calendar from '@components/main/MainCalendar';
-import Timetalbe from '@components/main/Timetable';
+import Timetable from '@components/main/Timetable';
 import {useEffect} from 'react';
 import {getUserInfo} from '@services/authService';
+import {Text} from '@components/common/Text';
+import MainTest from '@components/main/MainTest';
 
 function HomeScreen(): React.JSX.Element {
   useEffect(() => {
@@ -22,18 +24,22 @@ function HomeScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <MainHeader />
+      {/* <MainHeader /> */}
+      <MainTest />
 
-      <View style={styles.content}>
+      {/* <View style={styles.content}>
         <View style={styles.contentTop}>
           <TodoList />
           <Weather />
           <Calendar />
         </View>
         <View style={styles.contentBottom}>
-          <Timetalbe />
+          <Text variant="subtitle" weight="bold">
+            시간표
+          </Text>
+          <Timetable />
         </View>
-      </View>
+      </View> */}
     </View>
   );
 }
@@ -43,8 +49,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.xxl,
+    // paddingHorizontal: spacing.xl,
   },
   content: {
     flex: 1,
@@ -58,6 +63,6 @@ const styles = StyleSheet.create({
   },
   contentBottom: {
     flex: 5,
-    marginBottom: spacing.sm,
+    gap: spacing.md,
   },
 });
