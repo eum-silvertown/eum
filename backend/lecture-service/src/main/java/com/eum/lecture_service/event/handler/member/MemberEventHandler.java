@@ -27,9 +27,7 @@ public class MemberEventHandler {
 	private final ClassReadRepository classReadRepository;
 	private final StudentReadRepository studentReadRepository;
 
-	@KafkaListener(topics = "create_teacher", groupId = "lecture-group", properties = {
-		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.TeacherInfoEvent"
-	})
+	@KafkaListener(topics = "create_teacher", groupId = "lecture-group", containerFactory = "teacherKafkaListenerContainerFactory")
 	public void createTeacher(TeacherInfoEvent event) {
 		TeacherModel teacher = TeacherModel.builder()
 			.teacherId(event.getTeacherId())
@@ -42,9 +40,7 @@ public class MemberEventHandler {
 		teacherReadRepository.save(teacher);
 	}
 
-	@KafkaListener(topics = "update_teacher", groupId = "lecture-group", properties = {
-		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.TeacherInfoEvent"
-	})
+	@KafkaListener(topics = "update_teacher", groupId = "lecture-group", containerFactory = "teacherUpdateKafkaListenerContainerFactory")
 	public void updateTeacher(TeacherInfoEvent event) {
 		teacherReadRepository.findById(event.getTeacherId()).ifPresentOrElse(
 			teacher -> {
@@ -59,9 +55,7 @@ public class MemberEventHandler {
 		);
 	}
 
-	@KafkaListener(topics = "create_class", groupId = "lecture-group", properties = {
-		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.ClassEvent"
-	})
+	@KafkaListener(topics = "create_class", groupId = "lecture-group", containerFactory = "classKafkaListenerContainerFactory")
 	public void createClass(ClassEvent event) {
 		ClassModel classModel = ClassModel.builder()
 			.classId(event.getClassId())
@@ -73,9 +67,7 @@ public class MemberEventHandler {
 		classReadRepository.save(classModel);
 	}
 
-	@KafkaListener(topics = "create_student", groupId = "lecture-group", properties = {
-		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.StudentInfoEvent"
-	})
+	@KafkaListener(topics = "create_student", groupId = "lecture-group", containerFactory = "studentKafkaListenerContainerFactory")
 	public void createStudent(StudentInfoEvent event) {
 		StudentModel student = StudentModel.builder()
 			.studentId(event.getStudentId())
@@ -89,9 +81,7 @@ public class MemberEventHandler {
 		studentReadRepository.save(student);
 	}
 
-	@KafkaListener(topics = "update_student", groupId = "lecture-group", properties = {
-		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.StudentInfoEvent"
-	})
+	@KafkaListener(topics = "update_student", groupId = "lecture-group", containerFactory = "studentUpdateKafkaListenerContainerFactory")
 	public void updateStudent(StudentInfoEvent event) {
 		studentReadRepository.findById(event.getStudentId()).ifPresentOrElse(
 			student -> {
