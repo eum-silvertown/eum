@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/drawing")
+        registry.addEndpoint("/ws-gateway/drawing")
                 .setAllowedOrigins("*")
                 .withSockJS();
     }
