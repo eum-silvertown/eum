@@ -30,6 +30,7 @@ export const colors = {
       readonly: '#ECECEC',
       white: '#FFFFFF',
       modalOverlay: '#00000080',
+      input: '#F2F4F8',
     },
     borderColor: {
       cardBorder: '#463986',
@@ -65,6 +66,7 @@ export const colors = {
       readonly: '#ECECEC',
       white: '#FFFFFF',
       modalOverlay: '#00000080',
+      input: '#F2F4F8',
     },
     borderColor: {
       cardBorder: '#463986',

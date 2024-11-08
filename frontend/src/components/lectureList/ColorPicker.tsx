@@ -23,7 +23,7 @@ const CustomColorPicker = forwardRef((props: ColorPickerProps, ref) => {
     <View style={[styles.container]}>
       <ColorPicker
         thumbSize={getResponsiveSize(20)}
-        sliderSize={getResponsiveSize(25)}
+        sliderSize={getResponsiveSize(13)}
         color={currentColor}
         onColorChange={setCurrentColor}
         onColorChangeComplete={props.onColorSelected}
