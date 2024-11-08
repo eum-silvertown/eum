@@ -1,5 +1,5 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { spacing } from '@theme/spacing';
+import {View, StyleSheet, TouchableOpacity, Pressable} from 'react-native';
+import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -11,7 +11,7 @@ import StudentRank from '@components/classDetail/StudentRank';
 import StudentsChart from '@components/classDetail/StudentsChart';
 
 import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 import {
   getLectureDetail,
@@ -21,12 +21,10 @@ import {
   LectureStudentDetailType,
   LectureTeacherDetailType,
 } from 'src/services/lectureInformation';
-import { useQuery } from '@tanstack/react-query';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { useFocusEffect } from '@react-navigation/native';
-import { useState } from 'react';
-import { getResponsiveSize } from '@utils/responsive';
-
+import {useQuery} from '@tanstack/react-query';
+import {useState} from 'react';
+import {getResponsiveSize} from '@utils/responsive';
+import {useBookModalStore} from '@store/useBookModalStore';
 
 type ClassAverageScores = {
   homeworkAvgScore: number;
@@ -34,36 +32,24 @@ type ClassAverageScores = {
   attitudeAvgScore: number;
 };
 
-interface ClassDetailScreenProp {
-  closeBook: () => void;
-}
-
-function ClassDetailScreen({
-  closeBook,
-}: ClassDetailScreenProp): React.JSX.Element {
-  const setCurrentScreen = useCurrentScreenStore(
-    state => state.setCurrentScreen,
-  );
-
-  useFocusEffect(() => {
-    setCurrentScreen('ClassDetailScreen');
-  });
+function ClassDetailScreen(): React.JSX.Element {
+  const closeBook = useBookModalStore(state => state.closeBook);
 
   const lectureId = 1;
   const isTeacher = true;
 
-  const { data: lectureDetail } = useQuery<LectureDetailType>({
+  const {data: lectureDetail} = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId),
   });
 
-  const { data: studentLectureDetail } = useQuery<LectureStudentDetailType>({
+  const {data: studentLectureDetail} = useQuery<LectureStudentDetailType>({
     queryKey: ['studentLectureDetail', lectureId],
     queryFn: () => getStudentLectureDetail(lectureId),
     enabled: !isTeacher,
   });
 
-  const { data: teacherLectureDetail } = useQuery<LectureTeacherDetailType>({
+  const {data: teacherLectureDetail} = useQuery<LectureTeacherDetailType>({
     queryKey: ['teacherLectureDetail', lectureId],
     queryFn: () => getTeacherLectureDetail(lectureId),
     enabled: isTeacher,
@@ -73,8 +59,11 @@ function ClassDetailScreen({
   console.log('studentLectureDetail', studentLectureDetail);
   console.log('teacherLectureDetail', teacherLectureDetail);
 
-  const [selectedStudentScores, setSelectedStudentScores] = useState<ClassAverageScores | null>(null);
-  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(null);
+  const [selectedStudentScores, setSelectedStudentScores] =
+    useState<ClassAverageScores | null>(null);
+  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(
+    null,
+  );
 
   const handleStudentSelect = (scores: ClassAverageScores, name: string) => {
     setSelectedStudentScores(scores);
@@ -85,9 +74,9 @@ function ClassDetailScreen({
     // 선생님용
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
+        <Pressable onPress={closeBook} style={styles.bookmarkIcon}>
           <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
-        </TouchableOpacity>
+        </Pressable>
         <ClassHeader
           isTeacher={isTeacher}
           lectureId={lectureDetail?._id}
@@ -134,10 +123,13 @@ function ClassDetailScreen({
             <View style={styles.replayLayout}>
               <Replay lesson={lectureDetail?.lesson} />
             </View>
-            {teacherLectureDetail &&
+            {teacherLectureDetail && (
               <View style={styles.homeworkLayout}>
                 <StudentsChart
-                  classAverageScores={selectedStudentScores || teacherLectureDetail.classAverageScores}
+                  classAverageScores={
+                    selectedStudentScores ||
+                    teacherLectureDetail.classAverageScores
+                  }
                   studentName={selectedStudentName || '학급 평균'}
                 />
                 <StudentRank
@@ -145,7 +137,7 @@ function ClassDetailScreen({
                   onStudentSelect={handleStudentSelect}
                 />
               </View>
-            }
+            )}
           </View>
         </View>
       </View>

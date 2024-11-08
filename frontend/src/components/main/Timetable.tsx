@@ -31,10 +31,6 @@ export default function Timetable(): React.JSX.Element {
 
   return (
     <ContentLayout flex={1}>
-      <Text variant="subtitle" weight="bold" style={{marginBottom: spacing.sm}}>
-        시간표
-      </Text>
-
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

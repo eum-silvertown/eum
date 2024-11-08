@@ -29,7 +29,7 @@ function SidebarMenus(): React.JSX.Element {
   const menuItems: MenuItem[] = [
     {name: '홈', screen: 'HomeScreen', icon: HomeIcon},
     {name: '알림', screen: 'NotificationScreen', icon: NotificationIcon},
-    {name: '수업 목록', screen: 'LectureListScreen', icon: ClassIcon},
+    {name: '수업 목록', screen: 'ClassListScreen', icon: ClassIcon},
     {name: '숙제', screen: 'HomeworkScreen', icon: HomeworkIcon},
     {name: '문제 보관함', screen: 'QuestionBoxScreen', icon: questionBoxIcon},
     {name: '우리 반', screen: 'MyClassScreen', icon: myClassIcon},

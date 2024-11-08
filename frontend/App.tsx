@@ -10,7 +10,7 @@ import SignUpScreen from '@screens/SignUpScreen';
 import HomeScreen from '@screens/HomeScreen';
 import LessoningScreen from '@screens/LessoningScreen';
 import LectureListScreen from '@screens/LectureListScreen';
-import ClassDetailScreen from '@screens/ClassDetailScreen';
+import ClassListScreen from '@screens/ClassListScreen';
 import HomeworkScreen from '@screens/HomeworkScreen';
 import QuestionBoxScreen from '@screens/QuestionBoxScreen';
 import MyClassScreen from '@screens/MyClassScreen';
@@ -60,7 +60,6 @@ function App(): React.JSX.Element {
   //   {name: 'LessoningScreen', component: LessoningScreen},
   //   {name: 'LessoningStudentListScreen', component: LessoningStudentListScreen},
   //   {name: 'ProfileScreen', component: ProfileScreen},
-  //   {name: 'ClassDetailScreen', component: ClassDetailScreen},
   // ];
 
   useEffect(() => {
@@ -71,7 +70,7 @@ function App(): React.JSX.Element {
       {name: 'FindPasswordScreen', component: FindPasswordScreen},
       {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
       {name: 'SignUpScreen', component: SignUpScreen},
-      {name: 'LectureListScreen', component: LectureListScreen},
+      {name: 'ClassListScreen', component: ClassListScreen},
       {name: 'HomeworkScreen', component: HomeworkScreen},
       {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
       {name: 'MyClassScreen', component: MyClassScreen},
@@ -82,7 +81,6 @@ function App(): React.JSX.Element {
         component: LessoningStudentListScreen,
       },
       {name: 'ProfileScreen', component: ProfileScreen},
-      {name: 'ClassDetailScreen', component: ClassDetailScreen},
     ]);
   }, []);
 
