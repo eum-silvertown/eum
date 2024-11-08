@@ -6,26 +6,25 @@ interface ClassInfo {
   classNumber: number;
 }
 
+interface ImageInfo {
+  image: string;
+  url: string;
+}
+
 interface UserInfo {
   id: number;
   name: string;
   classInfo: ClassInfo;
   birth: string;
-  image: string | null;
+  image: ImageInfo | null;
+  role: string;
 }
 
 interface AuthState {
   isLoggedIn: boolean;
   setIsLoggedIn: (status: boolean) => void;
-  
-  username: string | null;
-  setUsername: (username: string) => void;
-  role: string | null;
-  setRole: (role: string) => void;
-  userProfileImage: string | null;
-  setUserProfileImage: (image: string) => void;
 
-  userInfo: UserInfo; 
+  userInfo: UserInfo;
   setUserInfo: (info: UserInfo) => void;
 }
 
@@ -40,17 +39,12 @@ const initialUserInfo: UserInfo = {
   },
   birth: '',
   image: null,
+  role: ''
 };
 
 export const useAuthStore = create<AuthState>(set => ({
   isLoggedIn: false,
   setIsLoggedIn: status => set({isLoggedIn: status}),
-  username: null,
-  setUsername: username => set({username}),
-  role: null,
-  setRole: role => set({role}),
-  userProfileImage: null,
-  setUserProfileImage: image => set({userProfileImage: image}),
   userInfo: initialUserInfo,
   setUserInfo: info => set({userInfo: info}),
 }));

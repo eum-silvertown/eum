@@ -204,7 +204,7 @@ export default function ProfileScreen(): React.JSX.Element {
               style={styles.profileImage}
               source={
                 authStore.userInfo && authStore.userInfo.image
-                  ? {uri: authStore.userInfo.image} //
+                  ? {uri: authStore.userInfo.image.url} //
                   : defaultProfileImage // 
               }
             />
