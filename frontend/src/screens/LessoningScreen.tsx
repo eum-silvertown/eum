@@ -8,14 +8,7 @@ import StudentCanvasSection from '@components/classLessoning/StudentCanvasSectio
 
 import { useFocusEffect } from '@react-navigation/native';
 import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-
-type PathData = {
-  path: any;
-  color: string;
-  strokeWidth: number;
-  opacity: number;
-  timestamp: number;
-};
+import { getResponsiveSize } from '@utils/responsive';
 
 function LessoningScreen(): React.JSX.Element {
   // 문제 텍스트와 이미지 URL이 포함된 예제
@@ -56,16 +49,6 @@ function LessoningScreen(): React.JSX.Element {
     transports: ['websocket'],
   });
 
-  const handleRecordingEnd = (paths: PathData[]) => {
-    const formattedPaths = paths.map(pathData => ({
-      ...pathData,
-      path: pathData.path.toSVGString
-        ? pathData.path.toSVGString()
-        : pathData.path,
-    }));
-    console.log('중간단계 데이터 확인용', formattedPaths);
-  };
-
   useEffect(() => {
     socket.on('connect_error', err => console.log('연결 오류:', err.message));
 
@@ -77,19 +60,20 @@ function LessoningScreen(): React.JSX.Element {
   // 선생님일 경우
   if (isTeacher) {
     return (
-      <View style={styles.container}>
-        <View style={styles.sectionContainer}>
-          <ProblemSection problemText={problems[currentPage]} />
-          <TeacherCanvasSection
-            socket={socket}
-            onRecordingEnd={handleRecordingEnd}
-            currentPage={currentPage + 1}
-            totalPages={problems.length}
-            onNextPage={handleNextPage}
-            onPrevPage={handlePrevPage}
-          />
+      <>
+        <View style={styles.container}>
+          <View style={styles.sectionContainer}>
+            <ProblemSection problemText={problems[currentPage]} />
+            <TeacherCanvasSection
+              socket={socket}
+              currentPage={currentPage + 1}
+              totalPages={problems.length}
+              onNextPage={handleNextPage}
+              onPrevPage={handlePrevPage}
+            />
+          </View>
         </View>
-      </View>
+      </>
     );
   }
 
@@ -118,7 +102,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     flex: 1,
-    padding: 10,
+    padding: getResponsiveSize(10),
     position: 'relative',
   },
   problemSection: {

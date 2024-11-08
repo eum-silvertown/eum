@@ -13,6 +13,7 @@ import {iconSize} from '@theme/iconSize';
 import {borderRadius} from '@theme/borderRadius';
 import {spacing} from '@theme/spacing';
 import {ModalContext} from 'src/contexts/useModalContext';
+import {getResponsiveSize} from '@utils/responsive';
 
 interface ModalProps {
   modal: {
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
     padding: spacing.xxl,
     backgroundColor: 'white',
     borderRadius: borderRadius.lg,
+    elevation: getResponsiveSize(2),
   },
   header: {
     flexDirection: 'row',
