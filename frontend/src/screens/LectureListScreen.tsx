@@ -1,22 +1,22 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
-import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Text } from '@components/common/Text';
+import { spacing } from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import AddLectureModal from '@components/lectureList/AddLectureModal';
-import {colors} from 'src/hooks/useColors';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
-import {useModal} from 'src/hooks/useModal';
-import {useLectureStore} from '@store/useLectureStore';
-import Lecture from '@components/main/Lecture';
+import { colors } from 'src/hooks/useColors';
+import { borderRadius } from '@theme/borderRadius';
+import { getResponsiveSize } from '@utils/responsive';
+import { useModal } from 'src/hooks/useModal';
+import { useLectureStore } from '@store/useLectureStore';
+import LectureCreateBook from '@components/main/LectureCreateBook';
 
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType} from '@store/useCurrentScreenStore';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType } from '@store/useCurrentScreenStore';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -32,8 +32,8 @@ function LectureListScreen(): React.JSX.Element {
   const [selectedSemester, setSelectedSemester] = useState<number | undefined>(
     currentSemester,
   );
-  const {lectures} = useLectureStore();
-  const {open} = useModal();
+  const { lectures } = useLectureStore();
+  const { open } = useModal();
 
   // 중복 제거된 연도 목록 생성
   const years = Array.from(
@@ -54,13 +54,6 @@ function LectureListScreen(): React.JSX.Element {
     setSelectedYear(currentYear);
     setSelectedSemester(currentSemester);
   };
-
-  // 연도와 학기 필터 적용
-  const filteredLectures = lectures.filter(
-    data =>
-      (!selectedYear || data.year === selectedYear) && // 연도 필터 적용
-      (!selectedSemester || data.semester === selectedSemester), // 학기 필터 적용
-  );
 
   return (
     <View style={styles.container}>
@@ -118,7 +111,7 @@ function LectureListScreen(): React.JSX.Element {
               <TouchableOpacity
                 key={data.lectureId}
                 onPress={handleMoveLectureDetail}>
-                <Lecture item={data}></Lecture>
+                <LectureCreateBook item={data} />
               </TouchableOpacity>
             ))}
         </ScrollView>
@@ -139,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  filter: {    
+  filter: {
     width: '30%',
     marginLeft: 'auto',
     flexDirection: 'row',

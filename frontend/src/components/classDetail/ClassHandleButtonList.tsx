@@ -24,26 +24,27 @@ export default ClassHandleButtonList;
 const styles = StyleSheet.create({
     buttonList: {
         flexDirection: 'column',
+        marginTop: spacing.md,
         gap: spacing.lg,
         padding: spacing.md,
     },
     classButton: {
         backgroundColor: '#14AE5C',
-        paddingVertical: spacing.md,
+        paddingVertical: spacing.lg,
         paddingHorizontal: spacing.lg,
         borderRadius: 8,
         alignItems: 'center',
     },
     testButton: {
         backgroundColor: '#FF5F5F',
-        paddingVertical: spacing.md,
+        paddingVertical: spacing.lg,
         paddingHorizontal: spacing.lg,
         borderRadius: 8,
         alignItems: 'center',
     },
     homeworkButton: {
         backgroundColor: '#5F9FFF',
-        paddingVertical: spacing.md,
+        paddingVertical: spacing.lg,
         paddingHorizontal: spacing.lg,
         borderRadius: 8,
         alignItems: 'center',
@@ -52,5 +53,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
+        marginBottom: spacing.xs,
     },
 });

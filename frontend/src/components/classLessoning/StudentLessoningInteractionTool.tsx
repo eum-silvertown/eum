@@ -9,11 +9,12 @@ import {
 import TeacherScreenMoveIcon from '@assets/icons/teacherScreenMoveIcon.svg';
 import TeacherScreenOffIcon from '@assets/icons/teacherScreenOffIcon.svg';
 import TeacherScreenOnIcon from '@assets/icons/teacherScreenOnIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
+import { iconSize } from '@theme/iconSize';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
+import { getResponsiveSize } from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -172,11 +173,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
     borderRadius: 12,
-    marginTop: 4,
+    marginTop: getResponsiveSize(4),
     marginHorizontal: 'auto',
-    padding: 8,
+    padding: getResponsiveSize(8),
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pageInfoText: {
-    marginHorizontal: 12,
+    marginHorizontal: getResponsiveSize(12),
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
@@ -203,8 +204,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   pageButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 12,
+    paddingVertical: getResponsiveSize(4),
+    paddingHorizontal: getResponsiveSize(12),
     borderRadius: 8,
     backgroundColor: '#E0F7FA',
     alignItems: 'center',
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   exitButton: {
-    padding: 4,
+    padding: getResponsiveSize(4),
     borderRadius: 8,
     backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
     alignItems: 'center',
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '80%',
-    padding: 20,
+    padding: getResponsiveSize(20),
     backgroundColor: 'white',
     borderRadius: 10,
     alignItems: 'center',
@@ -251,15 +252,15 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: getResponsiveSize(10),
   },
   input: {
     width: '100%',
-    padding: 10,
+    padding: getResponsiveSize(10),
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: getResponsiveSize(20),
   },
   modalButtons: {
     flexDirection: 'row',
@@ -269,8 +270,8 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
-    marginRight: 5,
+    paddingVertical: getResponsiveSize(10),
+    marginRight: getResponsiveSize(5),
     backgroundColor: '#FFCDD2',
     borderRadius: 5,
   },
@@ -281,10 +282,10 @@ const styles = StyleSheet.create({
   submitButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
-    marginLeft: 5,
+    paddingVertical: getResponsiveSize(10),
+    marginLeft: getResponsiveSize(5),
     backgroundColor: '#C8E6C9',
-    borderRadius: 5,
+    borderRadius: getResponsiveSize(5),
   },
   submitButtonText: {
     color: '#388E3C',
