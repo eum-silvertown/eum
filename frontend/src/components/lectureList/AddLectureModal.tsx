@@ -3,16 +3,15 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Alert,
-  ScrollView,
-  Animated,
+  Alert,  
 } from 'react-native';
+
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
 import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
+import CustomDropdownPicker from '@components/common/CustomDropdownPicker';
 import ColorPicker from '@components/lectureList/ColorPicker';
-import {Picker} from '@react-native-picker/picker';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {borderRadius} from '@theme/borderRadius';
@@ -45,19 +44,22 @@ interface LectureProps {
 
 const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
   const {close} = useModalContext();
+
   const [title, setTitle] = useState('');
   const [subjects, setSubjects] = useState('');
   const [introduction, setIntroduction] = useState('');
   const [year, setYear] = useState('');
   const [semester, setSemester] = useState('');
+  const [day, setDay] = useState<string>('');
+  const [period, setPeriod] = useState<string>('');
+  const [scheduleList, setScheduleList] = useState<Schedule[]>([]);
+
   const [coverColor, setCoverColor] = useState('#2E2559');
   const [fontColor, setFontColor] = useState('#FFFFFF');
   const [isColorPickerVisible, setColorPickerVisible] = useState(false);
   const [activePicker, setActivePicker] = useState<'cover' | 'font'>('cover');
   const colorPickerRef = useRef(null);
-  const [schedules, setSchedules] = useState<Schedule[]>([
-    {day: '', period: ''},
-  ]);
+
   const [grade, setGrade] = useState('');
   const [classNumber, setClassNumber] = useState('');
   const [lecturePreview, setLecturePreview] = useState<LectureProps['item']>({
@@ -100,36 +102,6 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
     }
   };
 
-  const addPickerSet = () => {
-    if (schedules.length < 3) {
-      setSchedules([...schedules, {day: '', period: ''}]);
-    } else {
-      Alert.alert('최대 3개까지 시간표를 추가할 수 있습니다.');
-    }
-  };
-
-  const handleDayChange = (value: string, index: number) => {
-    const newSchedules = [...schedules];
-    newSchedules[index].day = value;
-    setSchedules(newSchedules);
-  };
-
-  const handlePeriodChange = (value: string, index: number) => {
-    const newSchedules = [...schedules];
-    newSchedules[index].period = value;
-    setSchedules(newSchedules);
-  };
-
-  const handleRemoveSchedule = (index: number) => {
-    if (schedules.length > 1) {
-      const newSchedules = [...schedules];
-      newSchedules.splice(index, 1); // 해당 인덱스의 항목을 삭제
-      setSchedules(newSchedules);
-    } else {
-      Alert.alert('하나의 시간표는 반드시 있어야 합니다.');
-    }
-  };
-
   const handleCreateLecture = () => {
     // 에러 메시지를 초기화
     setTitleError('');
@@ -157,13 +129,9 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
       setGradeError('학급 정보를 선택해주세요.');
       isValid = false;
     }
-    if (
-      schedules.length === 0 ||
-      schedules.some(item => !item.day || !item.period)
-    ) {
-      setScheduleError(
-        '수업 시간표를 모두 입력하거나 불필요한 항목은 삭제해주세요.',
-      );
+    // 수업 시간표가 하나 이상 있는지 확인
+    if (scheduleList.length === 0) {
+      setScheduleError('최소 하나 이상의 시간표를 등록해야 합니다.');
       isValid = false;
     }
 
@@ -179,14 +147,50 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
       classId: parseInt(classNumber, 10) || 0, // 클래스 정보가 숫자로 필요하다면 파싱
       year,
       semester,
-      schedule: schedules.map(item => ({
+      schedule: scheduleList.map(item => ({
         day: item.day,
         period: parseInt(item.period, 10), // period도 숫자로 파싱
       })),
     };
-
+    Alert.alert('수업이 등록되었습니다.');
     console.log('LectureCreateBook Data:', lectureData); // 콘솔에 JSON 데이터 출력
     close();
+  };
+
+  const handleAddSchedule = () => {
+    // 요일과 교시가 선택되었는지 확인
+    if (!day || !period) {
+      Alert.alert('입력 오류', '요일과 교시를 모두 선택해주세요.');
+      return;
+    }
+
+    if (scheduleList.length >= 3) {
+      Alert.alert('시간표는 3개까지 등록 가능합니다.');
+      return;
+    }
+
+    // 중복 체크
+    const isDuplicate = scheduleList.some(
+      item => item.day === day && item.period === period,
+    );
+
+    if (isDuplicate) {
+      Alert.alert('중복된 시간표', '이미 등록된 시간표입니다.');
+      return;
+    }
+
+    // 중복이 아니면 추가하고 요일순 정렬
+    const newSchedule: Schedule = {day, period};
+    const updatedList = [...scheduleList, newSchedule].sort((a, b) =>
+      a.day.localeCompare(b.day),
+    );
+    setScheduleList(updatedList);
+  };
+
+  const handleRemoveSchedule = (index: number) => {
+    const updatedList = [...scheduleList];
+    updatedList.splice(index, 1);
+    setScheduleList(updatedList);
   };
 
   useEffect(() => {
@@ -201,310 +205,253 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
   }, [title, subjects, coverColor, fontColor, grade, classNumber]);
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <View style={styles.lectureInfoContainer}>
-            <View>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text
-                  variant="subtitle"
-                  weight="bold"
-                  style={styles.contentLabel}>
-                  제목
-                </Text>
-                <Text weight="bold">
-                  {year}년 {semester}학기
-                </Text>
+    <View>
+      <View style={styles.content}>
+        <View style={styles.innerContainer}>
+          <Text align="right" weight="bold">
+            {year}년 {semester}학기
+          </Text>
+          <View>
+            <CustomDropdownPicker
+              label="과목"
+              items={[
+                {label: '과목 선택', value: ''},
+                {label: '국어', value: '국어'},
+                {label: '영어', value: '영어'},
+                {label: '수학', value: '수학'},
+              ]}
+              placeholder="과목 선택"
+              onSelectItem={itemValue => setSubjects(itemValue)}
+              defaultValue={subjects}
+            />
+            {/* 에러 메시지 */}
+            {subjectError ? (
+              <StatusMessage message={subjectError} status="error" />
+            ) : null}
+          </View>
+          <InputField
+            label="제목"
+            placeholder="수업 제목을 입력해주세요."
+            value={title}
+            onChangeText={setTitle}
+            status="error"
+            statusText={titleError}
+          />
+
+          <View>
+            <View style={styles.pickers}>
+              <View style={styles.picker}>
+                <CustomDropdownPicker
+                  label="학년"
+                  items={Array.from({length: 4}, (_, i) => ({
+                    label: i === 0 ? '학년 선택' : `${i}학년`,
+                    value: `${i}`,
+                  }))}
+                  placeholder="학년 선택"
+                  onSelectItem={itemValue => setGrade(itemValue)}
+                  defaultValue={grade}
+                />
               </View>
-              <InputField
-                placeholder="수업 제목을 입력해주세요."
-                value={title}
-                onChangeText={setTitle}
-              />
-              <View style={styles.errorContainer}>
-                {/* 제목 에러 메시지 */}
-                {titleError ? (
-                  <StatusMessage message={titleError} status="error" />
-                ) : null}
+              <View style={styles.picker}>
+                <CustomDropdownPicker
+                  label="반"
+                  items={Array.from({length: 16}, (_, i) => ({
+                    label: i === 0 ? '반 선택' : `${i}반`,
+                    value: `${i}`,
+                  }))}
+                  placeholder="반 선택"
+                  onSelectItem={itemValue => setClassNumber(itemValue)}
+                  defaultValue={classNumber}
+                />
               </View>
             </View>
-
-            <View>
-              <Text
-                variant="subtitle"
-                weight="bold"
-                style={styles.contentLabel}>
-                과목
-              </Text>
-              <View style={styles.pickerSet}>
-                <Picker
-                  style={styles.picker}
-                  selectedValue={subjects}
-                  onValueChange={itemValue => setSubjects(itemValue)}>
-                  <Picker.Item key={0} label="과목 선택" value="" />
-                  <Picker.Item key={1} label="국어" value="국어" />
-                  <Picker.Item key={2} label="영어" value="영어" />
-                  <Picker.Item key={3} label="수학" value="수학" />
-                </Picker>
-                {/* 과목 에러 메시지 */}
-              </View>
-              {subjectError ? (
-                <StatusMessage message={subjectError} status="error" />
+            <View style={styles.errorContainer}>
+              {/* 학급 에러 메시지 */}
+              {gradeError ? (
+                <StatusMessage message={gradeError} status="error" />
               ) : null}
-            </View>
-            <View>
-              <Text
-                variant="subtitle"
-                weight="bold"
-                style={styles.contentLabel}>
-                수업 소개
-              </Text>
-              <InputField
-                placeholder="한 줄 수업 소개를 입력해주세요."
-                value={introduction}
-                onChangeText={setIntroduction}
-                multiline={true}
-              />
-              <View style={styles.errorContainer}>
-                {/* 수업 소개 에러 메시지 */}
-                {introductionError ? (
-                  <StatusMessage message={introductionError} status="error" />
-                ) : null}
-              </View>
-            </View>
-
-            <View>
-              <Text
-                variant="subtitle"
-                weight="bold"
-                style={styles.contentLabel}>
-                학급
-              </Text>
-              <View style={styles.pickerSet}>
-                <Picker
-                  selectedValue={grade}
-                  onValueChange={itemValue => setGrade(itemValue)}
-                  style={styles.picker}>
-                  {Array.from({length: 4}, (_, i) => (
-                    <Picker.Item
-                      key={i}
-                      label={i === 0 ? '학년 선택' : `${i}학년`}
-                      value={`${i}`}
-                    />
-                  ))}
-                </Picker>
-                <Picker
-                  selectedValue={classNumber}
-                  onValueChange={itemValue => setClassNumber(itemValue)}
-                  style={styles.picker}>
-                  {Array.from({length: 16}, (_, i) => (
-                    <Picker.Item
-                      key={i}
-                      label={i === 0 ? '반 선택' : `${i}반`}
-                      value={`${i}`}
-                    />
-                  ))}
-                </Picker>
-              </View>
-              <View style={styles.errorContainer}>
-                {/* 학급 에러 메시지 */}
-                {gradeError ? (
-                  <StatusMessage message={gradeError} status="error" />
-                ) : null}
-              </View>
-            </View>
-
-            <View>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text
-                  variant="subtitle"
-                  weight="bold"
-                  style={styles.contentLabel}>
-                  수업 시간표
-                </Text>
-                <TouchableOpacity onPress={addPickerSet}>
-                  <AddCircleIcon width={iconSize.lg} height={iconSize.lg} />
-                </TouchableOpacity>
-              </View>
-              {/* 추가된 요일 및 교시 Picker 렌더링 */}
-              <View style={styles.pickerContainer}>
-                {schedules.map((schedule, index) => (
-                  <View key={index} style={styles.pickerSet}>
-                    <Picker
-                      selectedValue={schedule.day}
-                      onValueChange={value => handleDayChange(value, index)}
-                      style={styles.picker}>
-                      <Picker.Item label="요일 선택" value="" />
-                      <Picker.Item label="월요일" value="월요일" />
-                      <Picker.Item label="화요일" value="화요일" />
-                      <Picker.Item label="수요일" value="수요일" />
-                      <Picker.Item label="목요일" value="목요일" />
-                      <Picker.Item label="금요일" value="금요일" />
-                    </Picker>
-                    <Picker
-                      selectedValue={schedule.period}
-                      onValueChange={value => handlePeriodChange(value, index)}
-                      style={styles.picker}>
-                      <Picker.Item label="교시 선택" value="" />
-                      <Picker.Item label="1교시" value="1교시" />
-                      <Picker.Item label="2교시" value="2교시" />
-                      <Picker.Item label="3교시" value="3교시" />
-                      <Picker.Item label="4교시" value="4교시" />
-                      <Picker.Item label="5교시" value="5교시" />
-                      <Picker.Item label="6교시" value="6교시" />
-                    </Picker>
-                    <TouchableOpacity
-                      onPress={() => handleRemoveSchedule(index)}>
-                      <CancelIcon width={iconSize.xs} height={iconSize.xs} />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </View>
-              <View style={styles.errorContainer}>
-                {/* 시간표 에러 메시지 */}
-                {scheduleError ? (
-                  <StatusMessage message={scheduleError} status="error" />
-                ) : null}
-              </View>
             </View>
           </View>
 
-          {/* 구분선 추가 */}
-          <View style={styles.separator} />
+          <InputField
+            label="수업 소개"
+            placeholder="한 줄 수업 소개를 입력해주세요."
+            value={introduction}
+            onChangeText={setIntroduction}
+            multiline={true}
+            status="error"
+            statusText={introductionError}
+          />
 
-          <View style={styles.lecturePreviewContainer}>
+          <View>
             <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
-              생성된 수업 예시
+              수업 시간표 등록
             </Text>
-            <View style={{alignItems: 'center'}}>
-              {lecturePreview && <LectureCreateBook item={lecturePreview} />}
-            </View>
-            <View>
-              <Text
-                variant="subtitle"
-                weight="bold"
-                style={styles.contentLabel}>
-                색상 선택
-              </Text>
 
-              <View style={{height: getResponsiveSize(240)}}>
-                {!isColorPickerVisible ? (
-                  <View style={styles.colorContainer}>
-                    <TouchableOpacity
-                      onPress={() => openColorPicker('cover')}
-                      style={styles.colorButton}>
-                      <Text weight="bold">표지 색상 선택</Text>
-                      <View style={styles.currentColorContainer}>
-                        <Text>
-                          현재 선택된 색상 :{' '}
-                          <Text
-                            style={[
-                              styles.currentColorFont,
-                              {color: coverColor},
-                            ]}>
-                            {coverColor.toUpperCase()}
-                          </Text>
-                        </Text>
-                        <View
-                          style={[
-                            styles.colorBox,
-                            {backgroundColor: coverColor},
-                          ]}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => openColorPicker('font')}
-                      style={styles.colorButton}>
-                      <Text weight="bold">표지 글자 색상 선택</Text>
-                      <View style={styles.currentColorContainer}>
-                        <Text>
-                          현재 선택된 색상 :{' '}
-                          <Text
-                            style={[
-                              styles.currentColorFont,
-                              {color: fontColor},
-                            ]}>
-                            {fontColor.toUpperCase()}
-                          </Text>
-                        </Text>
-                        <View
-                          style={[
-                            styles.colorBox,
-                            {backgroundColor: fontColor},
-                          ]}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View style={[styles.colorPickerContainer]}>
-                    <View style={styles.colorPicker}>
-                      <ColorPicker
-                        ref={colorPickerRef}
-                        initialColor={
-                          activePicker === 'cover' ? coverColor : fontColor
-                        }
-                        onColorSelected={color => confirmColorSelection(color)}
-                      />
-                    </View>
-                    <TouchableOpacity onPress={closeColorPicker}>
-                      <Text>색상 선택</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
+            <View style={styles.pickers}>
+              <View style={styles.picker}>
+                <CustomDropdownPicker
+                  items={[
+                    {label: '월요일', value: '월요일'},
+                    {label: '화요일', value: '화요일'},
+                    {label: '수요일', value: '수요일'},
+                    {label: '목요일', value: '목요일'},
+                    {label: '금요일', value: '금요일'},
+                  ]}
+                  placeholder="요일 선택"
+                  onSelectItem={(value: string) => setDay(value)}
+                  defaultValue={day}
+                />
               </View>
+              <View style={styles.picker}>
+                <CustomDropdownPicker
+                  items={[
+                    {label: '1교시', value: '1교시'},
+                    {label: '2교시', value: '2교시'},
+                    {label: '3교시', value: '3교시'},
+                    {label: '4교시', value: '4교시'},
+                    {label: '5교시', value: '5교시'},
+                    {label: '6교시', value: '6교시'},
+                  ]}
+                  placeholder="교시 선택"
+                  onSelectItem={(value: string) => setPeriod(value)}
+                  defaultValue={period}
+                />
+              </View>
+              <TouchableOpacity onPress={handleAddSchedule}>
+                <AddCircleIcon width={iconSize.lg} height={iconSize.lg} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.listContainer}>
+              {scheduleList.map((item, index) => (
+                <View
+                  key={`${item.day}-${item.period}`}
+                  style={styles.scheduleItem}>
+                  <Text>{`${item.day} - ${item.period}`}</Text>
+                  <TouchableOpacity onPress={() => handleRemoveSchedule(index)}>
+                    <CancelIcon width={iconSize.xs} height={iconSize.xs} />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+            <View style={styles.errorContainer}>
+              {/* 시간표 에러 메시지 */}
+              {scheduleError ? (
+                <StatusMessage message={scheduleError} status="error" />
+              ) : null}
             </View>
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.createButton}
-          onPress={handleCreateLecture}>
-          <Text weight="bold">생성</Text>
-        </TouchableOpacity>
+        {/* 구분선 추가 */}
+        <View style={styles.separator} />
+
+        <View style={styles.innerContainer}>
+          <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
+            생성된 수업 예시
+          </Text>
+          <View style={{alignItems: 'center', transform: [{scale: 0.9}]}}>
+            {lecturePreview && <LectureCreateBook item={lecturePreview} />}
+          </View>
+
+          <View>
+            <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
+              색상 선택
+            </Text>
+
+            <View style={{height: getResponsiveSize(180)}}>
+              {!isColorPickerVisible ? (
+                <View style={styles.colorContainer}>
+                  <TouchableOpacity
+                    onPress={() => openColorPicker('cover')}
+                    style={styles.colorButton}>
+                    <Text weight="bold">표지 색상 선택</Text>
+                    <View style={styles.currentColorContainer}>
+                      <Text>
+                        현재 선택된 색상 :{' '}
+                        <Text
+                          style={[
+                            styles.currentColorFont,
+                            {color: coverColor},
+                          ]}>
+                          {coverColor.toUpperCase()}
+                        </Text>
+                      </Text>
+                      <View
+                        style={[styles.colorBox, {backgroundColor: coverColor}]}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => openColorPicker('font')}
+                    style={styles.colorButton}>
+                    <Text weight="bold">표지 글자 색상 선택</Text>
+                    <View style={styles.currentColorContainer}>
+                      <Text>
+                        현재 선택된 색상 :{' '}
+                        <Text
+                          style={[styles.currentColorFont, {color: fontColor}]}>
+                          {fontColor.toUpperCase()}
+                        </Text>
+                      </Text>
+                      <View
+                        style={[styles.colorBox, {backgroundColor: fontColor}]}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={[styles.colorPickerContainer]}>
+                  <View style={styles.colorPicker}>
+                    <ColorPicker
+                      ref={colorPickerRef}
+                      initialColor={
+                        activePicker === 'cover' ? coverColor : fontColor
+                      }
+                      onColorSelected={color => confirmColorSelection(color)}
+                    />
+                  </View>
+                  <TouchableOpacity onPress={closeColorPicker}>
+                    <Text>색상 선택</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </View>
+        </View>
       </View>
-    </ScrollView>
+
+      <TouchableOpacity
+        style={styles.createButton}
+        onPress={handleCreateLecture}>
+        <Text weight="bold" color="white">
+          생성
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    gap: spacing.md,
-  },
   content: {
-    flex: 1,
     flexDirection: 'row',
     gap: spacing.xl,
   },
   contentLabel: {
     marginBottom: spacing.sm,
   },
-  lectureInfoContainer: {
-    gap: spacing.sm,
-    flex: 3,
-  },
-  lecturePreviewContainer: {
-    gap: spacing.md,
-    flex: 2,
+  innerContainer: {
+    flex: 1,
   },
   createButton: {
     marginTop: spacing.lg,
     padding: spacing.md,
     borderRadius: borderRadius.md,
+    backgroundColor: colors.light.background.main,
     alignItems: 'center',
   },
   colorButton: {
-    marginTop: spacing.md,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    alignItems: 'center',
-  },
-  confirmButton: {
     marginTop: spacing.md,
     padding: spacing.md,
     borderRadius: borderRadius.md,
@@ -550,24 +497,13 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.sm,
   },
-  pickerSet: {
-    paddingHorizontal: spacing.md,
-    borderWidth: borderWidth.sm,
-    borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: borderRadius.md,
+  pickers: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    height: getResponsiveSize(40), // 원하는 높이로 설정
+    gap: spacing.md,
   },
   picker: {
     flex: 1,
-    borderWidth: borderWidth.sm,
-    borderColor: colors.light.borderColor.cardBorder,
-    marginHorizontal: spacing.sm,
-  },
-  scrollViewContent: {
-    paddingBottom: spacing.md,
   },
   separator: {
     borderWidth: borderWidth.xs,
@@ -575,6 +511,17 @@ const styles = StyleSheet.create({
   errorContainer: {
     minHeight: spacing.lg,
     justifyContent: 'center',
+  },
+  listContainer: {
+    height: getResponsiveSize(50),
+  },
+  scheduleItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderBottomWidth: borderWidth.sm,
+    borderColor: '#ddd',
   },
 });
 
