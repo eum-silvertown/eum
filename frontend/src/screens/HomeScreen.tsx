@@ -5,8 +5,21 @@ import TodoList from '@components/main/TodoList';
 import Weather from '@components/main/Weather';
 import Calendar from '@components/main/MainCalendar';
 import Timetalbe from '@components/main/Timetable';
+import {useEffect} from 'react';
+import {getUserInfo} from '@services/authService';
 
 function HomeScreen(): React.JSX.Element {
+  useEffect(() => {
+    // 유저 정보 조회
+    const fetchData = async () => {
+      try {        
+        const response = await getUserInfo();
+      } catch (error) {}
+    };
+
+    fetchData(); // 함수 호출
+  }, []);
+
   return (
     <View style={styles.container}>
       <MainHeader />
@@ -45,6 +58,6 @@ const styles = StyleSheet.create({
   },
   contentBottom: {
     flex: 3,
-    marginBottom: spacing.sm
+    marginBottom: spacing.sm,
   },
 });
