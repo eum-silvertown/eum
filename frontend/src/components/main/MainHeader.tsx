@@ -15,7 +15,8 @@ export default function MainHeader(): React.JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
   const authStore = useAuthStore();
   const defaultMessage = `${authStore.userInfo.name}님, 오늘도 좋은 하루 되세요!`;
-  const [message, setMessage] = useState(defaultMessage);
+
+  const [message, setMessage] = useState('');  
 
   useEffect(() => {
     const loadMessage = async () => {
@@ -58,7 +59,7 @@ export default function MainHeader(): React.JSX.Element {
       ) : (
         <View style={styles.displayContainer}>
           <Text variant="title" weight="bold">
-            {message}
+            {message || defaultMessage}
           </Text>
           <TouchableOpacity onPress={() => setIsEditing(true)}>
             <EditIcon width={iconSize.lg} height={iconSize.lg} />
