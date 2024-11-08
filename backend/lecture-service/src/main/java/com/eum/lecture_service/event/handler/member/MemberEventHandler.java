@@ -41,7 +41,7 @@ public class MemberEventHandler {
 	}
 
 	@KafkaListener(topics = "update_teacher", groupId = "lecture-group")
-	public void updateTeacher(TeacherInfoUpdatedEvent event) {
+	public void updateTeacher(TeacherInfoEvent event) {
 		teacherReadRepository.findById(event.getTeacherId()).ifPresentOrElse(
 			teacher -> {
 				teacher.setName(event.getName());
@@ -82,7 +82,7 @@ public class MemberEventHandler {
 	}
 
 	@KafkaListener(topics = "update_student", groupId = "lecture-group")
-	public void updateStudent(StudentInfoUpdatedEvent event) {
+	public void updateStudent(StudentInfoEvent event) {
 		studentReadRepository.findById(event.getStudentId()).ifPresentOrElse(
 			student -> {
 				student.setName(event.getName());
