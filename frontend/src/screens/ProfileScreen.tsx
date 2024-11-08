@@ -200,14 +200,14 @@ export default function ProfileScreen(): React.JSX.Element {
       <View style={styles.contentContainer}>
         <View style={styles.ImageContent}>
           <View style={styles.profileImageContainer}>
-            {/* <Image
+            <Image
               style={styles.profileImage}
               source={
                 authStore.userInfo && authStore.userInfo.image
                   ? {uri: authStore.userInfo.image.url} //
                   : defaultProfileImage // 
               }
-            /> */}
+            />
           </View>
           <View></View>
           <TouchableOpacity
