@@ -10,6 +10,13 @@ import {useRoute} from '@react-navigation/native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {useModal} from 'src/hooks/useModal';
+import {
+  requestEmailVerificationPassword,
+  resetPasswordByVerificationCode,
+} from '@services/authService';
+
+import SuccessResetPasswordModal from '@components/account/SuccessResetPasswordModal';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -19,55 +26,74 @@ function FindPasswordScreen(): React.JSX.Element {
 
   const {userId: initialUserId, email: initialEmail} =
     (useRoute().params as {userId?: string; email?: string} | undefined) || {};
+  const {open} = useModal();
+
   const [email, setEmail] = useState(initialEmail || '');
   const [userId, setUserId] = useState(initialUserId || '');
   const [verificationCode, setVerificationCode] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [userIdError, setUserIdError] = useState('');
-  const [verificationError, setVerificationError] = useState('');
-  const [temporaryPassword, setTemporaryPassword] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [emailStatusText, setEmailStatusText] = useState('');
+  const [emailStatusType, setEmailStatusType] = useState<
+    'success' | 'error' | 'info' | ''
+  >('info');
+  const [userIdStatusText, setUserIdStatusText] = useState('');
+  const [userIdStatusType, setUserIdStatusType] = useState<
+    'success' | 'error' | 'info' | ''
+  >('info');
+  const [isVerificationSent, setIsVerificationSent] = useState(false);
+  const [verificationCodeStatusText, setVerificationCodeStatusText] =
+    useState('');
+  const [verificationCodeStatusType, setVerificationCodeStatusType] = useState<
+    'success' | 'error' | 'info' | ''
+  >('info');
 
-  const handleEmailVerification = () => {
-    let isValid = true;
-
-    if (!email.includes('@')) {
-      setEmailError('유효한 이메일 주소를 입력해주세요.');
-      isValid = false;
-    } else {
-      setEmailError('');
+  // 이메일과 아이디로 인증 코드 요청
+  const handleSendVerification = async () => {
+    if (!email || !email.includes('@')) {
+      setEmailStatusText('유효한 이메일 주소를 입력해주세요.');
+      setEmailStatusType('error');
+      return;
     }
-
     if (!userId.trim()) {
-      setUserIdError('아이디를 입력해주세요.');
-      isValid = false;
-    } else {
-      setUserIdError('');
+      setUserIdStatusText('아이디를 입력해주세요.');
+      setUserIdStatusType('error');
+      return;
     }
-
-    if (isValid) {
-      console.log('인증번호가 전송되었습니다.');
-    }
-  };
-
-  const handleVerifyCode = () => {
-    // 테스트용
-    if (verificationCode === '123456') {
-      setTemporaryPassword('tempPassword123');
-      setIsModalVisible(true);
-      setVerificationError('');
-    } else {
-      setVerificationError('잘못된 인증번호입니다.');
+    try {
+      const response = await requestEmailVerificationPassword(email, userId);
+      setIsVerificationSent(true);
+      setEmailStatusType('success');
+      setUserIdStatusType('success');
+      setEmailStatusText(response.message);
+      setUserIdStatusText('');
+    } catch (error) {
+      setIsVerificationSent(false);
+      setEmailStatusType('error');
+      setUserIdStatusType('error');
+      setEmailStatusText(String(error));
+      setUserIdStatusText('');
     }
   };
 
-  const moveLogin = () => {
-    navigation.navigate("LoginScreen");
-    setCurrentScreen("LoginScreen");
-  };
-  const closeModal = () => {
-    setIsModalVisible(false);
-  };
+  // 인증 코드 확인 및 임시 비밀번호 발급
+  const handleVerificationCodeInput = async () => {
+    if (!verificationCode) {
+      setVerificationCodeStatusType('error');
+      setVerificationCodeStatusText('인증번호를 입력해주세요.');
+      return;
+    }
+    try {
+      const response = await resetPasswordByVerificationCode(
+        email,
+        verificationCode,
+      );
+      open(<SuccessResetPasswordModal />, {
+        title: '임시 비밀번호 발급 완료',
+      });
+    } catch (error) {
+      setVerificationCodeStatusType('error');
+      setVerificationCodeStatusText(String(error));
+    }
+  };  
 
   return (
     <View style={styles.container}>
@@ -75,83 +101,45 @@ function FindPasswordScreen(): React.JSX.Element {
 
       <View style={styles.inputContainer}>
         <Text weight="bold">
-          본인인증에 사용된 이메일과 아이디를 입력해주세요.
+          회원가입에 사용된 이메일과 아이디를 입력해주세요.
         </Text>
 
-        <View style={styles.verificationCodeContainer}>
-          <View>
-            <Text>이메일</Text>
-            <InputField
-              placeholder="이메일을 입력해주세요."
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-            {emailError && (
-              <StatusMessage message={emailError} status="error" />
-            )}
-          </View>
-          <View>
-            <Text>아이디</Text>
-            <InputField
-              placeholder="아이디를 입력해주세요."
-              value={userId}
-              onChangeText={setUserId}
-            />
-            {userIdError && (
-              <StatusMessage message={userIdError} status="error" />
-            )}
-          </View>
-          <TouchableOpacity
-            style={styles.verifyButton}
-            onPress={handleEmailVerification}>
-            <Text>인증번호 발송</Text>
-          </TouchableOpacity>
+        <View>
+          <InputField
+            label="아이디"
+            placeholder="아이디를 입력해주세요."
+            value={userId}
+            onChangeText={setUserId}
+            statusText={userIdStatusText}
+            status={userIdStatusType}
+          />
+          <InputField
+            label="이메일"
+            placeholder="이메일을 입력해주세요."
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            buttonText="인증하기"
+            onButtonPress={handleSendVerification}
+            statusText={emailStatusText}
+            status={emailStatusType}
+          />
         </View>
 
-        <View>
-          <Text>인증번호</Text>
+        {/* 인증 코드 입력 필드 */}
+        {isVerificationSent && (
           <InputField
-            placeholder="인증번호 6자리를 입력해주세요."
+            label="인증번호"
+            placeholder="이메일로 받은 인증코드를 입력해주세요."
             value={verificationCode}
             onChangeText={setVerificationCode}
-            maxLength={6}
-            keyboardType="numeric"
+            buttonText="인증하기"
+            onButtonPress={handleVerificationCodeInput}
+            statusText={verificationCodeStatusText}
+            status={verificationCodeStatusType}
           />
-          {verificationError && (
-            <StatusMessage message={verificationError} status="error" />
-          )}
-        </View>
-
-        <TouchableOpacity
-          style={styles.verifyButton}
-          onPress={handleVerifyCode}>
-          <Text>인증하기</Text>
-        </TouchableOpacity>
+        )}
       </View>
-
-      <Modal
-        visible={isModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={closeModal}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text weight="bold" style={styles.modalTitle} align="center">
-              임시 비밀번호 발급이 완료되었습니다.{'\n'}
-              이메일 확인 후 로그인 해주세요.
-            </Text>
-
-            <TouchableOpacity style={styles.closeButton} onPress={moveLogin}>
-              <Text>로그인하러 가기</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-              <Text>닫기</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -168,35 +156,5 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '40%',
     gap: spacing.xl,
-  },
-  verificationCodeContainer: {
-    gap: spacing.xl,
-  },
-  verifyButton: {
-    alignItems: 'center',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '80%',
-    padding: spacing.lg,
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
-  modalTitle: {
-    marginBottom: spacing.md,
-  },
-  closeButton: {
-    marginTop: spacing.md,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  moveScreenContainer: {
-    flexDirection: 'row',
-    gap: spacing.md,
   },
 });
