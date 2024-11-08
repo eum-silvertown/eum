@@ -26,6 +26,10 @@ interface AuthState {
 
   userInfo: UserInfo;
   setUserInfo: (info: UserInfo) => void;
+
+  // 사이드바 온오프 여부
+  sideBarVisible: boolean;
+  setSideBarVisible: (status: boolean) => void;
 }
 
 // 초기값으로 사용할 빈 객체
@@ -47,4 +51,6 @@ export const useAuthStore = create<AuthState>(set => ({
   setIsLoggedIn: status => set({isLoggedIn: status}),
   userInfo: initialUserInfo,
   setUserInfo: info => set({userInfo: info}),
+  sideBarVisible: false,
+  setSideBarVisible: status => set({sideBarVisible: status}),
 }));
