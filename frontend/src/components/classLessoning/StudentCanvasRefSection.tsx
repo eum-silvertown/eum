@@ -1,11 +1,11 @@
-import {useEffect, useState} from 'react';
-import {Canvas, Path, Skia, useCanvasRef} from '@shopify/react-native-skia';
-import {Socket} from 'socket.io-client';
+import { useEffect, useState } from 'react';
+import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
+import { Socket } from 'socket.io-client';
 import pako from 'pako';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import base64 from 'react-native-base64';
 
-interface RightCanvasSectionProps {
+interface StudentCanvasSectionProps {
   socket: Socket;
 }
 
@@ -17,10 +17,9 @@ type PathData = {
   timestamps: number[]; // 개별 경로의 timestamp 배열
 };
 
-// 오른쪽 캔버스 컴포넌트
 function StudentCanvasRefSection({
   socket,
-}: RightCanvasSectionProps): React.JSX.Element {
+}: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [pathGroups, setPathGroups] = useState<PathData[][]>([]);
   console.log(pathGroups);
@@ -45,7 +44,7 @@ function StudentCanvasRefSection({
 
         // 2. 압축 해제
         const decompressedData = JSON.parse(
-          pako.inflate(compressedData, {to: 'string'}),
+          pako.inflate(compressedData, { to: 'string' }),
         );
 
         // 3. SVG 경로 데이터를 Skia Path 객체로 변환
@@ -74,7 +73,7 @@ function StudentCanvasRefSection({
         <Canvas style={styles.canvas} ref={canvasRef}>
           {pathGroups
             .flat()
-            .map(({path, color, strokeWidth, opacity}, index) => (
+            .map(({ path, color, strokeWidth, opacity }, index) => (
               <Path
                 key={index}
                 path={path}
@@ -102,5 +101,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-  canvas: {flex: 1},
+  canvas: { flex: 1 },
 });

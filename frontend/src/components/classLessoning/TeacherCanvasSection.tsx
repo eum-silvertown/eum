@@ -7,7 +7,7 @@ import base64 from 'react-native-base64';
 import pako from 'pako';
 import TeacherLessoningInteractionTool from './TeacherLessoningInteractionTool';
 
-interface LeftCanvasSectionProps {
+interface TeacherCanvasSectionProps {
   socket: Socket;
   currentPage: number;
   totalPages: number;
@@ -40,7 +40,7 @@ function TeacherCanvasSection({
   totalPages,
   onNextPage,
   onPrevPage,
-}: LeftCanvasSectionProps): React.JSX.Element {
+}: TeacherCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [pathGroups, setPathGroups] = useState<PathData[][]>([]);
   const [currentPath, setCurrentPath] = useState<any | null>(null);
@@ -346,6 +346,26 @@ function TeacherCanvasSection({
     }
   };
 
+  const handleSetPenColor = (color: string) => {
+    if (isErasing) {
+      setIsErasing(false);
+      setPathGroups(prevGroups =>
+        mergeSimilarPaths(prevGroups)
+      ); // 병합 수행
+    }
+    setPenColor(color);
+  };
+
+  const handleSetPenSize = (size: number) => {
+    if (isErasing) {
+      setIsErasing(false);
+      setPathGroups(prevGroups =>
+        mergeSimilarPaths(prevGroups)
+      ); // 병합 수행
+    }
+    setPenSize(size);
+  };
+
   return (
     <>
       <CanvasDrawingTool
@@ -358,8 +378,8 @@ function TeacherCanvasSection({
         handleTouchStart={handleTouchStart}
         handleTouchMove={handleTouchMove}
         handleTouchEnd={handleTouchEnd}
-        setPenColor={setPenColor}
-        setPenSize={setPenSize}
+        setPenColor={handleSetPenColor}
+        setPenSize={handleSetPenSize}
         togglePenOpacity={togglePenOpacity}
         undo={undo}
         redo={redo}
