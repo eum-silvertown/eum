@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClassCreatedEvent {
+public class ClassEvent {
     private Long classId;
     private Long grade;
     private Long classNumber;
