@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eum.lecture_service.common.RoleType;
@@ -50,10 +51,20 @@ public class LectureQueryController {
 	public CommonResponse<?> getLectures(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestHeader("X-MEMBER-ID") Long memberId,
-		@RequestBody TodayDto todayDto) {
+		@RequestParam("day") String day,
+		@RequestParam("year") Long year,
+		@RequestParam("semester") Long semester) {
+
+		TodayDto todayDto = TodayDto.builder()
+			.day(day)
+			.year(year)
+			.semester(semester)
+			.build();
+
 		List<LectureListResponse> lectureList = lectureQueryService.getLectureListByDay(todayDto, role, memberId);
 		return CommonResponse.success(lectureList, "목록조회 성공");
 	}
+
 
 	//수정용 조회
 	@GetMapping("/update/{lectureId}")
