@@ -51,25 +51,11 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
 
     await setToken(response.data.data.tokenResponse);
 
-    console.log(response.data.data);
-
     const authStore = useAuthStore.getState();
-
-    // 사용자 정보 추출
-    if (response.data.data.imageResponse) {
-      const profileImageUrl = response.data.data.imageResponse.url;
-      authStore.setUserProfileImage(profileImageUrl);
-    }
-    const userName = response.data.data.name;
-    const role = response.data.data.tokenResponse.role;
-
-    // 상태 업데이트
     authStore.setIsLoggedIn(true);
-    authStore.setUsername(userName);
-    authStore.setRole(role);
 
-    // 로그인 상태를 true로 설정
-    useAuthStore.getState().setIsLoggedIn(true);
+    // 사용자 정보 갱신
+    await getUserInfo();
 
     return response.data;
   } catch (error) {
@@ -80,7 +66,7 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
 // 로그아웃
 export const logOut = async (): Promise<any> => {
   try {
-    await publicApiClient.post('/user/logout');
+    await authApiClient.get('/user/logout');
     await clearToken();
 
     // 로그인 상태를 false로 설정
@@ -122,13 +108,18 @@ export const checkUsername = async (userId: string): Promise<any> => {
 // 토큰 갱신
 export const refreshAuthToken = async (): Promise<any> => {
   try {
-    const {refreshToken} = await getToken();
+    const Tokens = await getToken();
+
+    const refreshToken = Tokens.refreshToken;
     if (!refreshToken) throw new Error('No refresh token available');
 
     const response = await publicApiClient.post('/user/access', {refreshToken});
-    await setToken(response.data);
+
+    await setToken(response.data.data);
+
     return response.data.accessToken;
   } catch (error) {
+    console.log('리프레시 토큰 갱신 에러');
     return Promise.reject(handleApiError(error));
   }
 };
@@ -136,7 +127,15 @@ export const refreshAuthToken = async (): Promise<any> => {
 // 회원정보 조회
 export const getUserInfo = async (): Promise<any> => {
   try {
-    return await authApiClient.get('/user/profile');
+    const response = await authApiClient.get('/user/info');
+    const userInfo = response.data.data;
+
+    const authStore = useAuthStore.getState();
+
+    // 유저정보 갱신
+    await authStore.setUserInfo(userInfo);
+
+    return response.data;
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
@@ -154,18 +153,18 @@ export const updateProfilePicture = async (): Promise<any> => {
 };
 
 // 비밀번호 변경
-export const changePassword = async (passwordData: any): Promise<any> => {
+export const changePassword = async (password: string): Promise<any> => {
   try {
-    return await authApiClient.put('/user/change-password', passwordData);
+    return await authApiClient.patch('/user/info/password', {password});
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
 };
 
 // 회원 탈퇴
-export const deleteUser = async (): Promise<any> => {
+export const signOut = async (): Promise<any> => {
   try {
-    return await authApiClient.delete('/user/delete');
+    return await authApiClient.delete('/user/info');
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
@@ -177,6 +176,35 @@ export const deleteUser = async (): Promise<any> => {
 export const requestEmailVerification = async (email: string): Promise<any> => {
   try {
     return (await publicApiClient.post('/mail/auth/request', {email})).data;
+  } catch (error) {
+    return Promise.reject(handleApiError(error));
+  }
+};
+
+// 이메일 인증 요청 (아이디 찾기)
+export const requestEmailVerificationId = async (
+  email: string,
+): Promise<any> => {
+  try {
+    return (await publicApiClient.post('/mail/auth/request/find-id', {email}))
+      .data;
+  } catch (error) {
+    return Promise.reject(handleApiError(error));
+  }
+};
+
+// 이메일 인증 요청 (비밀번호 찾기)
+export const requestEmailVerificationPassword = async (
+  email: string,
+  id: string,
+): Promise<any> => {
+  try {
+    return (
+      await publicApiClient.post('/mail/auth/request/find-password', {
+        email,
+        id,
+      })
+    ).data;
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
@@ -198,11 +226,17 @@ export const verifyEmailCode = async (
 };
 
 // 인증번호로 아이디 찾기
-export const findUsernameByVerificationCode = async (
-  verificationData: any,
+export const findIdByVerificationCode = async (
+  email: string,
+  verificationCode: string,
 ): Promise<any> => {
   try {
-    return await publicApiClient.post('/mail/find-username', verificationData);
+    const response = await publicApiClient.post('/mail/auth/find-id', {
+      email,
+      code: verificationCode,
+    });
+    
+    return response.data.data.id
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
@@ -210,10 +244,14 @@ export const findUsernameByVerificationCode = async (
 
 // 인증번호로 비밀번호 찾기
 export const resetPasswordByVerificationCode = async (
-  verificationData: any,
+  email: string,
+  verificationCode: string,
 ): Promise<any> => {
   try {
-    return await publicApiClient.post('/mail/reset-password', verificationData);
+    return await publicApiClient.post('/mail/auth/find-password', {
+      email,
+      code: verificationCode,
+    });
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }

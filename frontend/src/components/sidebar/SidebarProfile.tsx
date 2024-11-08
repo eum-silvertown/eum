@@ -37,12 +37,13 @@ function SidebarProfile(): React.JSX.Element {
   return (
     <TouchableOpacity onPress={moveProfile} style={styles.container}>
       <View style={styles.profileImageContainer}>
-        <Image style={styles.profileImage} source={authStore.userProfileImage ? {uri: authStore.userProfileImage} : defaultProfileImage} />
+        <Image style={styles.profileImage} source={authStore.userInfo.image ? {uri: authStore.userInfo.image} : defaultProfileImage} />
       </View>
       <Animated.View style={[styles.username, {opacity: contentOpacity}]}>
-        <Text variant="subtitle" color="white" weight="bold" numberOfLines={1}>
-          {authStore.username}
+        <Text variant="subtitle" weight="bold" numberOfLines={1}>
+          {authStore.userInfo.name}
         </Text>
+        <Text>{authStore.role === 'STUDENT' ? '학생' : authStore.role === 'TEACHER' ? '선생님' : '역할 없음'}</Text>
       </Animated.View>
     </TouchableOpacity>
   );

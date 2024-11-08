@@ -4,16 +4,18 @@ import {StyleSheet, View, TouchableOpacity, TextInput} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '@assets/icons/editIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import { getResponsiveSize } from '@utils/responsive';
-import { colors } from 'src/hooks/useColors';
-import { borderWidth } from '@theme/borderWidth';
-import { borderRadius } from '@theme/borderRadius';
-import { spacing } from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
+import {colors} from 'src/hooks/useColors';
+import {borderWidth} from '@theme/borderWidth';
+import {borderRadius} from '@theme/borderRadius';
+import {spacing} from '@theme/spacing';
+import {useAuthStore} from '@store/useAuthStore';
 
 export default function MainHeader(): React.JSX.Element {
-  const defaultMessage = `박효진 학생, 오늘도 좋은 하루 되세요!`;
-  const [message, setMessage] = useState(defaultMessage);
   const [isEditing, setIsEditing] = useState(false);
+  const authStore = useAuthStore();
+  const defaultMessage = `${authStore.userInfo.name}님, 오늘도 좋은 하루 되세요!`;
+  const [message, setMessage] = useState(defaultMessage);
 
   useEffect(() => {
     const loadMessage = async () => {
@@ -89,6 +91,6 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     fontSize: getResponsiveSize(22),
     color: colors.light.text.main,
-    fontWeight: 'bold',    
+    fontWeight: 'bold',
   },
 });

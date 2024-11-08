@@ -7,7 +7,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 
 import {Text} from '@components/common/Text';
@@ -19,9 +19,20 @@ import {colors} from 'src/hooks/useColors';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
 import {iconSize} from '@theme/iconSize';
 import {borderWidth} from '@theme/borderWidth';
-import {updateProfilePicture} from '@services/authService';
+import {getUserInfo, updateProfilePicture, logOut} from '@services/authService';
 import {useAuthStore} from '@store/useAuthStore';
 import axios from 'axios';
+
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+
+import {useModal} from 'src/hooks/useModal';
+import PasswordChangeModal from '@components/account/PasswordChangeModal';
+import SignOutModal from '@components/account/SignOutModal';
+import {setAutoLogin} from '@utils/secureStorage';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 interface UploadResponse {
   uri: string;
@@ -30,7 +41,23 @@ interface UploadResponse {
 }
 
 export default function ProfileScreen(): React.JSX.Element {
+  const navigation = useNavigation<NavigationProps>();
+  const {setCurrentScreen} = useCurrentScreenStore();
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const {open} = useModal();
+  const authStore = useAuthStore();
+
+  useEffect(() => {
+    // 페이지가 로드될 때 한 번만 실행할 함수
+    const fetchData = async () => {
+      try {
+        // 예: API 호출 또는 초기화 작업
+        const response = await getUserInfo();
+      } catch (error) {}
+    };
+
+    fetchData(); // 함수 호출
+  }, []); // 빈 배열로 의존성 설정: 컴포넌트가 처음 로드될 때만 실행
 
   // 사진, 갤러리 권한 요청
   const requestPermission = async () => {
@@ -83,8 +110,8 @@ export default function ProfileScreen(): React.JSX.Element {
       launchImageLibrary(
         {
           mediaType: 'photo',
-          maxWidth: 300,
-          maxHeight: 300,
+          //   maxWidth: 300,
+          //   maxHeight: 300,
           quality: 0.5,
         },
         async response => {
@@ -146,10 +173,26 @@ export default function ProfileScreen(): React.JSX.Element {
   };
 
   // 로그아웃 버튼
-  const handleLogOut = () => {};
+  const handleLogOut = async () => {
+    try {
+      await logOut(); //
+      setAutoLogin(false);
+      navigation.navigate('LoginScreen'); // 로그아웃 성공 시 로그인 페이지로 이동
+      setCurrentScreen('LoginScreen');
+    } catch (error) {
+      console.error('로그아웃 실패:', error); // 로그아웃 실패 시 에러 처리
+    }
+  };
 
   // 비밀번호 변경 버튼
-  const handleChangePassword = () => {};
+  const handleChangePassword = () => {
+    open(<PasswordChangeModal />, {title: '비밀번호 변경'});
+  };
+
+  // 회원탈퇴 버튼
+  const handleSignOut = () => {
+    open(<SignOutModal />, {title: '정말 탈퇴하시겠습니까?'});
+  };
 
   return (
     <View style={styles.container}>
@@ -157,12 +200,22 @@ export default function ProfileScreen(): React.JSX.Element {
       <View style={styles.contentContainer}>
         <View style={styles.ImageContent}>
           <View style={styles.profileImageContainer}>
-            <Image style={styles.profileImage} source={defaultProfileImage} />
+            <Image
+              style={styles.profileImage}
+              source={
+                authStore.userInfo && authStore.userInfo.image
+                  ? {uri: authStore.userInfo.image} //
+                  : defaultProfileImage // 
+              }
+            />
           </View>
           <View></View>
-          <TouchableOpacity style={styles.button} onPress={handleImagePicker}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleImagePicker}
+            disabled={true}>
             <Text color="white" weight="bold">
-              사진 변경
+              사진 변경(준비중)
             </Text>
           </TouchableOpacity>
         </View>
@@ -170,27 +223,33 @@ export default function ProfileScreen(): React.JSX.Element {
           <Text variant="subtitle" weight="bold">
             이름
           </Text>
-          <Text>박효진</Text>
+          <Text>{authStore.userInfo.name}</Text>
         </View>
         <View style={styles.content}>
           <Text variant="subtitle" weight="bold">
             소속
           </Text>
-          <Text>OOOO학교 1학년 1반</Text>
+          <Text>
+            {authStore.userInfo.classInfo.school}{' '}
+            {authStore.userInfo.classInfo.grade}학년{' '}
+            {authStore.userInfo.classInfo.classNumber}반
+          </Text>
         </View>
         <View style={styles.content}>
           <Text variant="subtitle" weight="bold">
             생일
           </Text>
-          <Text>2024년 1월 1일</Text>
+          <Text>{authStore.userInfo.birth}</Text>
         </View>
         <View style={styles.optionContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleLogOut}>
             <Text color="white" weight="bold">
               로그아웃
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleChangePassword}>
             <Text color="white" weight="bold">
               비밀번호 변경
             </Text>
@@ -200,7 +259,7 @@ export default function ProfileScreen(): React.JSX.Element {
               styles.button,
               {backgroundColor: colors.light.background.danger},
             ]}>
-            <Text color="white" weight="bold">
+            <Text color="white" weight="bold" onPress={handleSignOut}>
               회원 탈퇴
             </Text>
           </TouchableOpacity>

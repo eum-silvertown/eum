@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
 import CheckBox from '@react-native-community/checkbox'; // 체크박스 라이브러리 추가
@@ -15,18 +16,21 @@ import serviceLogoImage from '@assets/images/serviceLogoImage.png';
 import {iconSize} from '@theme/iconSize';
 import {colors} from 'src/hooks/useColors';
 
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-
 import {logIn} from '@services/authService';
 import InputField from '@components/account/InputField';
 
 import {getToken, setAutoLogin, getAutoLoginStatus} from '@utils/secureStorage';
 import {useAuthStore} from '@store/useAuthStore';
+import {refreshAuthToken, getUserInfo} from '@services/authService';
+
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function LoginScreen(): React.JSX.Element {
+  const authStore = useAuthStore();
   const [isChecked, setIsChecked] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigation = useNavigation<NavigationProps>();
@@ -34,30 +38,45 @@ function LoginScreen(): React.JSX.Element {
 
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
+  const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
 
-  // 잠시 주석 처리
+  useFocusEffect(
+    React.useCallback(() => {
+      // 화면이 포커스될 때마다 id와 password 상태 초기화
+      setId('');
+      setPassword('');
+    }, []),
+  );
 
-  // useEffect(() => {
-  //   const initializeAuth = async () => {
-  //     // 자동 로그인 상태와 토큰 확인
-  //     const autoLoginEnabled = await getAutoLoginStatus();
-  //     const tokenData = await getToken();
-
-  //     console.log (autoLoginEnabled, tokenData)
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const autoLoginEnabled = await getAutoLoginStatus();
       
-  //     if (autoLoginEnabled && tokenData?.accessToken) {
-  //       // 토큰이 존재하고 자동 로그인이 활성화된 경우
-  //       setIsLoggedIn(true); // 스토어 상태를 로그인으로 설정
-  //       navigation.navigate('HomeScreen'); // 홈 화면으로 이동
-  //     } else {
-  //       setIsLoggedIn(false); // 스토어 상태를 로그아웃 상태로 설정
-  //       navigation.navigate('LoginScreen'); // 로그인 화면으로 이동
-  //     }
-  //   };
+      if (autoLoginEnabled) {
+        try {
+          // 리프레시 토큰을 사용해 새 액세스 토큰을 요청
+          await refreshAuthToken();
 
-  //   initializeAuth();
-  // }, []);
+          setIsLoggedIn(true);
+
+          // 유저 정보 불러오기 및 상태에 저장
+          await getUserInfo();
+          
+          navigation.navigate('HomeScreen');
+        } catch (error) {
+          console.log('Token refresh error:', error);
+          setIsLoggedIn(false);
+          navigation.navigate('LoginScreen');
+        }
+      } else {
+        // 자동 로그인이 비활성화되어 있거나, 토큰이 없는 경우
+        setIsLoggedIn(false);
+        navigation.navigate('LoginScreen');
+      }
+    };
+
+    initializeAuth();
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -65,8 +84,8 @@ function LoginScreen(): React.JSX.Element {
 
       // 자동 로그인 설정 상태 저장
       await setAutoLogin(isChecked);
-      console.log('auto', isChecked)
       navigation.navigate('HomeScreen');
+
       setCurrentScreen('HomeScreen');
     } catch (error) {
       console.log(error);
