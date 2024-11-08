@@ -1,4 +1,4 @@
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Pressable} from 'react-native';
 import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
@@ -22,11 +22,9 @@ import {
   LectureTeacherDetailType,
 } from 'src/services/lectureInformation';
 import {useQuery} from '@tanstack/react-query';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {useFocusEffect} from '@react-navigation/native';
 import {useState} from 'react';
 import {getResponsiveSize} from '@utils/responsive';
-import {Text} from '@components/common/Text';
+import {useBookModalStore} from '@store/useBookModalStore';
 
 type ClassAverageScores = {
   homeworkAvgScore: number;
@@ -34,20 +32,8 @@ type ClassAverageScores = {
   attitudeAvgScore: number;
 };
 
-interface ClassDetailScreenProp {
-  closeBook: () => void;
-}
-
-function ClassDetailScreen({
-  closeBook,
-}: ClassDetailScreenProp): React.JSX.Element {
-  const setCurrentScreen = useCurrentScreenStore(
-    state => state.setCurrentScreen,
-  );
-
-  useFocusEffect(() => {
-    setCurrentScreen('ClassDetailScreen');
-  });
+function ClassDetailScreen(): React.JSX.Element {
+  const closeBook = useBookModalStore(state => state.closeBook);
 
   const lectureId = 1;
   const isTeacher = true;
@@ -88,9 +74,9 @@ function ClassDetailScreen({
     // 선생님용
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
+        <Pressable onPress={closeBook} style={styles.bookmarkIcon}>
           <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
-        </TouchableOpacity>
+        </Pressable>
         <ClassHeader
           isTeacher={isTeacher}
           lectureId={lectureDetail?._id}
@@ -137,25 +123,21 @@ function ClassDetailScreen({
             <View style={styles.replayLayout}>
               <Replay lesson={lectureDetail?.lesson} />
             </View>
-            <View style={styles.homeworkLayout}>
-              {teacherLectureDetail ? (
-                <>
-                  <StudentsChart
-                    classAverageScores={
-                      selectedStudentScores ||
-                      teacherLectureDetail.classAverageScores
-                    }
-                    studentName={selectedStudentName || '학급 평균'}
-                  />
-                  <StudentRank
-                    studentsInfo={teacherLectureDetail.students}
-                    onStudentSelect={handleStudentSelect}
-                  />
-                </>
-              ) : (
-                <Text>빈데이터</Text>
-              )}
-            </View>
+            {teacherLectureDetail && (
+              <View style={styles.homeworkLayout}>
+                <StudentsChart
+                  classAverageScores={
+                    selectedStudentScores ||
+                    teacherLectureDetail.classAverageScores
+                  }
+                  studentName={selectedStudentName || '학급 평균'}
+                />
+                <StudentRank
+                  studentsInfo={teacherLectureDetail.students}
+                  onStudentSelect={handleStudentSelect}
+                />
+              </View>
+            )}
           </View>
         </View>
       </View>
