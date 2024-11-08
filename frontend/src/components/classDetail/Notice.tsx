@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from '@components/common/Text';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import postit from '@assets/images/postit.png';
 import { spacing } from '@theme/spacing';
 import { getResponsiveSize } from '@utils/responsive';
@@ -9,28 +9,60 @@ import { iconSize } from '@theme/iconSize';
 import { useModal } from 'src/hooks/useModal';
 import NoticeCreateModal from './NoticeCreateModal';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
+import { deleteNotice } from '@services/lectureNotice';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-type IsTeacherProps = {
+type NoticeData = {
+  noticeId: number;
+  title: string;
+  content: string;
+};
+
+type NoticeProps = {
   isTeacher: boolean;
-}
+  lectureId?: number;
+  notices?: NoticeData[];
+};
 
-function Notice({ isTeacher }: IsTeacherProps): React.JSX.Element {
+function Notice({
+  isTeacher,
+  lectureId,
+  notices = [],
+}: NoticeProps): React.JSX.Element {
   const { open } = useModal();
+  const displayedNotices = notices.slice(0, 3); // 최대 3개의 공지사항만 표시
+  const queryClient = useQueryClient();
+  const { mutate: deleteMutation } = useMutation({
+    mutationFn: (noticeId: number) => deleteNotice(noticeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['memorizeWordList', lectureId],
+      });
+    },
+  });
 
-  const noticeDatas = [
-    {
-      title: '공지사항 1',
-      content: '공지사항 내용 1@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@',
-    },
-    {
-      title: '공지사항 2',
-      content: '공지사항 내용 2',
-    },
-    {
-      title: '공지사항 3',
-      content: '공지사항 내용 3',
-    },
-  ];
+  const showDeleteConfirmation = (noticeId: number) => {
+    Alert.alert(
+      '경고',
+      '정말 삭제하시겠습니까?',
+      [
+        {
+          text: '삭제',
+          onPress: () => {
+            console.log('삭제 확정');
+            // 삭제 작업 실행 코드
+            deleteMutation(noticeId);
+          },
+          style: 'destructive',
+        },
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true },
+    );
+  };
 
   return (
     <View style={styles.notice}>
@@ -41,7 +73,7 @@ function Notice({ isTeacher }: IsTeacherProps): React.JSX.Element {
         {isTeacher && (
           <TouchableOpacity
             onPress={() => {
-              open(<NoticeCreateModal />, {
+              open(<NoticeCreateModal lectureId={lectureId} />, {
                 title: '공지사항 생성',
                 onClose: () => {
                   console.log('공지사항 생성 닫기');
@@ -53,20 +85,33 @@ function Notice({ isTeacher }: IsTeacherProps): React.JSX.Element {
         )}
       </View>
       <View style={styles.noticeLayout}>
-        {noticeDatas.map((notice, index) => (
-          <View key={index} style={styles.imageWrapper}>
-            <Image source={postit} alt="postit" style={styles.imageContainer} />
-            <View style={styles.textIconContainer}>
-              <Text style={styles.overlayText}>{notice.title}</Text>
-              {isTeacher &&
-                <TouchableOpacity style={styles.cancelIcon}>
-                  <CancelIcon width={iconSize.xxs} height={iconSize.xxs} />
-                </TouchableOpacity>
-              }
+        {Array.from({ length: 3 }).map((_, index) => {
+          const notice = displayedNotices[index];
+          return (
+            <View key={index} style={styles.imageWrapper}>
+              <Image
+                source={postit}
+                alt="postit"
+                style={styles.imageContainer}
+              />
+              <View style={styles.textIconContainer}>
+                <Text style={styles.overlayText}>
+                  {notice ? notice.title : '등록된 공지가 없습니다.'}
+                </Text>
+                {isTeacher && notice && (
+                  <TouchableOpacity
+                    style={styles.cancelIcon}
+                    onPress={() => showDeleteConfirmation(notice.noticeId)}>
+                    <CancelIcon width={iconSize.xxs} height={iconSize.xxs} />
+                  </TouchableOpacity>
+                )}
+              </View>
+              {notice && (
+                <Text style={styles.noticeContent}>{notice.content}</Text>
+              )}
             </View>
-            <Text style={styles.noticeContent}>{notice.content}</Text>
-          </View>
-        ))}
+          );
+        })}
       </View>
     </View>
   );
@@ -100,8 +145,9 @@ const styles = StyleSheet.create({
   },
   textIconContainer: {
     position: 'absolute',
-    left: 12,
-    top: 16,
+    left: getResponsiveSize(12),
+    top: getResponsiveSize(24),
+    right: getResponsiveSize(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -111,13 +157,13 @@ const styles = StyleSheet.create({
   },
   noticeContent: {
     position: 'absolute',
-    left: 12,
-    right: 12,
-    top: 42,
+    left: getResponsiveSize(12),
+    right: getResponsiveSize(12),
+    top: getResponsiveSize(48),
     color: '#333',
   },
   cancelIcon: {
-    marginLeft: '46%',
+    right: getResponsiveSize(4),
   },
 });
 
