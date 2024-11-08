@@ -90,9 +90,9 @@ function ClassHeader({
                 pastTeacherName={pastTeacherName!}
               />,
               {
-                title: '수업 생성',
+                title: '수업 수정',
                 onClose: () => {
-                  console.log('수업 생성 모달 종료');
+                  console.log('수업 수정 모달 종료');
                 },
               },
             ),
