@@ -1,5 +1,5 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { spacing } from '@theme/spacing';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -11,7 +11,7 @@ import StudentRank from '@components/classDetail/StudentRank';
 import StudentsChart from '@components/classDetail/StudentsChart';
 
 import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 import {
   getLectureDetail,
@@ -21,12 +21,12 @@ import {
   LectureStudentDetailType,
   LectureTeacherDetailType,
 } from 'src/services/lectureInformation';
-import { useQuery } from '@tanstack/react-query';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { useFocusEffect } from '@react-navigation/native';
-import { useState } from 'react';
-import { getResponsiveSize } from '@utils/responsive';
-
+import {useQuery} from '@tanstack/react-query';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {useFocusEffect} from '@react-navigation/native';
+import {useState} from 'react';
+import {getResponsiveSize} from '@utils/responsive';
+import {Text} from '@components/common/Text';
 
 type ClassAverageScores = {
   homeworkAvgScore: number;
@@ -52,18 +52,18 @@ function ClassDetailScreen({
   const lectureId = 1;
   const isTeacher = true;
 
-  const { data: lectureDetail } = useQuery<LectureDetailType>({
+  const {data: lectureDetail} = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId),
   });
 
-  const { data: studentLectureDetail } = useQuery<LectureStudentDetailType>({
+  const {data: studentLectureDetail} = useQuery<LectureStudentDetailType>({
     queryKey: ['studentLectureDetail', lectureId],
     queryFn: () => getStudentLectureDetail(lectureId),
     enabled: !isTeacher,
   });
 
-  const { data: teacherLectureDetail } = useQuery<LectureTeacherDetailType>({
+  const {data: teacherLectureDetail} = useQuery<LectureTeacherDetailType>({
     queryKey: ['teacherLectureDetail', lectureId],
     queryFn: () => getTeacherLectureDetail(lectureId),
     enabled: isTeacher,
@@ -73,8 +73,11 @@ function ClassDetailScreen({
   console.log('studentLectureDetail', studentLectureDetail);
   console.log('teacherLectureDetail', teacherLectureDetail);
 
-  const [selectedStudentScores, setSelectedStudentScores] = useState<ClassAverageScores | null>(null);
-  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(null);
+  const [selectedStudentScores, setSelectedStudentScores] =
+    useState<ClassAverageScores | null>(null);
+  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(
+    null,
+  );
 
   const handleStudentSelect = (scores: ClassAverageScores, name: string) => {
     setSelectedStudentScores(scores);
@@ -134,18 +137,25 @@ function ClassDetailScreen({
             <View style={styles.replayLayout}>
               <Replay lesson={lectureDetail?.lesson} />
             </View>
-            {teacherLectureDetail &&
-              <View style={styles.homeworkLayout}>
-                <StudentsChart
-                  classAverageScores={selectedStudentScores || teacherLectureDetail.classAverageScores}
-                  studentName={selectedStudentName || '학급 평균'}
-                />
-                <StudentRank
-                  studentsInfo={teacherLectureDetail.students}
-                  onStudentSelect={handleStudentSelect}
-                />
-              </View>
-            }
+            <View style={styles.homeworkLayout}>
+              {teacherLectureDetail ? (
+                <>
+                  <StudentsChart
+                    classAverageScores={
+                      selectedStudentScores ||
+                      teacherLectureDetail.classAverageScores
+                    }
+                    studentName={selectedStudentName || '학급 평균'}
+                  />
+                  <StudentRank
+                    studentsInfo={teacherLectureDetail.students}
+                    onStudentSelect={handleStudentSelect}
+                  />
+                </>
+              ) : (
+                <Text>빈데이터</Text>
+              )}
+            </View>
           </View>
         </View>
       </View>
