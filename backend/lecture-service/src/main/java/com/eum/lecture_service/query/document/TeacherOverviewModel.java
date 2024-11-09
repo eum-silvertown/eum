@@ -26,7 +26,7 @@ public class TeacherOverviewModel {
     @Id
     private String id;
     private Long teacherId;
-    private Long classId;
+    private Long lectureId;
     private List<StudentInfo> students = new ArrayList<>();
     private ClassAverageScores classAverageScores;
 
