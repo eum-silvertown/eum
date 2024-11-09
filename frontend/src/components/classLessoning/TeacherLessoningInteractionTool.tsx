@@ -1,8 +1,4 @@
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
-import RecordOffIcon from '@assets/icons/recordOffIcon.svg';
-import RecordOnIcon from '@assets/icons/recordOnIcon.svg';
-import MikeOffIcon from '@assets/icons/mikeOffIcon.svg';
-import MikeOnIcon from '@assets/icons/mikeOnIcon.svg';
 import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import { ScreenType } from '@store/useCurrentScreenStore';
@@ -23,9 +19,6 @@ type CanvasComponentProps = {
 };
 
 const TeacherLessoningInteractionTool = ({
-  startRecording,
-  stopRecording,
-  isRecording,
   currentPage,
   totalPages,
   onNextPage,
@@ -46,21 +39,6 @@ const TeacherLessoningInteractionTool = ({
             onPress={() => navigation.navigate('LessoningStudentListScreen')}>
             <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
           </TouchableOpacity>
-          {/* <TouchableOpacity>
-            <MikeOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MikeOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-          </TouchableOpacity>
-          {isRecording ? (
-            <TouchableOpacity onPress={stopRecording}>
-              <RecordOnIcon width={iconSize.md} height={iconSize.md} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={startRecording}>
-              <RecordOffIcon width={iconSize.md} height={iconSize.md} />
-            </TouchableOpacity>
-          )} */}
           {/* 문제 페이지 설정 */}
           <View style={styles.pageControlContainer}>
             <TouchableOpacity
