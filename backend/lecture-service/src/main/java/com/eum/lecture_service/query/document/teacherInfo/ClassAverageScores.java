@@ -14,6 +14,6 @@ import lombok.Setter;
 public class ClassAverageScores {
 
 	private Double homeworkAvgScore;
-	private Double testAvgScore;
+	private Double examAvgScore;
 	private Double attitudeAvgScore;
 }
