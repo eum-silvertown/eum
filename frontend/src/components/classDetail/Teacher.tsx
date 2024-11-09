@@ -1,11 +1,16 @@
 import React from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
-import { spacing } from '@theme/spacing';
+import {Text} from '@components/common/Text';
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
+import {spacing} from '@theme/spacing';
 import defaultTeacherPhoto from '@assets/images/teacher.png';
 import PencilIcon from '@assets/icons/pencilIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { getResponsiveSize } from '@utils/responsive';
+import {iconSize} from '@theme/iconSize';
+import {getResponsiveSize} from '@utils/responsive';
 
 type TeacherProps = {
   isTeacher: boolean;
@@ -81,9 +86,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   photoContainer: {
-    width: getResponsiveSize(80),
-    height: getResponsiveSize(80),
-    borderRadius: 45,
+    width: getResponsiveSize(70),
+    height: getResponsiveSize(70),
+    borderRadius: 100,
     overflow: 'hidden',
     borderWidth: 2,
     borderColor: '#ddd',
@@ -91,13 +96,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   photo: {
-    width: getResponsiveSize(90),
-    height: getResponsiveSize(90),
+    width: getResponsiveSize(80),
+    height: getResponsiveSize(80),
     justifyContent: 'center',
     alignItems: 'center',
   },
   photoImage: {
-    borderRadius: 45,
+    borderRadius: 100,
   },
   infoContainer: {
     flex: 1,

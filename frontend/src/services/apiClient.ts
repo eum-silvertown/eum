@@ -3,9 +3,7 @@ import {getToken, clearToken} from '@utils/secureStorage';
 import {refreshAuthToken} from '../services/authService';
 import Config from 'react-native-config';
 
-const baseURL = `${Config.BACKEND_API_URL}`
-;
-
+const baseURL = `${Config.BACKEND_API_URL}`;
 // 인증이 필요 없는 요청용 클라이언트
 const publicApiClient = axios.create({
   baseURL: baseURL,
@@ -17,7 +15,7 @@ const authApiClient = axios.create({
 });
 
 // 요청 인터셉터
-authApiClient.interceptors.request.use(async (config) => {
+authApiClient.interceptors.request.use(async config => {
   const {accessToken} = await getToken();
   if (accessToken) {
     config.headers.Authorization = `${accessToken}`;
