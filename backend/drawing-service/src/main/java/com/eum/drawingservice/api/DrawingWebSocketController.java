@@ -20,28 +20,14 @@ public class DrawingWebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/draw")
-    public void handleDrawingEvent(@Payload DrawingRequestDTO requestDTO, SimpMessageHeaderAccessor headerAccessor) {
-        try {
-            String memberId = Objects.requireNonNull(headerAccessor.getUser()).getName();
-            Role memberRole = Role.valueOf(Objects.requireNonNull(headerAccessor.getFirstNativeHeader("role")));
-
-            requestDTO.setMemberId(Long.valueOf(memberId));
-            drawingService.saveDrawing(requestDTO);
-            if (memberRole == Role.TEACHER) {
-                String sendUrl = "/topic/lesson/" + requestDTO.getLessonId() + "/question/" + requestDTO.getQuestionId();
-                messagingTemplate.convertAndSend(sendUrl, requestDTO);
-            } else {
-                String sendUrl = "/topic/teacher/lesson/" + requestDTO.getLessonId();
-                messagingTemplate.convertAndSend(sendUrl, requestDTO);
-            }
-        } catch (NullPointerException e) {
-            return;
+    public void handleDrawingEvent(@Payload DrawingRequestDTO requestDTO) {
+        drawingService.saveDrawing(requestDTO);
+        String sendUrl;
+        if (requestDTO.getRole() == Role.TEACHER) {
+            sendUrl = "/topic/lesson/" + requestDTO.getLessonId() + "/question/" + requestDTO.getQuestionId();
+        } else {
+            sendUrl = "/topic/teacher/lesson/" + requestDTO.getLessonId();
         }
-    }
-
-    @MessageMapping("/test")
-    public void test() {
-        messagingTemplate.convertAndSend("/topic/test", "SUCCESS HANGNIM!!");
-        System.out.println(">>> RECEIVED");
+        messagingTemplate.convertAndSend(sendUrl, requestDTO);
     }
 }
