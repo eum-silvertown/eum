@@ -44,7 +44,7 @@ const sendCompressedData = (socket: Socket, event: string, data: any, count: num
   socket.emit(event, base64EncodedData);
 
   // 전송 로그에 카운터 추가
-  console.log(`[Socket Sync] Event: ${event} | Count: ${count} | Data Length: ${data.length} | Data Sample:`, data[0]);
+  console.log(`[Socket Sync] Event: ${event} | Count: ${count} | Data Length: ${data.length}`);
 };
 
 const TeacherCanvasSection = ({
@@ -71,7 +71,7 @@ const TeacherCanvasSection = ({
   // 실시간 전송 - Move 시
   const throttledSendData = throttle((pathData: PathData) => {
     syncMoveCount += 1;
-    sendCompressedData(socket, 'sync_move', pathData, syncMoveCount);
+    sendCompressedData(socket, 'left_to_right_move', pathData, syncMoveCount);
     console.log(`[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`, pathData);
   }, 100); // 100ms마다 전송
 
@@ -81,7 +81,7 @@ const TeacherCanvasSection = ({
       ...pathData,
       path: pathData.path.toSVGString(),
     }));
-    sendCompressedData(socket, 'sync', dataToSend, syncCount);
+    sendCompressedData(socket, 'left_to_right', dataToSend, syncCount);
     console.log(`[Paths Updated] Sync 전송 횟수: ${syncCount} | paths 개수: ${paths.length}`);
   }, [paths, socket]);
 
@@ -98,21 +98,31 @@ const TeacherCanvasSection = ({
   };
 
   const erasePath = (x: number, y: number) => {
-    setPaths(prevPaths =>
-      prevPaths.filter(pathData => {
+    setPaths(prevPaths => {
+      let pathDeleted = false; // 삭제 여부 확인
+
+      const newPaths = prevPaths.filter(pathData => {
         const bounds = pathData.path.getBounds();
         const dx = Math.max(bounds.x - x, x - (bounds.x + bounds.width), 0);
         const dy = Math.max(bounds.y - y, y - (bounds.y + bounds.height), 0);
         const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
+        // 개별 경로로 지우기 작업 수행
         if (isInEraseArea) {
+          pathDeleted = true; // 경로 삭제 플래그 설정
           addToUndoStack({ type: 'erase', pathData });
-          console.log('지우개로 경로 삭제:', pathData); // 디버깅 로그
+          console.log('지우개로 개별 경로 삭제:', pathData); // 디버깅 로그
         }
-        return !isInEraseArea;
-      }),
-    );
-    setRedoStack([]); // redo 스택 초기화
+        return !isInEraseArea; // 삭제 대상이 아닌 경우만 남김
+      });
+
+      if (pathDeleted) {
+        setRedoStack([]); // redo 스택 초기화
+        return newPaths;
+      }
+
+      return prevPaths; // 삭제된 경로가 없으면 이전 상태 반환
+    });
   };
 
   const addToUndoStack = (action: ActionData) => {
@@ -218,10 +228,16 @@ const TeacherCanvasSection = ({
   };
 
   const handleSetPenColor = (color: string) => {
+    if (isErasing) {
+      setIsErasing(false); // 지우개 모드를 비활성화
+    }
     setPenColor(color);
   };
 
   const handleSetPenSize = (size: number) => {
+    if (isErasing) {
+      setIsErasing(false); // 지우개 모드를 비활성화
+    }
     setPenSize(size);
   };
 

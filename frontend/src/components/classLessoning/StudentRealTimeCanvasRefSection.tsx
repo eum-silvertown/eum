@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
 import { Socket } from 'socket.io-client';
 import pako from 'pako';
@@ -17,13 +17,86 @@ type PathData = {
 };
 
 // 학생 캔버스 컴포넌트
-function StudentCanvasRefSection({
+function StudentRealTimeCanvasRefSection({
   socket,
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
-  const [paths, setPaths] = useState<PathData[]>([]); // PathData[]로 변경하여 일관성 유지
+  const pathsRef = useRef<PathData[]>([]); // paths 상태를 useRef로 관리
+  const [, forceRender] = useState(0);
+  console.log('잔여데이터', pathsRef, '잔여');
+
+  const updatePaths = (newPaths: PathData[]) => {
+    pathsRef.current = newPaths;
+    forceRender((prev) => prev + 1); // 렌더링 강제 업데이트
+  };
 
   useEffect(() => {
+    const handleSync = (base64EncodedData: string) => {
+      try {
+        const binaryString = base64.decode(base64EncodedData);
+        const compressedData = Uint8Array.from(binaryString.split('').map(char => char.charCodeAt(0)));
+        const decompressedData = JSON.parse(pako.inflate(compressedData, { to: 'string' }));
+
+        const parsedPaths = decompressedData
+          .map((pathData: any) => {
+            const path = Skia.Path.MakeFromSVGString(pathData.path);
+            return path ? { ...pathData, path } : null;
+          })
+          .filter(Boolean);
+
+        updatePaths(parsedPaths); // 전체 데이터를 pathsRef에 설정하여 교체
+      } catch (error) {
+        console.error('Failed to decompress or parse left_to_right data:', error);
+      }
+    };
+
+    const handleSyncMove = (base64EncodedData: string) => {
+      try {
+        const binaryString = base64.decode(base64EncodedData);
+        const compressedData = Uint8Array.from(binaryString.split('').map(char => char.charCodeAt(0)));
+        const newPathData = JSON.parse(pako.inflate(compressedData, { to: 'string' }));
+        const newPath = Skia.Path.MakeFromSVGString(newPathData.path);
+
+        if (newPath) {
+          // 새로운 데이터와 기존 데이터 병합 후 pathsRef 업데이트
+          const updatedPaths = mergeSimilarPaths([...pathsRef.current, { ...newPathData, path: newPath }]);
+          pathsRef.current = updatedPaths;
+          forceRender((prev) => prev + 1); // 강제 렌더링
+        }
+      } catch (error) {
+        console.error('Failed to decompress or parse left_to_right_move data:', error);
+      }
+    };
+
+    const mergeSimilarPaths = (paths: PathData[]): PathData[] => {
+      const mergedPaths: PathData[] = [];
+
+      paths.forEach(currentPath => {
+        const lastMergedPath = mergedPaths[mergedPaths.length - 1];
+
+        // 마지막 병합된 경로와 스타일이 같으면 병합
+        if (
+          lastMergedPath &&
+          lastMergedPath.color === currentPath.color &&
+          lastMergedPath.strokeWidth === currentPath.strokeWidth &&
+          lastMergedPath.opacity === currentPath.opacity
+        ) {
+          const mergedPathString = lastMergedPath.path.toSVGString() + ' ' + currentPath.path.toSVGString();
+          const mergedPath = Skia.Path.MakeFromSVGString(mergedPathString);
+
+          if (mergedPath) {
+            lastMergedPath.path = mergedPath; // 병합된 경로 업데이트
+          }
+        } else {
+          // 스타일이 다르면 새 경로로 추가
+          mergedPaths.push(currentPath);
+        }
+      });
+
+      return mergedPaths;
+    };
+
+
     socket.on('connect', () => {
       console.log('학생 캔버스 서버에 연결됨:', socket.id);
     });
@@ -32,81 +105,31 @@ function StudentCanvasRefSection({
       console.log('서버 연결이 해제되었습니다.');
     });
 
-    // 전체 데이터를 수신하여 paths 갱신
-    socket.on('sync', (base64EncodedData: string) => {
-      try {
-        const binaryString = base64.decode(base64EncodedData);
-        const compressedData = Uint8Array.from(
-          binaryString.split('').map(char => char.charCodeAt(0)),
-        );
-        const decompressedData = JSON.parse(
-          pako.inflate(compressedData, { to: 'string' }),
-        );
-
-        const parsedPaths = decompressedData.map((pathData: any) => ({
-          ...pathData,
-          path: Skia.Path.MakeFromSVGString(pathData.path),
-        }));
-
-        setPaths(parsedPaths); // 전체 데이터를 paths로 설정하여 교체
-        console.log('[Socket Sync] 전체 데이터 수신 및 상태 갱신:', parsedPaths);
-      } catch (error) {
-        console.error('Failed to decompress or parse sync data:', error);
-      }
-    });
-
-    // 실시간 경로 데이터를 수신하여 paths에 추가
-    socket.on('sync_move', (base64EncodedData: string) => {
-      try {
-        const binaryString = base64.decode(base64EncodedData);
-        const compressedData = Uint8Array.from(
-          binaryString.split('').map(char => char.charCodeAt(0)),
-        );
-        const newPathData = JSON.parse(
-          pako.inflate(compressedData, { to: 'string' }),
-        );
-
-        const newPath = {
-          ...newPathData,
-          path: Skia.Path.MakeFromSVGString(newPathData.path),
-        };
-
-        setPaths(prevPaths => [...prevPaths, newPath]); // 새 경로를 기존 paths 배열에 추가
-        console.log('[Socket Sync Move] 실시간 데이터 수신 및 추가:', newPathData);
-      } catch (error) {
-        console.error('Failed to decompress or parse sync_move data:', error);
-      }
-    });
+    // 이벤트 리스너 등록
+    socket.on('left_to_right', handleSync);
+    socket.on('left_to_right_move', handleSyncMove);
 
     return () => {
-      socket.off('sync');
-      socket.off('sync_move');
+      // 이벤트 리스너 정리
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('left_to_right', handleSync);
+      socket.off('left_to_right_move', handleSyncMove);
     };
   }, [socket]);
 
   return (
     <View style={styles.canvasLayout}>
-      <View style={styles.canvasContainer}>
-        <Canvas style={styles.canvas} ref={canvasRef}>
-          {paths.map(({ path, color, strokeWidth, opacity }, index) => (
-            <Path
-              key={index}
-              path={path}
-              color={Skia.Color(color)}
-              style="stroke"
-              strokeWidth={strokeWidth}
-              strokeCap="round"
-              strokeJoin="round"
-              opacity={opacity}
-            />
-          ))}
-        </Canvas>
-      </View>
+      <Canvas style={styles.canvas} ref={canvasRef}>
+        {pathsRef.current.map(({ path, color, strokeWidth, opacity }, index) => (
+          <Path key={index} path={path} color={Skia.Color(color)} style="stroke" strokeWidth={strokeWidth} strokeCap="round" strokeJoin="round" opacity={opacity} />
+        ))}
+      </Canvas>
     </View>
   );
 }
 
-export default StudentCanvasRefSection;
+export default StudentRealTimeCanvasRefSection;
 
 const styles = StyleSheet.create({
   canvasLayout: {

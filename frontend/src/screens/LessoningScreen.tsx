@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
-import StudentCanvasSection from '@components/classLessoning/StudentCanvasSection';
+import StudentRealTimeCanvasSection from '@components/classLessoning/StudentRealTimeCanvasSection';
 
 import { useFocusEffect } from '@react-navigation/native';
 import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
@@ -80,7 +80,7 @@ function LessoningScreen(): React.JSX.Element {
   useFocusEffect(() => {
     setCurrentScreen('LessoningScreen');
   });
-  const socket: Socket = io('http://192.168.128.246:8080', {
+  const socket: Socket = io('http://192.168.0.10:8080', {
     reconnection: false,
     secure: true,
     transports: ['websocket'],
@@ -119,7 +119,7 @@ function LessoningScreen(): React.JSX.Element {
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
         <ProblemSection problemText={problems[currentPage]} />
-        <StudentCanvasSection
+        <StudentRealTimeCanvasSection
           socket={socket}
           currentPage={currentPage + 1}
           totalPages={problems.length}

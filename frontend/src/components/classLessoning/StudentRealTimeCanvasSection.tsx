@@ -75,8 +75,8 @@ const StudentRealTimeCanvasSection = ({
   const throttledSendData = throttle((pathData: PathData) => {
     syncMoveCount += 1;
     sendCompressedData(socket, 'sync_move', pathData, syncMoveCount);
-    console.log(`[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`, pathData);
-  }, 100);
+    console.log(`[ 학생 Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`, pathData);
+  }, 100000);
 
   useEffect(() => {
     syncCount += 1;
@@ -218,10 +218,16 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleSetPenColor = (color: string) => {
+    if (isErasing) {
+      setIsErasing(false); // 지우개 모드를 비활성화
+    }
     setPenColor(color);
   };
 
   const handleSetPenSize = (size: number) => {
+    if (isErasing) {
+      setIsErasing(false); // 지우개 모드를 비활성화
+    }
     setPenSize(size);
   };
 
