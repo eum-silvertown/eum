@@ -1,11 +1,14 @@
 package com.eum.lecture_service.command.service.exam;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eum.lecture_service.command.dto.exam.ExamDto;
 import com.eum.lecture_service.command.entity.exam.Exam;
 import com.eum.lecture_service.command.entity.exam.ExamQuestion;
+import com.eum.lecture_service.command.entity.homework.Homework;
 import com.eum.lecture_service.command.entity.lecture.Lecture;
 import com.eum.lecture_service.command.repository.exam.ExamRepository;
 import com.eum.lecture_service.command.repository.lecture.LectureRepository;
@@ -27,6 +30,13 @@ public class ExamServiceImpl implements ExamService{
 		Lecture lecture = lectureRepository.findById(examDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
+		List<Exam> exams = lecture.getExams();
+		for(Exam exam : exams) {
+			if(exam.getTitle().equals(examDto.getTitle())) {
+				throw new EumException(ErrorCode.EXAM_TITLE_DUPLICATE);
+			}
+		}
+
 		Exam exam = examDto.toExamEntity(lecture);
 		Exam savedExam = examRepository.save(exam);
 
@@ -46,6 +56,13 @@ public class ExamServiceImpl implements ExamService{
 	public Long updateExam(Long examId, ExamDto examDto) {
 		Exam exam = examRepository.findById(examId)
 			.orElseThrow(() -> new EumException(ErrorCode.EXAM_NOT_FOUND));
+
+		List<Exam> exams = exam.getLecture().getExams();
+		for(Exam findExam : exams) {
+			if(findExam.getTitle().equals(examDto.getTitle())) {
+				throw new EumException(ErrorCode.EXAM_TITLE_DUPLICATE);
+			}
+		}
 
 		if (examDto.getTitle() != null) {
 			exam.setTitle(examDto.getTitle());
