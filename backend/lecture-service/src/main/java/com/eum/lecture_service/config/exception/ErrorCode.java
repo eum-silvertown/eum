@@ -23,14 +23,18 @@ public enum ErrorCode {
 
 	// Lesson
 	LESSON_NOT_FOUND("L003", "레슨 없음", HttpStatus.BAD_REQUEST),
+	LESSON_TITLE_DUPLICATE("L004", "시험 제목 중복", HttpStatus.BAD_REQUEST),
 
 	// Exam
 	EXAM_NOT_FOUND("E001", "시험 없음" , HttpStatus.BAD_REQUEST),
 	EXAM_TIME_INVALID("E002", "시험 기간 아님", HttpStatus.BAD_REQUEST),
 	EXAM_ALREADY_SUBMITTED("E003","이미 제출한 시험", HttpStatus.BAD_REQUEST),
+	EXAM_TITLE_DUPLICATE("E004", "시험 제목 중복", HttpStatus.BAD_REQUEST),
 
 	// HOMEWORK
 	HOMEWORK_NOT_FOUND("H001", "숙제 없음" , HttpStatus.BAD_REQUEST ),
+	HOMEWORK_TIME_INVALID("H002", "숙제 제출 기간 지남", HttpStatus.BAD_REQUEST),
+	HOMEWORK_TITLE_DUPLICATE("H003", "숙제 제목 중복", HttpStatus.BAD_REQUEST),
 
 	// Teacher
 	TEACHER_NOT_FOUND("T001", "선생님 없음", HttpStatus.BAD_REQUEST),
