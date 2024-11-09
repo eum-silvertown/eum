@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.eum.lecture_service.query.document.LectureModel;
+import com.eum.lecture_service.query.document.eventModel.ClassModel;
 import com.eum.lecture_service.query.document.lectureInfo.ScheduleInfo;
 
 import lombok.Builder;
@@ -21,12 +22,13 @@ public class LectureListResponse {
 	private String fontColor;
 	private Long year;
 	private Long semester;
-	private Long classId;
+	private Long grade;
+	private Long classNumber;
 	private Long teacherId;
 	private List<String> scheduleDays;
 	private Long lecture_period;
 
-	public static LectureListResponse fromLectureModel(LectureModel lecture) {
+	public static LectureListResponse fromLectureModel(LectureModel lecture, ClassModel classModel) {
 		return LectureListResponse.builder()
 			.lectureId(lecture.getLectureId())
 			.title(lecture.getTitle())
@@ -36,7 +38,8 @@ public class LectureListResponse {
 			.fontColor(lecture.getFontColor())
 			.year(lecture.getYear())
 			.semester(lecture.getSemester())
-			.classId(lecture.getClassId())
+			.grade(classModel.getGrade())
+			.classNumber(classModel.getClassNumber())
 			.teacherId(lecture.getTeacherId())
 			.scheduleDays(lecture.getSchedule().stream()
 				.map(ScheduleInfo::getDay)
@@ -45,13 +48,13 @@ public class LectureListResponse {
 			.build();
 	}
 
-	public static LectureListResponse fromLectureModelWithPeriod(LectureModel lecture, String day) {
+	public static LectureListResponse fromLectureModelWithPeriod(LectureModel lecture, String day, ClassModel classModel) {
 		Long period = lecture.getSchedule().stream()
 			.filter(s -> s.getDay().equals(day))
 			.map(ScheduleInfo::getPeriod)
 			.findFirst()
 			.orElse(null);
-		LectureListResponse lectureListResponse = fromLectureModel(lecture);
+		LectureListResponse lectureListResponse = fromLectureModel(lecture, classModel);
 		lectureListResponse.setLecture_period(period);
 		return lectureListResponse;
 	}

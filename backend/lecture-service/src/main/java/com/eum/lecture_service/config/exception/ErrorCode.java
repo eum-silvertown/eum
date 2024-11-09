@@ -39,7 +39,9 @@ public enum ErrorCode {
 	// Student
 	STUDENT_NOT_FOUND("S001", "학생 없음", HttpStatus.BAD_REQUEST),
 	STUDENTMODEL_NOT_FOUND("S002", "학생 모델 없음", HttpStatus.BAD_REQUEST),
-	;
+
+	// Class
+	CLASS_NOT_FOUND("C002","수업 없음" , HttpStatus.BAD_REQUEST),;
 
 	private final String code;
 	private final String message;
