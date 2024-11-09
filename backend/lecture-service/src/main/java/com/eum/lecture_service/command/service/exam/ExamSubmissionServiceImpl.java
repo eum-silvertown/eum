@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,8 @@ import com.eum.lecture_service.command.repository.exam.ExamRepository;
 import com.eum.lecture_service.command.repository.exam.ExamSubmissionRepository;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
+import com.eum.lecture_service.event.dto.ExamProblemSubmissionEventDto;
+import com.eum.lecture_service.event.event.exam.ExamSubmissionCreateEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +29,7 @@ public class ExamSubmissionServiceImpl implements ExamSubmissionService {
 	private final ExamRepository examRepository;
 	private final ExamSubmissionRepository examSubmissionRepository;
 	private final ExamProblemSubmissionRepository examProblemSubmissionRepository;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
 	@Transactional
@@ -55,11 +59,12 @@ public class ExamSubmissionServiceImpl implements ExamSubmissionService {
 				.build();
 		}
 
+		ExamSubmission savedExam = examSubmissionRepository.save(examSubmission);
+
 		// 문제 제출 저장
-		ExamSubmission finalExamSubmission = examSubmission;
 		List<ExamProblemSubmission> examProblemSubmissionList = problemSubmissions.stream()
 			.map(dto -> {
-				return dto.toEntity(finalExamSubmission, studentId);
+				return dto.toEntity(savedExam, studentId);
 			})
 			.collect(Collectors.toList());
 
@@ -76,7 +81,37 @@ public class ExamSubmissionServiceImpl implements ExamSubmissionService {
 		examSubmission.setTotalCount(totalCount);
 		examSubmission.setScore(score);
 		examSubmission.setCompleted(true);
-		return examSubmissionRepository.save(examSubmission);
 
+		ExamSubmission saved = examSubmissionRepository.save(examSubmission);
+
+		publishExamSubmissionCreateEvent(examSubmission, examProblemSubmissionList, exam.getLecture().getLectureId());
+
+		return saved;
+
+	}
+
+	private void publishExamSubmissionCreateEvent(ExamSubmission examSubmission, List<ExamProblemSubmission> examProblemSubmissionList, Long lectureId) {
+
+		ExamSubmissionCreateEvent event = new ExamSubmissionCreateEvent();
+		event.setExamSubmissionId(examSubmission.getExamSubmissionId());
+		event.setExamId(examSubmission.getExam().getExamId());
+		event.setStudentId(examSubmission.getStudentId());
+		event.setLectureId(lectureId);
+		event.setScore(examSubmission.getScore());
+		event.setCorrectCount(examSubmission.getCorrectCount());
+		event.setTotalCount(examSubmission.getTotalCount());
+
+		List<ExamProblemSubmissionEventDto> problemSubmissionEventDtoList = examProblemSubmissionList.stream()
+			.map(submission -> ExamProblemSubmissionEventDto.builder()
+				.examProblemSubmissionId(submission.getExamProblemSubmissionId())
+				.questionId(submission.getQuestionId())
+				.isCorrect(submission.getIsCorrect())
+				.examSolution(submission.getExamSolution())
+				.build())
+			.collect(Collectors.toList());
+
+		event.setProblemSubmissions(problemSubmissionEventDtoList);
+
+		kafkaTemplate.send("exam-submission-event", event);
 	}
 }
