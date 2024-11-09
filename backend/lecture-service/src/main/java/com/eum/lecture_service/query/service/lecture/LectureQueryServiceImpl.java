@@ -41,23 +41,20 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 		LectureModel lecture = lectureReadRepository.findById(lectureId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
-		// TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
-		// 	.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
-
-		TeacherModel teacherModel = null;
+		TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
+			.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
 
 		if(ROLE_STUDENT.equals(role)) {
-			StudentOverviewModel studentOverviewModel = studentOverviewRepository.findByStudentIdAndClassId(memberId,
-					lecture.getClassId())
+			StudentOverviewModel studentOverviewModel = studentOverviewRepository.findByStudentIdAndLectureId(memberId,
+					lecture.getLectureId())
 				.orElseThrow(() -> new EumException(ErrorCode.STUDENTMODEL_NOT_FOUND));
 
 			return LectureDetailResponse.fromLectureModelForStudent(lecture,  teacherModel, studentOverviewModel);
 		}
 		else if(ROLE_TEACHER.equals(role)) {
-			// TeacherOverviewModel teacherOverviewModel = teacherOverviewRepository.findByTeacherIdAndClassId(memberId,
-			// 		lecture.getClassId())
-			// 	.orElseThrow(() -> new EumException(ErrorCode.TEACHERMODEL_NOT_FOUND));
-			TeacherOverviewModel teacherOverviewModel = null;
+			TeacherOverviewModel teacherOverviewModel = teacherOverviewRepository.findByTeacherIdAndLectureId(memberId,
+					lecture.getLectureId())
+				.orElseThrow(() -> new EumException(ErrorCode.TEACHERMODEL_NOT_FOUND));
 			return LectureDetailResponse.fromLectureModelForTeacher(lecture, teacherModel, teacherOverviewModel);
 		}
 		return null;
