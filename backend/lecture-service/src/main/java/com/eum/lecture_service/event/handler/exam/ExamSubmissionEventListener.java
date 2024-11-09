@@ -1,0 +1,166 @@
+package com.eum.lecture_service.event.handler.exam;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+
+import com.eum.lecture_service.config.exception.ErrorCode;
+import com.eum.lecture_service.config.exception.EumException;
+import com.eum.lecture_service.event.dto.ExamProblemSubmissionEventDto;
+import com.eum.lecture_service.event.event.exam.ExamSubmissionCreateEvent;
+import com.eum.lecture_service.query.document.StudentOverviewModel;
+import com.eum.lecture_service.query.document.TeacherOverviewModel;
+import com.eum.lecture_service.query.document.studentInfo.ExamProblemSubmissionInfo;
+import com.eum.lecture_service.query.document.studentInfo.ExamSubmissionInfo;
+import com.eum.lecture_service.query.document.studentInfo.Overview;
+import com.eum.lecture_service.query.document.studentInfo.StudentScores;
+import com.eum.lecture_service.query.document.teacherInfo.ClassAverageScores;
+import com.eum.lecture_service.query.document.teacherInfo.StudentInfo;
+import com.eum.lecture_service.query.repository.StudentOverviewRepository;
+import com.eum.lecture_service.query.repository.TeacherOverviewRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ExamSubmissionEventListener {
+
+	private final StudentOverviewRepository studentOverviewRepository;
+	private final TeacherOverviewRepository teacherOverviewRepository;
+
+	@KafkaListener(topics = "exam-submission-events", groupId = "lecture-group")
+	public void handleExamSubmissionCreatedEvent(ExamSubmissionCreateEvent event) {
+		Long studentId = event.getStudentId();
+		Long lectureId = event.getLectureId();
+
+		StudentOverviewModel studentModel = studentOverviewRepository.findByStudentIdAndLectureId(studentId, lectureId)
+			.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
+
+		ExamSubmissionInfo examSubmissionInfo = ExamSubmissionInfo.builder()
+			.examSubmissionId(event.getExamSubmissionId())
+			.examId(event.getExamId())
+			.score(event.getScore())
+			.correctCount(event.getCorrectCount())
+			.totalCount(event.getTotalCount())
+			.build();
+
+		List<ExamProblemSubmissionInfo> examProblemSubmissionInfos = new ArrayList<>();
+		for(ExamProblemSubmissionEventDto dto : event.getProblemSubmissions()) {
+			ExamProblemSubmissionInfo problemInfo = ExamProblemSubmissionInfo.builder()
+				.examProblemSubmissionId(dto.getExamProblemSubmissionId())
+				.questionId(dto.getQuestionId())
+				.isCorrect(dto.getIsCorrect())
+				.examSolution(dto.getExamSolution())
+				.build();
+		}
+		examSubmissionInfo.setProblemSubmissions(examProblemSubmissionInfos);
+
+		if(studentModel.getExamSubmissionInfo() == null) {
+			studentModel.setExamSubmissionInfo(new ArrayList<>());
+		}
+		studentModel.getExamSubmissionInfo().add(examSubmissionInfo);
+
+		updateStudentScores(studentModel);
+
+		//학생 오버뷰 업뎃
+		updateStudentOverview(studentModel);
+
+		studentOverviewRepository.save(studentModel);
+
+		updateTeacherOverviewModel(studentId, lectureId);
+	}
+
+	private void updateStudentOverview(StudentOverviewModel studentModel) {
+		Overview overview = studentModel.getOverview();
+		if(overview == null) {
+			overview = new Overview();
+			studentModel.setOverview(overview);
+		}
+
+		//지금은 맞춘거 카운트
+		long totalSolvedProblems = 0;
+		List<ExamSubmissionInfo> submissions = studentModel.getExamSubmissionInfo();
+		for(ExamSubmissionInfo submission : submissions) {
+			List<ExamProblemSubmissionInfo> problemSubmissionInfos = submission.getProblemSubmissions();
+			for(ExamProblemSubmissionInfo problemSubmissionInfo : problemSubmissionInfos) {
+				if (problemSubmissionInfo.getIsCorrect()) {
+					totalSolvedProblems++;
+				}
+			}
+		}
+		overview.setExamCount(totalSolvedProblems);
+	}
+
+	private void updateStudentScores(StudentOverviewModel studentModel) {
+		List<ExamSubmissionInfo> submissions = studentModel.getExamSubmissionInfo();
+
+		double totalStore = submissions.stream()
+			.mapToDouble(ExamSubmissionInfo::getScore)
+			.sum();
+		int count = submissions.size();
+
+		double avgScore = totalStore / count;
+
+		StudentScores scores = studentModel.getStudentScores();
+		if(scores == null) {
+			scores = new StudentScores();
+			studentModel.setStudentScores(scores);
+		}
+		scores.setExamAvgScore(avgScore);
+	}
+
+
+	private void updateTeacherOverviewModel(Long studentId, Long lectureId) {
+		// TeacherOverviewModel 가져오기
+		String teacherOverviewId = generateTeacherOverviewId(lectureId);
+		TeacherOverviewModel teacherOverview = teacherOverviewRepository.findById(teacherOverviewId)
+			.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
+
+		List<StudentInfo> studentInfos = teacherOverview.getStudents();
+		for (StudentInfo studentInfo : studentInfos) {
+			if (studentInfo.getStudentId().equals(studentId)) {
+
+				StudentOverviewModel studentOverview = studentOverviewRepository.findByStudentIdAndLectureId(studentId, lectureId)
+					.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
+				studentInfo.setStudentScores(studentOverview.getStudentScores());
+				break;
+			}
+		}
+
+		updateClassAverageScores(teacherOverview);
+
+		teacherOverviewRepository.save(teacherOverview);
+	}
+
+	private void updateClassAverageScores(TeacherOverviewModel teacherOverview) {
+		List<StudentInfo> studentInfos = teacherOverview.getStudents();
+		double totalHomework = 0.0;
+		double totalExam = 0.0;
+		double totalAttitude = 0.0;
+		int count = 0;
+
+		for (StudentInfo studentInfo : studentInfos) {
+			StudentScores scores = studentInfo.getStudentScores();
+			if (scores != null) {
+				totalHomework += scores.getHomeworkAvgScore() != null ? scores.getHomeworkAvgScore() : 0.0;
+				totalExam += scores.getExamAvgScore() != null ? scores.getExamAvgScore() : 0.0;
+				totalAttitude += scores.getAttitudeAvgScore() != null ? scores.getAttitudeAvgScore() : 100.0;
+				count++;
+			}
+		}
+
+		ClassAverageScores classAverageScores = ClassAverageScores.builder()
+			.homeworkAvgScore(count > 0 ? totalHomework / count : 0.0)
+			.examAvgScore(count > 0 ? totalExam / count : 0.0)
+			.attitudeAvgScore(count > 0 ? totalAttitude / count : 100.0)
+			.build();
+
+		teacherOverview.setClassAverageScores(classAverageScores);
+	}
+
+	private String generateTeacherOverviewId(Long lectureId) {
+		return "teacher-overview-" + lectureId;
+	}
+}
