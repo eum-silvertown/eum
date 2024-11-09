@@ -40,7 +40,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 		LocalDateTime now = LocalDateTime.now();
 		if (now.isBefore(homework.getStartTime()) || now.isAfter(homework.getEndTime())) {
-			throw new EumException(ErrorCode.HOMEWORK_NOT_FOUND);
+			throw new EumException(ErrorCode.HOMEWORK_TIME_INVALID);
 		}
 
 		// 새로운 HomeworkSubmission 생성
