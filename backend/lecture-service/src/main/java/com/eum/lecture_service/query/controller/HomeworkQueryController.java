@@ -16,6 +16,9 @@ import com.eum.lecture_service.config.global.CommonResponse;
 import com.eum.lecture_service.query.document.lectureInfo.HomeworkInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkProblemSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo;
+import com.eum.lecture_service.query.dto.homework.HomeworkInfoResponse;
+import com.eum.lecture_service.query.dto.homework.HomeworkProblemSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionInfoResponse;
 import com.eum.lecture_service.query.service.homework.HomeworkQueryService;
 import com.eum.lecture_service.query.service.homework.HomeworkSubmissionQueryService;
 
@@ -38,8 +41,8 @@ public class HomeworkQueryController {
 		@PathVariable Long lectureId,
 		@PathVariable Long homeworkId) {
 
-		HomeworkInfo homeworkInfo = homeworkQueryService.getHomeworkDetail(lectureId, homeworkId);
-		return CommonResponse.success(homeworkInfo, "숙제 상세 조회 성공");
+		HomeworkInfoResponse response = homeworkQueryService.getHomeworkDetail(lectureId, homeworkId);
+		return CommonResponse.success(response, "숙제 상세 조회 성공");
 	}
 
 	//특정 숙제에 대한 모든 제출 조회
@@ -52,8 +55,9 @@ public class HomeworkQueryController {
 
 		checkTeacherRole(role);
 
-		List<HomeworkSubmissionInfo> submissions = homeworkSubmissionQueryService.getHomeworkSubmissions(lectureId, homeworkId);
-		return CommonResponse.success(submissions, "숙제 제출 내역 조회 성공");
+		List<HomeworkSubmissionInfoResponse> response = homeworkSubmissionQueryService.getHomeworkSubmissions(
+			lectureId, homeworkId);
+		return CommonResponse.success(response, "숙제 제출 내역 조회 성공");
 	}
 
 	// 특정 학생의 숙제 제출 내역 조회
@@ -65,16 +69,11 @@ public class HomeworkQueryController {
 		@PathVariable Long homeworkId,
 		@PathVariable Long studentId) {
 
-		if (isStudent(role)) {
-			if (!memberId.equals(studentId)) {
-				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-			}
-		} else if (!isTeacher(role)) {
-			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		}
+		checkAccessPermission(role, memberId, studentId);
 
-		HomeworkSubmissionInfo submission = homeworkSubmissionQueryService.getStudentHomeworkSubmission(lectureId, homeworkId, studentId);
-		return CommonResponse.success(submission, "학생의 숙제 제출 내역 조회 성공");
+		HomeworkSubmissionInfoResponse response = homeworkSubmissionQueryService.getStudentHomeworkSubmission(
+			lectureId, homeworkId, studentId);
+		return CommonResponse.success(response, "학생의 숙제 제출 내역 조회 성공");
 	}
 
 	// 특정 문제 제출 정보 조회
@@ -87,23 +86,42 @@ public class HomeworkQueryController {
 		@PathVariable Long studentId,
 		@PathVariable Long problemId) {
 
-		if (isStudent(role)) {
-			if (!memberId.equals(studentId)) {
-				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-			}
-		} else if (!isTeacher(role)) {
-			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		}
+		checkAccessPermission(role, memberId, studentId);
 
-		HomeworkProblemSubmissionInfo problemSubmission = homeworkSubmissionQueryService.getHomeworkProblemSubmission(
+		HomeworkProblemSubmissionInfoResponse response = homeworkSubmissionQueryService.getHomeworkProblemSubmission(
 			lectureId, homeworkId, studentId, problemId);
 
-		return CommonResponse.success(problemSubmission, "숙제 문제 제출 정보 조회 성공");
+		return CommonResponse.success(response, "숙제 문제 제출 정보 조회 성공");
+	}
+
+	// 특정 학생의 모든 숙제 제출 내역 조회
+	@GetMapping("/{lectureId}/student/{studentId}/submissions")
+	public CommonResponse<?> getAllHomeworkSubmissionsByStudent(
+		@RequestHeader("X-MEMBER-ROLE") String role,
+		@RequestHeader("X-MEMBER-ID") Long memberId,
+		@PathVariable Long lectureId,
+		@PathVariable Long studentId) {
+
+		checkAccessPermission(role, memberId, studentId);
+
+		List<HomeworkSubmissionInfoResponse> response = homeworkSubmissionQueryService.getAllHomeworkSubmissionsByStudent(
+			lectureId, studentId);
+		return CommonResponse.success(response, "특정 학생의 모든 숙제 제출 내역 조회 성공");
 	}
 
 	// 역할이 TEACHER인지 확인하는 메서드
 	private void checkTeacherRole(String role) {
 		if (!isTeacher(role)) {
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		}
+	}
+
+	private void checkAccessPermission(String role, Long memberId, Long studentId) {
+		if (isStudent(role)) {
+			if (!memberId.equals(studentId)) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+		} else if (!isTeacher(role)) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		}
 	}

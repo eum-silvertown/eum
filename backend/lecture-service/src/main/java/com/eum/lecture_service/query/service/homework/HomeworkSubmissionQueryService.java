@@ -2,13 +2,15 @@ package com.eum.lecture_service.query.service.homework;
 
 import java.util.List;
 
-import com.eum.lecture_service.query.document.studentInfo.HomeworkProblemSubmissionInfo;
-import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo;
+import com.eum.lecture_service.query.dto.homework.HomeworkProblemSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionInfoResponse;
 
 public interface HomeworkSubmissionQueryService {
-	HomeworkSubmissionInfo getStudentHomeworkSubmission(Long lectureId, Long homeworkId, Long studentId);
+	HomeworkSubmissionInfoResponse getStudentHomeworkSubmission(Long lectureId, Long homeworkId, Long studentId);
 
-	List<HomeworkSubmissionInfo> getHomeworkSubmissions(Long lectureId, Long homeworkId);
+	List<HomeworkSubmissionInfoResponse> getHomeworkSubmissions(Long lectureId, Long homeworkId);
 
-	HomeworkProblemSubmissionInfo getHomeworkProblemSubmission(Long lectureId, Long homeworkId, Long studentId, Long problemId);
+	HomeworkProblemSubmissionInfoResponse getHomeworkProblemSubmission(Long lectureId, Long homeworkId, Long studentId, Long problemId);
+
+	List<HomeworkSubmissionInfoResponse> getAllHomeworkSubmissionsByStudent(Long lectureId, Long studentId);
 }
