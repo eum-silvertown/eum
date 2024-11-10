@@ -93,13 +93,26 @@ export default function Todo({
     );
   };
 
-  const handleDelete = async () => {
-    try {
-      await deleteTodo(item.id);
-      if (onDelete) onDelete();
-    } catch (error) {
-      Alert.alert('할 일 삭제를 실패하였습니다.');
-    }
+  const handleDelete = () => {
+    open(
+      <View style={{alignItems: 'center'}}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={async () => {
+            try {
+              await deleteTodo(item.id);
+              if (onDelete) onDelete();
+            } catch (error) {
+              Alert.alert('할 일 삭제를 실패하였습니다.');
+            }
+          }}>
+          <Text align="center" weight="bold" color="white">
+            삭제
+          </Text>
+        </TouchableOpacity>
+      </View>,
+      {title: ' 정말 삭제 하시겠습니까? '},
+    );
   };
 
   const spin = animatedHeight.interpolate({
@@ -199,5 +212,13 @@ const styles = StyleSheet.create({
   },
   optionIcon: {
     padding: spacing.sm,
+  },
+  button: {
+    alignItems: 'center',
+    width: '20%',
+    backgroundColor: colors.light.background.danger,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: borderRadius.md,
   },
 });
