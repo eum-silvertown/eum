@@ -48,7 +48,7 @@ const StudentRank = ({
               onStudentSelect(item.studentScores, item.studentName)
             }>
             <View style={styles.studentItem}>
-              <Text style={styles.rank}>{index + 1}위</Text>
+              <Text style={styles.rank}>{index + 1}등</Text>
               {item.studentImage ? (
                 <Image source={{ uri: item.studentImage }} style={styles.studentImage} />
               ) : (
