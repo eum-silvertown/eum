@@ -30,7 +30,7 @@ public class HomeworkSubmissionEventListener {
 	private final StudentOverviewRepository studentOverviewRepository;
 	private final TeacherOverviewRepository teacherOverviewRepository;
 
-	@KafkaListener(topics = "homework-submission-events", groupId = "lecture-group", properties = {
+	@KafkaListener(topics = "homework-submission-events", groupId = "homework-group", properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.homework.HomeworkSubmissionCreateEvent"
 	})
 	public void handleHomeworkSubmissionCreatedEvent(HomeworkSubmissionCreateEvent event) {
