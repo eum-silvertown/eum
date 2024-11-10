@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class LectureEventHandler {
+public class LectureEventListener {
 
 	private final LectureReadRepository lectureReadRepository;
 	private final StudentReadRepository studentReadRepository;
@@ -39,7 +39,9 @@ public class LectureEventHandler {
 	private final ClassReadRepository classReadRepository;
 
 	// 강의 생성 이벤트 처리
-	@KafkaListener(topics = "lecture-created-topic", groupId = "lecture-group")
+	@KafkaListener(topics = "lecture-created-topic", groupId = "lecture-group" , properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.lecture.LectureCreatedEvent"
+	})
 	public void handleLectureCreated(LectureCreatedEvent event) {
 		// 강의 기본 정보 설정
 		LectureModel lecture = LectureModel.builder()
@@ -106,7 +108,9 @@ public class LectureEventHandler {
 		}
 	}
 
-	@KafkaListener(topics = "lecture-updated-topic", groupId = "lecture-group")
+	@KafkaListener(topics = "lecture-updated-topic", groupId = "lecture-group" , properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent"
+	})
 	public void handleLectureUpdated(LectureUpdatedEvent event) {
 		lectureReadRepository.findById(event.getLectureId()).ifPresentOrElse(
 			lecture -> {
@@ -212,7 +216,9 @@ public class LectureEventHandler {
 	}
 
 	// 강의 삭제 이벤트 처리
-	@KafkaListener(topics = "lecture-deleted-topic", groupId = "lecture-group")
+	@KafkaListener(topics = "lecture-deleted-topic", groupId = "lecture-group" , properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.lecture.LectureDeletedEvent"
+	})
 	public void handleLectureDeleted(LectureDeletedEvent event) {
 		lectureReadRepository.findById(event.getLectureId()).ifPresentOrElse(
 			lecture -> {
