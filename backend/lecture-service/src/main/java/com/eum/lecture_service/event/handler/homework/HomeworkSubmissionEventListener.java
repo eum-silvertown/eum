@@ -12,7 +12,6 @@ import com.eum.lecture_service.event.dto.HomeworkProblemSubmissionEventDto;
 import com.eum.lecture_service.event.event.homework.HomeworkSubmissionCreateEvent;
 import com.eum.lecture_service.query.document.StudentOverviewModel;
 import com.eum.lecture_service.query.document.TeacherOverviewModel;
-import com.eum.lecture_service.query.document.eventModel.StudentModel;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkProblemSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.Overview;
@@ -20,7 +19,6 @@ import com.eum.lecture_service.query.document.studentInfo.StudentScores;
 import com.eum.lecture_service.query.document.teacherInfo.ClassAverageScores;
 import com.eum.lecture_service.query.document.teacherInfo.StudentInfo;
 import com.eum.lecture_service.query.repository.StudentOverviewRepository;
-import com.eum.lecture_service.query.repository.StudentReadRepository;
 import com.eum.lecture_service.query.repository.TeacherOverviewRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +30,9 @@ public class HomeworkSubmissionEventListener {
 	private final StudentOverviewRepository studentOverviewRepository;
 	private final TeacherOverviewRepository teacherOverviewRepository;
 
-	@KafkaListener(topics = "homework-submission-events", groupId = "lecture-group")
+	@KafkaListener(topics = "homework-submission-events", groupId = "lecture-group", properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.homework.HomeworkSubmissionCreateEvent"
+	})
 	public void handleHomeworkSubmissionCreatedEvent(HomeworkSubmissionCreateEvent event) {
 		Long studentId = event.getStudentId();
 		Long lectureId = event.getLectureId();

@@ -2,6 +2,7 @@ package com.eum.lecture_service.command.service.exam;
 
 import java.util.List;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,9 @@ import com.eum.lecture_service.command.repository.exam.ExamRepository;
 import com.eum.lecture_service.command.repository.lecture.LectureRepository;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
+import com.eum.lecture_service.event.event.exam.ExamCreateEvent;
+import com.eum.lecture_service.event.event.exam.ExamDeleteEvent;
+import com.eum.lecture_service.event.event.exam.ExamUpdateEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +26,7 @@ public class ExamServiceImpl implements ExamService {
 
 	private final ExamRepository examRepository;
 	private final LectureRepository lectureRepository;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
 	@Transactional
@@ -35,6 +40,9 @@ public class ExamServiceImpl implements ExamService {
 		Exam savedExam = examRepository.save(exam);
 
 		addExamQuestions(savedExam, examDto.getQuestionIds());
+		examRepository.save(savedExam);
+
+		publishExamCreateEvent(savedExam, examDto.getQuestionIds());
 
 		return savedExam.getExamId();
 	}
@@ -50,6 +58,9 @@ public class ExamServiceImpl implements ExamService {
 		updateExamDetails(exam, examDto);
 
 		Exam savedExam = examRepository.save(exam);
+
+		publishExamUpdateEvent(savedExam, examDto.getQuestionIds());
+
 		return savedExam.getExamId();
 	}
 
@@ -58,6 +69,8 @@ public class ExamServiceImpl implements ExamService {
 	public void deleteExam(Long examId) {
 		Exam exam = examRepository.findById(examId)
 			.orElseThrow(() -> new EumException(ErrorCode.EXAM_NOT_FOUND));
+
+		publishExamDeleteEvent(exam);
 
 		examRepository.delete(exam);
 	}
@@ -96,5 +109,37 @@ public class ExamServiceImpl implements ExamService {
 			exam.getExamQuestions().clear();
 			addExamQuestions(exam, examDto.getQuestionIds());
 		}
+	}
+
+	private void publishExamCreateEvent(Exam exam, List<Long> questionIds) {
+		ExamCreateEvent event = new ExamCreateEvent(
+			exam.getExamId(),
+			exam.getLecture().getLectureId(),
+			exam.getTitle(),
+			exam.getStartTime(),
+			exam.getEndTime(),
+			questionIds
+		);
+		kafkaTemplate.send("exam-create-topic", event);
+	}
+
+	private void publishExamUpdateEvent(Exam exam, List<Long> questionIds) {
+		ExamUpdateEvent event = new ExamUpdateEvent(
+			exam.getExamId(),
+			exam.getLecture().getLectureId(),
+			exam.getTitle(),
+			exam.getStartTime(),
+			exam.getEndTime(),
+			questionIds
+		);
+		kafkaTemplate.send("exam-update-topic", event);
+	}
+
+	private void publishExamDeleteEvent(Exam exam) {
+		ExamDeleteEvent event = new ExamDeleteEvent(
+			exam.getExamId(),
+			exam.getLecture().getLectureId()
+		);
+		kafkaTemplate.send("exam-delete-topic", event);
 	}
 }
