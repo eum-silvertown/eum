@@ -27,7 +27,7 @@ public class MemberEventHandler {
 	private final ClassReadRepository classReadRepository;
 	private final StudentReadRepository studentReadRepository;
 
-	@KafkaListener(topics = "create_teacher", groupId = "lecture-group", properties = {
+	@KafkaListener(topics = "create_teacher", groupId = "member-group", properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.TeacherInfoEvent"
 	})
 	public void createTeacher(TeacherInfoEvent event) {
@@ -42,7 +42,7 @@ public class MemberEventHandler {
 		teacherReadRepository.save(teacher);
 	}
 
-	@KafkaListener(topics = "update_teacher", groupId = "lecture-group", properties = {
+	@KafkaListener(topics = "update_teacher", groupId = "member-group", properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.TeacherInfoEvent"
 	})
 	public void updateTeacher(TeacherInfoEvent event) {
@@ -59,7 +59,7 @@ public class MemberEventHandler {
 		);
 	}
 
-	@KafkaListener(topics = "create_class", groupId = "lecture-group", properties = {
+	@KafkaListener(topics = "create_class", groupId = "member-group", properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.ClassEvent"
 	})
 	public void createClass(ClassEvent event) {
@@ -73,7 +73,7 @@ public class MemberEventHandler {
 		classReadRepository.save(classModel);
 	}
 
-	@KafkaListener(topics = "create_student", groupId = "lecture-group", properties = {
+	@KafkaListener(topics = "create_student", groupId = "member-group", properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.StudentInfoEvent"
 	})
 	public void createStudent(StudentInfoEvent event) {
@@ -89,7 +89,7 @@ public class MemberEventHandler {
 		studentReadRepository.save(student);
 	}
 
-	@KafkaListener(topics = "update_student", groupId = "lecture-group", properties = {
+	@KafkaListener(topics = "update_student", groupId = "member-group", properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.StudentInfoEvent"
 	})
 	public void updateStudent(StudentInfoEvent event) {

@@ -1,8 +1,8 @@
 package com.eum.lecture_service.query.service.homework;
 
-import com.eum.lecture_service.query.document.lectureInfo.HomeworkInfo;
+import com.eum.lecture_service.query.dto.homework.HomeworkInfoResponse;
 
 public interface HomeworkQueryService {
 
-	HomeworkInfo getHomeworkDetail(Long lectureId, Long homeworkId);
+	HomeworkInfoResponse getHomeworkDetail(Long lectureId, Long homeworkId);
 }
