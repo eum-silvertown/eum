@@ -1,11 +1,11 @@
-import {useState} from 'react';
-import {Skia, useCanvasRef} from '@shopify/react-native-skia';
-import {Socket} from 'socket.io-client';
+import { useState } from 'react';
+import { Skia, useCanvasRef } from '@shopify/react-native-skia';
+import { Socket } from 'socket.io-client';
 import CanvasDrawingTool from './CanvasDrawingTool';
 import RightCanvasRefSection from './StudentCanvasRefSection';
 import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
 
-interface RightCanvasSectionProps {
+interface StudentCanvasSectionProps {
   socket: Socket;
   currentPage: number;
   totalPages: number;
@@ -39,7 +39,7 @@ function StudentCanvasSection({
   totalPages,
   onNextPage,
   onPrevPage,
-}: RightCanvasSectionProps): React.JSX.Element {
+}: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [pathGroups, setPathGroups] = useState<PathData[][]>([]);
   const [currentPath, setCurrentPath] = useState<any | null>(null);
@@ -203,7 +203,7 @@ function StudentCanvasSection({
               dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
             if (isInEraseArea) {
-              addToUndoStack({type: 'erase', pathData});
+              addToUndoStack({ type: 'erase', pathData });
             }
             return !isInEraseArea;
           }),
@@ -272,9 +272,9 @@ function StudentCanvasSection({
   };
 
   const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -284,9 +284,9 @@ function StudentCanvasSection({
   };
 
   const handleTouchMove = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -306,10 +306,30 @@ function StudentCanvasSection({
         timestamp: Date.now(),
       };
       addPathToGroup(newPathData);
-      addToUndoStack({type: 'draw', pathData: newPathData});
+      addToUndoStack({ type: 'draw', pathData: newPathData });
       setCurrentPath(null);
       setRedoStack([]);
     }
+  };
+
+  const handleSetPenColor = (color: string) => {
+    if (isErasing) {
+      setIsErasing(false);
+      setPathGroups(prevGroups =>
+        mergeSimilarPaths(prevGroups)
+      ); // 병합 수행
+    }
+    setPenColor(color);
+  };
+
+  const handleSetPenSize = (size: number) => {
+    if (isErasing) {
+      setIsErasing(false);
+      setPathGroups(prevGroups =>
+        mergeSimilarPaths(prevGroups)
+      ); // 병합 수행
+    }
+    setPenSize(size);
   };
 
   return (
@@ -325,8 +345,8 @@ function StudentCanvasSection({
         handleTouchStart={handleTouchStart}
         handleTouchMove={handleTouchMove}
         handleTouchEnd={handleTouchEnd}
-        setPenColor={setPenColor}
-        setPenSize={setPenSize}
+        setPenColor={handleSetPenColor}
+        setPenSize={handleSetPenSize}
         togglePenOpacity={togglePenOpacity}
         undo={undo}
         redo={redo}

@@ -1,14 +1,10 @@
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
-import RecordOffIcon from '@assets/icons/recordOffIcon.svg';
-import RecordOnIcon from '@assets/icons/recordOnIcon.svg';
-import MikeOffIcon from '@assets/icons/mikeOffIcon.svg';
-import MikeOnIcon from '@assets/icons/mikeOnIcon.svg';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import DrawingTabletIcon from '@assets/icons/drawingTabletIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
-import { getResponsiveSize } from '@utils/responsive';
+import {iconSize} from '@theme/iconSize';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -18,11 +14,7 @@ type CanvasComponentProps = {
   isRecording?: boolean;
 };
 
-const TeacherLessoningGridInteractionTool = ({
-  startRecording,
-  stopRecording,
-  isRecording,
-}: CanvasComponentProps) => {
+const TeacherLessoningGridInteractionTool = ({}: CanvasComponentProps) => {
   const navigation = useNavigation<NavigationProps>();
 
   const handleExit = () => {
@@ -35,28 +27,18 @@ const TeacherLessoningGridInteractionTool = ({
         <View style={styles.floatingToolbar}>
           {/* 필기 화면 닫기 */}
           <TouchableOpacity
+            style={styles.iconTouchLayout}
             onPress={() => navigation.navigate('LessoningScreen')}>
             <DrawingTabletIcon
               width={iconSize.mdPlus}
               height={iconSize.mdPlus}
             />
+            <Text
+              style={styles.btnTitle}
+              onPress={() => navigation.navigate('LessoningScreen')}>
+              문제 필기로 이동하기
+            </Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity>
-            <MikeOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MikeOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-          </TouchableOpacity>
-          {isRecording ? (
-            <TouchableOpacity onPress={stopRecording}>
-              <RecordOnIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={startRecording}>
-              <RecordOffIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-            </TouchableOpacity>
-          )} */}
-
           {/* 종료 버튼 */}
           <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
             <Text style={styles.exitButtonText}>수업 종료하기</Text>
@@ -82,7 +64,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: getResponsiveSize(8),
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
@@ -128,5 +110,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#D32F2F',
     fontWeight: 'bold',
+  },
+  btnTitle: {
+    marginRight: 'auto',
+  },
+  iconTouchLayout: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

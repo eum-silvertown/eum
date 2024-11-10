@@ -1,6 +1,11 @@
 import React from 'react';
 import { Text } from '@components/common/Text';
-import { View, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 import { spacing } from '@theme/spacing';
 import defaultTeacherPhoto from '@assets/images/teacher.png';
 import PencilIcon from '@assets/icons/pencilIcon.svg';
@@ -12,7 +17,7 @@ type TeacherProps = {
   name?: string;
   telephone?: string;
   email?: string;
-  photo?: string;
+  photo?: string | null;
 };
 
 function Teacher({
@@ -22,8 +27,6 @@ function Teacher({
   email = 'teacher@example.com',
   photo,
 }: TeacherProps): React.JSX.Element {
-  console.log(photo);
-
   return (
     <View style={styles.teacher}>
       <View style={styles.header}>
@@ -39,7 +42,7 @@ function Teacher({
       <View style={styles.profileContainer}>
         <View style={styles.photoContainer}>
           <ImageBackground
-            source={defaultTeacherPhoto}
+            source={photo ? { uri: photo } : defaultTeacherPhoto} // photo가 null이면 기본 이미지 사용
             style={styles.photo}
             imageStyle={styles.photoImage}
           />
@@ -81,9 +84,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   photoContainer: {
-    width: getResponsiveSize(80),
-    height: getResponsiveSize(80),
-    borderRadius: 45,
+    width: getResponsiveSize(70),
+    height: getResponsiveSize(70),
+    borderRadius: 100,
     overflow: 'hidden',
     borderWidth: 2,
     borderColor: '#ddd',
@@ -91,13 +94,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   photo: {
-    width: getResponsiveSize(90),
-    height: getResponsiveSize(90),
+    width: getResponsiveSize(80),
+    height: getResponsiveSize(80),
     justifyContent: 'center',
     alignItems: 'center',
   },
   photoImage: {
-    borderRadius: 45,
+    borderRadius: 100,
   },
   infoContainer: {
     flex: 1,

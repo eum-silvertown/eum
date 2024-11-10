@@ -1,19 +1,23 @@
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {spacing} from '@theme/spacing';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { spacing } from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {borderRadius} from '@theme/borderRadius';
+import { borderRadius } from '@theme/borderRadius';
 import Book from '@components/common/Book';
 import AddLectureModal from '@components/lectureList/AddLectureModal';
-import {iconSize} from '@theme/iconSize';
-import {useModal} from 'src/hooks/useModal';
+import { iconSize } from '@theme/iconSize';
+import { useModal } from 'src/hooks/useModal';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {Picker} from '@react-native-picker/picker';
-import {useLectureStore} from '@store/useLectureStore';
-import {useState} from 'react';
-import {colors} from 'src/hooks/useColors';
-import {getResponsiveSize} from '@utils/responsive';
+import { Picker } from '@react-native-picker/picker';
+import { useState } from 'react';
+import { colors } from 'src/hooks/useColors';
+import { getResponsiveSize } from '@utils/responsive';
+import { useQuery } from '@tanstack/react-query';
+import {
+  LectureListItemType,
+  getLectureList,
+} from '@services/lectureInformation';
 
 function ClassListScreen(): React.JSX.Element {
   const setCurrentScreen = useCurrentScreenStore(
@@ -24,137 +28,12 @@ function ClassListScreen(): React.JSX.Element {
     setCurrentScreen('ClassListScreen');
   });
 
-  const {open} = useModal();
-
-  // 샘플 데이터 (클래스 리스트)
-  const classData = [
-    {
-      id: '1',
-      lectureId: 101,
-      title: '이게뭐여, 수학이여?',
-      subject: '수학',
-      backgroundColor: '#FF7171',
-      fontColor: '#FFFFFF',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '백종원',
-      lecturePeriod: 1,
-      year: 2024,
-      semester: 2,
-    },
-    {
-      id: '2',
-      lectureId: 112,
-      title: '영어 텍스쳐 없죠?',
-      subject: '영어',
-      backgroundColor: '#F3FF84',
-      fontColor: '#000000',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '롱기누스',
-      lecturePeriod: 3,
-      year: 2024,
-      semester: 1,
-    },
-    {
-      id: '3',
-      lectureId: 113,
-      title: '나야, 국어기름',
-      subject: '국어',
-      backgroundColor: '#6A80C8',
-      fontColor: '#000000',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '강록최',
-      lecturePeriod: 2,
-      year: 2024,
-      semester: 1,
-    },
-    {
-      id: '4',
-      lectureId: 114,
-      title: '이게뭐여, 수학이여?',
-      subject: '수학',
-      backgroundColor: '#FF7171',
-      fontColor: '#FFFFFF',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '백종원',
-      lecturePeriod: 7,
-      year: 2024,
-      semester: 2,
-    },
-    {
-      id: '5',
-      lectureId: 115,
-      title: '영어 텍스쳐 없죠?',
-      subject: '영어',
-      backgroundColor: '#F3FF84',
-      fontColor: '#000000',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '롱기누스',
-      lecturePeriod: 4,
-      year: 2024,
-      semester: 2,
-    },
-    {
-      id: '6',
-      lectureId: 116,
-      title: '나야, 국어기름',
-      subject: '국어',
-      backgroundColor: '#6A80C8',
-      fontColor: '#000000',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '강록최',
-      lecturePeriod: 6,
-      year: 2023,
-      semester: 2,
-    },
-    {
-      id: '7',
-      lectureId: 117,
-      title: '이게뭐여, 수학이여?',
-      subject: '수학',
-      backgroundColor: '#FF7171',
-      fontColor: '#FFFFFF',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '백종원',
-      lecturePeriod: 1,
-      year: 2023,
-      semester: 1,
-    },
-    {
-      id: '8',
-      lectureId: 118,
-      title: '영어 텍스쳐 없죠?',
-      subject: '영어',
-      backgroundColor: '#F3FF84',
-      fontColor: '#000000',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '롱기누스',
-      lecturePeriod: 3,
-      year: 2023,
-      semester: 1,
-    },
-    {
-      id: '9',
-      lectureId: 119,
-      title: '나야, 국어기름',
-      subject: '국어',
-      backgroundColor: '#6A80C8',
-      fontColor: '#000000',
-      grade: '3',
-      classNumber: '2',
-      teacherName: '강록최',
-      lecturePeriod: 5,
-      year: 2023,
-      semester: 1,
-    },
-  ];
+  const { open } = useModal();
+  const { data: lectures = [], isLoading } = useQuery<LectureListItemType[]>({
+    queryKey: ['lectureList'],
+    queryFn: getLectureList,
+  });
+  const teacherName = '롹';
 
   const currentYear = new Date().getFullYear();
   const currentSemester = new Date().getMonth() < 6 ? 1 : 2;
@@ -165,8 +44,6 @@ function ClassListScreen(): React.JSX.Element {
   const [selectedSemester, setSelectedSemester] = useState<number | undefined>(
     currentSemester,
   );
-
-  const {lectures} = useLectureStore();
 
   const years = Array.from(
     new Set(
@@ -181,11 +58,15 @@ function ClassListScreen(): React.JSX.Element {
     setSelectedSemester(currentSemester);
   };
 
-  const filteredLectures = classData.filter(
+  const filteredLectures = lectures.filter(
     data =>
       (!selectedYear || data.year === selectedYear) &&
       (!selectedSemester || data.semester === selectedSemester),
   );
+
+  if (isLoading) {
+    return <Text>Loading...</Text>; // 로딩 상태 표시
+  }
 
   return (
     <View style={styles.container}>
@@ -239,12 +120,13 @@ function ClassListScreen(): React.JSX.Element {
                 key={index}
                 rightPosition={index * 25}
                 title={data.title}
-                subtitle={data.subject}
+                subject={data.subject}
                 backgroundColor={data.backgroundColor}
                 fontColor={data.fontColor}
                 grade={data.grade}
                 classNumber={data.classNumber}
-                teacherName={data.teacherName}
+                teacherName={teacherName}
+                lectureId={data.lectureId}
               />
             ))}
           </View>
