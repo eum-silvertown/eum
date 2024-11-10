@@ -4,14 +4,29 @@ import { View, StyleSheet } from 'react-native';
 import ProgressBox from '@components/homework/ProgressBox';
 import { spacing } from '@theme/spacing';
 import { getResponsiveSize } from '@utils/responsive';
+import {
+  HomeworkType,
+  ExamType,
+  LessonType,
+} from 'src/services/lectureInformation';
 
 type OverviewProps = {
   homeworkCnt?: number;
   examCnt?: number;
   lessonCnt?: number;
+  navigateData?: {
+    lessons: LessonType[];
+    exams: ExamType[];
+    homeworks: HomeworkType[];
+  };
 };
 
-function Overview({ homeworkCnt = 0, examCnt = 0, lessonCnt = 0 }: OverviewProps): React.JSX.Element {
+function Overview({
+  homeworkCnt = 0,
+  examCnt = 0,
+  lessonCnt = 0,
+  navigateData = { lessons: [], exams: [], homeworks: [] },
+}: OverviewProps): React.JSX.Element {
   return (
     <View style={styles.overview}>
       <Text variant="subtitle" weight="bold" style={styles.subtitle}>
@@ -25,6 +40,7 @@ function Overview({ homeworkCnt = 0, examCnt = 0, lessonCnt = 0 }: OverviewProps
           unit="번"
           icon="folderCheck"
           isLessonDetail={true}
+          navigateData={navigateData.lessons}
         />
         <ProgressBox
           color="red"
@@ -33,6 +49,7 @@ function Overview({ homeworkCnt = 0, examCnt = 0, lessonCnt = 0 }: OverviewProps
           unit="번"
           icon="complete"
           isLessonDetail={true}
+          navigateData={navigateData.exams}
         />
         <ProgressBox
           color="blue"
@@ -41,6 +58,7 @@ function Overview({ homeworkCnt = 0, examCnt = 0, lessonCnt = 0 }: OverviewProps
           unit="개"
           icon="homeworkCheck"
           isLessonDetail={true}
+          navigateData={navigateData.homeworks}
         />
       </View>
     </View>

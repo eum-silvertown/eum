@@ -80,6 +80,11 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
               homeworkCnt={lectureDetail.homeworks.length}
               examCnt={lectureDetail.exams.length}
               lessonCnt={lectureDetail.lessons.length}
+              navigateData={{
+                lessons: lectureDetail.lessons,
+                exams: lectureDetail.exams,
+                homeworks: lectureDetail.homeworks,
+              }}
             />
             <Notice
               lectureId={lectureDetail.lectureId}
