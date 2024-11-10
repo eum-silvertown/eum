@@ -1,5 +1,7 @@
 package com.eum.lecture_service.command.service.lesson;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,13 @@ public class LessonServiceImpl implements LessonService {
 		Lecture lecture = lectureRepository.findById(lessonDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
+		List<Lesson> lessons = lecture.getLessons();
+		for(Lesson lesson : lessons) {
+			if(lesson.getTitle().equals(lessonDto.getTitle())) {
+				throw new EumException(ErrorCode.LESSON_TITLE_DUPLICATE);
+			}
+		}
+
 		Lesson lesson = lessonDto.toLessonEntity(lecture);
 		Lesson savedLesson = lessonRepository.save(lesson);
 
@@ -47,6 +56,13 @@ public class LessonServiceImpl implements LessonService {
 	public Long updateLesson(Long lessonId, LessonDto lessonDto) {
 		Lesson lesson = lessonRepository.findById(lessonId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+
+		List<Lesson> lessons = lesson.getLecture().getLessons();
+		for(Lesson findLesson : lessons) {
+			if(findLesson.getTitle().equals(lessonDto.getTitle())) {
+				throw new EumException(ErrorCode.LESSON_TITLE_DUPLICATE);
+			}
+		}
 
 		if(lessonDto.getTitle() != null) {
 			lesson.setTitle(lessonDto.getTitle());

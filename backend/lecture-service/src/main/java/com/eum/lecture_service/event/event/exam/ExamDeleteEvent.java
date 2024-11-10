@@ -1,4 +1,4 @@
-package com.eum.lecture_service.query.document.teacherInfo;
+package com.eum.lecture_service.event.event.exam;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClassAverageScores {
+public class ExamDeleteEvent {
 
-	private Double homeworkAvgScore;
-	private Double examAvgScore;
-	private Double attitudeAvgScore;
+	private Long examId;
+	private Long lectureId;
 }

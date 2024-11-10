@@ -21,6 +21,7 @@ public class ExamProblemSubmissionDto {
 	private Long questionId;
 	private Long studentId;
 	private Boolean isCorrect;
+	private String examSolution;
 
 	public ExamProblemSubmission toEntity(ExamSubmission examSubmission, Long studentId) {
 		return ExamProblemSubmission.builder()
@@ -28,6 +29,7 @@ public class ExamProblemSubmissionDto {
 			.questionId(questionId)
 			.studentId(studentId)
 			.isCorrect(isCorrect)
+			.examSolution(examSolution)
 			.build();
 	}
 }

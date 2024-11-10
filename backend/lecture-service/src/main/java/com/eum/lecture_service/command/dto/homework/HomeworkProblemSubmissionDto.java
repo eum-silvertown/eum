@@ -21,6 +21,7 @@ public class HomeworkProblemSubmissionDto {
 	private Long questionId;
 	private Long studentId;
 	private Boolean isCorrect;
+	private String homeworkSolution;
 
 	public HomeworkProblemSubmission toEntity(HomeworkSubmission homeworkSubmission, Long studentId) {
 		return HomeworkProblemSubmission.builder()
@@ -28,6 +29,7 @@ public class HomeworkProblemSubmissionDto {
 			.questionId(questionId)
 			.studentId(studentId)
 			.isCorrect(isCorrect)
+			.homeworkSolution(homeworkSolution)
 			.build();
 	}
 }

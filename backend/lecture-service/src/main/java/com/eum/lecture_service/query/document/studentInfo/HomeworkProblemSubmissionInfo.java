@@ -11,9 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudentScores {
+public class HomeworkProblemSubmissionInfo {
 
-	private Double homeworkAvgScore;
-	private Double examAvgScore;
-	private Double attitudeAvgScore;
+	private Long homeworkProblemSubmissionId;
+	private Long questionId;
+	private Boolean isCorrect;
+	private String homeworkSolution;
 }

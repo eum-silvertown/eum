@@ -40,4 +40,7 @@ public class ExamProblemSubmission {
 
 	@Column(name = "is_correct")
 	private Boolean isCorrect;
+
+	@Column(name = "exam_solution")
+	private String examSolution;
 }

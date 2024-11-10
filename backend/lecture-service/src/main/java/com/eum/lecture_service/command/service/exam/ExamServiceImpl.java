@@ -1,5 +1,7 @@
 package com.eum.lecture_service.command.service.exam;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ExamServiceImpl implements ExamService{
+public class ExamServiceImpl implements ExamService {
 
 	private final ExamRepository examRepository;
 	private final LectureRepository lectureRepository;
@@ -27,16 +29,12 @@ public class ExamServiceImpl implements ExamService{
 		Lecture lecture = lectureRepository.findById(examDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
+		checkDuplicateExamTitle(lecture.getExams(), examDto.getTitle());
+
 		Exam exam = examDto.toExamEntity(lecture);
 		Exam savedExam = examRepository.save(exam);
 
-		for(Long questionId : examDto.getQuestionIds()) {
-			ExamQuestion examQuestion = ExamQuestion.builder()
-				.exam(savedExam)
-				.questionId(questionId)
-				.build();
-			savedExam.getExamQuestions().add(examQuestion);
-		}
+		addExamQuestions(savedExam, examDto.getQuestionIds());
 
 		return savedExam.getExamId();
 	}
@@ -47,27 +45,9 @@ public class ExamServiceImpl implements ExamService{
 		Exam exam = examRepository.findById(examId)
 			.orElseThrow(() -> new EumException(ErrorCode.EXAM_NOT_FOUND));
 
-		if (examDto.getTitle() != null) {
-			exam.setTitle(examDto.getTitle());
-		}
-		if (examDto.getStartTime() != null) {
-			exam.setStartTime(examDto.getStartTime());
-		}
-		if (examDto.getEndTime() != null) {
-			exam.setEndTime(examDto.getEndTime());
-		}
+		checkDuplicateExamTitle(exam.getLecture().getExams(), examDto.getTitle());
 
-		if (examDto.getQuestionIds() != null) {
-			exam.getExamQuestions().clear();
-
-			for(Long questionId : examDto.getQuestionIds()) {
-				ExamQuestion examQuestion = ExamQuestion.builder()
-					.exam(exam)
-					.questionId(questionId)
-					.build();
-				exam.getExamQuestions().add(examQuestion);
-			}
-		}
+		updateExamDetails(exam, examDto);
 
 		Exam savedExam = examRepository.save(exam);
 		return savedExam.getExamId();
@@ -80,5 +60,41 @@ public class ExamServiceImpl implements ExamService{
 			.orElseThrow(() -> new EumException(ErrorCode.EXAM_NOT_FOUND));
 
 		examRepository.delete(exam);
+	}
+
+	private void checkDuplicateExamTitle(List<Exam> exams, String title) {
+		exams.stream()
+			.filter(exam -> exam.getTitle().equals(title))
+			.findAny()
+			.ifPresent(exam -> {
+				throw new EumException(ErrorCode.EXAM_TITLE_DUPLICATE);
+			});
+	}
+
+	private void addExamQuestions(Exam savedExam, List<Long> questionIds) {
+		questionIds.forEach(questionId -> {
+			ExamQuestion examQuestion = ExamQuestion.builder()
+				.exam(savedExam)
+				.questionId(questionId)
+				.build();
+			savedExam.getExamQuestions().add(examQuestion);
+		});
+	}
+
+	private void updateExamDetails(Exam exam, ExamDto examDto) {
+		if (examDto.getTitle() != null) {
+			exam.setTitle(examDto.getTitle());
+		}
+		if (examDto.getStartTime() != null) {
+			exam.setStartTime(examDto.getStartTime());
+		}
+		if (examDto.getEndTime() != null) {
+			exam.setEndTime(examDto.getEndTime());
+		}
+
+		if (examDto.getQuestionIds() != null) {
+			exam.getExamQuestions().clear();
+			addExamQuestions(exam, examDto.getQuestionIds());
+		}
 	}
 }
