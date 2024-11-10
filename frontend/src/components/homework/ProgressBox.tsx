@@ -18,6 +18,11 @@ import {
 import { useEffect, useState } from 'react';
 import IntoIcon from '@assets/icons/intoIcon.svg';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType } from '@store/useCurrentScreenStore';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
+
 
 interface ProgressBoxProps {
   color: 'blue' | 'red' | 'green';
@@ -26,6 +31,7 @@ interface ProgressBoxProps {
   unit: string;
   icon: 'complete' | 'incomplete' | 'avarageScore' | 'homeworkCheck' | 'folderCheck';
   isLessonDetail?: boolean;
+  navigateData?: any[];
 }
 
 const AnimatedNumber = ({ value }: { value: number }) => {
@@ -61,14 +67,31 @@ function ProgressBox({
   unit,
   icon,
   isLessonDetail,
+  navigateData,
 }: ProgressBoxProps): React.JSX.Element {
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps>();
 
   const handleNavigate = () => {
-    // navigation.navigate('리스트 페이지');
-    console.log('이동할 페이지를 추가해주세요', navigation);
+    if (!isLessonDetail) { return; }
+
+    // 각 title에 맞게 이동할 페이지를 지정
+    switch (title) {
+      case '수업':
+        navigation.navigate('ClassLessonListScreen', { data: navigateData });
+
+        break;
+      case '시험':
+        navigation.navigate('ClassExamListScreen', { data: navigateData });
+        break;
+      case '숙제':
+        navigation.navigate('ClassHomeworkListScreen', { data: navigateData });
+        break;
+      default:
+        console.log('Invalid title');
+    }
   };
+
   const icons = {
     complete: CompleteHomeworkIcon,
     incomplete: IncompleteHomeworkIcon,
