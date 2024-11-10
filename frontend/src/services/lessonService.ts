@@ -51,3 +51,29 @@ export const deleteLesson = async (lessonId: number): Promise<void> => {
   }
 };
 
+// 레슨 상세 조회
+type LessonDetailResponse = {
+  questionIds: number[];
+  questionAnswers: string[];
+  studentAnswers: string[];
+  drawingPaths: string;
+};
+
+export const getLessonDetail = async (
+  lectureId: number,
+  lessonId: number,
+): Promise<LessonDetailResponse> => {
+  try {
+    console.log(`레슨 상세 조회 요청: lectureId = ${lectureId}, lessonId = ${lessonId}`);
+
+    const { data } = await authApiClient.get<LessonDetailResponse>(
+      `/lecture/${lectureId}/lesson/${lessonId}`
+    );
+
+    console.log('레슨 상세 조회 응답:', data);
+    return data;
+  } catch (error) {
+    console.error('레슨 상세 조회 실패:', error);
+    throw error;
+  }
+};

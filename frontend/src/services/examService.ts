@@ -106,3 +106,30 @@ export const submitExamProblems = async (
     throw error;
   }
 };
+
+// 시험 상세 조회
+type ExamDetailResponse = {
+  questionIds: number[];
+  questionAnswers: string[];
+  studentAnswers: string[];
+  drawingPaths: string;
+};
+
+export const getExamDetail = async (
+  lectureId: number,
+  examId: number,
+): Promise<ExamDetailResponse> => {
+  try {
+    console.log(`시험 상세 조회 요청: lectureId = ${lectureId}, examId = ${examId}`);
+
+    const { data } = await authApiClient.get<ExamDetailResponse>(
+      `/lecture/${lectureId}/exam/${examId}`
+    );
+
+    console.log('시험 상세 조회 응답:', data);
+    return data;
+  } catch (error) {
+    console.error('시험 상세 조회 실패:', error);
+    throw error;
+  }
+};

@@ -109,3 +109,29 @@ export const submitHomeworkProblems = async (
   }
 };
 
+// 숙제 상세 조회
+type HomeworkDetailResponse = {
+  questionIds: number[];
+  questionAnswers: string[];
+  studentAnswers: string[];
+  drawingPaths: string;
+};
+
+export const getHomeworkDetail = async (
+  lectureId: number,
+  homeworkId: number,
+): Promise<HomeworkDetailResponse> => {
+  try {
+    console.log(`숙제 상세 조회 요청: lectureId = ${lectureId}, homeworkId = ${homeworkId}`);
+
+    const { data } = await authApiClient.get<HomeworkDetailResponse>(
+      `/lecture/${lectureId}/homework/${homeworkId}`
+    );
+
+    console.log('숙제 상세 조회 응답:', data);
+    return data;
+  } catch (error) {
+    console.error('숙제 상세 조회 실패:', error);
+    throw error;
+  }
+};
