@@ -8,6 +8,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.eum.lecture_service.command.dto.lecture.LectureCreateDto;
 import com.eum.lecture_service.command.dto.lecture.LectureDto;
 import com.eum.lecture_service.command.entity.lecture.Lecture;
 import com.eum.lecture_service.command.entity.lecture.LectureSchedule;
@@ -18,6 +19,8 @@ import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
+import com.eum.lecture_service.query.document.eventModel.ClassModel;
+import com.eum.lecture_service.query.repository.ClassReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,11 +31,17 @@ public class LectureServiceImpl implements LectureService{
 	private final LectureRepository lectureRepository;
 	private final LectureScheduleRepository lectureScheduleRepository;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
+	private final ClassReadRepository classReadRepository;
 
 	@Override
 	@Transactional
-	public Long createLecture(LectureDto lectureDto, Long teacherId) {
-		Lecture lecture = lectureDto.toLectureEntity(teacherId);
+	public Long createLecture(LectureCreateDto lectureDto, Long teacherId) {
+
+		ClassModel classModel = classReadRepository.findByAndSchoolAndGradeAndAndClassNumber(
+			lectureDto.getSchool(), lectureDto.getGrade(), lectureDto.getClassNumber())
+			.orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
+
+		Lecture lecture = lectureDto.toLectureEntity(teacherId, classModel.getClassId());
 
 		lectureRepository.save(lecture);
 
