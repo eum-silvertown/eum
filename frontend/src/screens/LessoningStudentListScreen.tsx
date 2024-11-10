@@ -1,10 +1,10 @@
 import ParticipantCard from '@components/classLessoning/ParticipantCard';
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import {useState} from 'react';
+import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import TeacherLessoningGridInteractionTool from '@components/classLessoning/TeacherLessoningGridInteractionTool';
-import { getResponsiveSize } from '@utils/responsive';
+import {getResponsiveSize} from '@utils/responsive';
 
 interface Participant {
   id: string;
@@ -22,34 +22,34 @@ function LessoningStudentListScreen(): React.JSX.Element {
   });
 
   const ROWS = 4;
-  const COLUMNS = 5;
+  const COLUMNS = 4;
   const PARTICIPANTS_PER_PAGE = ROWS * COLUMNS;
 
   const [participants] = useState<Participant[]>([
-    { id: '1', name: '학생 1' },
-    { id: '2', name: '학생 2' },
-    { id: '3', name: '학생 3' },
-    { id: '4', name: '학생 4' },
-    { id: '5', name: '학생 5' },
-    { id: '6', name: '학생 6' },
-    { id: '7', name: '학생 7' },
-    { id: '8', name: '학생 8' },
-    { id: '9', name: '학생 9' },
-    { id: '10', name: '학생 10' },
-    { id: '11', name: '학생 11' },
-    { id: '12', name: '학생 12' },
-    { id: '13', name: '학생 13' },
-    { id: '14', name: '학생 14' },
-    { id: '15', name: '학생 15' },
-    { id: '16', name: '학생 16' },
-    { id: '17', name: '학생 17' },
-    { id: '18', name: '학생 18' },
-    { id: '19', name: '학생 19' },
-    { id: '20', name: '학생 20' },
-    { id: '21', name: '학생 21' },
-    { id: '22', name: '학생 22' },
-    { id: '23', name: '학생 23' },
-    { id: '24', name: '학생 24' },
+    {id: '1', name: '학생 1'},
+    {id: '2', name: '학생 2'},
+    {id: '3', name: '학생 3'},
+    {id: '4', name: '학생 4'},
+    {id: '5', name: '학생 5'},
+    {id: '6', name: '학생 6'},
+    {id: '7', name: '학생 7'},
+    {id: '8', name: '학생 8'},
+    {id: '9', name: '학생 9'},
+    {id: '10', name: '학생 10'},
+    {id: '11', name: '학생 11'},
+    {id: '12', name: '학생 12'},
+    {id: '13', name: '학생 13'},
+    {id: '14', name: '학생 14'},
+    {id: '15', name: '학생 15'},
+    {id: '16', name: '학생 16'},
+    {id: '17', name: '학생 17'},
+    {id: '18', name: '학생 18'},
+    {id: '19', name: '학생 19'},
+    {id: '20', name: '학생 20'},
+    {id: '21', name: '학생 21'},
+    {id: '22', name: '학생 22'},
+    {id: '23', name: '학생 23'},
+    {id: '24', name: '학생 24'},
   ]);
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -89,7 +89,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
         data={currentParticipants}
         keyExtractor={item => item.id}
         numColumns={COLUMNS}
-        renderItem={({ item }) => <ParticipantCard participant={item} />}
+        renderItem={({item}) => <ParticipantCard participant={item} />}
         contentContainerStyle={styles.grid}
       />
 
@@ -125,8 +125,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   interactionToolContainer: {
-    flex: 1,
+    zIndex: 1,
+    position: 'absolute',
+    top: 10,
     width: '100%',
+    height: '100%',
   },
   closeButton: {
     position: 'absolute',
@@ -143,8 +146,8 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: getResponsiveSize(40),
-    right: getResponsiveSize(54),
+    top: getResponsiveSize(20),
+    right: getResponsiveSize(24),
     backgroundColor: '#fff',
     padding: getResponsiveSize(8),
     borderRadius: 8,
@@ -156,13 +159,13 @@ const styles = StyleSheet.create({
   grid: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: getResponsiveSize(30),
+    marginTop: getResponsiveSize(80),
   },
   pageControls: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: getResponsiveSize(30),
+    paddingBottom: getResponsiveSize(20),
   },
   pageText: {
     fontSize: 16,

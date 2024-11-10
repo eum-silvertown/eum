@@ -190,7 +190,7 @@ function BookModal(): React.JSX.Element {
           width: '100%',
           height: '100%',
         }}>
-        {renderDetail && <ClassDetailScreen />}
+        {renderDetail && <ClassDetailScreen lectureId={bookInfo.lectureId}/>}
       </View>
       <Animated.View style={[bookStyles]}>
         <View style={styles.bookContainer}>

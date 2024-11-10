@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Text } from '@components/common/Text';
 import { useNavigation } from '@react-navigation/native';
@@ -12,7 +11,6 @@ import { useModal } from 'src/hooks/useModal';
 import { deleteLecture } from '@services/lectureInformation';
 import { useMutation } from '@tanstack/react-query';
 import { getResponsiveSize } from '@utils/responsive';
-
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -49,9 +47,10 @@ function ClassHeader({
   const { mutate: deleteMutation } = useMutation({
     mutationFn: (deleteLectureId: number) => deleteLecture(deleteLectureId),
     onSuccess: () => {
-      navigation.navigate('LectureListScreen');
+      navigation.navigate('ClassListScreen');
     },
   });
+
   const showDeleteConfirmation = () => {
     Alert.alert(
       '경고',
@@ -61,7 +60,6 @@ function ClassHeader({
           text: '삭제',
           onPress: () => {
             console.log('삭제 확정');
-            // 삭제 작업 실행 코드
             deleteMutation(lectureId!);
           },
           style: 'destructive',
@@ -83,16 +81,24 @@ function ClassHeader({
         {
           text: '수정하기',
           onPress: () =>
-            open(<UpdateLectureModal lectureId={lectureId!} grade={grade!} classNumber={classNumber!} pastTeacherName={pastTeacherName!} />, {
-              title: '수업 생성',
-              onClose: () => {
-                console.log('수업 생성 모달 종료');
+            open(
+              <UpdateLectureModal
+                lectureId={lectureId!}
+                grade={grade!}
+                classNumber={classNumber!}
+                pastTeacherName={pastTeacherName!}
+              />,
+              {
+                title: '수업 수정',
+                onClose: () => {
+                  console.log('수업 수정 모달 종료');
+                },
               },
-            }),
+            ),
         },
         {
           text: '삭제하기',
-          onPress: showDeleteConfirmation, // 재확인 경고
+          onPress: showDeleteConfirmation,
           style: 'destructive',
         },
         {
@@ -114,7 +120,7 @@ function ClassHeader({
           {grade && semester && (
             <View style={styles.gradeSemesterChip}>
               <Text style={styles.gradeSemesterText}>
-                {grade}학년 - {semester}학기
+                {grade}학년 - {semester}반
               </Text>
             </View>
           )}
@@ -137,7 +143,9 @@ function ClassHeader({
       <View style={styles.rightSection}>
         <TouchableOpacity
           style={styles.enterButton}
-          onPress={() => navigation.navigate('LessoningStudentListScreen')}>
+          onPress={() =>
+            navigation.navigate(isTeacher ? 'LessoningStudentListScreen' : 'LessoningScreen')
+          }>
           <Text style={styles.enterButtonText}>수업 입장</Text>
         </TouchableOpacity>
         {isTeacher && (

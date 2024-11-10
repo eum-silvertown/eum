@@ -50,6 +50,7 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
     const response = await publicApiClient.post('/user/sign-in', credentials);
 
     await setToken(response.data.data.tokenResponse);
+    console.log(response.data.data.tokenResponse.accessToken);
 
     const authStore = useAuthStore.getState();
     authStore.setIsLoggedIn(true);
@@ -235,8 +236,8 @@ export const findIdByVerificationCode = async (
       email,
       code: verificationCode,
     });
-    
-    return response.data.data.id
+
+    return response.data.data.id;
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
