@@ -98,7 +98,7 @@ function StudentsChart({ classAverageScores, studentName }: ChartProps): React.J
 
 const styles = StyleSheet.create({
   chart: {
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
   },
   subtitle: {
     marginStart: spacing.xl,
@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   chartContainer: {
-    width: getResponsiveSize(120),
-    height: getResponsiveSize(120),
+    width: getResponsiveSize(80),
+    height: getResponsiveSize(80),
   },
   legendContainer: {
     marginLeft: spacing.xxl,
@@ -140,9 +140,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   colorDot: {
-    width: getResponsiveSize(12),
-    height: getResponsiveSize(12),
-    borderRadius: 6,
+    width: getResponsiveSize(10),
+    height: getResponsiveSize(10),
+    borderRadius: 10,
     marginRight: spacing.sm,
   },
 });
