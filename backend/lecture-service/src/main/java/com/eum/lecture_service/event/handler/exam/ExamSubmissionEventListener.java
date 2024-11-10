@@ -30,7 +30,7 @@ public class ExamSubmissionEventListener {
 	private final StudentOverviewRepository studentOverviewRepository;
 	private final TeacherOverviewRepository teacherOverviewRepository;
 
-	@KafkaListener(topics = "exam-submission-events", groupId = "lecture-group", properties = {
+	@KafkaListener(topics = "exam-submission-events", groupId = "exam-group", properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.exam.ExamSubmissionCreateEvent"
 	})
 	public void handleExamSubmissionCreatedEvent(ExamSubmissionCreateEvent event) {
