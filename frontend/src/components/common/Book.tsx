@@ -10,8 +10,8 @@ interface BookProp {
   subject: string;
   backgroundColor: string;
   fontColor: string;
-  grade: string;
-  classNumber: string;
+  grade: number;
+  classNumber: number;
   teacherName: string;
   lectureId: number;
 }

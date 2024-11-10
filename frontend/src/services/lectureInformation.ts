@@ -222,10 +222,11 @@ export type LectureListItemType = {
   subject: string;
   backgroundColor: string;
   fontColor: string;
-  classId: number;
-  schedule: string[];
   year: number;
   semester: number;
+  grade: number;
+  classNumber: number;
+  schedule: string[];
   name: string;
 };
 
