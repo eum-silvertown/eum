@@ -27,16 +27,19 @@ import { getResponsiveSize } from '@utils/responsive';
 import { useBookModalStore } from '@store/useBookModalStore';
 import EmptyData from '@components/common/EmptyData';
 
+type BookLectureProps = {
+  lectureId: number,
+}
+
 type ClassAverageScores = {
   homeworkAvgScore: number;
   testAvgScore: number;
   attitudeAvgScore: number;
 };
 
-function ClassDetailScreen(): React.JSX.Element {
+function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
   const closeBook = useBookModalStore(state => state.closeBook);
 
-  const lectureId = 1;
   const isTeacher = false;
 
   const { data: lectureDetail } = useQuery<LectureDetailType>({

@@ -22,6 +22,7 @@ type BookInfo = {
   grade: string;
   classNumber: string;
   teacherName: string;
+  lectureId: number;
 };
 
 type BookModalState = {

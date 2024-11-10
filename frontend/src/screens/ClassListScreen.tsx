@@ -123,12 +123,13 @@ function ClassListScreen(): React.JSX.Element {
                 key={index}
                 rightPosition={index * 25}
                 title={data.title}
-                subtitle={data.subject}
+                subject={data.subject}
                 backgroundColor={data.backgroundColor}
                 fontColor={data.fontColor}
                 grade={grade}
                 classNumber={classNumber}
                 teacherName={teacherName}
+                lectureId={data.lectureId}
               />
             ))}
           </View>
