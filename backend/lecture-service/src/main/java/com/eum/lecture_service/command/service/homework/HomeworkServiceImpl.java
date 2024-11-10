@@ -2,6 +2,7 @@ package com.eum.lecture_service.command.service.homework;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -33,38 +34,14 @@ public class HomeworkServiceImpl implements HomeworkService {
 		Lecture lecture = lectureRepository.findById(homeworkDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
-		//같은 제목의 홈워크있을시 오류
-		List<Homework> homeworks = lecture.getHomeworks();
-		for(Homework homework : homeworks) {
-			if(homework.getTitle().equals(homeworkDto.getTitle())) {
-				throw new EumException(ErrorCode.HOMEWORK_TITLE_DUPLICATE);
-			}
-		}
+		checkDuplicateTitle(lecture.getHomeworks(), homeworkDto.getTitle());
 
 		Homework homework = homeworkDto.toHomeworkEntity(lecture);
+		homework.setHomeworkQuestions(createHomeworkQuestions(homeworkDto.getQuestionIds(), homework));
 
-		List<HomeworkQuestion> homeworkQuestions = new ArrayList<>();
-		// 문제 ID 리스트 처리
-		for (Long questionId : homeworkDto.getQuestionIds()) {
-			HomeworkQuestion homeworkQuestion = HomeworkQuestion.builder()
-				.homework(homework)
-				.questionId(questionId)
-				.build();
-			homeworkQuestions.add(homeworkQuestion);
-		}
-		homework.setHomeworkQuestions(homeworkQuestions);
 		Homework savedHomework = homeworkRepository.save(homework);
 
-		HomeworkCreateEvent event = HomeworkCreateEvent.builder()
-			.homeworkId(savedHomework.getHomeworkId())
-			.lectureId(savedHomework.getLecture().getLectureId())
-			.title(savedHomework.getTitle())
-			.startTime(savedHomework.getStartTime())
-			.endTime(savedHomework.getEndTime())
-			.questionIds(homeworkDto.getQuestionIds())
-			.build();
-
-		kafkaTemplate.send("homework-create-topic", event);
+		publishHomeworkCreateEvent(savedHomework, homeworkDto.getQuestionIds());
 
 		return savedHomework.getHomeworkId();
 	}
@@ -74,46 +51,13 @@ public class HomeworkServiceImpl implements HomeworkService {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_NOT_FOUND));
 
-		List<Homework> homeworks = homework.getLecture().getHomeworks();
-		for(Homework findhomework : homeworks) {
-			if(findhomework.getTitle().equals(homeworkDto.getTitle())) {
-				throw new EumException(ErrorCode.HOMEWORK_TITLE_DUPLICATE);
-			}
-		}
-		if(homeworkDto.getTitle() != null) {
-			homework.setTitle(homeworkDto.getTitle());
-		}
-		if(homeworkDto.getStartTime() != null) {
-			homework.setStartTime(homeworkDto.getStartTime());
-		}
-		if(homeworkDto.getEndTime() != null) {
-			homework.setEndTime(homeworkDto.getEndTime());
-		}
+		checkDuplicateTitle(homework.getLecture().getHomeworks(), homeworkDto.getTitle());
 
-		if (homeworkDto.getQuestionIds() != null) {
-			homework.getHomeworkQuestions().clear();
-			for (Long questionId : homeworkDto.getQuestionIds()) {
-				HomeworkQuestion homeworkQuestion = HomeworkQuestion.builder()
-					.homework(homework)
-					.questionId(questionId)
-					.build();
-				homework.getHomeworkQuestions().add(homeworkQuestion);
-			}
-		}
+		updateHomeworkDetails(homework, homeworkDto);
 
 		Homework savedHomework = homeworkRepository.save(homework);
 
-		// 카프카 이벤트 발행
-		HomeworkUpdateEvent event = HomeworkUpdateEvent.builder()
-			.homeworkId(savedHomework.getHomeworkId())
-			.lectureId(savedHomework.getLecture().getLectureId())
-			.title(savedHomework.getTitle())
-			.startTime(savedHomework.getStartTime())
-			.endTime(savedHomework.getEndTime())
-			.questionIds(homeworkDto.getQuestionIds())
-			.build();
-
-		kafkaTemplate.send("homework-update-topic", event);
+		publishHomeworkUpdateEvent(savedHomework, homeworkDto.getQuestionIds());
 
 		return savedHomework.getHomeworkId();
 	}
@@ -123,13 +67,73 @@ public class HomeworkServiceImpl implements HomeworkService {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_NOT_FOUND));
 
-		HomeworkDeleteEvent event = HomeworkDeleteEvent.builder()
-			.homeworkId(homeworkId)
-			.lectureId(homework.getLecture().getLectureId())
-			.build();
-
-		kafkaTemplate.send("homework-delete-topic",  event);
+		publishHomeworkDeleteEvent(homework);
 
 		homeworkRepository.delete(homework);
+	}
+
+	private void checkDuplicateTitle(List<Homework> homeworks, String title) {
+		homeworks.stream()
+			.filter(hw -> hw.getTitle().equals(title))
+			.findAny()
+			.ifPresent(hw -> {
+				throw new EumException(ErrorCode.HOMEWORK_TITLE_DUPLICATE);
+			});
+	}
+
+	private List<HomeworkQuestion> createHomeworkQuestions(List<Long> questionIds, Homework homework) {
+		return questionIds.stream()
+			.map(questionId -> HomeworkQuestion.builder()
+				.homework(homework)
+				.questionId(questionId)
+				.build())
+			.collect(Collectors.toList());
+	}
+
+	private void updateHomeworkDetails(Homework homework, HomeworkDto homeworkDto) {
+		if (homeworkDto.getTitle() != null) {
+			homework.setTitle(homeworkDto.getTitle());
+		}
+		if (homeworkDto.getStartTime() != null) {
+			homework.setStartTime(homeworkDto.getStartTime());
+		}
+		if (homeworkDto.getEndTime() != null) {
+			homework.setEndTime(homeworkDto.getEndTime());
+		}
+		if (homeworkDto.getQuestionIds() != null) {
+			homework.setHomeworkQuestions(createHomeworkQuestions(homeworkDto.getQuestionIds(), homework));
+		}
+	}
+
+	private void publishHomeworkCreateEvent(Homework homework, List<Long> questionIds) {
+		HomeworkCreateEvent event = new HomeworkCreateEvent(
+			homework.getHomeworkId(),
+			homework.getLecture().getLectureId(),
+			homework.getTitle(),
+			homework.getStartTime(),
+			homework.getEndTime(),
+			questionIds
+		);
+		kafkaTemplate.send("homework-create-topic", event);
+	}
+
+	private void publishHomeworkUpdateEvent(Homework homework, List<Long> questionIds) {
+		HomeworkUpdateEvent event = new HomeworkUpdateEvent(
+			homework.getHomeworkId(),
+			homework.getLecture().getLectureId(),
+			homework.getTitle(),
+			homework.getStartTime(),
+			homework.getEndTime(),
+			questionIds
+		);
+		kafkaTemplate.send("homework-update-topic", event);
+	}
+
+	private void publishHomeworkDeleteEvent(Homework homework) {
+		HomeworkDeleteEvent event = new HomeworkDeleteEvent(
+			homework.getHomeworkId(),
+			homework.getLecture().getLectureId()
+		);
+		kafkaTemplate.send("homework-delete-topic", event);
 	}
 }

@@ -38,33 +38,14 @@ public class ExamSubmissionEventListener {
 		StudentOverviewModel studentModel = studentOverviewRepository.findByStudentIdAndLectureId(studentId, lectureId)
 			.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
 
-		ExamSubmissionInfo examSubmissionInfo = ExamSubmissionInfo.builder()
-			.examSubmissionId(event.getExamSubmissionId())
-			.examId(event.getExamId())
-			.score(event.getScore())
-			.correctCount(event.getCorrectCount())
-			.totalCount(event.getTotalCount())
-			.build();
+		ExamSubmissionInfo examSubmissionInfo = createExamSubmissionInfo(event);
 
-		List<ExamProblemSubmissionInfo> examProblemSubmissionInfos = new ArrayList<>();
-		for(ExamProblemSubmissionEventDto dto : event.getProblemSubmissions()) {
-			ExamProblemSubmissionInfo problemInfo = ExamProblemSubmissionInfo.builder()
-				.examProblemSubmissionId(dto.getExamProblemSubmissionId())
-				.questionId(dto.getQuestionId())
-				.isCorrect(dto.getIsCorrect())
-				.examSolution(dto.getExamSolution())
-				.build();
-		}
-		examSubmissionInfo.setProblemSubmissions(examProblemSubmissionInfos);
-
-		if(studentModel.getExamSubmissionInfo() == null) {
+		if (studentModel.getExamSubmissionInfo() == null) {
 			studentModel.setExamSubmissionInfo(new ArrayList<>());
 		}
 		studentModel.getExamSubmissionInfo().add(examSubmissionInfo);
 
 		updateStudentScores(studentModel);
-
-		//학생 오버뷰 업뎃
 		updateStudentOverview(studentModel);
 
 		studentOverviewRepository.save(studentModel);
@@ -72,19 +53,44 @@ public class ExamSubmissionEventListener {
 		updateTeacherOverviewModel(studentId, lectureId);
 	}
 
+	private ExamSubmissionInfo createExamSubmissionInfo(ExamSubmissionCreateEvent event) {
+		List<ExamProblemSubmissionInfo> examProblemSubmissionInfos = new ArrayList<>();
+		for (ExamProblemSubmissionEventDto dto : event.getProblemSubmissions()) {
+			ExamProblemSubmissionInfo problemInfo = createExamProblemSubmissionInfo(dto);
+			examProblemSubmissionInfos.add(problemInfo);
+		}
+
+		return new ExamSubmissionInfo(
+			event.getExamSubmissionId(),
+			event.getExamId(),
+			event.getScore(),
+			event.getCorrectCount(),
+			event.getTotalCount(),
+			examProblemSubmissionInfos
+		);
+	}
+
+	private ExamProblemSubmissionInfo createExamProblemSubmissionInfo(ExamProblemSubmissionEventDto dto) {
+		return new ExamProblemSubmissionInfo(
+			dto.getExamProblemSubmissionId(),
+			dto.getQuestionId(),
+			dto.getIsCorrect(),
+			dto.getExamSolution()
+		);
+	}
+
 	private void updateStudentOverview(StudentOverviewModel studentModel) {
 		Overview overview = studentModel.getOverview();
-		if(overview == null) {
+		if (overview == null) {
 			overview = new Overview();
 			studentModel.setOverview(overview);
 		}
 
-		//지금은 맞춘거 카운트
 		long totalSolvedProblems = 0;
 		List<ExamSubmissionInfo> submissions = studentModel.getExamSubmissionInfo();
-		for(ExamSubmissionInfo submission : submissions) {
+		for (ExamSubmissionInfo submission : submissions) {
 			List<ExamProblemSubmissionInfo> problemSubmissionInfos = submission.getProblemSubmissions();
-			for(ExamProblemSubmissionInfo problemSubmissionInfo : problemSubmissionInfos) {
+			for (ExamProblemSubmissionInfo problemSubmissionInfo : problemSubmissionInfos) {
 				if (problemSubmissionInfo.getIsCorrect()) {
 					totalSolvedProblems++;
 				}
@@ -96,24 +102,22 @@ public class ExamSubmissionEventListener {
 	private void updateStudentScores(StudentOverviewModel studentModel) {
 		List<ExamSubmissionInfo> submissions = studentModel.getExamSubmissionInfo();
 
-		double totalStore = submissions.stream()
+		double totalScore = submissions.stream()
 			.mapToDouble(ExamSubmissionInfo::getScore)
 			.sum();
 		int count = submissions.size();
 
-		double avgScore = totalStore / count;
+		double avgScore = count > 0 ? totalScore / count : 0.0;
 
 		StudentScores scores = studentModel.getStudentScores();
-		if(scores == null) {
+		if (scores == null) {
 			scores = new StudentScores();
 			studentModel.setStudentScores(scores);
 		}
 		scores.setExamAvgScore(avgScore);
 	}
 
-
 	private void updateTeacherOverviewModel(Long studentId, Long lectureId) {
-		// TeacherOverviewModel 가져오기
 		String teacherOverviewId = generateTeacherOverviewId(lectureId);
 		TeacherOverviewModel teacherOverview = teacherOverviewRepository.findById(teacherOverviewId)
 			.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
@@ -121,7 +125,6 @@ public class ExamSubmissionEventListener {
 		List<StudentInfo> studentInfos = teacherOverview.getStudents();
 		for (StudentInfo studentInfo : studentInfos) {
 			if (studentInfo.getStudentId().equals(studentId)) {
-
 				StudentOverviewModel studentOverview = studentOverviewRepository.findByStudentIdAndLectureId(studentId, lectureId)
 					.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
 				studentInfo.setStudentScores(studentOverview.getStudentScores());
@@ -151,11 +154,11 @@ public class ExamSubmissionEventListener {
 			}
 		}
 
-		ClassAverageScores classAverageScores = ClassAverageScores.builder()
-			.homeworkAvgScore(count > 0 ? totalHomework / count : 0.0)
-			.examAvgScore(count > 0 ? totalExam / count : 0.0)
-			.attitudeAvgScore(count > 0 ? totalAttitude / count : 100.0)
-			.build();
+		ClassAverageScores classAverageScores = new ClassAverageScores(
+			count > 0 ? totalHomework / count : 0.0,
+			count > 0 ? totalExam / count : 0.0,
+			count > 0 ? totalAttitude / count : 100.0
+		);
 
 		teacherOverview.setClassAverageScores(classAverageScores);
 	}

@@ -38,46 +38,73 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_NOT_FOUND));
 
+		validateHomeworkTime(homework);
+
+		HomeworkSubmission homeworkSubmission = createHomeworkSubmission(homework, studentId);
+
+		List<HomeworkProblemSubmission> homeworkProblemSubmissionList = saveHomeworkProblemSubmissions(
+			homeworkProblemSubmissions, homeworkSubmission, studentId);
+
+		updateHomeworkSubmissionScores(homeworkSubmission, homeworkProblemSubmissionList);
+
+		publishHomeworkSubmissionCreateEvent(homeworkSubmission, homeworkProblemSubmissionList, homework.getLecture().getLectureId());
+
+		return homeworkSubmission;
+	}
+
+	private void validateHomeworkTime(Homework homework) {
 		LocalDateTime now = LocalDateTime.now();
 		if (now.isBefore(homework.getStartTime()) || now.isAfter(homework.getEndTime())) {
 			throw new EumException(ErrorCode.HOMEWORK_TIME_INVALID);
 		}
+	}
 
-		// 새로운 HomeworkSubmission 생성
+	private HomeworkSubmission createHomeworkSubmission(Homework homework, Long studentId) {
 		HomeworkSubmission homeworkSubmission = HomeworkSubmission.builder()
 			.homework(homework)
 			.studentId(studentId)
 			.build();
+		return homeworkSubmissionRepository.save(homeworkSubmission);
+	}
 
-		HomeworkSubmission savedHomeworkSubmission = homeworkSubmissionRepository.save(homeworkSubmission);
+	private List<HomeworkProblemSubmission> saveHomeworkProblemSubmissions(
+		List<HomeworkProblemSubmissionDto> homeworkProblemSubmissions,
+		HomeworkSubmission homeworkSubmission,
+		Long studentId) {
 
-		// 문제 제출 저장
 		List<HomeworkProblemSubmission> homeworkProblemSubmissionList = homeworkProblemSubmissions.stream()
-			.map(dto -> dto.toEntity(savedHomeworkSubmission, studentId))
+			.map(dto -> dto.toEntity(homeworkSubmission, studentId))
 			.collect(Collectors.toList());
 
-		homeworkProblemSubmissionRepository.saveAll(homeworkProblemSubmissionList);
+		return homeworkProblemSubmissionRepository.saveAll(homeworkProblemSubmissionList);
+	}
 
+	private void updateHomeworkSubmissionScores(HomeworkSubmission homeworkSubmission,
+		List<HomeworkProblemSubmission> homeworkProblemSubmissionList) {
 		Long correctCount = homeworkProblemSubmissionList.stream()
 			.filter(HomeworkProblemSubmission::getIsCorrect)
 			.count();
+
 		Long totalCount = (long) homeworkProblemSubmissionList.size();
 		double score = (double) correctCount / totalCount * 100;
 
-		// HomeworkSubmission 업데이트
 		homeworkSubmission.setCorrectCount(correctCount);
 		homeworkSubmission.setTotalCount(totalCount);
 		homeworkSubmission.setScore(score);
 
-		HomeworkSubmission saved = homeworkSubmissionRepository.save(homeworkSubmission);
-
-		publishHomeworkSubmissionCreateEvent(homeworkSubmission, homeworkProblemSubmissionList, homework.getLecture().getLectureId());
-
-		return saved;
+		homeworkSubmissionRepository.save(homeworkSubmission);
 	}
 
-	private void publishHomeworkSubmissionCreateEvent(HomeworkSubmission homeworkSubmission, List<HomeworkProblemSubmission> homeworkProblemSubmissionList, Long lectureId) {
+	private void publishHomeworkSubmissionCreateEvent(HomeworkSubmission homeworkSubmission,
+		List<HomeworkProblemSubmission> homeworkProblemSubmissionList,
+		Long lectureId) {
 
+		HomeworkSubmissionCreateEvent event = createHomeworkSubmissionCreateEvent(homeworkSubmission, lectureId, homeworkProblemSubmissionList);
+
+		kafkaTemplate.send("homework-submission-events", event);
+	}
+
+	private HomeworkSubmissionCreateEvent createHomeworkSubmissionCreateEvent(HomeworkSubmission homeworkSubmission, Long lectureId, List<HomeworkProblemSubmission> homeworkProblemSubmissionList) {
 		HomeworkSubmissionCreateEvent event = new HomeworkSubmissionCreateEvent();
 		event.setHomeworkSubmissionId(homeworkSubmission.getHomeworkSubmissionId());
 		event.setHomeworkId(homeworkSubmission.getHomework().getHomeworkId());
@@ -86,19 +113,23 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		event.setCorrectCount(homeworkSubmission.getCorrectCount());
 		event.setTotalCount(homeworkSubmission.getTotalCount());
 		event.setLectureId(lectureId);
+		event.setProblemSubmissions(createProblemSubmissionEvents(homeworkProblemSubmissionList));
+		return event;
+	}
 
-		List<HomeworkProblemSubmissionEventDto> problemSubmissionEvents = homeworkProblemSubmissionList.stream()
-			.map(submission -> HomeworkProblemSubmissionEventDto.builder()
-				.homeworkProblemSubmissionId(submission.getHomeworkProblemSubmissionId())
-				.questionId(submission.getQuestionId())
-				.isCorrect(submission.getIsCorrect())
-				.homeworkSolution(submission.getHomeworkSolution())
-				.build())
+	private List<HomeworkProblemSubmissionEventDto> createProblemSubmissionEvents(
+		List<HomeworkProblemSubmission> homeworkProblemSubmissionList) {
+		return homeworkProblemSubmissionList.stream()
+			.map(this::toHomeworkProblemSubmissionEventDto)
 			.collect(Collectors.toList());
+	}
 
-		event.setProblemSubmissions(problemSubmissionEvents);
-
-		kafkaTemplate.send("homework-submission-events", event);
+	private HomeworkProblemSubmissionEventDto toHomeworkProblemSubmissionEventDto(HomeworkProblemSubmission submission) {
+		return new HomeworkProblemSubmissionEventDto(
+			submission.getHomeworkProblemSubmissionId(),
+			submission.getQuestionId(),
+			submission.getIsCorrect(),
+			submission.getHomeworkSolution()
+		);
 	}
 }
-

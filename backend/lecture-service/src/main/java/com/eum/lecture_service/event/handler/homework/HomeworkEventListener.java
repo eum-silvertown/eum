@@ -25,14 +25,7 @@ public class HomeworkEventListener {
 		LectureModel lecture = lectureReadRepository.findById(event.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
-		HomeworkInfo homeworkInfo = HomeworkInfo.builder()
-			.homeworkId(event.getHomeworkId())
-			.title(event.getTitle())
-			.startTime(event.getStartTime())
-			.endTime(event.getEndTime())
-			.questions(event.getQuestionIds())
-			.build();
-
+		HomeworkInfo homeworkInfo = createHomeworkInfo(event);
 		lecture.getHomeworks().add(homeworkInfo);
 		lectureReadRepository.save(lecture);
 	}
@@ -44,17 +37,9 @@ public class HomeworkEventListener {
 
 		lecture.getHomeworks().removeIf(hw -> hw.getHomeworkId().equals(event.getHomeworkId()));
 
-		HomeworkInfo homeworkInfo = HomeworkInfo.builder()
-			.homeworkId(event.getHomeworkId())
-			.title(event.getTitle())
-			.startTime(event.getStartTime())
-			.endTime(event.getEndTime())
-			.questions(event.getQuestionIds())
-			.build();
-
+		HomeworkInfo homeworkInfo = updateHomeworkInfo(event);
 		lecture.getHomeworks().add(homeworkInfo);
 		lectureReadRepository.save(lecture);
-
 	}
 
 	@KafkaListener(topics = "homework-delete-topic", groupId = "homework-group")
@@ -64,5 +49,25 @@ public class HomeworkEventListener {
 
 		lecture.getHomeworks().removeIf(hw -> hw.getHomeworkId().equals(event.getHomeworkId()));
 		lectureReadRepository.save(lecture);
+	}
+
+	private HomeworkInfo createHomeworkInfo(HomeworkCreateEvent event) {
+		return new HomeworkInfo(
+			event.getHomeworkId(),
+			event.getTitle(),
+			event.getStartTime(),
+			event.getEndTime(),
+			event.getQuestionIds()
+		);
+	}
+
+	private HomeworkInfo updateHomeworkInfo(HomeworkUpdateEvent event) {
+		return new HomeworkInfo(
+			event.getHomeworkId(),
+			event.getTitle(),
+			event.getStartTime(),
+			event.getEndTime(),
+			event.getQuestionIds()
+		);
 	}
 }
