@@ -1,5 +1,6 @@
-import {View, StyleSheet, TouchableOpacity, Pressable} from 'react-native';
-import {spacing} from '@theme/spacing';
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { spacing } from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -9,142 +10,51 @@ import Replay from '@components/classDetail/Replay';
 import Teacher from '@components/classDetail/Teacher';
 import StudentRank from '@components/classDetail/StudentRank';
 import StudentsChart from '@components/classDetail/StudentsChart';
-
 import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 import {
   getLectureDetail,
-  getStudentLectureDetail,
-  getTeacherLectureDetail,
   LectureDetailType,
-  LectureStudentDetailType,
-  LectureTeacherDetailType,
+  ClassAverageScoresType,
 } from 'src/services/lectureInformation';
-import {useQuery} from '@tanstack/react-query';
-import {useState} from 'react';
-import {getResponsiveSize} from '@utils/responsive';
-import {useBookModalStore} from '@store/useBookModalStore';
+import { useQuery } from '@tanstack/react-query';
+import { getResponsiveSize } from '@utils/responsive';
+import { useBookModalStore } from '@store/useBookModalStore';
+import EmptyData from '@components/common/EmptyData';
+import { useAuthStore } from '@store/useAuthStore';
 
-type ClassAverageScores = {
-  homeworkAvgScore: number;
-  testAvgScore: number;
-  attitudeAvgScore: number;
+type BookLectureProps = {
+  lectureId: number;
 };
 
-function ClassDetailScreen(): React.JSX.Element {
+function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
   const closeBook = useBookModalStore(state => state.closeBook);
+  const userInfo = useAuthStore(state => state.userInfo);
+  const isTeacher = userInfo.role === 'TEACHER';
 
-  const lectureId = 1;
-  const isTeacher = true;
-
-  const {data: lectureDetail} = useQuery<LectureDetailType>({
+  // 통합 강의 상세 정보 쿼리
+  const { data: lectureDetail, isLoading, isError } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId),
   });
 
-  const {data: studentLectureDetail} = useQuery<LectureStudentDetailType>({
-    queryKey: ['studentLectureDetail', lectureId],
-    queryFn: () => getStudentLectureDetail(lectureId),
-    enabled: !isTeacher,
-  });
+  const [selectedStudentScores, setSelectedStudentScores] = useState<ClassAverageScoresType | null>(null);
+  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(null);
 
-  const {data: teacherLectureDetail} = useQuery<LectureTeacherDetailType>({
-    queryKey: ['teacherLectureDetail', lectureId],
-    queryFn: () => getTeacherLectureDetail(lectureId),
-    enabled: isTeacher,
-  });
-
-  console.log('lectureDetail', lectureDetail);
-  console.log('studentLectureDetail', studentLectureDetail);
-  console.log('teacherLectureDetail', teacherLectureDetail);
-
-  const [selectedStudentScores, setSelectedStudentScores] =
-    useState<ClassAverageScores | null>(null);
-  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(
-    null,
-  );
-
-  const handleStudentSelect = (scores: ClassAverageScores, name: string) => {
+  const handleStudentSelect = (scores: ClassAverageScoresType, name: string) => {
     setSelectedStudentScores(scores);
     setSelectedStudentName(name);
   };
 
-  if (isTeacher) {
-    // 선생님용
-    return (
-      <View style={styles.container}>
-        <Pressable onPress={closeBook} style={styles.bookmarkIcon}>
-          <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
-        </Pressable>
-        <ClassHeader
-          isTeacher={isTeacher}
-          lectureId={lectureDetail?._id}
-          title={lectureDetail?.title}
-          subtitle={lectureDetail?.subject}
-          schedule={lectureDetail?.schedule}
-          semester={lectureDetail?.semester}
-          grade={lectureDetail?.grade}
-          classNumber={lectureDetail?.classNumber}
-          pastTeacherName={lectureDetail?.teacher.name}
-          backgroundColor={lectureDetail?.backgroundColor}
-          fontColor={lectureDetail?.fontColor}
-        />
-        <View style={styles.content}>
-          <View style={styles.firstRow}>
-            <View style={styles.overviewLayout}>
-              <Overview
-                homeworkCnt={lectureDetail?.homework.length}
-                examCnt={lectureDetail?.exams.length}
-                lessonCnt={lectureDetail?.lesson.length}
-              />
-              <Notice
-                lectureId={lectureDetail?._id}
-                isTeacher={isTeacher}
-                notices={lectureDetail?.notices}
-              />
-            </View>
-            <View style={styles.mainContentLayout}>
-              <View style={styles.teacherLayout}>
-                <Teacher
-                  isTeacher={isTeacher}
-                  name={lectureDetail?.teacher.name}
-                  telephone={lectureDetail?.teacher.telephone}
-                  email={lectureDetail?.teacher.email}
-                  photo={lectureDetail?.teacher.photo}
-                />
-              </View>
-              <View style={styles.chartLayout}>
-                <ClassHandleButtonList />
-              </View>
-            </View>
-          </View>
-          <View style={styles.secondRow}>
-            <View style={styles.replayLayout}>
-              <Replay lesson={lectureDetail?.lesson} />
-            </View>
-            {teacherLectureDetail && (
-              <View style={styles.homeworkLayout}>
-                <StudentsChart
-                  classAverageScores={
-                    selectedStudentScores ||
-                    teacherLectureDetail.classAverageScores
-                  }
-                  studentName={selectedStudentName || '학급 평균'}
-                />
-                <StudentRank
-                  studentsInfo={teacherLectureDetail.students}
-                  onStudentSelect={handleStudentSelect}
-                />
-              </View>
-            )}
-          </View>
-        </View>
-      </View>
-    );
+  if (isLoading) {
+    return <ActivityIndicator />;
   }
 
-  // 학생용
+  if (isError || !lectureDetail) {
+    return <EmptyData message="강의 정보를 불러올 수 없습니다." />;
+  }
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
@@ -152,50 +62,76 @@ function ClassDetailScreen(): React.JSX.Element {
       </TouchableOpacity>
       <ClassHeader
         isTeacher={isTeacher}
-        lectureId={lectureDetail?._id}
-        title={lectureDetail?.title}
-        subtitle={lectureDetail?.subject}
-        schedule={lectureDetail?.schedule}
-        semester={lectureDetail?.semester}
-        grade={lectureDetail?.grade}
-        backgroundColor={lectureDetail?.backgroundColor}
-        fontColor={lectureDetail?.fontColor}
+        lectureId={lectureDetail.lectureId}
+        title={lectureDetail.title}
+        subtitle={lectureDetail.subject}
+        schedule={lectureDetail.schedule}
+        semester={lectureDetail.semester}
+        grade={lectureDetail.grade}
+        classNumber={lectureDetail.classNumber}
+        backgroundColor={lectureDetail.backgroundColor}
+        fontColor={lectureDetail.fontColor}
+        pastTeacherName={lectureDetail.teacherModel.name}
       />
       <View style={styles.content}>
         <View style={styles.firstRow}>
           <View style={styles.overviewLayout}>
             <Overview
-              homeworkCnt={lectureDetail?.homework.length}
-              examCnt={lectureDetail?.exams.length}
-              lessonCnt={lectureDetail?.lesson.length}
+              homeworkCnt={lectureDetail.homeworks.length}
+              examCnt={lectureDetail.exams.length}
+              lessonCnt={lectureDetail.lessons.length}
+              navigateData={{
+                lessons: lectureDetail.lessons,
+                exams: lectureDetail.exams,
+                homeworks: lectureDetail.homeworks,
+              }}
             />
             <Notice
-              lectureId={lectureDetail?._id}
+              lectureId={lectureDetail.lectureId}
               isTeacher={isTeacher}
-              notices={lectureDetail?.notices}
+              notices={lectureDetail.notices}
             />
           </View>
           <View style={styles.mainContentLayout}>
             <View style={styles.teacherLayout}>
               <Teacher
                 isTeacher={isTeacher}
-                name={lectureDetail?.teacher.name}
-                telephone={lectureDetail?.teacher.telephone}
-                email={lectureDetail?.teacher.email}
-                photo={lectureDetail?.teacher.photo}
+                name={lectureDetail.teacherModel.name}
+                telephone={lectureDetail.teacherModel.tel}
+                email={lectureDetail.teacherModel.email}
+                photo={lectureDetail.teacherModel.image}
               />
             </View>
             <View style={styles.chartLayout}>
-              <Chart studentScores={studentLectureDetail?.studentScores} />
+              {isTeacher ? (
+                <ClassHandleButtonList />
+              ) : (
+                <Chart studentScores={lectureDetail.studentOverviewModel?.studentScores} />
+              )}
             </View>
           </View>
         </View>
         <View style={styles.secondRow}>
           <View style={styles.replayLayout}>
-            <Replay lesson={lectureDetail?.lesson} />
+            <Replay lesson={lectureDetail.lessons} />
           </View>
           <View style={styles.homeworkLayout}>
-            <Homework homework={lectureDetail?.homework} />
+            {isTeacher ? (
+              <>
+                <StudentsChart
+                  classAverageScores={
+                    selectedStudentScores || lectureDetail.teacherOverviewModel?.classAverageScores
+                  }
+                  studentName={selectedStudentName || '학급 평균'}
+                />
+                <StudentRank
+                  studentsInfo={lectureDetail.teacherOverviewModel?.students}
+                  onStudentSelect={handleStudentSelect}
+                />
+              </>
+            ) : (
+              <Homework homework={lectureDetail.homeworks} />
+            )}
           </View>
         </View>
       </View>

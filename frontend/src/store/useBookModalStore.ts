@@ -19,9 +19,10 @@ type BookInfo = {
   subtitle: string;
   backgroundColor: string;
   fontColor: string;
-  grade: string;
-  classNumber: string;
+  grade: number;
+  classNumber: number;
   teacherName: string;
+  lectureId: number;
 };
 
 type BookModalState = {

@@ -234,8 +234,7 @@ const styles = StyleSheet.create({
   canvas: { flex: 1 },
   floatingToolbar: {
     position: 'absolute',
-    top: '50%',
-    transform: [{ translateY: -280 }],
+    top: '9%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
@@ -247,7 +246,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-    gap: getResponsiveSize(20),
+    gap: getResponsiveSize(12),
   },
   paletteContainer: {
     flexDirection: 'column',
@@ -255,8 +254,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   colorPalette: {
-    width: getResponsiveSize(24),
-    height: getResponsiveSize(24),
+    width: getResponsiveSize(18),
+    height: getResponsiveSize(18),
     borderRadius: 15,
     marginVertical: spacing.xs,
     borderWidth: 2,
@@ -272,8 +271,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   penSize: {
-    width: getResponsiveSize(24),
-    height: getResponsiveSize(24),
+    width: getResponsiveSize(18),
+    height: getResponsiveSize(18),
     borderRadius: 15,
     marginVertical: spacing.xs,
     alignItems: 'center',
