@@ -39,5 +39,8 @@ public class HomeworkProblemSubmission {
 
 	@Column(name = "is_correct")
 	private Boolean isCorrect;
+
+	@Column(name = "homework_solution")
+	private String homeworkSolution;
 }
 

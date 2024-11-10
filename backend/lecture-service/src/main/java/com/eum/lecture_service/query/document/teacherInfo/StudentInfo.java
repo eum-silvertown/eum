@@ -18,5 +18,6 @@ public class StudentInfo {
 	private Long studentId;
 	private String studentImage;
 	private String studentName;
-	private StudentScores studentScores;
+	@Builder.Default
+	private StudentScores studentScores = new StudentScores(0.0, 0.0, 100.0);
 }

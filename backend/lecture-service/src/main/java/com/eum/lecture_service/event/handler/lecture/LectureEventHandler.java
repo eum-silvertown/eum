@@ -11,13 +11,14 @@ import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
 import com.eum.lecture_service.query.document.LectureModel;
 import com.eum.lecture_service.query.document.TeacherOverviewModel;
+import com.eum.lecture_service.query.document.studentInfo.Overview;
 import com.eum.lecture_service.query.document.teacherInfo.StudentInfo;
 import com.eum.lecture_service.query.document.lectureInfo.ScheduleInfo;
+import com.eum.lecture_service.query.repository.ClassReadRepository;
 import com.eum.lecture_service.query.repository.LectureReadRepository;
 import com.eum.lecture_service.query.repository.StudentOverviewRepository;
 import com.eum.lecture_service.query.repository.StudentReadRepository;
 import com.eum.lecture_service.query.repository.TeacherOverviewRepository;
-import com.eum.lecture_service.query.repository.TeacherReadRepository;
 import com.eum.lecture_service.query.document.eventModel.StudentModel;
 import com.eum.lecture_service.query.document.StudentOverviewModel;
 import com.eum.lecture_service.query.document.studentInfo.StudentScores;
@@ -33,8 +34,9 @@ public class LectureEventHandler {
 
 	private final LectureReadRepository lectureReadRepository;
 	private final StudentReadRepository studentReadRepository;
-	private final TeacherOverviewRepository teacherOverviewReadRepository;
-	private final StudentOverviewRepository studentOverviewReadRepository;
+	private final TeacherOverviewRepository teacherOverviewRepository;
+	private final StudentOverviewRepository studentOverviewRepository;
+	private final ClassReadRepository classReadRepository;
 
 	// 강의 생성 이벤트 처리
 	@KafkaListener(topics = "lecture-created-topic", groupId = "lecture-group")
@@ -59,6 +61,8 @@ public class LectureEventHandler {
 				.collect(Collectors.toList()))
 			.build();
 
+		lectureReadRepository.save(lecture);
+
 		List<StudentModel> students = studentReadRepository.findByClassId(event.getClassId());
 
 		if (students.isEmpty()) {
@@ -69,38 +73,37 @@ public class LectureEventHandler {
 					.studentId(student.getStudentId())
 					.studentImage(student.getImage())
 					.studentName(student.getName())
-					.studentScores(null)
+					.studentScores(new StudentScores(0.0, 0.0, 100.0)) // 기본값 설정
 					.build())
 				.collect(Collectors.toList());
 
 			Long teacherId = event.getTeacherId();
-			Long classId = event.getClassId();
-			String teacherOverviewId = generateTeacherOverviewId(teacherId, classId);
+			Long lectureId = event.getLectureId(); // lectureId 사용
+			String teacherOverviewId = generateTeacherOverviewId(lectureId);
 
 			TeacherOverviewModel teacherOverview = TeacherOverviewModel.builder()
 				.id(teacherOverviewId)
 				.teacherId(teacherId)
-				.classId(classId)
+				.lectureId(lectureId)
 				.students(studentInfos)
-				.classAverageScores(null) // 회원가입 시 초기값 설정
+				.classAverageScores(new ClassAverageScores(0.0, 0.0, 100.0))
 				.build();
 
-			teacherOverviewReadRepository.save(teacherOverview);
+			teacherOverviewRepository.save(teacherOverview);
 
 			studentInfos.forEach(studentInfo -> {
-				String studentOverviewId = generateStudentOverviewId(studentInfo.getStudentId(), classId);
+				String studentOverviewId = generateStudentOverviewId(studentInfo.getStudentId(), lectureId);
 				StudentOverviewModel studentOverview = StudentOverviewModel.builder()
 					.id(studentOverviewId)
 					.studentId(studentInfo.getStudentId())
-					.classId(classId)
-					.overview(null)
-					.studentScores(null)
+					.lectureId(lectureId)
+					.overview(new Overview())
+					.studentScores(new StudentScores(0.0, 0.0, 100.0))
 					.build();
 
-				studentOverviewReadRepository.save(studentOverview);
+				studentOverviewRepository.save(studentOverview);
 			});
 		}
-		lectureReadRepository.save(lecture);
 	}
 
 	@KafkaListener(topics = "lecture-updated-topic", groupId = "lecture-group")
@@ -109,23 +112,34 @@ public class LectureEventHandler {
 			lecture -> {
 				updateLectureModel(lecture, event);
 
-				String teacherOverviewId = generateTeacherOverviewId(event.getTeacherId(), event.getClassId());
+				//원래 이 수업의 학생 수
+				Long originalStudentSize = (long)studentOverviewRepository.findByLectureId(
+					lecture.getLectureId()).size();
 
-				TeacherOverviewModel teacherOverview = teacherOverviewReadRepository.findById(teacherOverviewId)
-					.orElse(createNewTeacherOverview(event.getTeacherId(), event.getClassId()));
+				//현재 이 학급의 학생 수
+				List<StudentModel> studentSize = studentReadRepository.findByClassId(lecture.getClassId());
 
-				List<StudentInfo> studentInfos = updateStudentInfos(event.getClassId());
-				teacherOverview.setStudents(studentInfos);
+				if (originalStudentSize != studentSize.size()) {
+					Long lectureId = event.getLectureId();
+					List<StudentInfo> studentInfos = updateStudentInfos(lectureId);
+					String teacherOverviewId = generateTeacherOverviewId(lectureId);
 
-				teacherOverview.setClassAverageScores(calculateClassAverageScores(studentScoresList(studentInfos)));
+					TeacherOverviewModel teacherOverview = teacherOverviewRepository.findById(teacherOverviewId)
+						.orElse(createNewTeacherOverview(event.getTeacherId(), lectureId));
 
-				teacherOverviewReadRepository.save(teacherOverview);
+					teacherOverview.setStudents(studentInfos);
 
-				updateStudentOverviews(studentInfos, event.getClassId());
+					ClassAverageScores classAverageScores = calculateClassAverageScores(studentScoresList(studentInfos));
+					teacherOverview.setClassAverageScores(classAverageScores);
+
+					teacherOverviewRepository.save(teacherOverview);
+
+					updateStudentOverviews(studentInfos, lectureId);
+				}
 
 				lectureReadRepository.save(lecture);
 			},
-			() -> log.error("강의를 찾을 수 없습니다.", event.getLectureId())
+			() -> log.error("강의를 찾을 수 없습니다. Lecture ID: {}", event.getLectureId())
 		);
 	}
 
@@ -148,49 +162,52 @@ public class LectureEventHandler {
 			.collect(Collectors.toList()));
 	}
 
-	private TeacherOverviewModel createNewTeacherOverview(Long teacherId, Long classId) {
+	private TeacherOverviewModel createNewTeacherOverview(Long teacherId, Long lectureId) {
 		return TeacherOverviewModel.builder()
-			.id(generateTeacherOverviewId(teacherId, classId))
+			.id(generateTeacherOverviewId(lectureId))
 			.teacherId(teacherId)
-			.classId(classId)
+			.lectureId(lectureId)
 			.students(List.of())
-			.classAverageScores(null)
+			.classAverageScores(new ClassAverageScores(0.0, 0.0, 100.0))
 			.build();
 	}
 
-	// StudentInfos 생성 및 업데이트
-	private List<StudentInfo> updateStudentInfos(Long classId) {
-		List<StudentModel> students = studentReadRepository.findByClassId(classId);
+	private List<StudentInfo> updateStudentInfos(Long lectureId) {
+		LectureModel lecture = lectureReadRepository.findById(lectureId)
+			.orElseThrow(() -> new IllegalArgumentException("강의를 찾을 수 없습니다. Lecture ID: " + lectureId));
+
+		List<StudentModel> students = studentReadRepository.findByClassId(lecture.getClassId());
+
 		return students.stream()
 			.map(student -> {
-				StudentOverviewModel studentOverview = studentOverviewReadRepository
-					.findByStudentIdAndClassId(student.getStudentId(), classId)
+				StudentOverviewModel studentOverview = studentOverviewRepository
+					.findByStudentIdAndLectureId(student.getStudentId(), lectureId)
 					.orElse(null);
-				StudentScores studentScores = studentOverview != null ? studentOverview.getStudentScores() : null;
+				StudentScores studentScores = studentOverview != null ? studentOverview.getStudentScores() : new StudentScores(0.0, 0.0, 100.0);
 
 				return StudentInfo.builder()
 					.studentId(student.getStudentId())
 					.studentImage(student.getImage())
 					.studentName(student.getName())
-					.studentScores(studentScores) // 개별 학생의 성적 정보 포함
+					.studentScores(studentScores)
 					.build();
 			})
 			.collect(Collectors.toList());
 	}
 
-	private void updateStudentOverviews(List<StudentInfo> studentInfos, Long classId) {
+	private void updateStudentOverviews(List<StudentInfo> studentInfos, Long lectureId) {
 		studentInfos.forEach(studentInfo -> {
-			String studentOverviewId = generateStudentOverviewId(studentInfo.getStudentId(), classId);
-			StudentOverviewModel studentOverview = studentOverviewReadRepository.findById(studentOverviewId)
+			String studentOverviewId = generateStudentOverviewId(studentInfo.getStudentId(), lectureId);
+			StudentOverviewModel studentOverview = studentOverviewRepository.findById(studentOverviewId)
 				.orElse(StudentOverviewModel.builder()
 					.id(studentOverviewId)
 					.studentId(studentInfo.getStudentId())
-					.classId(classId)
-					.overview(null)
+					.lectureId(lectureId)
+					.overview(new Overview())
 					.studentScores(studentInfo.getStudentScores())
 					.build());
 
-			studentOverviewReadRepository.save(studentOverview);
+			studentOverviewRepository.save(studentOverview);
 		});
 	}
 
@@ -199,43 +216,41 @@ public class LectureEventHandler {
 	public void handleLectureDeleted(LectureDeletedEvent event) {
 		lectureReadRepository.findById(event.getLectureId()).ifPresentOrElse(
 			lecture -> {
-				Long teacherId = lecture.getTeacherId();
-				Long classId = lecture.getClassId();
-				String teacherOverviewId = generateTeacherOverviewId(teacherId, classId);
+				Long lectureId = lecture.getLectureId();
+				String teacherOverviewId = generateTeacherOverviewId(lectureId);
 
 				lectureReadRepository.deleteById(event.getLectureId());
 
-				teacherOverviewReadRepository.findById(teacherOverviewId).ifPresent(existingTeacherOverview -> {
-					teacherOverviewReadRepository.deleteById(existingTeacherOverview.getId());
+				teacherOverviewRepository.findById(teacherOverviewId).ifPresent(existingTeacherOverview -> {
+					teacherOverviewRepository.deleteById(existingTeacherOverview.getId());
 				});
 
-				List<StudentOverviewModel> studentOverviews = studentOverviewReadRepository.findByClassId(classId);
+				List<StudentOverviewModel> studentOverviews = studentOverviewRepository.findByLectureId(lectureId);
 				studentOverviews.forEach(studentOverview -> {
-					String studentOverviewId = generateStudentOverviewId(studentOverview.getStudentId(), classId);
-					studentOverviewReadRepository.deleteById(studentOverviewId);
+					String studentOverviewId = generateStudentOverviewId(studentOverview.getStudentId(), lectureId);
+					studentOverviewRepository.deleteById(studentOverviewId);
 				});
 			},
-			() -> log.error("강의를 찾을 수 없습니다.", event.getLectureId())
+			() -> log.error("강의를 찾을 수 없습니다. Lecture ID: {}", event.getLectureId())
 		);
 	}
 
-	// 수업 전체 평균 성적 계산 메서드
 	private ClassAverageScores calculateClassAverageScores(List<StudentScores> studentScoresList) {
 		double totalHomework = 0.0;
-		double totalTest = 0.0;
+		double totalExam = 0.0;
 		double totalAttitude = 0.0;
 		int count = studentScoresList.size();
 
 		for (StudentScores scores : studentScoresList) {
 			totalHomework += scores.getHomeworkAvgScore() != null ? scores.getHomeworkAvgScore() : 0.0;
-			totalTest += scores.getTestAvgScore() != null ? scores.getTestAvgScore() : 0.0;
-			totalAttitude += scores.getAttitudeAvgScore() != null ? scores.getAttitudeAvgScore() : 0.0;
+			totalExam += scores.getExamAvgScore() != null ? scores.getExamAvgScore() : 0.0;
+			totalAttitude += scores.getAttitudeAvgScore() != null ? scores.getAttitudeAvgScore() : 100.0;
 		}
 
 		return ClassAverageScores.builder()
 			.homeworkAvgScore(count > 0 ? totalHomework / count : 0.0)
-			.testAvgScore(count > 0 ? totalTest / count : 0.0)
-			.attitudeAvgScore(count > 0 ? totalAttitude / count : 0.0)
+			.examAvgScore(count > 0 ? totalExam / count : 0.0)
+			.attitudeAvgScore(count > 0 ? totalAttitude / count : 100.0)
 			.build();
 	}
 
@@ -246,11 +261,11 @@ public class LectureEventHandler {
 			.collect(Collectors.toList());
 	}
 
-	private String generateTeacherOverviewId(Long teacherId, Long classId) {
-		return teacherId + "-" + classId;
+	private String generateTeacherOverviewId(Long lectureId) {
+		return "teacher-overview-" + lectureId;
 	}
 
-	private String generateStudentOverviewId(Long studentId, Long classId) {
-		return studentId + "-" + classId;
+	private String generateStudentOverviewId(Long studentId, Long lectureId) {
+		return "student-overview-" + studentId + "-" + lectureId;
 	}
 }

@@ -1,5 +1,7 @@
 package com.eum.lecture_service.query.document.studentInfo;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,9 +13,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudentScores {
+public class ExamSubmissionInfo {
 
-	private Double homeworkAvgScore;
-	private Double examAvgScore;
-	private Double attitudeAvgScore;
+	private Long examSubmissionId;
+	private Long examId;
+	private Double score;
+	private Long correctCount;
+	private Long totalCount;
+	private List<ExamProblemSubmissionInfo> problemSubmissions;
 }

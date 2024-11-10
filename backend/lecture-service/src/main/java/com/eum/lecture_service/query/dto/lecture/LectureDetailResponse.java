@@ -5,6 +5,7 @@ import java.util.List;
 import com.eum.lecture_service.query.document.LectureModel;
 import com.eum.lecture_service.query.document.StudentOverviewModel;
 import com.eum.lecture_service.query.document.TeacherOverviewModel;
+import com.eum.lecture_service.query.document.eventModel.ClassModel;
 import com.eum.lecture_service.query.document.eventModel.TeacherModel;
 import com.eum.lecture_service.query.document.lectureInfo.ExamInfo;
 import com.eum.lecture_service.query.document.lectureInfo.HomeworkInfo;
@@ -29,7 +30,8 @@ public class LectureDetailResponse {
 	private String fontColor;
 	private Long year;
 	private Long semester;
-	private Long classId;
+	private Long grade;
+	private Long classNumber;
 	private TeacherModel teacherModel;
 	private List<ScheduleInfo> schedule;
 	private List<NoticeInfo> notices;
@@ -39,7 +41,7 @@ public class LectureDetailResponse {
 	private StudentOverviewModel studentOverviewModel;
 	private TeacherOverviewModel teacherOverviewModel;
 
-	public static LectureDetailResponse fromLectureModelForStudent(LectureModel lecture, TeacherModel teacherModel, StudentOverviewModel studentOverviewModel) {
+	public static LectureDetailResponse fromLectureModelForStudent(LectureModel lecture, TeacherModel teacherModel, StudentOverviewModel studentOverviewModel, ClassModel classModel) {
 		return LectureDetailResponse.builder()
 			.lectureId(lecture.getLectureId())
 			.title(lecture.getTitle())
@@ -49,7 +51,8 @@ public class LectureDetailResponse {
 			.fontColor(lecture.getFontColor())
 			.year(lecture.getYear())
 			.semester(lecture.getSemester())
-			.classId(lecture.getClassId())
+			.grade(classModel.getGrade())
+			.classNumber(classModel.getClassNumber())
 			.teacherModel(teacherModel)
 			.schedule(lecture.getSchedule())
 			.notices(lecture.getNotices())
@@ -60,7 +63,7 @@ public class LectureDetailResponse {
 			.build();
 	}
 
-	public static LectureDetailResponse fromLectureModelForTeacher(LectureModel lecture, TeacherModel teacherModel, TeacherOverviewModel teacherOverviewModel) {
+	public static LectureDetailResponse fromLectureModelForTeacher(LectureModel lecture, TeacherModel teacherModel, TeacherOverviewModel teacherOverviewModel, ClassModel classModel) {
 		return LectureDetailResponse.builder()
 			.lectureId(lecture.getLectureId())
 			.title(lecture.getTitle())
@@ -70,7 +73,8 @@ public class LectureDetailResponse {
 			.fontColor(lecture.getFontColor())
 			.year(lecture.getYear())
 			.semester(lecture.getSemester())
-			.classId(lecture.getClassId())
+			.grade(classModel.getGrade())
+			.classNumber(classModel.getClassNumber())
 			.teacherModel(teacherModel)
 			.schedule(lecture.getSchedule())
 			.notices(lecture.getNotices())

@@ -9,7 +9,7 @@ import com.eum.lecture_service.query.document.StudentOverviewModel;
 
 public interface StudentOverviewRepository extends MongoRepository<StudentOverviewModel, String> {
 
-	Optional<StudentOverviewModel> findByStudentIdAndClassId(Long studentId, Long classId);
+	Optional<StudentOverviewModel> findByStudentIdAndLectureId(Long studentId, Long lectureId);
 
-	List<StudentOverviewModel> findByClassId(Long ClassId);
+	List<StudentOverviewModel> findByLectureId(Long lectureId);
 }
