@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
-import { Socket } from 'socket.io-client';
 import base64 from 'react-native-base64';
 import pako from 'pako';
 import { throttle } from 'lodash';
 import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
 import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
-
+import * as StompJs from '@stomp/stompjs';
 interface StudentCanvasSectionProps {
-  socket: Socket;
+  role: string;
+  token: string;
+  clientRef: React.MutableRefObject<StompJs.Client | null>;
+  isConnected: boolean;
+  sendMessage: () => void;
+  receivedMessage: string | null;
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
@@ -38,21 +42,16 @@ const MAX_STACK_SIZE = 5;
 let syncCount = 0;
 let syncMoveCount = 0;
 
-// 압축 전송 함수
-const sendCompressedData = (socket: Socket, event: string, data: any, count: number) => {
-  const compressedData = pako.deflate(JSON.stringify(data));
-  const base64EncodedData = base64.encode(String.fromCharCode(...compressedData));
-  socket.emit(event, base64EncodedData);
-
-  console.log(`[Socket Sync] Event: ${event} | Count: ${count} | Data Length: ${data.length} | Data Sample:`, data[0]);
-};
 
 const StudentRealTimeCanvasSection = ({
-  socket,
+  role,
+  token,
+  clientRef,
   currentPage,
   totalPages,
   onNextPage,
   onPrevPage,
+  receivedMessage,
 }: StudentCanvasSectionProps): React.JSX.Element => {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -66,6 +65,33 @@ const StudentRealTimeCanvasSection = ({
   const [isErasing, setIsErasing] = useState(false);
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
 
+  // 압축 전송
+  const sendCompressedData = (destination: string, data: any, count: number) => {
+    if (!clientRef.current || !clientRef.current.active) {
+      console.log('STOMP client is not connected');
+      return;
+    }
+    const compressedData = pako.deflate(JSON.stringify(data));
+    const base64EncodedData = base64.encode(String.fromCharCode(...compressedData));
+    const newPayload = {
+      memberId: 63,
+      role: role,
+      lessonId: 37,
+      questionId: 1,
+      drawingData: base64EncodedData,
+    };
+
+    clientRef.current.publish({
+      destination,
+      headers: {
+        Authorization: `${token}`,
+      },
+      body: JSON.stringify(newPayload),
+    });
+
+    console.log(`[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`);
+  };
+
   // 화면 전환 토글
   const handleToggleScreen = () => {
     setIsTeacherScreenOn(prev => !prev);
@@ -74,9 +100,9 @@ const StudentRealTimeCanvasSection = ({
   // 실시간 전송 - Move 시
   const throttledSendData = throttle((pathData: PathData) => {
     syncMoveCount += 1;
-    sendCompressedData(socket, 'sync_move', pathData, syncMoveCount);
-    console.log(`[ 학생 Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`, pathData);
-  }, 100000);
+    sendCompressedData('/app/move', pathData, syncMoveCount);
+    console.log(`[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`, pathData);
+  }, 400); // 200ms마다 전송
 
   useEffect(() => {
     syncCount += 1;
@@ -84,9 +110,12 @@ const StudentRealTimeCanvasSection = ({
       ...pathData,
       path: pathData.path.toSVGString(),
     }));
-    sendCompressedData(socket, 'sync', dataToSend, syncCount);
+
+    // STOMP 전송 함수 호출
+    sendCompressedData('/app/draw', dataToSend, syncCount);
     console.log(`[Paths Updated] Sync 전송 횟수: ${syncCount} | paths 개수: ${paths.length}`);
-  }, [paths, socket]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paths, clientRef]);
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1));
@@ -129,7 +158,7 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const undo = () => {
-    if (undoStack.length === 0) return;
+    if (undoStack.length === 0) { return; }
 
     const lastAction = undoStack[undoStack.length - 1];
     setUndoStack(undoStack.slice(0, -1));
@@ -144,7 +173,7 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const redo = () => {
-    if (redoStack.length === 0) return;
+    if (redoStack.length === 0) { return; }
 
     const lastRedoAction = redoStack[redoStack.length - 1];
     setRedoStack(redoStack.slice(0, -1));
@@ -233,7 +262,7 @@ const StudentRealTimeCanvasSection = ({
 
   return (
     <>
-      {isTeacherScreenOn && <StudentRealTimeCanvasRefSection socket={socket} />}
+      {isTeacherScreenOn && <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} />}
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}

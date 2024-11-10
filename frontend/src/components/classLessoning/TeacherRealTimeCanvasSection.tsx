@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
-import { Socket } from 'socket.io-client';
 import base64 from 'react-native-base64';
 import pako from 'pako';
 import { throttle } from 'lodash';
 import TeacherLessoningInteractionTool from './TeacherLessoningInteractionTool';
-
+import * as StompJs from '@stomp/stompjs';
+import simplify from 'simplify-js';
 interface TeacherCanvasSectionProps {
-  socket: Socket;
+  role: string;
+  token: string;
+  clientRef: React.MutableRefObject<StompJs.Client | null>;
+  isConnected: boolean;
+  sendMessage: () => void;
+  receivedMessage: string | null;
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
@@ -37,22 +42,16 @@ const MAX_STACK_SIZE = 5;
 let syncCount = 0;
 let syncMoveCount = 0;
 
-// 압축 전송 함수
-const sendCompressedData = (socket: Socket, event: string, data: any, count: number) => {
-  const compressedData = pako.deflate(JSON.stringify(data));
-  const base64EncodedData = base64.encode(String.fromCharCode(...compressedData));
-  socket.emit(event, base64EncodedData);
-
-  // 전송 로그에 카운터 추가
-  console.log(`[Socket Sync] Event: ${event} | Count: ${count} | Data Length: ${data.length}`);
-};
 
 const TeacherCanvasSection = ({
-  socket,
+  role,
+  token,
+  clientRef,
   currentPage,
   totalPages,
   onNextPage,
   onPrevPage,
+  receivedMessage,
 }: TeacherCanvasSectionProps): React.JSX.Element => {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -67,13 +66,50 @@ const TeacherCanvasSection = ({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
+  const roundToTwoDecimals = (value: number): number => {
+    return Math.round(value * 100) / 100;
+  };
+  useEffect(() => {
+    if (receivedMessage) {
+      // 받은 메시지 처리 로직
+      console.log('Received message in Teacher:', receivedMessage);
+      // 받은 데이터를 처리하거나 화면에 반영할 수 있음
+    }
+  }, [receivedMessage]);
+  // 압축 전송
+  const sendCompressedData = (destination: string, data: any, count: number) => {
+    if (!clientRef.current || !clientRef.current.active) {
+      console.log('STOMP client is not connected');
+      return;
+    }
+
+    const compressedData = pako.deflate(JSON.stringify(data));
+    const base64EncodedData = base64.encode(String.fromCharCode(...compressedData));
+    const newPayload = {
+      memberId: 63,
+      role: role,
+      lessonId: 37,
+      questionId: 1,
+      drawingData: base64EncodedData,
+    };
+
+    clientRef.current.publish({
+      destination,
+      headers: {
+        Authorization: `${token}`,
+      },
+      body: JSON.stringify(newPayload),
+    });
+
+    console.log(`[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`);
+  };
 
   // 실시간 전송 - Move 시
   const throttledSendData = throttle((pathData: PathData) => {
     syncMoveCount += 1;
-    sendCompressedData(socket, 'left_to_right_move', pathData, syncMoveCount);
+    sendCompressedData('/app/move', pathData, syncMoveCount);
     console.log(`[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`, pathData);
-  }, 100); // 100ms마다 전송
+  }, 400); // 200ms마다 전송
 
   useEffect(() => {
     syncCount += 1;
@@ -81,9 +117,12 @@ const TeacherCanvasSection = ({
       ...pathData,
       path: pathData.path.toSVGString(),
     }));
-    sendCompressedData(socket, 'left_to_right', dataToSend, syncCount);
+
+    // STOMP 전송 함수 호출
+    sendCompressedData('/app/draw', dataToSend, syncCount);
     console.log(`[Paths Updated] Sync 전송 횟수: ${syncCount} | paths 개수: ${paths.length}`);
-  }, [paths, socket]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paths, clientRef]);
 
   const togglePenOpacity = () => {
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1));
@@ -136,7 +175,7 @@ const TeacherCanvasSection = ({
   };
 
   const undo = () => {
-    if (undoStack.length === 0) return;
+    if (undoStack.length === 0) { return; }
 
     const lastAction = undoStack[undoStack.length - 1];
     setUndoStack(undoStack.slice(0, -1));
@@ -151,7 +190,7 @@ const TeacherCanvasSection = ({
   };
 
   const redo = () => {
-    if (redoStack.length === 0) return;
+    if (redoStack.length === 0) { return; }
 
     const lastRedoAction = redoStack[redoStack.length - 1];
     setRedoStack(redoStack.slice(0, -1));
@@ -176,7 +215,9 @@ const TeacherCanvasSection = ({
   };
 
   const handleTouchStart = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
+    const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
+
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
@@ -188,22 +229,37 @@ const TeacherCanvasSection = ({
   };
 
   const handleTouchMove = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
+    const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
-      currentPath.lineTo(locationX, locationY);
+      // 현재 경로에 새로운 포인트 추가
+      currentPath.lineTo(
+        Math.round(locationX * 100) / 100, // 좌표 정밀도 소수점 두 자리로 제한
+        Math.round(locationY * 100) / 100
+      );
       canvasRef.current?.redraw();
+
+      // 정밀도가 낮아진 좌표 목록을 PathData로 준비
       const pathData = {
         path: currentPath.toSVGString(),
         color: penColor,
         strokeWidth: penSize,
         opacity: penOpacity,
       };
-      console.log(pathData);
 
-      throttledSendData(pathData); // 실시간 전송 (throttle 적용)
+      // 경로 간소화 알고리즘을 적용하여 불필요한 점을 줄이기
+      const simplifiedPathData = simplify(
+        [{ x: locationX, y: locationY }],
+        0.5, // 간소화 허용 오차
+        true
+      );
+
+      // 간소화된 좌표 목록을 PathData에 추가하여 전송
+      throttledSendData({ ...pathData, path: simplifiedPathData });
+      console.log(`[Simplified Path Data]: ${simplifiedPathData}`);
     }
   };
 
