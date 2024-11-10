@@ -20,7 +20,9 @@ public class HomeworkEventListener {
 
 	private final LectureReadRepository lectureReadRepository;
 
-	@KafkaListener(topics = "homework-create-topic", groupId = "homework-group")
+	@KafkaListener(topics = "homework-create-topic", groupId = "homework-group", properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.homework.HomeworkCreateEvent"
+	})
 	public void handleHomeworkCreate(HomeworkCreateEvent event) {
 		LectureModel lecture = lectureReadRepository.findById(event.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
@@ -30,7 +32,9 @@ public class HomeworkEventListener {
 		lectureReadRepository.save(lecture);
 	}
 
-	@KafkaListener(topics = "homework-update-topic", groupId = "homework-group")
+	@KafkaListener(topics = "homework-update-topic", groupId = "homework-group", properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.homework.HomeworkUpdateEvent"
+	})
 	public void handleHomeworkUpdated(HomeworkUpdateEvent event) {
 		LectureModel lecture = lectureReadRepository.findById(event.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
@@ -42,7 +46,9 @@ public class HomeworkEventListener {
 		lectureReadRepository.save(lecture);
 	}
 
-	@KafkaListener(topics = "homework-delete-topic", groupId = "homework-group")
+	@KafkaListener(topics = "homework-delete-topic", groupId = "homework-group", properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.homework.HomeworkDeleteEvent"
+	})
 	public void handleHomeworkDeleted(HomeworkDeleteEvent event) {
 		LectureModel lecture = lectureReadRepository.findById(event.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
