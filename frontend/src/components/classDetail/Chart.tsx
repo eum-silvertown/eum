@@ -7,6 +7,9 @@ import { Ring } from './Ring';
 import { typography } from '@theme/typography';
 import { getResponsiveSize } from '@utils/responsive';
 import EmptyData from '@components/common/EmptyData';
+import {
+  StudentScoreType,
+} from 'src/services/lectureInformation';
 
 const width = 120;
 const height = 120;
@@ -18,27 +21,22 @@ export const strokeWidth = 15;
 const color = (r: number, g: number, b: number) =>
   `rgb(${r * 255}, ${g * 255}, ${b * 255})`;
 
-type StudentScores = {
-  homeworkScore: number;
-  testScore: number;
-  attitudeScore: number;
-};
 
 type ChartProps = {
-  studentScores?: StudentScores;
+  studentScores?: StudentScoreType;
 };
 
 function Chart({ studentScores }: ChartProps): React.JSX.Element {
   // 점수 데이터가 하나라도 없으면 EmptyData 메시지를 표시
-  const hasScoreData = studentScores?.homeworkScore !== undefined &&
-    studentScores?.testScore !== undefined &&
-    studentScores?.attitudeScore !== undefined;
+  const hasScoreData = studentScores?.homeworkAvgScore !== undefined &&
+    studentScores?.examAvgScore !== undefined &&
+    studentScores?.attitudeAvgScore !== undefined;
 
   const averageScore = hasScoreData
     ? Math.round(
-      ((studentScores?.homeworkScore || 0) +
-        (studentScores?.testScore || 0) +
-        (studentScores?.attitudeScore || 0)) /
+      ((studentScores?.homeworkAvgScore || 0) +
+        (studentScores?.examAvgScore || 0) +
+        (studentScores?.attitudeAvgScore || 0)) /
       3
     )
     : 0;
@@ -46,21 +44,21 @@ function Chart({ studentScores }: ChartProps): React.JSX.Element {
   const rings = hasScoreData
     ? [
       {
-        totalProgress: (studentScores.homeworkScore || 0) / 100,
+        totalProgress: (studentScores.homeworkAvgScore || 0) / 100,
         colors: [color(0.0, 0.9, 0.7), color(0.2, 0.7, 1)],
         background: color(0.02, 0.25, 0.25),
         size: SIZE - strokeWidth * 4,
         label: '숙제',
       },
       {
-        totalProgress: (studentScores.testScore || 0) / 100,
+        totalProgress: (studentScores.examAvgScore || 0) / 100,
         colors: [color(1, 0.8, 0), color(1, 0.6, 0.2)],
         background: color(0.3, 0.2, 0),
         size: SIZE - strokeWidth * 2,
         label: '시험',
       },
       {
-        totalProgress: (studentScores.attitudeScore || 0) / 100,
+        totalProgress: (studentScores.attitudeAvgScore || 0) / 100,
         colors: [color(1, 0.3, 0.4), color(1, 0.5, 0.6)],
         background: color(0.2, 0, 0.1),
         size: SIZE,

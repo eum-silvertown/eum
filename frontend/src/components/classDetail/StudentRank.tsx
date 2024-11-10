@@ -1,28 +1,19 @@
-import {getResponsiveSize} from '@utils/responsive';
+import { getResponsiveSize } from '@utils/responsive';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import PersonIcon from '@assets/icons/personIcon.svg';
-
-interface StudentScore {
-  studentId: number;
-  studentImage: string;
-  studentName: string;
-  studentScores: {
-    homeworkAvgScore: number;
-    testAvgScore: number;
-    attitudeAvgScore: number;
-  };
-}
+import { StudentOverviewType } from 'src/services/lectureInformation';
 
 interface StudentRankProps {
-  studentsInfo: StudentScore[];
+  studentsInfo?: StudentOverviewType[];
   onStudentSelect: (
-    scores: StudentScore['studentScores'],
+    scores: StudentOverviewType['studentScores'],
     name: string,
   ) => void; // 이름도 함께 전달
 }
@@ -33,9 +24,9 @@ const StudentRank = ({
 }: StudentRankProps): React.JSX.Element => {
   const calculateTotalScore = (scores: {
     homeworkAvgScore: number;
-    testAvgScore: number;
+    examAvgScore: number;
     attitudeAvgScore: number;
-  }) => scores.homeworkAvgScore + scores.testAvgScore + scores.attitudeAvgScore;
+  }) => scores.homeworkAvgScore + scores.examAvgScore + scores.attitudeAvgScore;
 
   const rankedStudents = [...studentsInfo].sort(
     (a, b) =>
@@ -51,15 +42,18 @@ const StudentRank = ({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity
             onPress={() =>
               onStudentSelect(item.studentScores, item.studentName)
             }>
             <View style={styles.studentItem}>
               <Text style={styles.rank}>{index + 1}위</Text>
-              <PersonIcon style={styles.studentImage} />
-              {/* <Image source={{ uri: item.studentImage }} style={styles.studentImage} /> */}
+              {item.studentImage ? (
+                <Image source={{ uri: item.studentImage }} style={styles.studentImage} />
+              ) : (
+                <PersonIcon width={32} height={32} style={styles.studentImage} />
+              )}
               <Text style={styles.studentName}>{item.studentName}</Text>
             </View>
           </TouchableOpacity>

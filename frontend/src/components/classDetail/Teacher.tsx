@@ -1,23 +1,23 @@
 import React from 'react';
-import {Text} from '@components/common/Text';
+import { Text } from '@components/common/Text';
 import {
   View,
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import {spacing} from '@theme/spacing';
+import { spacing } from '@theme/spacing';
 import defaultTeacherPhoto from '@assets/images/teacher.png';
 import PencilIcon from '@assets/icons/pencilIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {getResponsiveSize} from '@utils/responsive';
+import { iconSize } from '@theme/iconSize';
+import { getResponsiveSize } from '@utils/responsive';
 
 type TeacherProps = {
   isTeacher: boolean;
   name?: string;
   telephone?: string;
   email?: string;
-  photo?: string;
+  photo?: string | null;
 };
 
 function Teacher({
@@ -27,8 +27,6 @@ function Teacher({
   email = 'teacher@example.com',
   photo,
 }: TeacherProps): React.JSX.Element {
-  console.log(photo);
-
   return (
     <View style={styles.teacher}>
       <View style={styles.header}>
@@ -44,7 +42,7 @@ function Teacher({
       <View style={styles.profileContainer}>
         <View style={styles.photoContainer}>
           <ImageBackground
-            source={defaultTeacherPhoto}
+            source={photo ? { uri: photo } : defaultTeacherPhoto} // photo가 null이면 기본 이미지 사용
             style={styles.photo}
             imageStyle={styles.photoImage}
           />

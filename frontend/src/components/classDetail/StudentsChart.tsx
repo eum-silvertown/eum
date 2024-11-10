@@ -6,6 +6,7 @@ import { Canvas, vec } from '@shopify/react-native-skia';
 import { Ring } from './Ring';
 import { typography } from '@theme/typography';
 import { getResponsiveSize } from '@utils/responsive';
+import { ClassAverageScoresType } from 'src/services/lectureInformation';
 
 const width = 120;
 const height = 120;
@@ -17,14 +18,8 @@ export const strokeWidth = 15;
 const color = (r: number, g: number, b: number) =>
   `rgb(${r * 255}, ${g * 255}, ${b * 255})`;
 
-type ClassAverageScores = {
-  homeworkAvgScore: number;
-  testAvgScore: number;
-  attitudeAvgScore: number;
-};
-
 type ChartProps = {
-  classAverageScores?: ClassAverageScores;
+  classAverageScores?: ClassAverageScoresType;
   studentName?: string;
 };
 
@@ -37,7 +32,7 @@ function StudentsChart({ classAverageScores, studentName }: ChartProps): React.J
 
   const averageScore = Math.round(
     ((classAverageScores?.homeworkAvgScore || 0) +
-      (classAverageScores?.testAvgScore || 0) +
+      (classAverageScores?.examAvgScore || 0) +
       (classAverageScores?.attitudeAvgScore || 0)) / 3
   );
 
@@ -50,7 +45,7 @@ function StudentsChart({ classAverageScores, studentName }: ChartProps): React.J
       label: '숙제',
     },
     {
-      totalProgress: (classAverageScores?.testAvgScore || 0) / 100,
+      totalProgress: (classAverageScores?.examAvgScore || 0) / 100,
       colors: [color(1, 0.8, 0), color(1, 0.6, 0.2)],
       background: color(0.3, 0.2, 0),
       size: SIZE - strokeWidth * 2,
