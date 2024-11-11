@@ -32,6 +32,7 @@ public class LectureDetailResponse {
 	private Long semester;
 	private Long grade;
 	private Long classNumber;
+	private Boolean lectureStatus;
 	private TeacherModel teacherModel;
 	private List<ScheduleInfo> schedule;
 	private List<NoticeInfo> notices;
@@ -52,6 +53,7 @@ public class LectureDetailResponse {
 			.year(lecture.getYear())
 			.semester(lecture.getSemester())
 			.grade(classModel.getGrade())
+			.lectureStatus(lecture.getLectureStatus())
 			.classNumber(classModel.getClassNumber())
 			.teacherModel(teacherModel)
 			.schedule(lecture.getSchedule())
@@ -75,6 +77,7 @@ public class LectureDetailResponse {
 			.semester(lecture.getSemester())
 			.grade(classModel.getGrade())
 			.classNumber(classModel.getClassNumber())
+			.lectureStatus(lecture.getLectureStatus())
 			.teacherModel(teacherModel)
 			.schedule(lecture.getSchedule())
 			.notices(lecture.getNotices())

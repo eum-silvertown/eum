@@ -15,4 +15,6 @@ public interface LectureService {
 	void deleteLecture(Long lectureId);
 
 	Optional<Lecture> getLecture(Long lectureId);
+
+	void switchLecture(Long lectureId, Long memberId);
 }
