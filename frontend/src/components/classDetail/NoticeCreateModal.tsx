@@ -24,7 +24,7 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
     onSuccess: () => {
       console.log('성공적으로 공지사항을 게시했습니다.');
       queryClient.invalidateQueries({
-        queryKey: ['memorizeWordList', lectureId],
+        queryKey: ['lectureDetail', lectureId],
       });
       closeAll();
     },
@@ -48,7 +48,7 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
   };
 
   return (
-    <View>
+    <>
       <View style={[styles.titleContainer]}>
         <Text variant="subtitle" weight="bold">
           제목
@@ -74,7 +74,7 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
           게시
         </Text>
       </TouchableOpacity>
-    </View>
+    </>
   );
 };
 
