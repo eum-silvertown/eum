@@ -1,17 +1,19 @@
 package com.eum.todo_service.domain.todo.entity;
 
+import com.eum.todo_service.domain.todo.dto.TodoRequest;
 import com.eum.todo_service.global.common.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor
 @Table(name = "todos")
 public class Todo extends BaseEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -29,5 +31,23 @@ public class Todo extends BaseEntity {
 
     @Column(name = "isDone", nullable = false)
     private Boolean isDone;
+
+    @Builder
+    public Todo(Long memberId, String title, String content, Integer priority) {
+        this.memberId = memberId;
+        this.title = title;
+        this.content = content;
+        this.priority = priority;
+        this.isDone = false;
+    }
+
+    public static Todo from(TodoRequest todoRequest, Long memberId) {
+        return Todo.builder()
+                .memberId(memberId)
+                .title(todoRequest.getTitle())
+                .content(todoRequest.getContent())
+                .priority(todoRequest.getPriority())
+                .build();
+    }
 
 }
