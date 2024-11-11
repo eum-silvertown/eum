@@ -25,4 +25,6 @@ public interface UserService {
     ImageResponse updateMemberProfile(Long memberId);
 
     MemberInfoResponse getMemberInfo(Long memberId, Role role);
+
+    void deleteMemberImage(Long memberId);
 }
