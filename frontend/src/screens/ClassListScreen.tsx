@@ -18,8 +18,11 @@ import {
   LectureListItemType,
   getLectureList,
 } from '@services/lectureInformation';
+import BookModal from '@components/common/BookModal';
+import {useBookModalStore} from '@store/useBookModalStore';
 
 function ClassListScreen(): React.JSX.Element {
+  const bookPosition = useBookModalStore(state => state.bookPosition);
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
   );
@@ -68,43 +71,45 @@ function ClassListScreen(): React.JSX.Element {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <ScreenInfo title="수업" />
-        <TouchableOpacity
-          onPress={() => {
-            open(<AddLectureModal />, {
-              title: '수업 생성',
-              onClose: () => {
-                console.log('수업 생성 모달 종료');
-              },
-            });
-          }}>
-          <AddCircleIcon width={iconSize.lg} height={iconSize.lg} />
-        </TouchableOpacity>
-      </View>
+    <>
+      {bookPosition && <BookModal />}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <ScreenInfo title="수업" />
+          <TouchableOpacity
+            onPress={() => {
+              open(<AddLectureModal />, {
+                title: '수업 생성',
+                onClose: () => {
+                  console.log('수업 생성 모달 종료');
+                },
+              });
+            }}>
+            <AddCircleIcon width={iconSize.lg} height={iconSize.lg} />
+          </TouchableOpacity>
+        </View>
 
-      <View style={styles.classListContainer}>
-        {/* filter 영역을 우측 상단에 배치 */}
-        <View style={styles.filter}>
-          <Picker
-            selectedValue={selectedYear}
-            onValueChange={itemValue => setSelectedYear(itemValue)}
-            style={styles.picker}>
-            <Picker.Item label="연도 선택" value="" />
-            {years.map(year => (
-              <Picker.Item key={year} label={`${year}`} value={year} />
-            ))}
-          </Picker>
+        <View style={styles.classListContainer}>
+          {/* filter 영역을 우측 상단에 배치 */}
+          <View style={styles.filter}>
+            <Picker
+              selectedValue={selectedYear}
+              onValueChange={itemValue => setSelectedYear(itemValue)}
+              style={styles.picker}>
+              <Picker.Item label="연도 선택" value="" />
+              {years.map(year => (
+                <Picker.Item key={year} label={`${year}`} value={year} />
+              ))}
+            </Picker>
 
-          <Picker
-            selectedValue={selectedSemester}
-            onValueChange={itemValue => setSelectedSemester(itemValue)}
-            style={styles.picker}>
-            <Picker.Item label="학기 선택" value={0} />
-            <Picker.Item label="1학기" value={1} />
-            <Picker.Item label="2학기" value={2} />
-          </Picker>
+            <Picker
+              selectedValue={selectedSemester}
+              onValueChange={itemValue => setSelectedSemester(itemValue)}
+              style={styles.picker}>
+              <Picker.Item label="학기 선택" value={0} />
+              <Picker.Item label="1학기" value={1} />
+              <Picker.Item label="2학기" value={2} />
+            </Picker>
 
           <TouchableOpacity
             onPress={handleCurrentSemester}
@@ -132,6 +137,7 @@ function ClassListScreen(): React.JSX.Element {
         </View>
       </View>
     </View>
+    </>
   );
 }
 

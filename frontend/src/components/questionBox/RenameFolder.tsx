@@ -11,24 +11,27 @@ import {useState} from 'react';
 import {Pressable, StyleSheet, TextInput, View} from 'react-native';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {colors} from 'src/hooks/useColors';
-import {renameFolder} from 'src/services/questionBox';
+import {renameFolder, renameQuestion} from 'src/services/questionBox';
 
 interface RenameFolderProp {
   item: QuestionBoxType;
 }
 
-function RenameFolder({item}: RenameFolderProp): React.JSX.Element {
+function RenameFile({item}: RenameFolderProp): React.JSX.Element {
   const {close} = useModalContext();
   const renameItem = useQuestionExplorerStore(state => state.renameItem);
-  const [folderName, setFolderName] = useState(item.title);
+  const [fileName, setFileName] = useState(item.title);
 
   const onChangeText = (inputText: string) => {
-    setFolderName(inputText);
+    setFileName(inputText);
   };
 
   const onPress = async () => {
     try {
-      const newTitle = await renameFolder(item.id, folderName);
+      const newTitle =
+        item.type === 'folder'
+          ? await renameFolder(item.id, fileName)
+          : await renameQuestion(item.id, fileName);
       renameItem(item.id, newTitle);
       close();
     } catch (error) {
@@ -40,7 +43,7 @@ function RenameFolder({item}: RenameFolderProp): React.JSX.Element {
     <View style={styles.container}>
       <TextInput
         onChangeText={onChangeText}
-        value={folderName}
+        value={fileName}
         placeholder="이름을 입력하세요."
         keyboardType="default"
         style={styles.input}
@@ -57,7 +60,7 @@ function RenameFolder({item}: RenameFolderProp): React.JSX.Element {
   );
 }
 
-export default RenameFolder;
+export default RenameFile;
 
 const styles = StyleSheet.create({
   container: {

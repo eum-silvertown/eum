@@ -1,8 +1,9 @@
 import {Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import UpArrowIcon from '@assets/icons/backArrowIcon.svg';
-import SearchIcon from '@assets/icons/searchIcon.svg';
+// import SearchIcon from '@assets/icons/searchIcon.svg';
 import AddFolderIcon from '@assets/icons/addFolderIcon.svg';
+import AddQuestionIcon from '@assets/icons/addQuestionIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import BreadCrumb from '@components/questionBox/BreadCrumb';
 import {spacing} from '@theme/spacing';
@@ -13,6 +14,7 @@ import {borderWidth} from '@theme/borderWidth';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
+import CreateQuestionModal from './CreateQuestionModal';
 
 function FolderHeader(): React.JSX.Element {
   const currentHistoryIndex = useQuestionExplorerStore(
@@ -24,10 +26,17 @@ function FolderHeader(): React.JSX.Element {
     useQuestionExplorerStore();
   const {open} = useModal();
 
-  const openModal = () => {
+  const openFolderCreateModal = () => {
     open(<CreateFolder />, {
       title: '폴더 생성',
       size: 'xs',
+    });
+  };
+
+  const openQuestionCreateModal = () => {
+    open(<CreateQuestionModal />, {
+      title: '문제 생성',
+      size: 'md',
     });
   };
 
@@ -75,12 +84,23 @@ function FolderHeader(): React.JSX.Element {
       <BreadCrumb />
 
       <View style={styles.rightIcons}>
-        <SearchIcon width={iconSize.md} height={iconSize.md} />
+        {/* 검색 아이콘 */}
+        {/* <SearchIcon width={iconSize.md} height={iconSize.md} /> */}
         <TouchableOpacity
           onPress={() => {
-            openModal();
+            openFolderCreateModal();
           }}>
           <AddFolderIcon width={iconSize.md} height={iconSize.md} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            openQuestionCreateModal();
+          }}>
+          <AddQuestionIcon
+            width={iconSize.md}
+            height={iconSize.md}
+            color={colors.light.background.main}
+          />
         </TouchableOpacity>
       </View>
     </View>
