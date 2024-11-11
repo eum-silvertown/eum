@@ -31,10 +31,8 @@ public class SavedFile extends BaseEntity {
     private String content;
     private String answer;
 
-    public void update(String title, String content, String answer) {
+    public void updateTitle(String title) {
         this.title = title;
-        this.content = content;
-        this.answer = answer;
     }
 
     public void moveFolder(Folder folder) {
