@@ -40,6 +40,8 @@ function LoginScreen(): React.JSX.Element {
   const [password, setPassword] = useState('');
   const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
 
+  const [loginErrorText, setLoginErrorText] = useState('');
+
   useFocusEffect(
     React.useCallback(() => {
       // 화면이 포커스될 때마다 id와 password 상태 초기화
@@ -51,7 +53,7 @@ function LoginScreen(): React.JSX.Element {
   useEffect(() => {
     const initializeAuth = async () => {
       const autoLoginEnabled = await getAutoLoginStatus();
-      
+
       if (autoLoginEnabled) {
         try {
           // 리프레시 토큰을 사용해 새 액세스 토큰을 요청
@@ -61,7 +63,7 @@ function LoginScreen(): React.JSX.Element {
 
           // 유저 정보 불러오기 및 상태에 저장
           await getUserInfo();
-          
+
           navigation.navigate('HomeScreen');
         } catch (error) {
           console.log('Token refresh error:', error);
@@ -79,6 +81,11 @@ function LoginScreen(): React.JSX.Element {
   }, []);
 
   const handleLogin = async () => {
+    if (!id || !password) {
+      setLoginErrorText('아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+
     try {
       const response = await logIn({id, password});
 
@@ -87,7 +94,13 @@ function LoginScreen(): React.JSX.Element {
       navigation.navigate('HomeScreen');
 
       setCurrentScreen('HomeScreen');
-    } catch (error) {
+    } catch (error: any) {
+      // 에러 메시지를 string으로 변환하여 상태에 설정
+      if (error?.message) {
+        setLoginErrorText(error.message);
+      } else {
+        setLoginErrorText('로그인에 실패했습니다. 다시 시도해주세요.');
+      }
       console.log(error);
     }
   };
@@ -119,13 +132,19 @@ function LoginScreen(): React.JSX.Element {
           <InputField
             label="아이디"
             value={id}
-            onChangeText={setId}
+            onChangeText={text => {
+              setId(text);
+              setLoginErrorText(''); 
+            }}
             placeholder="아이디를 입력해주세요."
           />
           <InputField
             label="비밀번호"
             value={password}
-            onChangeText={setPassword}
+            onChangeText={text => {
+              setPassword(text);
+              setLoginErrorText(''); 
+            }}
             placeholder="비밀번호를 입력해주세요."
             secureTextEntry={!passwordVisible}
             iconComponent={
@@ -139,6 +158,8 @@ function LoginScreen(): React.JSX.Element {
               )
             }
             onIconPress={() => setPasswordVisible(!passwordVisible)}
+            status="error"
+            statusText={loginErrorText}
           />
           <View style={styles.checkboxContainer}>
             <TouchableOpacity
