@@ -36,6 +36,12 @@ public class SavedFileServiceImpl implements SavedFileService {
         Folder parentFolder = folderRepository.findById(requestDTO.getFolderId())
                 .orElseThrow(() -> new FolderException(ErrorCode.FOLDER_NOT_FOUND_ERROR));
 
+        for (SavedFile file : parentFolder.getSavedFiles()) {
+            if(file.getTitle().equals(requestDTO.getTitle())) {
+                throw new FolderException(ErrorCode.FILE_ALREADY_EXISTS_ERROR);
+            }
+        }
+
         SavedFile file = requestDTO.from(parentFolder);
 
         SavedFile savedFile = savedFileRepository.save(file);
@@ -49,6 +55,12 @@ public class SavedFileServiceImpl implements SavedFileService {
     public SavedFileDetailResponseDTO modifySavedFile(SavedFileModifyRequestDTO requestDTO) {
         SavedFile savedFile = savedFileRepository.findById(requestDTO.getFileId())
                 .orElseThrow(() -> new FolderException(ErrorCode.FILE_NOT_FOUND_ERROR));
+
+        for(SavedFile file : savedFile.getFolder().getSavedFiles()) {
+            if(file.getTitle().equals(requestDTO.getTitle()) && !file.getId().equals(requestDTO.getFileId())) {
+                throw new FolderException(ErrorCode.FILE_ALREADY_EXISTS_ERROR);
+            }
+        }
 
         savedFile.update(requestDTO.getTitle(), requestDTO.getContent(), requestDTO.getAnswer());
         return SavedFileDetailResponseDTO.of(savedFile);
@@ -77,6 +89,13 @@ public class SavedFileServiceImpl implements SavedFileService {
 
         Folder newParentFolder = folderRepository.findById(requestDTO.getToId())
                 .orElseThrow(() -> new FolderException(ErrorCode.FOLDER_NOT_FOUND_ERROR));
+
+        for(SavedFile file : newParentFolder.getSavedFiles()) {
+            if(file.getTitle().equals(savedFile.getTitle())) {
+                throw new FolderException(ErrorCode.FILE_ALREADY_EXISTS_ERROR);
+            }
+        }
+        
         newParentFolder.addSavedFile(savedFile);
 
         savedFile.moveFolder(newParentFolder);

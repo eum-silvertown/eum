@@ -19,6 +19,7 @@ public enum ErrorCode {
 
     // File(Question)
     FILE_NOT_FOUND_ERROR("Q001", "해당 파일을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    FILE_ALREADY_EXISTS_ERROR("Q002", "해당 파일이 이미 존재합니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;
