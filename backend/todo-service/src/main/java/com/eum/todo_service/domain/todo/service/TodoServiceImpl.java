@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,11 +47,12 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public TodoListResponse getTodoList(Long memberId) {
-       List<Todo> todoList = todoRepository.findByMemberId(memberId);
-       List<TodoResponse> responseList = todoList.stream()
-               .map(TodoResponse::from)
-               .collect(Collectors.toList());
-        return TodoListResponse.from(responseList);
+       List<Todo> todoList = todoRepository.findByMemberIdOrderByPriorityAndUpdatedAtDesc(memberId);
+        Map<Boolean, List<TodoResponse>> partitionedResponses = todoList.stream()
+                .map(TodoResponse::from)
+                .collect(Collectors.partitioningBy(TodoResponse::getIsDone));
+
+        return TodoListResponse.from(partitionedResponses.get(true), partitionedResponses.get(false));
     }
 
     @Override

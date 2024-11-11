@@ -9,16 +9,22 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class TodoListResponse {
-    private List<TodoResponse> todoResponseList;
+    private List<TodoResponse> completedTodoResponseList;
+    private List<TodoResponse> notCompletedTodoResponseList;
 
     @Builder
-    public TodoListResponse(List<TodoResponse> todoResponseList) {
-        this.todoResponseList = todoResponseList;
+    public TodoListResponse(List<TodoResponse> completedTodoResponseList
+            , List<TodoResponse> notCompletedTodoResponseList) {
+        this.completedTodoResponseList = completedTodoResponseList;
+        this.notCompletedTodoResponseList = notCompletedTodoResponseList;
     }
 
-    public static TodoListResponse from(List<TodoResponse> todoResponseList) {
+    public static TodoListResponse from(List<TodoResponse> completedTodoResponseList,
+                                        List<TodoResponse> notCompletedTodoResponseList) {
         return TodoListResponse.builder()
-                .todoResponseList(todoResponseList)
+                .completedTodoResponseList(completedTodoResponseList)
+                .notCompletedTodoResponseList(notCompletedTodoResponseList)
                 .build();
+
     }
 }

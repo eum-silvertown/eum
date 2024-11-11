@@ -16,16 +16,18 @@ public class TodoResponse {
     private String content;
     private Integer priority;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private Boolean isDone;
 
     @Builder
-    public TodoResponse(Long id, String title, String content,
-                        Integer priority, LocalDateTime createdAt, Boolean isDone) {
+    public TodoResponse(Long id, String title, String content, Integer priority,
+                        LocalDateTime createdAt,LocalDateTime updatedAt, Boolean isDone) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.priority = priority;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.isDone = isDone;
     }
 
@@ -36,6 +38,7 @@ public class TodoResponse {
                 .content(todo.getContent())
                 .priority(todo.getPriority())
                 .createdAt(todo.getCreatedAt())
+                .updatedAt(todo.getUpdatedAt())
                 .isDone(todo.getIsDone())
                 .build();
 
