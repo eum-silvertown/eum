@@ -2,11 +2,10 @@ package com.eum.notification_service.config.firebase;
 
 import java.io.FileInputStream;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.eum.notification_service.config.exception.ErrorCode;
-import com.eum.notification_service.config.exception.EumException;
+import com.eum.notification_service.common.exception.ErrorCode;
+import com.eum.notification_service.common.exception.EumException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
