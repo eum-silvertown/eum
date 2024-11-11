@@ -6,6 +6,8 @@ from config import config  # 설정 가져오기
 from s3_service import S3Service  # S3Service 가져오기
 import anthropic
 import re
+import logging
+import traceback
 
 class PDFConverterService:
     def __init__(self):
@@ -14,44 +16,51 @@ class PDFConverterService:
         self.claude_key = config.ANTHROPIC_API_KEY
         self.s3_service = S3Service()  # S3Service 인스턴스 생성
         self.client = anthropic.Anthropic(api_key=self.claude_key)
+        self.logger = logging.getLogger(__name__)
 
     def convert_pdf_from_s3(self, presigned_url):
-        # S3 presigned URL을 통해 PDF 파일 다운로드
-        response = requests.get(presigned_url)
-        if response.status_code != 200:
-            raise Exception("Failed to download PDF file from S3")
+        try:
+            # S3 presigned URL을 통해 PDF 파일 다운로드
+            response = requests.get(presigned_url)
+            self.logger.info("Downloading PDF from S3 URL: %s", presigned_url)
+            
+            if response.status_code != 200:
+                self.logger.error("Failed to download PDF file from S3, Status Code: %s", response.status_code)
+                raise Exception("Failed to download PDF file from S3")
+            
+            # 임시 파일에 PDF 저장
+            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
+                temp_pdf.write(response.content)
+                temp_pdf_path = temp_pdf.name
+            
+            self.logger.info("PDF downloaded successfully to temp path: %s", temp_pdf_path)
 
-        # 임시 파일에 PDF 저장
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_pdf:
-            temp_pdf.write(response.content)
-            temp_pdf_path = temp_pdf.name
+            # Mathpix API 옵션 설정
+            options = {
+                "conversion_formats": {"docx": True, "tex.zip": True},
+                "math_inline_delimiters": ["$", "$"],
+                "rm_spaces": True
+            }
 
-        # Mathpix API 옵션 설정
-        options = {
-            "conversion_formats": {"docx": True, "tex.zip": True},
-            "math_inline_delimiters": ["$", "$"],
-            "rm_spaces": True
-        }
+            # Mathpix API 요청
+            with open(temp_pdf_path, "rb") as pdf_file:
+                r = requests.post(
+                    "https://api.mathpix.com/v3/pdf",
+                    headers={"app_id": self.app_id, "app_key": self.app_key},
+                    data={"options_json": json.dumps(options)},
+                    files={"file": pdf_file}
+                )
 
-        # Mathpix API 요청
-        with open(temp_pdf_path, "rb") as pdf_file:
-            r = requests.post("https://api.mathpix.com/v3/pdf",
-                              headers={
-                                  "app_id": self.app_id,
-                                  "app_key": self.app_key
-                              },
-                              data={
-                                  "options_json": json.dumps(options)
-                              },
-                              files={
-                                  "file": pdf_file
-                              }
-                              )
+            if r.status_code != 200:
+                self.logger.error("Mathpix API request failed, Status Code: %s, Response: %s", r.status_code, r.text)
+                raise Exception("Mathpix API request failed: " + r.text)
 
-        if r.status_code != 200:
-            raise Exception("Mathpix API request failed: " + r.text)
+            self.logger.info("Mathpix API request successful")
+            return r.json()
         
-        return r.json()  # JSON 형태로 반환 (pdf_id 포함)
+        except Exception as e:
+            self.logger.error("Error in convert_pdf_from_s3: %s", traceback.format_exc())
+            raise e
 
     def check_status(self, pdf_id):
         # Mathpix API로 PDF 변환 상태 확인
