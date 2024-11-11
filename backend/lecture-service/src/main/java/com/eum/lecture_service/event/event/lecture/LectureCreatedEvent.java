@@ -30,6 +30,7 @@ public class LectureCreatedEvent {
 	private Long classId;
 	private Long teacherId;
 	private List<LectureScheduleDto> schedule;
+	private Boolean lectureStatus;
 
 	public LectureCreatedEvent(Lecture lecture) {
 		this.lectureId = lecture.getLectureId();
@@ -42,6 +43,7 @@ public class LectureCreatedEvent {
 		this.semester = lecture.getSemester();
 		this.teacherId = lecture.getTeacherId();
 		this.classId = lecture.getClassId();
+		this.lectureStatus = lecture.getLectureStatus();
 		this.schedule = lecture.getLectureSchedules().stream()
 			.map(s -> new LectureScheduleDto(s.getDay(), s.getPeriod()))
 			.collect(Collectors.toList());

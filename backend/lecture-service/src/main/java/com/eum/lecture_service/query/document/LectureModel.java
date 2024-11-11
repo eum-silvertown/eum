@@ -37,6 +37,7 @@ public class LectureModel {
 	private Long semester;
 	private Long classId;
 	private Long teacherId;
+	private Boolean lectureStatus;
 	private List<ScheduleInfo> schedule = new ArrayList<>();
 	private List<NoticeInfo> notices = new ArrayList<>();
 	private List<ExamInfo> exams = new ArrayList<>();

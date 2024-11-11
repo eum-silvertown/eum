@@ -34,6 +34,7 @@ public class LectureCreateDto {
 			.subject(subject)
 			.backgroundColor(backgroundColor)
 			.fontColor(fontColor)
+			.lectureStatus(false)
 			.year(year)
 			.semester(semester)
 			.build();
