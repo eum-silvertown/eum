@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import {Text} from '@components/common/Text';
 import ContentLayout from './ContentLayout';
@@ -8,6 +8,7 @@ import {iconSize} from '@theme/iconSize';
 import Todo from './Todo';
 import AddTodoModal from './AddTodoModal';
 import {useModal} from 'src/hooks/useModal';
+import {getTodos} from '@services/todoService';
 
 interface TodoType {
   id: number;
@@ -19,51 +20,38 @@ interface TodoType {
 }
 
 export default function TodoList(): React.JSX.Element {
-  const [todoList, setTodoList] = useState([]);
-
-  const todos = [
-    {title: '응애', importance: 3, description: '할일 내용1'},
-    {title: '하자', importance: 1, description: '할일 내용2'},
+  const [todoList, setTodoList] = useState<TodoType[]>([
     {
-      title: '일하자일하자일하자일하자',
-      importance: 0,
-      description: '할일 내용3',
+      id: 1,
+      title: '테스트투두1',
+      content: '테스트투투 내용1',
+      prioirty: 1,
+      updatedAt: '2024-11-10',
+      isDone: true,
     },
     {
-      title: '일하자일하자일하자일하자',
-      importance: 2,
-      description:
-        '할일 내용fkdslfdslakmfklasmfklasklfmdasmlfadsmlfmdlasmlfdaskmladskldakslklsda',
+      id: 2,
+      title: '테스트투두2',
+      content: '테스트투투 내용2',
+      prioirty: 4,
+      updatedAt: '2024-11-09',
+      isDone: false,
     },
-    {title: '응애', importance: 3, description: '할일 내용1'},
-    {title: '하자', importance: 1, description: '할일 내용2'},
-    {
-      title: '일하자일하자일하자일하자',
-      importance: 0,
-      description: '할일 내용3',
-    },
-    {
-      title: '일하자일하자일하자일하자',
-      importance: 2,
-      description:
-        '할일 내용fkdslfdslakmfklasmfklasklfmdasmlfadsmlfmdlasmlfdaskmladskldakslklsda',
-    },
-    {title: '응애', importance: 3, description: '할일 내용1'},
-    {title: '하자', importance: 1, description: '할일 내용2'},
-    {
-      title: '일하자일하자일하자일하자',
-      importance: 0,
-      description: '할일 내용3',
-    },
-    {
-      title: '일하자일하자일하자일하자',
-      importance: 2,
-      description:
-        '엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용엄청긴 할일 내용',
-    },
-  ];
-
+  ]);
   const {open} = useModal();
+
+  const loadTodos = async () => {
+    try {
+      const todos = await getTodos();
+      setTodoList(todos);
+    } catch (error) {
+      console.error('투두 리스트를 가져오는 중 오류 발생:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadTodos();
+  }, []);
 
   return (
     <ContentLayout flex={2}>
@@ -73,21 +61,30 @@ export default function TodoList(): React.JSX.Element {
         </Text>
         <TouchableOpacity
           onPress={() => {
-            open(<AddTodoModal />, {
-              title: '해야할 일 리스트',
+            open(<AddTodoModal onTodoListUpdate={loadTodos} />, {
+              title: '할 일 생성',
               onClose: () => {
-                console.log('해야할 일 리스트 Closed!');
+                console.log('할 일 생성 Closed!');
               },
             });
           }}>
           <AddCircleIcon width={iconSize.lg} height={iconSize.lg} />
         </TouchableOpacity>
       </View>
-      <ScrollView>
-        {todoList.map((item, index) => (
-          <Todo key={index} item={item} />
-        ))}
-      </ScrollView>
+      {todoList.length === 0 ? (
+        <View style={styles.emptyMessageContainer}>
+          <Text variant="body" weight="medium">
+            할 일이 없습니다.
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+        showsVerticalScrollIndicator={false}>
+          {todoList.map(item => (
+            <Todo key={item.id} item={item} onEdit={loadTodos}/>
+          ))}
+        </ScrollView>
+      )}
     </ContentLayout>
   );
 }
@@ -99,5 +96,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     marginBottom: spacing.md,
+  },
+  emptyMessageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
   },
 });

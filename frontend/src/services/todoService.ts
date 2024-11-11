@@ -20,13 +20,12 @@ export const getTodos = async (): Promise<any> => {
 };
 
 // Todo 생성
-export const createTodo = async (
-  todoId: number,
+export const createTodo = async (  
   todoItem: TodoDataType,
 ): Promise<any> => {
   try {
     const response = await authApiClient.post(
-      `/todo-service/${todoId}`,
+      `/todo-service`,
       todoItem,
     );
 
@@ -39,7 +38,7 @@ export const createTodo = async (
 };
 
 // Todo 수정
-export const editTodo = async (
+export const updateTodo = async (
   todoId: number,
   todoItem: TodoDataType,
 ): Promise<any> => {
@@ -76,7 +75,7 @@ export const toggleTodo = async (
   status: boolean,
 ): Promise<any> => {
   try {
-    // const response = await authApiClient.patch(`/todo-service/${todoId}`);
+    const response = await authApiClient.patch(`/todo-service/${todoId}`, {status});
   } catch (error) {
     console.log('Todo 상태 토글 실패', error);
     throw error;
