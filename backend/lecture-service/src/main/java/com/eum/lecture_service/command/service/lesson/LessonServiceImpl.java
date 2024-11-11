@@ -2,10 +2,12 @@ package com.eum.lecture_service.command.service.lesson;
 
 import java.util.List;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eum.lecture_service.command.dto.lesson.LessonDto;
+import com.eum.lecture_service.command.entity.exam.Exam;
 import com.eum.lecture_service.command.entity.homework.HomeworkQuestion;
 import com.eum.lecture_service.command.entity.lecture.Lecture;
 import com.eum.lecture_service.command.entity.lesson.Lesson;
@@ -14,6 +16,9 @@ import com.eum.lecture_service.command.repository.lecture.LectureRepository;
 import com.eum.lecture_service.command.repository.lesson.LessonRepository;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
+import com.eum.lecture_service.event.event.exam.ExamCreateEvent;
+import com.eum.lecture_service.event.event.lesson.LessonCreateEvent;
+import com.eum.lecture_service.event.event.lesson.LessonDeleteEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +28,7 @@ public class LessonServiceImpl implements LessonService {
 
 	private final LectureRepository lectureRepository;
 	private final LessonRepository lessonRepository;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
 	@Transactional
@@ -48,8 +54,11 @@ public class LessonServiceImpl implements LessonService {
 			savedLesson.getLessonQuestions().add(lessonQuestion);
 		}
 
+		publishLessonCreateEvent(savedLesson, lessonDto.getQuestionIds());
+
 		return savedLesson.getLessonId();
 	}
+
 
 	@Override
 	@Transactional
@@ -89,6 +98,26 @@ public class LessonServiceImpl implements LessonService {
 		Lesson lesson = lessonRepository.findById(lessonId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
+		publishLessonDeleteEvent(lesson);
+
 		lessonRepository.delete(lesson);
+	}
+
+	private void publishLessonDeleteEvent(Lesson lesson) {
+		LessonDeleteEvent event = new LessonDeleteEvent(
+			lesson.getLecture().getLectureId(),
+			lesson.getLessonId()
+		);
+		kafkaTemplate.send("lesson-delete-event", event);
+	}
+
+	private void publishLessonCreateEvent(Lesson savedLesson, List<Long> lessonQuestions) {
+		LessonCreateEvent event = new LessonCreateEvent(
+			savedLesson.getLessonId(),
+			savedLesson.getLecture().getLectureId(),
+			savedLesson.getTitle(),
+			lessonQuestions
+		);
+		kafkaTemplate.send("lesson-create-topic", event);
 	}
 }

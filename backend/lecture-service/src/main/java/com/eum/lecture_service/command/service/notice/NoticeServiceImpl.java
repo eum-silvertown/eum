@@ -2,6 +2,8 @@ package com.eum.lecture_service.command.service.notice;
 
 import java.util.Optional;
 
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,8 @@ import com.eum.lecture_service.command.repository.lecture.LectureRepository;
 import com.eum.lecture_service.command.repository.notice.NoticeRepository;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
+import com.eum.lecture_service.event.event.notice.NoticeCreateEvent;
+import com.eum.lecture_service.event.event.notice.NoticeDeletedEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +25,7 @@ public class NoticeServiceImpl implements NoticeService{
 
 	private final NoticeRepository noticeRepository;
 	private final LectureRepository lectureRepository;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
 	@Transactional
@@ -29,6 +34,10 @@ public class NoticeServiceImpl implements NoticeService{
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
 		Notice notice = noticeDto.toNoticeEntity(lecture);
+
+		NoticeCreateEvent event = new NoticeCreateEvent(notice);
+		kafkaTemplate.send("notice-create-topic", event);
+
 		noticeRepository.save(notice);
 	}
 
@@ -54,7 +63,17 @@ public class NoticeServiceImpl implements NoticeService{
 		Notice notice = noticeRepository.findById(noticeId)
 			.orElseThrow(() -> new EumException(ErrorCode.NOTICE_NOT_FOUND));
 
+		makeNoticeDeleteEvent(notice);
+
 		noticeRepository.delete(notice);
+	}
+
+	private void makeNoticeDeleteEvent(Notice notice) {
+		NoticeDeletedEvent event = NoticeDeletedEvent.builder()
+			.lectureId(notice.getLecture().getLectureId())
+			.noticeId(notice.getNoticeId())
+			.build();
+		kafkaTemplate.send("notice-delete-topic", event);
 	}
 
 	@Override
