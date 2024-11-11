@@ -1,5 +1,11 @@
 import React, {useState, useRef} from 'react';
-import {StyleSheet, View, TouchableOpacity, Animated, Pressable} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Animated,
+  Alert,
+} from 'react-native';
 import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
@@ -12,24 +18,39 @@ import DeleteIcon from '@assets/icons/cancelIcon.svg';
 import {colors} from 'src/hooks/useColors';
 import {iconSize} from '@theme/iconSize';
 
+import {toggleTodo, updateTodo, deleteTodo} from '@services/todoService';
+import {getResponsiveSize} from '@utils/responsive';
+import {useModal} from 'src/hooks/useModal';
+import AddTodoModal from './AddTodoModal';
+
 interface TodoProps {
   item: {
+    id: number;
     title: string;
-    importance: number;
-    description: string;
-    completed?: boolean;
+    prioirty: number;
+    content: string;
+    isDone: boolean;
+    updatedAt: string;
   };
   onToggleComplete?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export default function Todo({item}: TodoProps): React.JSX.Element {
+export default function Todo({
+  item,
+  onToggleComplete,
+  onEdit,
+  onDelete,
+}: TodoProps): React.JSX.Element {
+  const {open} = useModal();
   const [expanded, setExpanded] = useState(false);
-  const [completed, setCompleted] = useState(item.completed || false);
+  const [isDone, setIsDone] = useState(item.isDone || false);
   const animatedHeight = useRef(new Animated.Value(0)).current;
 
   // 중요도에 따른 체크박스 색상 설정 함수
-  const getCheckBoxColor = (importance: number) => {
-    switch (importance) {
+  const getCheckBoxColor = (prioirty: number) => {
+    switch (prioirty) {
       case 1:
         return '#4CAF50'; // 중요도 1 (보통 중요도)
       case 2:
@@ -43,14 +64,55 @@ export default function Todo({item}: TodoProps): React.JSX.Element {
   const toggleAccordion = () => {
     setExpanded(!expanded);
     Animated.timing(animatedHeight, {
-      toValue: expanded ? 0 : 100,
+      toValue: expanded ? 0 : getResponsiveSize(30),
       duration: 300,
       useNativeDriver: false,
     }).start();
   };
 
-  const handleToggleComplete = () => {
-    setCompleted(!completed);
+  const handleToggleComplete = async () => {
+    try {
+      const newIsDone = !isDone;
+      await toggleTodo(item.id, newIsDone);
+      setIsDone(newIsDone);
+      if (onToggleComplete) onToggleComplete();
+    } catch (error) {
+      Alert.alert('할 일 완료 토글을 실패하였습니다.');
+    }
+  };
+
+  const handleEdit = () => {
+    if (onEdit) onEdit();
+    open(
+      <AddTodoModal
+        isEditMode={true}
+        todo={item} // 현재 투두 아이템 전달
+        onTodoListUpdate={onEdit} // 수정 후 리스트 갱신을 위해 onEdit 전달
+      />,
+      {title: '할 일 수정'},
+    );
+  };
+
+  const handleDelete = () => {
+    open(
+      <View style={{alignItems: 'center'}}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={async () => {
+            try {
+              await deleteTodo(item.id);
+              if (onDelete) onDelete();
+            } catch (error) {
+              Alert.alert('할 일 삭제를 실패하였습니다.');
+            }
+          }}>
+          <Text align="center" weight="bold" color="white">
+            삭제
+          </Text>
+        </TouchableOpacity>
+      </View>,
+      {title: ' 정말 삭제 하시겠습니까? '},
+    );
   };
 
   const spin = animatedHeight.interpolate({
@@ -78,22 +140,23 @@ export default function Todo({item}: TodoProps): React.JSX.Element {
 
         <View style={styles.optionContainer}>
           <CheckBox
-          
             style={styles.optionIcon}
-            value={completed}
+            value={isDone}
             onValueChange={handleToggleComplete}
             tintColors={{
-              true: getCheckBoxColor(item.importance),
-              false: getCheckBoxColor(item.importance),
+              true: getCheckBoxColor(item.prioirty),
+              false: getCheckBoxColor(item.prioirty),
             }}
           />
 
           {expanded && (
             <>
-              <TouchableOpacity style={styles.optionIcon}>
+              <TouchableOpacity style={styles.optionIcon} onPress={handleEdit}>
                 <EditIcon width={iconSize.md} height={iconSize.md} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.optionIcon}>
+              <TouchableOpacity
+                style={styles.optionIcon}
+                onPress={handleDelete}>
                 <DeleteIcon width={iconSize.sm} height={iconSize.sm} />
               </TouchableOpacity>
             </>
@@ -107,7 +170,7 @@ export default function Todo({item}: TodoProps): React.JSX.Element {
           {height: animatedHeight},
           {marginVertical: animatedMargin},
         ]}>
-        <Text variant="caption">{item.description}</Text>
+        <Text variant="caption">{item.content}</Text>
       </Animated.View>
     </TouchableOpacity>
   );
@@ -147,7 +210,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingHorizontal: spacing.lg,
   },
-  optionIcon: {    
+  optionIcon: {
     padding: spacing.sm,
+  },
+  button: {
+    alignItems: 'center',
+    width: '20%',
+    backgroundColor: colors.light.background.danger,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: borderRadius.md,
   },
 });
