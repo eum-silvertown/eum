@@ -373,7 +373,6 @@ const AddLectureModal = (): React.JSX.Element => {
                     <Picker.Item label="11교시" value="11교시" />
                     <Picker.Item label="12교시" value="12교시" />
                     <Picker.Item label="13교시" value="13교시" />
-                    <Picker.Item label="14교시" value="14교시" />
                   </Picker>
                   <TouchableOpacity onPress={() => handleRemoveSchedule(index)}>
                     <CancelIcon width={iconSize.xs} height={iconSize.xs} />
