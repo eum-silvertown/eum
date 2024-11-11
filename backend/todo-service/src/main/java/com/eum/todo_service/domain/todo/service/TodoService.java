@@ -7,4 +7,6 @@ public interface TodoService {
     TodoResponse createNewTodo(Long memberId, TodoRequest todoRequest);
 
     TodoResponse updateTodo(Long memberId, Long todoId, TodoRequest todoRequest);
+
+    TodoResponse deleteTodo(Long memberId, Long todoId);
 }

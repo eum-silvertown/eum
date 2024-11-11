@@ -29,5 +29,12 @@ public class TodoController {
         return CommonResponse.success(todoResponse, "todo 갱신에 성공했습니다.");
     }
 
+    @DeleteMapping("/{todoId}")
+    public CommonResponse<?> deleteTodo(@RequestHeader(value = "X-MEMBER-ID",required = false) String memberId,
+                                        @PathVariable Long todoId) {
+        TodoResponse todoResponse = todoService.deleteTodo(Long.valueOf(memberId),todoId);
+        return CommonResponse.success(todoResponse, "todo 갱신에 성공했습니다.");
+    }
+
 
 }

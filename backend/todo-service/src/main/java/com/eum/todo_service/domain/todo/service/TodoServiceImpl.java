@@ -34,4 +34,15 @@ public class TodoServiceImpl implements TodoService {
         todo.updateTodo(todoRequest);
         return null;
     }
+
+    @Override
+    public TodoResponse deleteTodo(Long memberId, Long todoId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new EumException(ErrorCode.TODO_NOT_FOUND));
+        if(todo.getMemberId() != memberId){
+            throw new EumException(ErrorCode.USER_NOT_AUTHORIZED);
+        }
+        todoRepository.delete(todo);
+        return null;
+    }
 }
