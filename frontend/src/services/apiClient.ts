@@ -12,6 +12,7 @@ const publicApiClient = axios.create({
 // 인증이 필요한 요청용 클라이언트
 const authApiClient = axios.create({
   baseURL: baseURL,
+  timeout: 20000,
 });
 
 // 요청 인터셉터
