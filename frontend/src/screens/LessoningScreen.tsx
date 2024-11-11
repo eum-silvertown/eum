@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, StyleSheet, Text, Button} from 'react-native';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
 import StudentRealTimeCanvasSection from '@components/classLessoning/StudentRealTimeCanvasSection';
-import { useAuthStore } from '@store/useAuthStore';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { getResponsiveSize } from '@utils/responsive';
+import {useAuthStore} from '@store/useAuthStore';
+import {useFocusEffect} from '@react-navigation/native';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {getResponsiveSize} from '@utils/responsive';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
+import NetInfo from '@react-native-community/netinfo';
 
 function LessoningScreen(): React.JSX.Element {
   const userInfo = useAuthStore(state => state.userInfo);
@@ -30,7 +31,6 @@ function LessoningScreen(): React.JSX.Element {
   const isTeacher = userInfo.role === 'TEACHER';
   const questionId = 1;
   console.log('당신은 선생인가', isTeacher);
-
 
   // STOMP 클라이언트 초기화 및 설정
   useEffect(() => {
@@ -62,9 +62,29 @@ function LessoningScreen(): React.JSX.Element {
           console.log(`Subscribed to student topic: ${studentTopic}`);
         }
       },
-      onDisconnect: () => {
+      onDisconnect: frame => {
         console.log('STOMP client disconnected');
         setIsConnected(false);
+
+        // 끊김 이유 로그 추가
+        if (frame?.body) {
+          console.error('Disconnection Frame Body:', frame.body);
+        } else {
+          console.warn('Disconnected without additional information.');
+        }
+
+        // 네트워크 상태 확인
+        NetInfo.fetch().then(state => {
+          if (!state.isConnected) {
+            console.warn(
+              'No internet connection - possibly the reason for disconnection',
+            );
+          } else {
+            console.log(
+              'Internet connection is active - checking for other issues',
+            );
+          }
+        });
       },
       onWebSocketError: error => {
         console.error('WebSocket Error:', error);
@@ -79,7 +99,6 @@ function LessoningScreen(): React.JSX.Element {
     // STOMP 클라이언트 활성화
     client.activate();
     clientRef.current = client; // 클라이언트 인스턴스를 useRef에 저장
-
 
     return () => {
       console.log('Deactivating STOMP client...');
@@ -117,7 +136,6 @@ function LessoningScreen(): React.JSX.Element {
     `그림과 같이 양수 $t$ 에 대하여 곡선 $y = e^{x} - 1$ 이 두 직선 $y = t$, $y = 5t$ 와 만나는 점을 각각 $\\mathrm{A}$, $\\mathrm{B}$ 라 하고, 점 $B$ 에서 $x$ 축에 내린 수선의 발을 $C$ 라 하자. 삼각형 $ \\mathrm{ACB} $ 의 넓이를 $S(t)$ 라 할 때, $\\lim_{t \\rightarrow 0+} \\frac{S(t)}{t^{2}}$ 의 값을 구하시오.
     `,
   ];
-
 
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -166,9 +184,8 @@ function LessoningScreen(): React.JSX.Element {
             style={[
               styles.connectionChip,
               // eslint-disable-next-line react-native/no-inline-styles
-              { backgroundColor: isConnected ? 'green' : 'red' },
-            ]}
-          >
+              {backgroundColor: isConnected ? 'green' : 'red'},
+            ]}>
             <Text style={styles.connectionChipText}>
               {isConnected ? 'Connected' : 'Not connected'}
             </Text>
@@ -219,9 +236,8 @@ function LessoningScreen(): React.JSX.Element {
         style={[
           styles.connectionChip,
           // eslint-disable-next-line react-native/no-inline-styles
-          { backgroundColor: isConnected ? 'green' : 'red' },
-        ]}
-      >
+          {backgroundColor: isConnected ? 'green' : 'red'},
+        ]}>
         <Text style={styles.connectionChipText}>
           {isConnected ? 'Connected' : 'Not connected'}
         </Text>

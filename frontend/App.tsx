@@ -1,4 +1,5 @@
 import {NavigationContainer} from '@react-navigation/native';
+import {navigationRef} from '@services/NavigationService';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {ScreenType} from '@store/useCurrentScreenStore';
@@ -95,7 +96,7 @@ function App(): React.JSX.Element {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <MainLayout>
           <Stack.Navigator
             screenOptions={{
