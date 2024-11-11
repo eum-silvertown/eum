@@ -5,10 +5,20 @@ import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
-import {LectureListItemType} from '@services/lectureInformation';
+
+type LectureItemType = {
+  title: string;
+  subject: string;
+  backgroundColor: string;
+  fontColor: string;
+  grade: number;
+  classNumber: number;
+  teacherName?: string;
+  lecturePeriod?: number;
+};
 
 interface LectureProps {
-  item: LectureListItemType;
+  item: LectureItemType;
 }
 
 export default function LectureCreateBook({
@@ -52,14 +62,14 @@ export default function LectureCreateBook({
                 {item.subject}
               </Text>
               <View style={{alignItems: 'flex-end'}}>
-                {/* <View style={styles.chip}>
+                <View style={styles.chip}>
                   <Text variant="caption" color="white" weight="bold">
-                    {item.}-{item.classNumber}
+                    {item.grade}-{item.classNumber}
                   </Text>
                 </View>
                 <Text style={{color: item.fontColor}} weight="bold">
                   {item.teacherName} 선생님
-                </Text> */}
+                </Text>
               </View>
             </View>
           </View>
