@@ -1,5 +1,6 @@
 package com.eum.todo_service.domain.todo.service;
 
+import com.eum.todo_service.domain.todo.dto.TodoListResponse;
 import com.eum.todo_service.domain.todo.dto.TodoRequest;
 import com.eum.todo_service.domain.todo.dto.TodoResponse;
 import com.eum.todo_service.domain.todo.entity.Todo;
@@ -9,6 +10,11 @@ import com.eum.todo_service.global.exception.EumException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,5 +49,14 @@ public class TodoServiceImpl implements TodoService {
             throw new EumException(ErrorCode.USER_NOT_AUTHORIZED);
         }
         todoRepository.delete(todo);
+    }
+
+    @Override
+    public TodoListResponse getTodoList(Long memberId) {
+       List<Todo> todoList = todoRepository.findByMemberId(memberId);
+       List<TodoResponse> responseList = todoList.stream()
+               .map(TodoResponse::from)
+               .collect(Collectors.toList());
+        return TodoListResponse.from(responseList);
     }
 }

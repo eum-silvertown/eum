@@ -1,5 +1,6 @@
 package com.eum.todo_service.domain.todo.controller;
 
+import com.eum.todo_service.domain.todo.dto.TodoListResponse;
 import com.eum.todo_service.domain.todo.dto.TodoRequest;
 import com.eum.todo_service.domain.todo.dto.TodoResponse;
 import com.eum.todo_service.domain.todo.service.TodoService;
@@ -34,6 +35,12 @@ public class TodoController {
                                         @PathVariable Long todoId) {
         todoService.deleteTodo(Long.valueOf(memberId),todoId);
         return CommonResponse.success("todo 삭제에 성공했습니다.");
+    }
+
+    @GetMapping
+    public CommonResponse<?> getTodoList(@RequestHeader(value = "X-MEMBER-ID",required = false) String memberId) {
+        TodoListResponse todoListResponse = todoService.getTodoList(Long.valueOf(memberId));
+        return CommonResponse.success(todoListResponse, "todo 조회에 성공했습니다.");
     }
 
 
