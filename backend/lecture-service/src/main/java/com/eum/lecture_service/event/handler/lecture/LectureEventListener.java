@@ -57,6 +57,7 @@ public class LectureEventListener {
 			.year(event.getYear())
 			.semester(event.getSemester())
 			.teacherId(event.getTeacherId())
+			.lectureStatus(event.getLectureStatus())
 			.classId(event.getClassId())
 			.schedule(event.getSchedule().stream()
 				.map(s -> ScheduleInfo.builder()

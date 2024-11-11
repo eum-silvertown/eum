@@ -61,6 +61,9 @@ public class Lecture extends BaseEntity {
 	@Column(name = "semester", nullable = false)
 	private Long semester;
 
+	@Column(name = "lecture_status", nullable = false)
+	private Boolean lectureStatus = false;
+
 	@OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<LectureSchedule> lectureSchedules = new ArrayList<>();
 

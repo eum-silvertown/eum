@@ -25,6 +25,7 @@ public class LectureListResponse {
 	private Long semester;
 	private Long grade;
 	private Long classNumber;
+	private Boolean lectureStatus;
 	private TeacherModel teacher;
 	private List<String> scheduleDays;
 	private Long lecture_period;
@@ -41,6 +42,7 @@ public class LectureListResponse {
 			.semester(lecture.getSemester())
 			.grade(classModel.getGrade())
 			.classNumber(classModel.getClassNumber())
+			.lectureStatus(lecture.getLectureStatus())
 			.teacher(teacher)
 			.scheduleDays(lecture.getSchedule().stream()
 				.map(ScheduleInfo::getDay)
