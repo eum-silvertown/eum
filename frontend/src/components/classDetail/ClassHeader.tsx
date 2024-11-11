@@ -16,16 +16,16 @@ type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type ClassHeaderProps = {
   isTeacher: boolean;
-  lectureId?: number;
-  title?: string;
-  subtitle?: string;
-  schedule?: {day: string; period: number}[];
-  semester?: number;
-  grade?: number;
-  classNumber?: number;
-  backgroundColor?: string;
-  fontColor?: string;
-  pastTeacherName?: string;
+  lectureId: number;
+  title: string;
+  subtitle: string;
+  schedule: {day: string; period: number}[];
+  semester: number;
+  grade: number;
+  classNumber: number;
+  backgroundColor: string;
+  fontColor: string;
+  pastTeacherName: string;
 };
 
 function ClassHeader({
@@ -60,7 +60,7 @@ function ClassHeader({
           text: '삭제',
           onPress: () => {
             console.log('삭제 확정');
-            deleteMutation(lectureId!);
+            deleteMutation(lectureId);
           },
           style: 'destructive',
         },
@@ -83,10 +83,10 @@ function ClassHeader({
           onPress: () =>
             open(
               <UpdateLectureModal
-                lectureId={lectureId!}
-                grade={grade!}
-                classNumber={classNumber!}
-                pastTeacherName={pastTeacherName!}
+                lectureId={lectureId}
+                grade={grade}
+                classNumber={classNumber}
+                pastTeacherName={pastTeacherName}
               />,
               {
                 title: '수업 수정',
