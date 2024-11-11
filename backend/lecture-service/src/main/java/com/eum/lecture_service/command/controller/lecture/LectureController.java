@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.eum.lecture_service.command.dto.lecture.LectureCreateDto;
 import com.eum.lecture_service.command.dto.lecture.LectureDto;
 import com.eum.lecture_service.command.service.lecture.LectureService;
 import com.eum.lecture_service.common.RoleType;
@@ -29,7 +30,7 @@ public class LectureController {
 	@PostMapping
 	public CommonResponse<?> createLecture(@RequestHeader("X-MEMBER-ID") Long memberId,
 		@RequestHeader("X-MEMBER-ROLE") String role,
-		@RequestBody LectureDto lectureDto) {
+		@RequestBody LectureCreateDto lectureDto) {
 		try {
 			RoleType roleType = RoleType.fromString(role);
 			if (roleType == RoleType.STUDENT) {
