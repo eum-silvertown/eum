@@ -1,7 +1,6 @@
 import {authApiClient, publicApiClient} from '@services/apiClient';
 import {setToken, getToken, clearToken} from '@utils/secureStorage';
 import {useAuthStore} from '@store/useAuthStore';
-import axios from 'axios';
 
 interface LoginCredentials {
   id: string;
@@ -50,6 +49,7 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
     const response = await publicApiClient.post('/user/sign-in', credentials);
 
     await setToken(response.data.data.tokenResponse);
+
     console.log(response.data.data.tokenResponse.accessToken);
 
     const authStore = useAuthStore.getState();
@@ -118,15 +118,16 @@ export const refreshAuthToken = async (): Promise<any> => {
     const Tokens = await getToken();
 
     const refreshToken = Tokens.refreshToken;
+        
     if (!refreshToken) throw new Error('No refresh token available');
-
+    console.log('저장된 리프레쉬 토큰', refreshToken);
     const response = await publicApiClient.post('/user/access', {refreshToken});
 
     await setToken(response.data.data);
 
     return response.data.accessToken;
   } catch (error) {
-    console.log('리프레시 토큰 갱신 에러');
+    console.log('리프레시 토큰 갱신 에러', error);
     return Promise.reject(handleApiError(error));
   }
 };
@@ -173,7 +174,7 @@ export const signOut = async (): Promise<any> => {
   try {
     const response = await authApiClient.delete('/user/info');
     console.log('회원탈퇴 성공', response.data.data);
-    
+
     await clearToken();
 
     // 로그인 상태를 false로 설정
