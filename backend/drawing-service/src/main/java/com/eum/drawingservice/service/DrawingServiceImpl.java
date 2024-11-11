@@ -1,6 +1,7 @@
 package com.eum.drawingservice.service;
 
 import com.eum.drawingservice.dto.DrawingRequestDTO;
+import com.eum.drawingservice.dto.DrawingResponseDTO;
 import com.eum.drawingservice.entity.Drawing;
 import com.eum.drawingservice.repository.DrawingRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,15 @@ public class DrawingServiceImpl implements DrawingService {
         }
 
         drawingRepository.save(existingDrawing);
+    }
+
+    @Override
+    public DrawingResponseDTO getTeacherDrawingData(Long teacherId, Long lessonId, Long questionId) {
+        Drawing drawing = drawingRepository.findByMemberIdAndLessonIdAndQuestionId(
+            String.valueOf(teacherId),
+            String.valueOf(lessonId),
+            String.valueOf(questionId)).orElse(null);
+
+        return drawing == null ? null : DrawingResponseDTO.of(drawing);
     }
 }

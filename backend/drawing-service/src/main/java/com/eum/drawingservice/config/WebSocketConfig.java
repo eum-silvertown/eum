@@ -34,29 +34,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/drawing")
                 .setAllowedOriginPatterns("*");
     }
-
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String memberId = accessor.getFirstNativeHeader("X-MEMBER-ID");
-                    String memberRole = accessor.getFirstNativeHeader("X-MEMBER-ROLE");
-
-                    if (memberId != null && memberRole != null) {
-                        accessor.setUser(new Principal() {
-                            @Override
-                            public String getName() {
-                                return memberId;
-                            }
-                        });
-                        accessor.setNativeHeader("role", memberRole);
-                    }
-                }
-                return message;
-            }
-        });
-    }
 }
