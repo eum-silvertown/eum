@@ -35,8 +35,8 @@ public class NoticeController {
 			if (roleType == RoleType.STUDENT) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
-			noticeService.createNotice(noticeDto);
-			return CommonResponse.success("공지사항 생성 성공");
+			Long noticeId = noticeService.createNotice(noticeDto);
+			return CommonResponse.success(noticeId, "공지사항 생성 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		} catch (Exception e) {
