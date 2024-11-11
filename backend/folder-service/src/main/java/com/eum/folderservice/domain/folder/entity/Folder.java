@@ -41,15 +41,29 @@ public class Folder extends BaseEntity {
 
     public void addChildFolder(Folder folder) {
         this.subFolders.add(folder);
-        this.childrenCount = (long) this.subFolders.size();
+        this.childrenCount = getNewChildCount();
     }
 
     public void removeChildFolder(Folder folder) {
         this.subFolders.remove(folder);
-        this.childrenCount = (long) this.subFolders.size();
+        this.childrenCount = getNewChildCount();
+    }
+
+    public void addSavedFile(SavedFile savedFile) {
+        this.savedFiles.add(savedFile);
+        this.childrenCount = getNewChildCount();
+    }
+
+    public void removeSavedFile(SavedFile savedFile) {
+        this.savedFiles.remove(savedFile);
+        this.childrenCount = getNewChildCount();
     }
 
     public void modifyTitle(String title) {
         this.title = title;
+    }
+
+    private long getNewChildCount() {
+        return (long) this.subFolders.size() + (long) this.savedFiles.size();
     }
 }
