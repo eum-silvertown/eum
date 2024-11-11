@@ -32,7 +32,7 @@ public class TodoServiceImpl implements TodoService {
             throw new EumException(ErrorCode.USER_NOT_AUTHORIZED);
         }
         todo.updateTodo(todoRequest);
-        return null;
+        return TodoResponse.from(todo);
     }
 
     @Override
