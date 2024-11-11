@@ -89,4 +89,12 @@ public interface UserApiDocumentation {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     CommonResponse<?> updateMemberProfileImage(String memberId);
+
+    @Operation(summary = "프로필 사진 삭제", description = "사용자의 프로필 사진을 삭제합니다")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로필 사진 삭제 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 유저 입니다"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    CommonResponse<?> deleteMemberProfileImage(String memberId);
 }

@@ -40,6 +40,14 @@ public class FileServiceImpl implements FileService{
         return ImageResponse.from(url,key);
     }
 
+    @Override
+    public void deleteImage(String imageName) {
+        if (amazonS3.doesObjectExist(bucket, imageName)) {
+            // 동일한 이름의 파일이 존재하면 삭제
+            amazonS3.deleteObject(bucket, imageName);
+        }
+    }
+
     private GeneratePresignedUrlRequest getGeneratePresignedUrlForRead(String bucket, String key) {
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, key)
                 .withMethod(HttpMethod.GET)
@@ -54,10 +62,7 @@ public class FileServiceImpl implements FileService{
     }
 
     private GeneratePresignedUrlRequest getGeneratePresignedUrlForUpload(String bucket, String key) {
-        if (amazonS3.doesObjectExist(bucket, key)) {
-            // 동일한 이름의 파일이 존재하면 삭제
-            amazonS3.deleteObject(bucket, key);
-        }
+        deleteImage(key);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, key)
                 .withMethod(HttpMethod.PUT)

@@ -173,6 +173,17 @@ public class UserServiceImpl implements UserService {
         return MemberInfoResponse.from(member, classInfoResponse, imageResponse);
     }
 
+    @Override
+    @Transactional
+    public void deleteMemberImage(Long memberId) {
+        Member member = userRepository.findById(memberId)
+                .orElseThrow(() -> new EumException(ErrorCode.USER_NOT_FOUND));
+        if(member.getImage() != null) {
+            fileService.deleteImage(member.getImage());
+        }
+        member.updateUserImage(null);
+    }
+
     private ClassInfoResponse getClassInfoResponseByRole(Long memberId, Role role) {
         if (role.equals(Role.TEACHER)) {
             ClassInfo classInfo = classInfoRepository.findByTeacherId(memberId)
