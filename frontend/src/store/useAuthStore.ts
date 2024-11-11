@@ -43,7 +43,7 @@ const initialUserInfo: UserInfo = {
   },
   birth: '',
   image: null,
-  role: ''
+  role: '',
 };
 
 export const useAuthStore = create<AuthState>(set => ({

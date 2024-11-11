@@ -158,7 +158,6 @@ export type LectureDetailType = {
   teacherOverviewModel: TeacherOverviewType | null;
 };
 
-
 // 수업 상세 조회 함수
 export const getLectureDetail = async (
   lectureId: number,
@@ -167,7 +166,7 @@ export const getLectureDetail = async (
 
   try {
     // 변경된 API 호출을 통해 데이터를 받아옴
-    const { data } = await authApiClient.get<{
+    const {data} = await authApiClient.get<{
       status: string;
       data: LectureDetailType;
       message: string;
@@ -184,7 +183,6 @@ export const getLectureDetail = async (
     throw error;
   }
 };
-
 
 // 수업 수정용 조회 함수
 export type ToUpdateLectureResponse = {
@@ -236,7 +234,7 @@ export type LectureListResponse = {
   message: string;
 };
 
-// 수업 리스트 조회 함수
+// 수업 리스트
 export const getLectureList = async (): Promise<LectureListItemType[]> => {
   console.log('수업 리스트 조회 요청');
   try {
@@ -246,6 +244,43 @@ export const getLectureList = async (): Promise<LectureListItemType[]> => {
     return data.data; // data 필드에 수업 리스트 배열이 포함되어 있음
   } catch (error) {
     console.error('수업 리스트 조회 실패:', error);
+    throw error;
+  }
+};
+
+// 수업 생성
+export type CreateLectureRequest = {
+  title: string;
+  subject: string;
+  introduction: string;
+  backgroundColor: string;
+  fontColor: string;
+  school: string;
+  grade: number;
+  classNumber: number;
+  year: number;
+  semester: number;
+  schedule: LectureScheduleType[];
+};
+
+export type CreateLectureResponse = {
+  lectureId: number;
+};
+
+export const postCreateLecture = async (
+  createData: CreateLectureRequest,
+): Promise<CreateLectureResponse> => {
+  console.log('수업 생성 요청:', createData);
+  try {
+    const {data} = await authApiClient.post<ApiResponse<CreateLectureResponse>>(
+      '/lecture',
+      createData,
+    );
+
+    console.log('수업 생성 응답:', data);
+    return data.data;
+  } catch (error) {
+    console.error('수업 생성 실패:', error);
     throw error;
   }
 };
