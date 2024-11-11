@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/todo")
-public class TodoController {
+public class TodoController implements TodoApiDocumentation{
 
     private final TodoService todoService;
 
