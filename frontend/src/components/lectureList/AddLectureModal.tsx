@@ -21,8 +21,12 @@ import {getResponsiveSize} from '@utils/responsive';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import StatusMessage from '@components/account/StatusMessage';
 import {useModalContext} from 'src/contexts/useModalContext';
-
-interface AddLectureModalProps {}
+import {useAuthStore} from '@store/useAuthStore';
+import {
+  CreateLectureRequest,
+  postCreateLecture,
+} from '@services/lectureInformation';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 interface Schedule {
   day: string;
@@ -35,20 +39,23 @@ interface LectureProps {
     subject: string;
     backgroundColor: string;
     fontColor: string;
-    grade: string;
-    classNumber: string;
+    grade: number;
+    classNumber: number;
     teacherName?: string;
     lecturePeriod?: number;
   };
 }
 
-const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
+const AddLectureModal = (): React.JSX.Element => {
+  const userInfo = useAuthStore(state => state.userInfo);
+  const school = userInfo.classInfo.school;
+
   const {close} = useModalContext();
   const [title, setTitle] = useState('');
   const [subjects, setSubjects] = useState('');
   const [introduction, setIntroduction] = useState('');
-  const [year, setYear] = useState('');
-  const [semester, setSemester] = useState('');
+  const [year, setYear] = useState(0);
+  const [semester, setSemester] = useState(0);
   const [coverColor, setCoverColor] = useState('#2E2559');
   const [fontColor, setFontColor] = useState('#FFFFFF');
   const [isColorPickerVisible, setColorPickerVisible] = useState(false);
@@ -57,15 +64,15 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
   const [schedules, setSchedules] = useState<Schedule[]>([
     {day: '', period: ''},
   ]);
-  const [grade, setGrade] = useState('');
-  const [classNumber, setClassNumber] = useState('');
+  const [grade, setGrade] = useState(0);
+  const [classNumber, setClassNumber] = useState(0);
   const [lecturePreview, setLecturePreview] = useState<LectureProps['item']>({
     title: '제목 없음',
     subject: '과목 없음',
     backgroundColor: '#FFFFFF',
     fontColor: '#000000',
-    grade: '1',
-    classNumber: '1',
+    grade: 1,
+    classNumber: 1,
     teacherName: '예시 선생님', // 기본값을 설정
   });
   // 에러 메시지 상태 추가
@@ -74,12 +81,28 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
   const [introductionError, setIntroductionError] = useState('');
   const [gradeError, setGradeError] = useState('');
   const [scheduleError, setScheduleError] = useState('');
+  const queryClient = useQueryClient();
+
+  const {mutate: createLecture} = useMutation({
+    mutationFn: (newLectureData: CreateLectureRequest) =>
+      postCreateLecture(newLectureData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['lectureList'],
+      });
+      Alert.alert('수업이 성공적으로 생성되었습니다.');
+      close(); // 성공 시 모달 닫기
+    },
+    onError: () => {
+      Alert.alert('다시 시도해주세요'); // 실패 시 알림
+    },
+  });
 
   useEffect(() => {
     const currentYear = new Date().getFullYear().toString();
     const currentSemester = new Date().getMonth() < 6 ? '1' : '2';
-    setYear(currentYear);
-    setSemester(currentSemester);
+    setYear(Number(currentYear));
+    setSemester(Number(currentSemester));
   }, []);
 
   const openColorPicker = (pickerType: 'cover' | 'font') => {
@@ -152,7 +175,7 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
       setIntroductionError('수업 소개를 입력해주세요.');
       isValid = false;
     }
-    if (!grade.trim() || !classNumber.trim()) {
+    if (!grade || !classNumber) {
       setGradeError('학급 정보를 선택해주세요.');
       isValid = false;
     }
@@ -177,7 +200,9 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
       introduction,
       backgroundColor: coverColor,
       fontColor,
-      classId: parseInt(classNumber, 10) || 0, // 클래스 정보가 숫자로 필요하다면 파싱
+      school,
+      grade,
+      classNumber,
       year,
       semester,
       schedule: schedules.map(item => ({
@@ -185,9 +210,8 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
         period: parseInt(item.period, 10), // period도 숫자로 파싱
       })),
     };
-
+    createLecture(lectureData);
     console.log('LectureCreateBook Data:', lectureData); // 콘솔에 JSON 데이터 출력
-    close();
   };
 
   useEffect(() => {
@@ -196,8 +220,8 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
       subject: subjects || '과목 없음',
       backgroundColor: coverColor || '#FFFFFF',
       fontColor: fontColor || '#000000',
-      grade: grade || '1',
-      classNumber: classNumber || '1',
+      grade: grade || 1,
+      classNumber: classNumber || 1,
     });
   }, [title, subjects, coverColor, fontColor, grade, classNumber]);
 
@@ -342,6 +366,14 @@ const AddLectureModal = ({}: AddLectureModalProps): React.JSX.Element => {
                     <Picker.Item label="4교시" value="4교시" />
                     <Picker.Item label="5교시" value="5교시" />
                     <Picker.Item label="6교시" value="6교시" />
+                    <Picker.Item label="7교시" value="7교시" />
+                    <Picker.Item label="8교시" value="8교시" />
+                    <Picker.Item label="9교시" value="9교시" />
+                    <Picker.Item label="10교시" value="10교시" />
+                    <Picker.Item label="11교시" value="11교시" />
+                    <Picker.Item label="12교시" value="12교시" />
+                    <Picker.Item label="13교시" value="13교시" />
+                    <Picker.Item label="14교시" value="14교시" />
                   </Picker>
                   <TouchableOpacity onPress={() => handleRemoveSchedule(index)}>
                     <CancelIcon width={iconSize.xs} height={iconSize.xs} />
