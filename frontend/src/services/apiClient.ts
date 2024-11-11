@@ -16,6 +16,7 @@ const publicApiClient = axios.create({
 
 const authApiClient = axios.create({
   baseURL: baseURL,
+  timeout: 20000,
 });
 
 authApiClient.interceptors.request.use(async config => {

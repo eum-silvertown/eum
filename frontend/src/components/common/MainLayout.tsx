@@ -21,7 +21,6 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
   const sidebarWidthAnim = useRef(
     new Animated.Value(isExpanded ? 17.5 : 5),
   ).current;
-  const bookPosition = useBookModalStore(state => state.bookPosition);
 
   // 현재 스크린
   const currentScreen = useCurrentScreenStore(state => state.currentScreen);
@@ -59,10 +58,7 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
             <Sidebar />
           </Animated.View>
         )}
-        <View style={styles.contentWrapper}>
-          {bookPosition && <BookModal />}
-          {children}
-        </View>
+        <View style={styles.contentWrapper}>{children}</View>
       </View>
       <Modals />
     </>

@@ -19,6 +19,7 @@ function BookModal(): React.JSX.Element {
     state => state.setContainerPosition,
   );
   const isBookOpened = useBookModalStore(state => state.isBookOpened);
+  const setIsBookOpened = useBookModalStore(state => state.setIsBookOpened);
   const bookPosition = useBookModalStore(state => state.bookPosition);
   const bookInfo = useBookModalStore(state => state.bookInfo);
   const clearBookPosition = useBookModalStore(state => state.clearBookPosition);
@@ -157,6 +158,16 @@ function BookModal(): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 페이지 벗어날 때 상태 관리 초기화
+  useEffect(() => {
+    return () => {
+      clearBookInfo();
+      clearBookPosition();
+      setIsBookOpened(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!bookPosition || !bookInfo) {
     return <></>;
   }
@@ -190,7 +201,7 @@ function BookModal(): React.JSX.Element {
           width: '100%',
           height: '100%',
         }}>
-        {renderDetail && <ClassDetailScreen lectureId={bookInfo.lectureId}/>}
+        {renderDetail && <ClassDetailScreen lectureId={bookInfo.lectureId} />}
       </View>
       <Animated.View style={[bookStyles]}>
         <View style={styles.bookContainer}>
