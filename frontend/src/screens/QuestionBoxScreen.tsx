@@ -75,14 +75,10 @@ function QuestionBoxScreen(): React.JSX.Element {
             <Pressable
               key={index}
               onPress={() => {
-                if (item.type === 'folder') {
-                  folderPressHandler(item);
-                }
+                folderPressHandler(item);
               }}
               onLongPress={() => {
-                if (item.type === 'folder') {
-                  folderLongPressHandler(item);
-                }
+                folderLongPressHandler(item);
               }}
               style={styles.fileItem}>
               <FileContainer file={item} />

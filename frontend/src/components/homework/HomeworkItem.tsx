@@ -1,6 +1,6 @@
 import {StyleSheet, View} from 'react-native';
 import {Text} from '../common/Text';
-import {HomeworkType} from '@screens/HomeworkScreen';
+import {HomeworkType} from '@screens/homework/HomeworkScreen';
 import {spacing} from '@theme/spacing';
 import ListItemContainer from '../common/ListItemContainer';
 import {iconSize} from '@theme/iconSize';
