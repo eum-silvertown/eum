@@ -83,11 +83,17 @@ export const signUp = async (userData: SignupCredentials): Promise<any> => {
     const response = await publicApiClient.post('/user/sign-up', userData);
 
     // 회원가입 성공 시 토큰을 저장하고 로그인 상태로 전환
-    const tokenData = response.data;
+
+    console.log('회원가입 성공 메세지', response.data.data);
+
+    const tokenData = response.data.data.tokenResponse;
     await setToken({
       accessToken: tokenData.accessToken,
       refreshToken: tokenData.refreshToken,
     });
+
+    console.log('회원가입 후 저장된 토큰 확인', getToken());
+
     // 로그인 상태를 true로 설정
     useAuthStore.getState().setIsLoggedIn(true);
     return response.data;
@@ -165,8 +171,17 @@ export const changePassword = async (password: string): Promise<any> => {
 // 회원 탈퇴
 export const signOut = async (): Promise<any> => {
   try {
-    return await authApiClient.delete('/user/info');
+    const response = await authApiClient.delete('/user/info');
+    console.log('회원탈퇴 성공', response.data.data);
+    
+    await clearToken();
+
+    // 로그인 상태를 false로 설정
+    useAuthStore.getState().setIsLoggedIn(false);
+
+    return response;
   } catch (error) {
+    console.log('회원탈퇴 실패', error);
     return Promise.reject(handleApiError(error));
   }
 };
