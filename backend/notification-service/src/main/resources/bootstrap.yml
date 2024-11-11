@@ -3,9 +3,9 @@ spring:
     config:
       uri: http://config-service:8888  # Config 서버 URI
       #uri: http://localhost:8888
-      name: eum-lecture
+      name: eum-notification
   profiles:
-    active: lecture
+    active: notification
 
 eureka:
   client:
