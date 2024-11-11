@@ -6,7 +6,7 @@ import { iconSize } from '@theme/iconSize';
 import CalendarIcon from '@assets/icons/calendarIcon.svg';
 import EmptyExamIcon from '@assets/icons/emptyExamIcon.svg'; // SVG 아이콘 임포트
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
-import { Text as HeaderText } from "@components/common/Text";
+import { Text as HeaderText } from '@components/common/Text';
 
 interface Exam {
   examId: string;
