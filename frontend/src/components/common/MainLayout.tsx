@@ -43,27 +43,29 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
   }, [isExpanded]);
 
   return (
-    <View style={styles.container}>
-      {isLoggedIn && !screensWithoutSidebar.includes(currentScreen) && (
-        <Animated.View
-          style={[
-            styles.sidebarContainer,
-            {
-              width: sidebarWidthAnim.interpolate({
-                inputRange: [0, 100],
-                outputRange: ['0%', '100%'],
-              }),
-            },
-          ]}>
-          <Sidebar />
-        </Animated.View>
-      )}
-      <View style={styles.contentWrapper}>
-        {bookPosition && <BookModal />}
-        {children}
+    <>
+      <View style={styles.container}>
+        {isLoggedIn && !screensWithoutSidebar.includes(currentScreen) && (
+          <Animated.View
+            style={[
+              styles.sidebarContainer,
+              {
+                width: sidebarWidthAnim.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: ['0%', '100%'],
+                }),
+              },
+            ]}>
+            <Sidebar />
+          </Animated.View>
+        )}
+        <View style={styles.contentWrapper}>
+          {bookPosition && <BookModal />}
+          {children}
+        </View>
       </View>
       <Modals />
-    </View>
+    </>
   );
 }
 
