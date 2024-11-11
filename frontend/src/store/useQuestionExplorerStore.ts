@@ -53,6 +53,10 @@ type QuestionExplorerState = {
   ) => boolean;
   moveItem: (itemId: number, newParentId: number) => void;
   renameItem: (itemId: number, newTitle: string) => void;
+  updateHistoryEntries: (
+    tree: QuestionBoxType[],
+    entry: HistoryEntry,
+  ) => HistoryEntry;
 };
 
 export const useQuestionExplorerStore = create<QuestionExplorerState>(
@@ -81,7 +85,38 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
       return currentPath[currentPath.length - 1].id;
     },
 
-    // Helper function to check if a path is still valid after changes
+    // Helper function to update a history entry with the latest tree state
+    updateHistoryEntries: (
+      tree: QuestionBoxType[],
+      entry: HistoryEntry,
+    ): HistoryEntry => {
+      const updatedPath: QuestionBoxType[] = [];
+      let currentItems = tree;
+
+      // Update path items with latest state
+      for (const pathItem of entry.path) {
+        const found = currentItems.find(item => item.id === pathItem.id);
+        if (found && found.type === 'folder') {
+          updatedPath.push(found);
+          currentItems = found.children;
+        } else {
+          break;
+        }
+      }
+
+      // Get the current folder's contents
+      let updatedFolder: QuestionBoxType[] = tree;
+      if (updatedPath.length > 0) {
+        const lastFolder = updatedPath[updatedPath.length - 1];
+        updatedFolder = lastFolder.children;
+      }
+
+      return {
+        path: updatedPath,
+        folder: updatedFolder,
+      };
+    },
+
     isValidPath: (
       path: QuestionBoxType[],
       tree: QuestionBoxType[],
@@ -98,7 +133,6 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
       return true;
     },
 
-    // Helper function to clean history entries that contain deleted items
     cleanHistory: (
       history: HistoryEntry[],
       tree: QuestionBoxType[],
@@ -113,16 +147,19 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
         return isValid;
       });
 
-      // Ensure newIndex is not out of bounds
-      newIndex = Math.max(-1, Math.min(newIndex, cleanedHistory.length - 1));
-      return {cleanedHistory, newIndex};
+      // Update remaining history entries with latest tree state
+      const updatedHistory = cleanedHistory.map(entry =>
+        get().updateHistoryEntries(tree, entry),
+      );
+
+      newIndex = Math.max(-1, Math.min(newIndex, updatedHistory.length - 1));
+      return {cleanedHistory: updatedHistory, newIndex};
     },
 
     updateHistoryAfterChange: (newQuestionBox: QuestionBoxType[]) => {
       const state = get();
       const {currentPath} = state;
 
-      // Update current path with new data to maintain references
       const updatedPath = [];
       let currentFolder = newQuestionBox;
       let isPathValid = true;
@@ -138,7 +175,6 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
         }
       }
 
-      // If current path is invalid, navigate to home
       if (!isPathValid) {
         set({
           questionBox: newQuestionBox,
@@ -150,7 +186,6 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
         return;
       }
 
-      // Clean history to remove entries with invalid paths
       const {cleanedHistory, newIndex} = get().cleanHistory(
         state.history,
         newQuestionBox,
@@ -310,6 +345,10 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
 
     createItem: (newItem: QuestionBoxType) => {
       const state = get();
+      if (newItem.type === 'file') {
+        newItem.children = [];
+        newItem.childrenCount = 0;
+      }
 
       const updateTree = (items: QuestionBoxType[]): QuestionBoxType[] => {
         if (newItem.parentId === null || newItem.parentId === state.rootId) {
@@ -450,68 +489,68 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
     moveItem: (itemId: number, newParentId: number) => {
       const state = get();
 
-      // Check if trying to move to its own descendant or itself
+      // 자신의 하위 폴더로 이동하려는 경우 체크
       if (
         state.isDescendant(itemId, newParentId, state.questionBox) ||
         itemId === newParentId
       ) {
         console.warn('Cannot move a folder into its own subfolder');
-        return; // Early return without any state changes
+        return;
       }
 
       let itemToMove: QuestionBoxType | null = null;
       let oldParentId: number | null = null;
-      let found = false; // Flag to track if item was found and removed
 
+      // 트리에서 아이템을 찾고 제거하는 함수
       const removeFromTree = (items: QuestionBoxType[]): QuestionBoxType[] => {
-        return items.map(item => {
-          if (item.children.length > 0) {
-            const filteredChildren = item.children.filter(child => {
-              if (child.id === itemId) {
-                itemToMove = {...child, parentId: newParentId};
-                oldParentId = item.id;
-                found = true; // Set flag when item is found and removed
-                return false;
-              }
-              return true;
-            });
+        const result: QuestionBoxType[] = [];
 
-            return {
-              ...item,
-              children:
-                filteredChildren.length === item.children.length && !found
-                  ? removeFromTree(item.children)
-                  : filteredChildren,
-            };
+        for (const item of items) {
+          if (item.id === itemId) {
+            itemToMove = {...item, parentId: newParentId};
+            continue;
           }
-          return item;
-        });
+
+          const newItem = {...item};
+          if (item.children.length > 0) {
+            const newChildren = removeFromTree(item.children);
+            if (newChildren.length !== item.children.length) {
+              oldParentId = item.id;
+            }
+            newItem.children = newChildren;
+          }
+          result.push(newItem);
+        }
+
+        return result;
       };
 
-      // Handle root level items
+      // 루트 레벨 아이템 처리
       let newQuestionBox = [...state.questionBox];
       const rootIndex = newQuestionBox.findIndex(item => item.id === itemId);
+
       if (rootIndex !== -1) {
         itemToMove = {...newQuestionBox[rootIndex], parentId: newParentId};
         oldParentId = null;
         newQuestionBox.splice(rootIndex, 1);
-        found = true;
       } else {
         newQuestionBox = removeFromTree(newQuestionBox);
       }
 
-      // If item wasn't found or removed, return without changes
-      if (!itemToMove || !found) {
+      if (!itemToMove) {
         console.warn('Item not found');
         return;
       }
 
+      // 새로운 위치에 아이템 추가
       const addToTree = (items: QuestionBoxType[]): QuestionBoxType[] => {
         return items.map(item => {
           if (item.id === newParentId) {
             return {
               ...item,
               children: [...item.children, itemToMove!],
+              childrenCount:
+                item.type === 'folder' ? item.children.length + 1 : 0,
             };
           }
           if (item.children.length > 0) {
@@ -524,17 +563,17 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
         });
       };
 
-      // If new parent is root
+      // 루트로 이동하는 경우
       if (newParentId === state.rootId) {
         newQuestionBox = [...newQuestionBox, itemToMove];
       } else {
-        // Verify that new parent exists before adding
+        // 새로운 부모 폴더가 존재하는지 확인
         let parentFound = false;
         const findParent = (items: QuestionBoxType[]) => {
           for (const item of items) {
             if (item.id === newParentId) {
               parentFound = true;
-              return;
+              break;
             }
             if (item.children.length > 0) {
               findParent(item.children);
@@ -545,40 +584,73 @@ export const useQuestionExplorerStore = create<QuestionExplorerState>(
 
         if (!parentFound) {
           console.warn('Target parent folder not found');
-          return; // Early return if parent doesn't exist
+          return;
         }
 
         newQuestionBox = addToTree(newQuestionBox);
       }
 
-      // Update the current folder if needed
+      // 현재 경로상의 모든 폴더의 childrenCount 업데이트
+      const updateChildrenCounts = (
+        items: QuestionBoxType[],
+      ): QuestionBoxType[] => {
+        return items.map(item => {
+          if (item.type === 'folder') {
+            return {
+              ...item,
+              children: updateChildrenCounts(item.children),
+              childrenCount: item.children.length,
+            };
+          }
+          return item;
+        });
+      };
+
+      newQuestionBox = updateChildrenCounts(newQuestionBox);
+
+      // 현재 폴더의 내용 업데이트
       let newCurrentFolder = state.currentFolder;
       const currentParentId = state.getCurrentParentId();
 
-      // If the item was moved from current folder
-      if (currentParentId === oldParentId || currentParentId === null) {
-        newCurrentFolder = newCurrentFolder.filter(
-          item => item.id !== itemToMove!.id,
-        );
+      // 현재 폴더에서 아이템이 제거된 경우
+      if (
+        currentParentId === oldParentId ||
+        (oldParentId === null && currentParentId === state.rootId)
+      ) {
+        newCurrentFolder = newCurrentFolder.filter(item => item.id !== itemId);
       }
 
-      // If the item was moved to current folder
+      // 현재 폴더로 아이템이 이동된 경우
       if (currentParentId === newParentId) {
         newCurrentFolder = [...newCurrentFolder, itemToMove];
       }
 
-      set(state => ({
-        questionBox: newQuestionBox,
-        currentFolder: newCurrentFolder,
-        history: state.history.map((entry, index) =>
-          index === state.currentHistoryIndex
-            ? {
-                ...entry,
-                folder: newCurrentFolder,
-              }
-            : entry,
-        ),
-      }));
+      // 상태 업데이트 및 히스토리 정리
+      set(state => {
+        const updatedState = {
+          questionBox: newQuestionBox,
+          currentFolder: newCurrentFolder,
+        };
+
+        // 히스토리의 각 엔트리를 새로운 트리 상태로 업데이트
+        const updatedHistory = state.history.map((entry, index) => {
+          if (index === state.currentHistoryIndex) {
+            return {
+              ...entry,
+              folder: newCurrentFolder,
+            };
+          }
+          return get().updateHistoryEntries(newQuestionBox, entry);
+        });
+
+        return {
+          ...updatedState,
+          history: updatedHistory,
+        };
+      });
+
+      // 전체 상태 동기화를 위해 updateHistoryAfterChange 호출
+      state.updateHistoryAfterChange(newQuestionBox);
     },
 
     renameItem: (itemId: number, newTitle: string) => {
