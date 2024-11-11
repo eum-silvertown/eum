@@ -1,16 +1,16 @@
-import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { Text } from '@components/common/Text';
-import { useNavigation } from '@react-navigation/native';
-import { spacing } from '@theme/spacing';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {Text} from '@components/common/Text';
+import {useNavigation} from '@react-navigation/native';
+import {spacing} from '@theme/spacing';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 import UpdateLectureModal from './UpdateLectureModal';
-import { useModal } from 'src/hooks/useModal';
-import { deleteLecture } from '@services/lectureInformation';
-import { useMutation } from '@tanstack/react-query';
-import { getResponsiveSize } from '@utils/responsive';
+import {useModal} from 'src/hooks/useModal';
+import {deleteLecture} from '@services/lectureInformation';
+import {useMutation} from '@tanstack/react-query';
+import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -19,7 +19,7 @@ type ClassHeaderProps = {
   lectureId?: number;
   title?: string;
   subtitle?: string;
-  schedule?: { day: string; period: number }[];
+  schedule?: {day: string; period: number}[];
   semester?: number;
   grade?: number;
   classNumber?: number;
@@ -42,9 +42,9 @@ function ClassHeader({
   pastTeacherName,
 }: ClassHeaderProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const { open } = useModal();
+  const {open} = useModal();
 
-  const { mutate: deleteMutation } = useMutation({
+  const {mutate: deleteMutation} = useMutation({
     mutationFn: (deleteLectureId: number) => deleteLecture(deleteLectureId),
     onSuccess: () => {
       navigation.navigate('ClassListScreen');
@@ -69,7 +69,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      { cancelable: true },
+      {cancelable: true},
     );
   };
 
@@ -106,7 +106,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      { cancelable: true },
+      {cancelable: true},
     );
   };
 
@@ -127,9 +127,9 @@ function ClassHeader({
           {schedule?.map((item, index) => (
             <View
               key={index}
-              style={[styles.scheduleChip, { backgroundColor: backgroundColor }]}>
-              <Text style={[styles.scheduleChipText, { color: fontColor }]}>
-                {item.day}
+              style={[styles.scheduleChip, {backgroundColor: backgroundColor}]}>
+              <Text style={[styles.scheduleChipText, {color: fontColor}]}>
+                {item.day} - {item.period}교시
               </Text>
             </View>
           ))}
@@ -144,7 +144,9 @@ function ClassHeader({
         <TouchableOpacity
           style={styles.enterButton}
           onPress={() =>
-            navigation.navigate(isTeacher ? 'LessoningStudentListScreen' : 'LessoningScreen')
+            navigation.navigate(
+              isTeacher ? 'LessoningStudentListScreen' : 'LessoningScreen',
+            )
           }>
           <Text style={styles.enterButtonText}>수업 입장</Text>
         </TouchableOpacity>

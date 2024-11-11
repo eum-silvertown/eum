@@ -1,19 +1,19 @@
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { spacing } from '@theme/spacing';
+import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {spacing} from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
-import { borderRadius } from '@theme/borderRadius';
+import {borderRadius} from '@theme/borderRadius';
 import Book from '@components/common/Book';
 import AddLectureModal from '@components/lectureList/AddLectureModal';
-import { iconSize } from '@theme/iconSize';
-import { useModal } from 'src/hooks/useModal';
+import {iconSize} from '@theme/iconSize';
+import {useModal} from 'src/hooks/useModal';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import { Picker } from '@react-native-picker/picker';
-import { useState } from 'react';
-import { colors } from 'src/hooks/useColors';
-import { getResponsiveSize } from '@utils/responsive';
-import { useQuery } from '@tanstack/react-query';
+import {Picker} from '@react-native-picker/picker';
+import {useState} from 'react';
+import {colors} from 'src/hooks/useColors';
+import {getResponsiveSize} from '@utils/responsive';
+import {useQuery} from '@tanstack/react-query';
 import {
   LectureListItemType,
   getLectureList,
@@ -28,12 +28,11 @@ function ClassListScreen(): React.JSX.Element {
     setCurrentScreen('ClassListScreen');
   });
 
-  const { open } = useModal();
-  const { data: lectures = [], isLoading } = useQuery<LectureListItemType[]>({
+  const {open} = useModal();
+  const {data: lectures = [], isLoading} = useQuery<LectureListItemType[]>({
     queryKey: ['lectureList'],
     queryFn: getLectureList,
   });
-  const teacherName = '롹';
 
   const currentYear = new Date().getFullYear();
   const currentSemester = new Date().getMonth() < 6 ? 1 : 2;
@@ -125,7 +124,7 @@ function ClassListScreen(): React.JSX.Element {
                 fontColor={data.fontColor}
                 grade={data.grade}
                 classNumber={data.classNumber}
-                teacherName={teacherName}
+                teacherName={data.teacher.name}
                 lectureId={data.lectureId}
               />
             ))}
