@@ -5,11 +5,15 @@ import java.time.LocalDateTime;
 import com.eum.lecture_service.command.dto.notice.NoticeDto;
 import com.eum.lecture_service.command.entity.lecture.Notice;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NoticeCreateEvent {
 
 	private Long noticeId;
