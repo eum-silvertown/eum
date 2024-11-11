@@ -1,5 +1,5 @@
-import {useLectureStore} from '@store/useLectureStore';
-import React, {useEffect, useState, useCallback, useRef} from 'react';
+import { getCurrentDateInfo } from '@utils/dateUtils';
+import React, {useEffect, useState, useCallback, useRef, } from 'react';
 import {
   StyleSheet,
   View,
@@ -17,6 +17,11 @@ import Weather from './Weather';
 import {spacing} from '@theme/spacing';
 import Calendar from '@components/main/MainCalendar';
 import {borderRadius} from '@theme/borderRadius';
+import {
+  LectureListDayItemType,
+  getLectureListDay,
+} from '@services/lectureInformation';
+import { useQuery } from '@tanstack/react-query';
 
 interface TimeColor {
   startHour: number;
@@ -37,7 +42,12 @@ const TRANSITION_HOUR = 17; // 태양에서 달로 전환되는 시간
 const TOTAL_HOURS = ENDING_HOUR - STARTING_HOUR;
 
 const MainTest = (): React.JSX.Element => {
-  const {lectures} = useLectureStore();
+  const { day, year, semester } = getCurrentDateInfo();
+  const {data: lectures = [], isLoading} = useQuery<LectureListDayItemType[]>({
+    queryKey: ['lectureListDay'],
+    queryFn: () => getLectureListDay(day, year, semester),
+  });
+  
   const periodTimes = [8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 
   const [backgroundAnim] = useState(new Animated.Value(0));
