@@ -3,6 +3,7 @@ package com.eum.todo_service.domain.todo.service;
 import com.eum.todo_service.domain.todo.dto.TodoListResponse;
 import com.eum.todo_service.domain.todo.dto.TodoRequest;
 import com.eum.todo_service.domain.todo.dto.TodoResponse;
+import com.eum.todo_service.domain.todo.dto.TodoStatusUpdateRequest;
 import com.eum.todo_service.domain.todo.entity.Todo;
 import com.eum.todo_service.domain.todo.repository.TodoRepository;
 import com.eum.todo_service.global.exception.ErrorCode;
@@ -32,22 +33,14 @@ public class TodoServiceImpl implements TodoService {
     @Override
     @Transactional
     public TodoResponse updateTodo(Long memberId, Long todoId, TodoRequest todoRequest) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new EumException(ErrorCode.TODO_NOT_FOUND));
-        if(todo.getMemberId() != memberId){
-            throw new EumException(ErrorCode.USER_NOT_AUTHORIZED);
-        }
+        Todo todo = validateTodo(memberId, todoId);
         todo.updateTodo(todoRequest);
         return TodoResponse.from(todo);
     }
 
     @Override
     public void deleteTodo(Long memberId, Long todoId) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new EumException(ErrorCode.TODO_NOT_FOUND));
-        if(todo.getMemberId() != memberId){
-            throw new EumException(ErrorCode.USER_NOT_AUTHORIZED);
-        }
+        Todo todo = validateTodo(memberId, todoId);
         todoRepository.delete(todo);
     }
 
@@ -58,5 +51,22 @@ public class TodoServiceImpl implements TodoService {
                .map(TodoResponse::from)
                .collect(Collectors.toList());
         return TodoListResponse.from(responseList);
+    }
+
+    @Override
+    @Transactional
+    public TodoResponse updateTodoState(Long memberId, Long todoId, TodoStatusUpdateRequest todoStatusUpdateRequest) {
+        Todo todo = validateTodo(memberId,todoId);
+        todo.updateTodoStatus(todoStatusUpdateRequest);
+        return TodoResponse.from(todo);
+    }
+
+    private Todo validateTodo(Long memberId, Long todoId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new EumException(ErrorCode.TODO_NOT_FOUND));
+        if(todo.getMemberId() != memberId){
+            throw new EumException(ErrorCode.USER_NOT_AUTHORIZED);
+        }
+        return todo;
     }
 }

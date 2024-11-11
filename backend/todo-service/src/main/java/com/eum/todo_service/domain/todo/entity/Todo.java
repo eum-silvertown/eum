@@ -1,6 +1,7 @@
 package com.eum.todo_service.domain.todo.entity;
 
 import com.eum.todo_service.domain.todo.dto.TodoRequest;
+import com.eum.todo_service.domain.todo.dto.TodoStatusUpdateRequest;
 import com.eum.todo_service.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -54,6 +55,10 @@ public class Todo extends BaseEntity {
         this.title = todoRequest.getTitle();
         this.content = todoRequest.getContent();
         this.priority = todoRequest.getPriority();
+    }
+
+    public void updateTodoStatus(TodoStatusUpdateRequest todoStatusUpdateRequest) {
+        this.isDone = todoStatusUpdateRequest.getStatus();
     }
 
 }

@@ -3,6 +3,7 @@ package com.eum.todo_service.domain.todo.controller;
 import com.eum.todo_service.domain.todo.dto.TodoListResponse;
 import com.eum.todo_service.domain.todo.dto.TodoRequest;
 import com.eum.todo_service.domain.todo.dto.TodoResponse;
+import com.eum.todo_service.domain.todo.dto.TodoStatusUpdateRequest;
 import com.eum.todo_service.domain.todo.service.TodoService;
 import com.eum.todo_service.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -43,5 +44,13 @@ public class TodoController {
         return CommonResponse.success(todoListResponse, "todo 조회에 성공했습니다.");
     }
 
+    @PatchMapping("/{todoId}")
+    public CommonResponse<?> updateTodoState(@RequestHeader(value = "X-MEMBER-ID",required = false) String memberId,
+                                             @PathVariable Long todoId,
+                                             @RequestBody TodoStatusUpdateRequest todoStatusUpdateRequest) {
+        TodoResponse todoListResponse = todoService
+                .updateTodoState(Long.valueOf(memberId),todoId,todoStatusUpdateRequest);
+        return CommonResponse.success(todoListResponse, "todo 상태 변경에 성공했습니다.");
+    }
 
 }
