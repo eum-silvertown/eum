@@ -1,16 +1,14 @@
 import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
-import MainHeader from '@components/main/MainHeader';
-import TodoList from '@components/main/TodoList';
-import Weather from '@components/main/Weather';
-import Calendar from '@components/main/MainCalendar';
-import Timetable from '@components/main/Timetable';
 import {useEffect} from 'react';
 import {getUserInfo} from '@services/authService';
-import {Text} from '@components/common/Text';
 import MainTest from '@components/main/MainTest';
+import BookModal from '@components/common/BookModal';
+import {useBookModalStore} from '@store/useBookModalStore';
 
 function HomeScreen(): React.JSX.Element {
+  const bookPosition = useBookModalStore(state => state.bookPosition);
+
   useEffect(() => {
     // 유저 정보 조회
     const fetchData = async () => {
@@ -24,22 +22,8 @@ function HomeScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {/* <MainHeader /> */}
+      {bookPosition && <BookModal />}
       <MainTest />
-
-      {/* <View style={styles.content}>
-        <View style={styles.contentTop}>
-          <TodoList />
-          <Weather />
-          <Calendar />
-        </View>
-        <View style={styles.contentBottom}>
-          <Text variant="subtitle" weight="bold">
-            시간표
-          </Text>
-          <Timetable />
-        </View>
-      </View> */}
     </View>
   );
 }

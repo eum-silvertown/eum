@@ -7,11 +7,12 @@ import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
-import {moveFolder} from 'src/services/questionBox';
+import {moveFolder, moveQuestion} from 'src/services/questionBox';
 
 function MoveMenu(): React.JSX.Element {
   const title = useCutStore(state => state.title);
   const cutFolderId = useCutStore(state => state.folderId);
+  const fileType = useCutStore(state => state.type);
   const setFolder = useCutStore(state => state.setFolder);
   const moveItem = useQuestionExplorerStore(state => state.moveItem);
   const getCurrentFolderId = useQuestionExplorerStore(
@@ -21,9 +22,13 @@ function MoveMenu(): React.JSX.Element {
   const pressButtonHandler = async () => {
     const currentFolderId = getCurrentFolderId();
     try {
-      await moveFolder(cutFolderId, currentFolderId);
+      if (fileType === 'folder') {
+        await moveFolder(cutFolderId, currentFolderId);
+      } else {
+        await moveQuestion(cutFolderId, currentFolderId);
+      }
       moveItem(cutFolderId, currentFolderId);
-      setFolder('', 0);
+      setFolder('', 0, 'folder');
     } catch (error) {
       console.error('Failed to moveFolder');
     }

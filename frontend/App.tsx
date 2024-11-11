@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { navigationRef } from '@services/NavigationService';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
-import { ScreenType } from '@store/useCurrentScreenStore';
+import {ScreenType} from '@store/useCurrentScreenStore';
 import LoginScreen from '@screens/LoginScreen';
 import FindIdScreen from '@screens/FindIdScreen';
 import FindPasswordScreen from '@screens/FindPasswordScreen';
@@ -14,18 +14,17 @@ import ClassListScreen from '@screens/ClassListScreen';
 import ClassExamListScreen from '@screens/ClassExamListScreen';
 import ClassHomeworkListScreen from '@screens/ClassHomeworkListScreen';
 import ClassLessonListScreen from '@screens/ClassLessonListScreen';
-import HomeworkScreen from '@screens/HomeworkScreen';
+import HomeworkScreen from '@screens/homework/HomeworkScreen';
 import QuestionBoxScreen from '@screens/QuestionBoxScreen';
-import MyClassScreen from '@screens/MyClassScreen';
-import NotificationScreen from '@screens/NotificationScreen';
+import MyClassScreen from '@screens/myClass/MyClassScreen';
+import NotificationScreen from '@screens/notification/NotificationScreen';
 import LessoningStudentListScreen from '@screens/LessoningStudentListScreen';
 import MainLayout from '@components/common/MainLayout';
 import ProfileScreen from '@screens/ProfileScreen';
-import { Platform, UIManager } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TextEncoder } from 'text-encoding';
-
+import {Platform, UIManager} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {TextEncoder} from 'text-encoding';
 
 global.TextEncoder = TextEncoder;
 // 안드로이드 기본 Navbar 없애기
@@ -68,26 +67,26 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     setScreens([
-      { name: 'LoginScreen', component: LoginScreen },
-      { name: 'HomeScreen', component: HomeScreen },
-      { name: 'FindIdScreen', component: FindIdScreen },
-      { name: 'FindPasswordScreen', component: FindPasswordScreen },
-      { name: 'SignUpSelectScreen', component: SignUpSelectScreen },
-      { name: 'SignUpScreen', component: SignUpScreen },
-      { name: 'ClassExamListScreen', component: ClassExamListScreen },
-      { name: 'ClassListScreen', component: ClassListScreen },
-      { name: 'ClassHomeworkListScreen', component: ClassHomeworkListScreen },
-      { name: 'ClassLessonListScreen', component: ClassLessonListScreen },
-      { name: 'HomeworkScreen', component: HomeworkScreen },
-      { name: 'QuestionBoxScreen', component: QuestionBoxScreen },
-      { name: 'MyClassScreen', component: MyClassScreen },
-      { name: 'NotificationScreen', component: NotificationScreen },
-      { name: 'LessoningScreen', component: LessoningScreen },
+      {name: 'LoginScreen', component: LoginScreen},
+      {name: 'HomeScreen', component: HomeScreen},
+      {name: 'FindIdScreen', component: FindIdScreen},
+      {name: 'FindPasswordScreen', component: FindPasswordScreen},
+      {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
+      {name: 'SignUpScreen', component: SignUpScreen},
+      {name: 'ClassExamListScreen', component: ClassExamListScreen},
+      {name: 'ClassListScreen', component: ClassListScreen},
+      {name: 'ClassHomeworkListScreen', component: ClassHomeworkListScreen},
+      {name: 'ClassLessonListScreen', component: ClassLessonListScreen},
+      {name: 'HomeworkScreen', component: HomeworkScreen},
+      {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
+      {name: 'MyClassScreen', component: MyClassScreen},
+      {name: 'NotificationScreen', component: NotificationScreen},
+      {name: 'LessoningScreen', component: LessoningScreen},
       {
         name: 'LessoningStudentListScreen',
         component: LessoningStudentListScreen,
       },
-      { name: 'ProfileScreen', component: ProfileScreen },
+      {name: 'ProfileScreen', component: ProfileScreen},
     ]);
   }, []);
 

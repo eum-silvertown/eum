@@ -1,4 +1,4 @@
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import {Text} from './Text';
 import {useColors} from 'src/hooks/useColors';
 import {spacing} from '@theme/spacing';
@@ -6,13 +6,19 @@ import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
 
 interface ButtonProps {
+  style?: StyleProp<ViewStyle>;
   variant: 'pressable' | 'error';
   content: string;
   onPress?: () => void;
   size: 'sm' | 'md' | 'lg' | 'full';
 }
 
-function Button({content, size, onPress}: ButtonProps): React.JSX.Element {
+function Button({
+  style,
+  content,
+  size,
+  onPress,
+}: ButtonProps): React.JSX.Element {
   const colors = useColors();
   const styles = StyleSheet.create({
     container: {
@@ -40,7 +46,9 @@ function Button({content, size, onPress}: ButtonProps): React.JSX.Element {
   });
 
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, sizes[size]]}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.container, sizes[size], style]}>
       <Text color="white" align="center">
         {content}
       </Text>
