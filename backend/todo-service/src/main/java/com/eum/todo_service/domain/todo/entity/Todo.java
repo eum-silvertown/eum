@@ -30,16 +30,16 @@ public class Todo extends BaseEntity {
     @Column(name = "priority", nullable = false)
     private Integer priority;
 
-    @Column(name = "isDone", nullable = false)
+    @Column(name = "is_done", nullable = false)
     private Boolean isDone;
 
     @Builder
-    public Todo(Long memberId, String title, String content, Integer priority) {
+    public Todo(Long memberId, String title, String content, Integer priority, Boolean isDone) {
         this.memberId = memberId;
         this.title = title;
         this.content = content;
         this.priority = priority;
-        this.isDone = false;
+        this.isDone = isDone;
     }
 
     public static Todo from(TodoRequest todoRequest, Long memberId) {
@@ -48,6 +48,7 @@ public class Todo extends BaseEntity {
                 .title(todoRequest.getTitle())
                 .content(todoRequest.getContent())
                 .priority(todoRequest.getPriority())
+                .isDone(false)
                 .build();
     }
 
