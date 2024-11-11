@@ -71,8 +71,16 @@ public class UserController implements UserApiDocumentation{
     }
 
     @PatchMapping("/info/image")
-    public CommonResponse<?> updateMemberProfileImage(@RequestHeader(value = "X-MEMBER-ID", required = false) String memberId) {
+    public CommonResponse<?> updateMemberProfileImage(
+            @RequestHeader(value = "X-MEMBER-ID", required = false) String memberId) {
         ImageResponse imageResponse = userService.updateMemberProfile(Long.valueOf(memberId));
         return CommonResponse.success(imageResponse,"프로필 사진이 성공적으로 변경되었습니다.");
+    }
+
+    @DeleteMapping("/info/image")
+    public CommonResponse<?> deleteMemberProfileImage(
+            @RequestHeader(value = "X-MEMBER-ID", required = false) String memberId) {
+        userService.deleteMemberImage(Long.valueOf(memberId));
+        return CommonResponse.success("프로필 사진이 성공적으로 삭제되었습니다.");
     }
 }
