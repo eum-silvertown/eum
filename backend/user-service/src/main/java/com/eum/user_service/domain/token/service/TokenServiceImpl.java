@@ -41,7 +41,7 @@ public class TokenServiceImpl implements TokenService {
                 .findById(REFRESH_TOKEN_PREFIX + jwtUtil.getUserIdFromRefreshToken(tokenRequest.refreshToken()))
                 .orElseThrow(() -> new EumException(ErrorCode.REFRESH_TOKEN_EXPIRED));
 
-        if (blacklistTokenService.isTokenBlacklisted(refreshToken.getRefreshToken())) {
+        if (blacklistTokenService.isTokenBlacklisted(tokenRequest.refreshToken())) {
             throw new EumException(ErrorCode.REFRESH_TOKEN_BLACKLISTED);
         }
         return refreshToken;
