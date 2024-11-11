@@ -35,10 +35,11 @@ public class NoticeServiceImpl implements NoticeService{
 
 		Notice notice = noticeDto.toNoticeEntity(lecture);
 
+		Notice savedNotice = noticeRepository.save(notice);
+
 		NoticeCreateEvent event = new NoticeCreateEvent(notice);
 		kafkaTemplate.send("notice-create-topic", event);
 
-		Notice savedNotice = noticeRepository.save(notice);
 		return savedNotice.getNoticeId();
 	}
 
