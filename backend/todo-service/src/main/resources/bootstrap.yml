@@ -2,9 +2,9 @@ spring:
   cloud:
     config:
       uri: http://config-service:8888  # Config 서버 URI
-      name: eum-user
+      name: eum-todo
   profiles:
-    active: user
+    active: todo
 
 eureka:
   client:
