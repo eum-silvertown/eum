@@ -29,7 +29,7 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	@Transactional
-	public void createNotice(NoticeDto noticeDto) {
+	public Long createNotice(NoticeDto noticeDto) {
 		Lecture lecture = lectureRepository.findById(noticeDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 
@@ -38,7 +38,8 @@ public class NoticeServiceImpl implements NoticeService{
 		NoticeCreateEvent event = new NoticeCreateEvent(notice);
 		kafkaTemplate.send("notice-create-topic", event);
 
-		noticeRepository.save(notice);
+		Notice savedNotice = noticeRepository.save(notice);
+		return savedNotice.getNoticeId();
 	}
 
 	@Override

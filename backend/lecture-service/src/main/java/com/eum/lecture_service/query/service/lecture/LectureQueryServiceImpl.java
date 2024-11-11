@@ -76,7 +76,9 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 					.map(lecture -> {
 						ClassModel classModel = classReadRepository.findById(lecture.getClassId())
 							.orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
-						return LectureListResponse.fromLectureModel(lecture, classModel);
+						TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
+							.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
+						return LectureListResponse.fromLectureModel(lecture, classModel, teacherModel);
 					})
 					.collect(Collectors.toList()))
 				.orElseGet(Collections::emptyList);
@@ -85,7 +87,9 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 				.map(lecture -> {
 					ClassModel classModel = classReadRepository.findById(lecture.getClassId())
 						.orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
-					return LectureListResponse.fromLectureModel(lecture, classModel);
+					TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
+						.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
+					return LectureListResponse.fromLectureModel(lecture, classModel, teacherModel);
 				})
 				.collect(Collectors.toList());
 		}
@@ -102,7 +106,9 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 					.map(lecture -> {
 						ClassModel classModel = classReadRepository.findById(lecture.getClassId())
 							.orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
-						return LectureListResponse.fromLectureModelWithPeriod(lecture, todayDto.getDay(), classModel);
+						TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
+							.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
+						return LectureListResponse.fromLectureModelWithPeriod(lecture, todayDto.getDay(), classModel, teacherModel);
 					})
 					.collect(Collectors.toList()))
 				.orElseGet(Collections::emptyList);
@@ -112,12 +118,15 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 				.map(lecture -> {
 					ClassModel classModel = classReadRepository.findById(lecture.getClassId())
 						.orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
-					return LectureListResponse.fromLectureModelWithPeriod(lecture, todayDto.getDay(), classModel);
+					TeacherModel teacherModel = teacherReadRepository.findById(lecture.getTeacherId())
+						.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
+					return LectureListResponse.fromLectureModelWithPeriod(lecture, todayDto.getDay(), classModel, teacherModel);
 				})
 				.collect(Collectors.toList());
 		}
 		return Collections.emptyList();
 	}
+
 
 	@Override
 	public LectureUpdateResponse getLectureForUpdate(Long lectureId) {

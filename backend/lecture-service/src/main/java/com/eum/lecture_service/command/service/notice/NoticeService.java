@@ -7,7 +7,7 @@ import com.eum.lecture_service.command.entity.lecture.Notice;
 
 public interface NoticeService {
 
-	void createNotice(NoticeDto noticeDto);
+	Long createNotice(NoticeDto noticeDto);
 
 	void updateNotice(Long noticeId, NoticeDto noticeDto);
 

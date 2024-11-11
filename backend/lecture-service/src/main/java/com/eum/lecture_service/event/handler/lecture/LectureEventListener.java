@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
+import com.eum.lecture_service.event.event.notification.LectureNotificationEvent;
 import com.eum.lecture_service.query.document.LectureModel;
 import com.eum.lecture_service.query.document.TeacherOverviewModel;
 import com.eum.lecture_service.query.document.studentInfo.Overview;
@@ -36,7 +38,8 @@ public class LectureEventListener {
 	private final StudentReadRepository studentReadRepository;
 	private final TeacherOverviewRepository teacherOverviewRepository;
 	private final StudentOverviewRepository studentOverviewRepository;
-	private final ClassReadRepository classReadRepository;
+
+	//private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	// 강의 생성 이벤트 처리
 	@KafkaListener(topics = "lecture-created-topic", groupId = "lecture-group" , properties = {
@@ -105,8 +108,23 @@ public class LectureEventListener {
 
 				studentOverviewRepository.save(studentOverview);
 			});
+			//수업생성됐다고 애들한테 알리기
+			//publishStudentsCreateLecture(event, students);
 		}
 	}
+
+	// private void publishStudentsCreateLecture(LectureCreatedEvent event, List<StudentModel> students) {
+	// 	LectureNotificationEvent notificationEvent = LectureNotificationEvent.builder()
+	// 		.lectureId(event.getLectureId())
+	// 		.lectureTitle(event.getTitle())
+	// 		.studentIds(students.stream()
+	// 			.map(StudentModel::getStudentId)
+	// 			.collect(Collectors.toList()))
+	// 		.message("새로운 강의가 생성되었습니다. :" + event.getTitle())
+	// 		.build();
+	//
+	// 	kafkaTemplate.send("lecture-create-notification-topic", notificationEvent);
+	// }
 
 	@KafkaListener(topics = "lecture-updated-topic", groupId = "lecture-group" , properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent"
