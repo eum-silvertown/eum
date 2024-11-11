@@ -5,9 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.eum.lecture_service.event.event.member.ClassEvent;
 import com.eum.lecture_service.event.event.member.StudentInfoEvent;
-import com.eum.lecture_service.event.event.member.StudentInfoUpdatedEvent;
 import com.eum.lecture_service.event.event.member.TeacherInfoEvent;
-import com.eum.lecture_service.event.event.member.TeacherInfoUpdatedEvent;
 import com.eum.lecture_service.query.document.eventModel.ClassModel;
 import com.eum.lecture_service.query.document.eventModel.StudentModel;
 import com.eum.lecture_service.query.document.eventModel.TeacherModel;
@@ -21,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MemberEventHandler {
+public class MemberEventListener {
 
 	private final TeacherReadRepository teacherReadRepository;
 	private final ClassReadRepository classReadRepository;
