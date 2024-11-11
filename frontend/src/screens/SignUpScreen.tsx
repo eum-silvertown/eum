@@ -31,7 +31,6 @@ import {
   signUp,
   verifyEmailCode,
 } from '@services/authService';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {borderRadius} from '@theme/borderRadius';
 import StatusMessage from '@components/account/StatusMessage';
 import CustomDropdownPicker from '@components/common/CustomDropdownPicker';
@@ -273,6 +272,7 @@ function SignUpScreen(): React.JSX.Element {
       setIsVerificationSent(true);
       setEmailStatusType('success');
       setEmailStatusText(response.message);
+      Alert.alert('이메일로 인증 코드를 전송하였습니다. 확인 후 인증해주세요.')
     } catch (error) {
       setIsVerificationSent(false);
       setEmailStatusType('error');
