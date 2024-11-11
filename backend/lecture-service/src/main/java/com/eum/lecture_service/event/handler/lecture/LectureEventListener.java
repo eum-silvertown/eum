@@ -7,8 +7,11 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import com.eum.lecture_service.config.exception.ErrorCode;
+import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
+import com.eum.lecture_service.event.event.lecture.LectureStatusUpdatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
 import com.eum.lecture_service.event.event.notification.LectureNotificationEvent;
 import com.eum.lecture_service.query.document.LectureModel;
@@ -292,5 +295,16 @@ public class LectureEventListener {
 
 	private String generateStudentOverviewId(Long studentId, Long lectureId) {
 		return "student-overview-" + studentId + "-" + lectureId;
+	}
+
+	@KafkaListener(topics = "lecture-status-updated-topic",groupId = "lecture-group" , properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.lecture.LectureStatusUpdatedEvent"
+	})
+	public void handleLectureStatusUpdated(LectureStatusUpdatedEvent event) {
+		LectureModel lecture = lectureReadRepository.findById(event.getLectureId())
+			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+
+		lecture.setLectureStatus(event.getStatus());
+		lectureReadRepository.save(lecture);
 	}
 }

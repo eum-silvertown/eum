@@ -82,4 +82,25 @@ public class LectureController {
 			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@PostMapping("/{lectureId}/switch")
+	public CommonResponse<?> startLecture(
+		@RequestHeader("X-MEMBER-ID") Long memberId,
+		@RequestHeader("X-MEMBER-ROLE") String role,
+		@PathVariable Long lectureId) {
+
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+			lectureService.switchLecture(lectureId, memberId);
+			return CommonResponse.success("수업상태가 변경되었습니다!");
+		} catch (IllegalArgumentException e) {
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 }

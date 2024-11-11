@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
+import com.eum.lecture_service.event.event.lecture.LectureStatusUpdatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
 import com.eum.lecture_service.query.document.eventModel.ClassModel;
 import com.eum.lecture_service.query.repository.ClassReadRepository;
@@ -110,5 +112,22 @@ public class LectureServiceImpl implements LectureService{
 	@Override
 	public Optional<Lecture> getLecture(Long lectureId) {
 		return lectureRepository.findById(lectureId);
+	}
+
+	@Override
+	@Transactional
+	public void switchLecture(Long lectureId, Long teacherId) {
+		Lecture lecture = lectureRepository.findById(lectureId)
+			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
+
+		if (!lecture.getTeacherId().equals(teacherId)) {
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		}
+		Boolean lectureStatus = lecture.getLectureStatus();
+		lecture.setLectureStatus(!lectureStatus);
+		Lecture savedlecture = lectureRepository.save(lecture);
+
+		LectureStatusUpdatedEvent event = new LectureStatusUpdatedEvent(lectureId, savedlecture.getLectureStatus());
+		kafkaTemplate.send("lecture-status-updated-topic", event);
 	}
 }
