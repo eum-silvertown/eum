@@ -50,4 +50,10 @@ public class Todo extends BaseEntity {
                 .build();
     }
 
+    public void updateTodo(TodoRequest todoRequest) {
+        this.title = todoRequest.getTitle();
+        this.content = todoRequest.getContent();
+        this.priority = todoRequest.getPriority();
+    }
+
 }

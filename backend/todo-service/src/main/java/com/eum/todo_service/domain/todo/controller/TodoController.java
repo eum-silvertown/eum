@@ -21,5 +21,13 @@ public class TodoController {
         return CommonResponse.success(todoResponse, "todo 생성에 성공했습니다.");
     }
 
+    @PutMapping("/{todoId}")
+    public CommonResponse<?> updateTodo(@RequestHeader(value = "X-MEMBER-ID",required = false) String memberId,
+                                        @PathVariable Long todoId,
+                                         @RequestBody TodoRequest todoRequest) {
+        TodoResponse todoResponse = todoService.updateTodo(Long.valueOf(memberId),todoId,todoRequest);
+        return CommonResponse.success(todoResponse, "todo 갱신에 성공했습니다.");
+    }
+
 
 }
