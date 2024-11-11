@@ -32,7 +32,7 @@ public class NoticeEventListener {
 	}
 
 	@KafkaListener(topics = "notice-delete-topic", groupId = "notice-group",  properties = {
-		"spring.json.value.default.type=com.eum.lecture_service.event.event.notice.NoticeDeleteEvent"
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.notice.NoticeDeletedEvent"
 	})
 	public void handleNoticeDelete(NoticeDeletedEvent event) {
 		LectureModel lecture = lectureReadRepository.findById(event.getLectureId())
