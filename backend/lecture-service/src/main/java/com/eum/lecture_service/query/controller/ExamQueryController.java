@@ -8,93 +8,87 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eum.lecture_service.command.service.homework.HomeworkService;
 import com.eum.lecture_service.common.RoleType;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.config.global.CommonResponse;
-import com.eum.lecture_service.query.document.lectureInfo.HomeworkInfo;
-import com.eum.lecture_service.query.document.studentInfo.HomeworkProblemSubmissionInfo;
-import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo;
-import com.eum.lecture_service.query.dto.homework.HomeworkInfoResponse;
-import com.eum.lecture_service.query.dto.homework.HomeworkProblemSubmissionInfoResponse;
-import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionInfoResponse;
-import com.eum.lecture_service.query.service.homework.HomeworkQueryService;
-import com.eum.lecture_service.query.service.homework.HomeworkSubmissionQueryService;
+import com.eum.lecture_service.query.dto.exam.ExamInfoResponse;
+import com.eum.lecture_service.query.dto.exam.ExamProblemSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.exam.ExamSubmissionInfoResponse;
+import com.eum.lecture_service.query.service.exam.ExamQueryService;
+import com.eum.lecture_service.query.service.exam.ExamSubmissionQueryService;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/homework")
-public class HomeworkQueryController {
+@RequestMapping("/exam")
+public class ExamQueryController {
 
-	private final HomeworkQueryService homeworkQueryService;
-	private final HomeworkSubmissionQueryService homeworkSubmissionQueryService;
+	private final ExamQueryService examQueryService;
+	private final ExamSubmissionQueryService examSubmissionQueryService;
 
-	//숙제 상세 조회
-	@GetMapping("/{lectureId}/{homeworkId}")
-	public CommonResponse<?> getHomeworkDetail(
+	@GetMapping("/{lectureId}/{examId}")
+	public CommonResponse<?> getExamDetail(
 		@RequestHeader("X-MEMBER-ROLE") String role,
-		@RequestHeader("X-MEMBER-ID") Long memberId,
+		@RequestHeader("X-MEMBER_ID") Long memberId,
 		@PathVariable Long lectureId,
-		@PathVariable Long homeworkId) {
+		@PathVariable Long examId) {
 
-		HomeworkInfoResponse response = homeworkQueryService.getHomeworkDetail(lectureId, homeworkId);
-		return CommonResponse.success(response, "숙제 상세 조회 성공");
+		ExamInfoResponse response = examQueryService.getExamDetail(lectureId, examId);
+		return CommonResponse.success(response, "시험 상세 조회 성공");
 	}
 
-	//특정 숙제에 대한 모든 제출 조회
-	@GetMapping("/{lectureId}/{homeworkId}/submissions")
-	public CommonResponse<?> getHomeworkSubmissions(
+	//특정 시험에 대한 모든 제출 조회
+	@GetMapping("/{lectureId}/{examId}/submissions")
+	public CommonResponse<?> getExamSubmissions(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestHeader("X-MEMBER-ID") Long memberId,
 		@PathVariable Long lectureId,
-		@PathVariable Long homeworkId) {
+		@PathVariable Long examId) {
 
 		checkTeacherRole(role);
 
-		List<HomeworkSubmissionInfoResponse> response = homeworkSubmissionQueryService.getHomeworkSubmissions(
-			lectureId, homeworkId);
-		return CommonResponse.success(response, "숙제 제출 내역 조회 성공");
+		List<ExamSubmissionInfoResponse> responses = examSubmissionQueryService.getExamSubmissions(
+			lectureId, examId);
+		return CommonResponse.success(responses, "시험 제출 내역 조회 성공");
 	}
 
-	// 특정 학생의 숙제 제출 내역 조회
-	@GetMapping("/{lectureId}/{homeworkId}/submissions/{studentId}")
+	//특정 학생의 시험 제출 내역 조회
+	@GetMapping("/{lectureId}/{examId}/submissions/{studentId}")
 	public CommonResponse<?> getStudentHomeworkSubmission(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestHeader("X-MEMBER-ID") Long memberId,
 		@PathVariable Long lectureId,
-		@PathVariable Long homeworkId,
+		@PathVariable Long examId,
 		@PathVariable Long studentId) {
 
 		checkAccessPermission(role, memberId, studentId);
 
-		HomeworkSubmissionInfoResponse response = homeworkSubmissionQueryService.getStudentHomeworkSubmission(
-			lectureId, homeworkId, studentId);
-		return CommonResponse.success(response, "학생의 숙제 제출 내역 조회 성공");
+		ExamSubmissionInfoResponse response = examSubmissionQueryService.getStudentExamSubmission(
+			lectureId, examId, studentId);
+		return CommonResponse.success(response, "학생의 시험 제출 내역 조회 성공");
 	}
 
 	// 특정 문제 제출 정보 조회
-	@GetMapping("/{lectureId}/{homeworkId}/submissions/{studentId}/problems/{problemId}")
+	@GetMapping("/{lectureId}/{examId}/submissions/{studentId}/problems/{problemId}")
 	public CommonResponse<?> getHomeworkProblemSubmission(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@RequestHeader("X-MEMBER-ID") Long memberId,
 		@PathVariable Long lectureId,
-		@PathVariable Long homeworkId,
+		@PathVariable Long examId,
 		@PathVariable Long studentId,
 		@PathVariable Long problemId) {
 
 		checkAccessPermission(role, memberId, studentId);
 
-		HomeworkProblemSubmissionInfoResponse response = homeworkSubmissionQueryService.getHomeworkProblemSubmission(
-			lectureId, homeworkId, studentId, problemId);
-
-		return CommonResponse.success(response, "숙제 문제 제출 정보 조회 성공");
+		ExamProblemSubmissionInfoResponse response = examSubmissionQueryService.getExamProblemSubmission(
+			lectureId, examId, studentId, problemId);
+		return CommonResponse.success(response, "시험 문제 제출 정보 조회 성공");
 	}
 
-	// 특정 학생의 모든 숙제 제출 내역 조회
+	//특정 학생의 모든 숙제 제출 내역 조회
 	@GetMapping("/{lectureId}/student/{studentId}/submissions")
 	public CommonResponse<?> getAllHomeworkSubmissionsByStudent(
 		@RequestHeader("X-MEMBER-ROLE") String role,
@@ -104,9 +98,9 @@ public class HomeworkQueryController {
 
 		checkAccessPermission(role, memberId, studentId);
 
-		List<HomeworkSubmissionInfoResponse> response = homeworkSubmissionQueryService.getAllHomeworkSubmissionsByStudent(
+		List<ExamSubmissionInfoResponse> response = examSubmissionQueryService.getAllExamSubmissionsByStudent(
 			lectureId, studentId);
-		return CommonResponse.success(response, "특정 학생의 모든 숙제 제출 내역 조회 성공");
+		return CommonResponse.success(response, "특정 학생의 모든 시험 제출 내역 조회 성공");
 	}
 
 	// 역할이 TEACHER인지 확인하는 메서드
