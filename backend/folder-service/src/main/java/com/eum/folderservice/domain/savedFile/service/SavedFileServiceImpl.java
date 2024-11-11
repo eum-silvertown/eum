@@ -62,7 +62,7 @@ public class SavedFileServiceImpl implements SavedFileService {
             }
         }
 
-        savedFile.update(requestDTO.getTitle(), requestDTO.getContent(), requestDTO.getAnswer());
+        savedFile.updateTitle(requestDTO.getTitle());
         return SavedFileDetailResponseDTO.of(savedFile);
     }
 

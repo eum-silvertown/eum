@@ -10,6 +10,4 @@ import lombok.Setter;
 public class SavedFileModifyRequestDTO {
     private Long fileId;
     private String title;
-    private String content;
-    private String answer;
 }
