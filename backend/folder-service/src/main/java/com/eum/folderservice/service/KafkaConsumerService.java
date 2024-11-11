@@ -12,8 +12,8 @@ public class KafkaConsumerService {
     private final FolderService folderService;
 
     @KafkaListener(topics = "signup-topic")
-    public void listen(String memberId, Acknowledgment ack) {
-        folderService.createRootFolder(Long.parseLong(memberId));
+    public void listen(Object memberId, Acknowledgment ack) {
+        folderService.createRootFolder(Long.parseLong(String.valueOf(memberId)));
         ack.acknowledge();
     }
 }
