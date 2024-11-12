@@ -1,11 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {Text} from '@components/common/Text';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Alert} from 'react-native';
 import ScreenHeader from '@components/account/ScreenHeader';
 import InputField from '@components/account/InputField';
 import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
-
 import {useModal} from 'src/hooks/useModal';
 import FoundIdModal from '@components/account/FoundIdModal';
 
@@ -30,8 +29,8 @@ function FindIdScreen(): React.JSX.Element {
   const [verificationCodeStatusType, setVerificationCodeStatusType] = useState<
     'success' | 'error' | 'info' | ''
   >('info');
-
-  // `foundId`가 설정되면 모달을
+  const [Isloading, setIsLoading] = useState(false);
+  const [isVerifyLoading, setIsVerifyLoading] = useState(false);
   useEffect(() => {
     if (foundId) {
       open(<FoundIdModal id={foundId} email={email} />, {
@@ -47,18 +46,22 @@ function FindIdScreen(): React.JSX.Element {
       setEmailStatusType('error');
       return;
     }
+
+    setIsLoading(true);
     try {
       const response = await requestEmailVerificationId(email);
       setIsVerificationSent(true);
       setEmailStatusType('success');
       setEmailStatusText(response.message);
-
+      Alert.alert('이메일로 인증 코드를 발송하였습니다.');
       // 이메일 인증코드 발송 상태 변경
       setIsVerificationSent(true);
     } catch (error) {
       setIsVerificationSent(false);
       setEmailStatusType('error');
       setEmailStatusText(String(error));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,13 +70,17 @@ function FindIdScreen(): React.JSX.Element {
     if (!verificationCode) {
       setVerificationCodeStatusType('error');
       setVerificationCodeStatusText('인증번호를 입력해주세요.');
+      return;
     }
+    setIsVerifyLoading(true);
     try {
       const response = await findIdByVerificationCode(email, verificationCode);
       setFoundId(response);
     } catch (error) {
       setVerificationCodeStatusType('error');
       setVerificationCodeStatusText(String(error));
+    } finally {
+      setIsVerifyLoading(false);
     }
   };
 
@@ -84,30 +91,32 @@ function FindIdScreen(): React.JSX.Element {
       <View style={styles.inputContainer}>
         <Text weight="bold">회원가입에 사용된 이메일을 입력해주세요.</Text>
 
-        <InputField
-          label="이메일"
-          placeholder="이메일을 입력해주세요."
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          buttonText="인증하기"
-          onButtonPress={handleSendVerification}
-          statusText={emailStatusText}
-          status={emailStatusType}
-        />
-        {/* 이메일 인증코드 입력 필드 */}
-        {isVerificationSent && (
+        <View style={{gap: spacing.md}}>
           <InputField
-            label="인증번호"
-            placeholder="이메일로 받은 인증코드를 입력해주세요."
-            value={verificationCode}
-            onChangeText={setVerificationCode}
-            buttonText="인증하기"
-            onButtonPress={handleVerificationCodeInput}
-            statusText={verificationCodeStatusText}
-            status={verificationCodeStatusType}
+            label="이메일"
+            placeholder="이메일을 입력해주세요."
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            buttonText={Isloading ? '발송 중...' : '인증하기'}
+            onButtonPress={handleSendVerification}
+            statusText={emailStatusText}
+            status={emailStatusType}
           />
-        )}
+          {/* 이메일 인증코드 입력 필드 */}
+          {isVerificationSent && (
+            <InputField
+              label="인증번호"
+              placeholder="이메일로 받은 인증코드를 입력해주세요."
+              value={verificationCode}
+              onChangeText={setVerificationCode}
+              buttonText={isVerifyLoading ? '인증 중...' : '본인인증'}
+              onButtonPress={handleVerificationCodeInput}
+              statusText={verificationCodeStatusText}
+              status={verificationCodeStatusType}
+            />
+          )}
+        </View>
       </View>
     </View>
   );
@@ -125,5 +134,5 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '40%',
     gap: spacing.xl,
-  },  
+  },
 });
