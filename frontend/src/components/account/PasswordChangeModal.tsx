@@ -44,7 +44,10 @@ export default function PasswordChangeModal(): React.JSX.Element {
       );
 
       await logOut();
-      navigation.navigate('LoginScreen');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'LoginScreen' }], 
+      });
       setCurrentScreen('LoginScreen');
 
       close();

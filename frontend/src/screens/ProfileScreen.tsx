@@ -180,8 +180,13 @@ export default function ProfileScreen(): React.JSX.Element {
     try {
       await logOut(); //
       setAutoLogin(false);
-      navigation.navigate('LoginScreen'); // 로그아웃 성공 시 로그인 페이지로 이동
+
       setCurrentScreen('LoginScreen');
+      // 내비게이션 스택을 초기화하여 로그인 화면으로 이동
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'LoginScreen'}],
+      });
     } catch (error) {
       console.error('로그아웃 실패:', error); // 로그아웃 실패 시 에러 처리
     }
