@@ -45,8 +45,9 @@ function SignUpScreen(): React.JSX.Element {
   const headerText =
     userType === 'teacher' ? '선생님으로 가입하기' : '학생으로 가입하기';
 
-  const [isUsernameChecked, setIsUsernameChecked] = useState(false); // 아이디 중복 체크 완료 여부
-  const [isEmailVerified, setIsEmailVerified] = useState(false); // 이메일 인증 완료 여부
+  const [isUsernameChecked, setIsUsernameChecked] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  
   // 회원가입 정보 상태
   const [userId, setUserId] = useState('');
   const [userIdStatusText, setUserIdStatusText] = useState('');
@@ -202,8 +203,8 @@ function SignUpScreen(): React.JSX.Element {
       setTelStatusText('');
     }
 
-    if (!school) {
-      setSchoolStatusText('학교 정보를 입력해주세요.');
+    if (!school || selectedGrade === '0' || selectedClass === '0') {
+      setSchoolStatusText('학교 정보를 모두 입력해주세요.');
       setSchoolStatusType('error');
       isValid = false;
     } else {
@@ -508,23 +509,23 @@ function SignUpScreen(): React.JSX.Element {
                     <View style={styles.pickerContainer}>
                       {/* 학년 선택 드롭다운 */}
                       <CustomDropdownPicker
+                        label="학년"
                         items={Array.from({length: 4}, (_, i) => ({
-                          label: i === 0 ? '학년' : `${i}학년`,
+                          label: i === 0 ? '학년 선택' : `${i}학년`,
                           value: `${i}`,
                         }))}
-                        placeholder="학년 선택"
                         onSelectItem={value => setSelectedGrade(value)}
-                        defaultValue={selectedGrade}
+                        defaultValue={selectedGrade} // 선택된 학년 값 전달
                       />
                     </View>
                     <View style={styles.pickerContainer}>
                       {/* 반 선택 드롭다운 */}
                       <CustomDropdownPicker
+                        label="반"
                         items={Array.from({length: 16}, (_, i) => ({
                           label: i === 0 ? '반' : `${i}반`,
                           value: `${i}`,
                         }))}
-                        placeholder="반 선택"
                         onSelectItem={value => setSelectedClass(value)}
                         defaultValue={selectedClass}
                       />
@@ -632,7 +633,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xl,
-    marginBottom: spacing.md,
   },
   gradeClassContainer: {
     flex: 1,

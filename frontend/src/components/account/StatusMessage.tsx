@@ -6,7 +6,7 @@ import {spacing} from '@theme/spacing';
 
 interface StatusMessageProps {
   message?: string | undefined; // 메시지 텍스트
-  status?: 'error' | 'success' | 'info' | '' ;
+  status?: 'error' | 'success' | 'info' | '';
   style?: ViewStyle | TextStyle; // 추가 스타일
 }
 
@@ -26,18 +26,15 @@ function StatusMessage({
   ];
 
   return (
-    <View style={styles.container}>
-      <Text variant='caption' style={messageStyle}>{message}</Text>
-    </View>
+    <Text variant="caption" style={messageStyle}>
+      {message}
+    </Text>
   );
 }
 
 export default StatusMessage;
 
 const styles = StyleSheet.create({
-  container: {
-    marginVertical: spacing.sm,
-  },
   errorMessage: {
     color: colors.light.text.error,
   },
