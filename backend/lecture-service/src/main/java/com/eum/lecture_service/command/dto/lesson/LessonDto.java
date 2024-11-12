@@ -1,5 +1,6 @@
 package com.eum.lecture_service.command.dto.lesson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.eum.lecture_service.command.entity.lecture.Lecture;
@@ -27,6 +28,7 @@ public class LessonDto {
 		return Lesson.builder()
 			.lecture(lecture)
 			.title(title)
+			.lessonQuestions(new ArrayList<>())
 			.build();
 	}
 }

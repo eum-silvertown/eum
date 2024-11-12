@@ -61,6 +61,7 @@ public class NoticeServiceImpl implements NoticeService{
 	}
 
 	@Override
+	@Transactional
 	public void deleteNotice(Long noticeId) {
 		Notice notice = noticeRepository.findById(noticeId)
 			.orElseThrow(() -> new EumException(ErrorCode.NOTICE_NOT_FOUND));

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.eum.lecture_service.command.dto.homework.HomeworkDto;
 import com.eum.lecture_service.command.entity.homework.Homework;
@@ -18,6 +19,9 @@ import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.homework.HomeworkCreateEvent;
 import com.eum.lecture_service.event.event.homework.HomeworkDeleteEvent;
 import com.eum.lecture_service.event.event.homework.HomeworkUpdateEvent;
+import com.eum.lecture_service.event.event.notification.HomeworkCreatedNotificationEvent;
+import com.eum.lecture_service.query.document.eventModel.StudentModel;
+import com.eum.lecture_service.query.repository.StudentReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,13 +31,14 @@ public class HomeworkServiceImpl implements HomeworkService {
 
 	private final HomeworkRepository homeworkRepository;
 	private final LectureRepository lectureRepository;
+	private final StudentReadRepository studentReadRepository;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
+	@Transactional
 	public Long createHomework(HomeworkDto homeworkDto) {
 		Lecture lecture = lectureRepository.findById(homeworkDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
-
 		checkDuplicateTitle(lecture.getHomeworks(), homeworkDto.getTitle());
 
 		Homework homework = homeworkDto.toHomeworkEntity(lecture);
@@ -43,10 +48,15 @@ public class HomeworkServiceImpl implements HomeworkService {
 
 		publishHomeworkCreateEvent(savedHomework, homeworkDto.getQuestionIds());
 
+		//알림이벤트
+		publishHomeworkNotificationCreateEvent(savedHomework);
+
 		return savedHomework.getHomeworkId();
 	}
 
+
 	@Override
+	@Transactional
 	public Long updateHomework(Long homeworkId, HomeworkDto homeworkDto) {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_NOT_FOUND));
@@ -63,6 +73,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteHomework(Long homeworkId) {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_NOT_FOUND));
@@ -135,5 +146,20 @@ public class HomeworkServiceImpl implements HomeworkService {
 			homework.getLecture().getLectureId()
 		);
 		kafkaTemplate.send("homework-delete-topic", event);
+	}
+
+	private List<Long> getStudentIds(Long classId) {
+		List<StudentModel> studentModels = studentReadRepository.findByClassId(classId);
+
+		return studentModels.stream()
+			.map(StudentModel::getStudentId)
+			.collect(Collectors.toList());
+	}
+
+	private void publishHomeworkNotificationCreateEvent(Homework savedHomework) {
+		List<Long> studentIds = getStudentIds(savedHomework.getLecture().getClassId());
+
+		HomeworkCreatedNotificationEvent event = HomeworkCreatedNotificationEvent.of(savedHomework, studentIds);
+		kafkaTemplate.send("homework-created-notification-topic", event);
 	}
 }

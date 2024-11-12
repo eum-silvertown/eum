@@ -3,6 +3,7 @@ package com.eum.lecture_service.command.service.lecture;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -21,8 +22,12 @@ import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureStatusUpdatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
+import com.eum.lecture_service.event.event.notification.LectureCreatedNotificationEvent;
+import com.eum.lecture_service.event.event.notification.LectureStartedNotificationEvent;
 import com.eum.lecture_service.query.document.eventModel.ClassModel;
+import com.eum.lecture_service.query.document.eventModel.StudentModel;
 import com.eum.lecture_service.query.repository.ClassReadRepository;
+import com.eum.lecture_service.query.repository.StudentReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +39,7 @@ public class LectureServiceImpl implements LectureService{
 	private final LectureScheduleRepository lectureScheduleRepository;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 	private final ClassReadRepository classReadRepository;
+	private final StudentReadRepository studentReadRepository;
 
 	@Override
 	@Transactional
@@ -59,8 +65,12 @@ public class LectureServiceImpl implements LectureService{
 		LectureCreatedEvent event = new LectureCreatedEvent(savedLecture);
 		kafkaTemplate.send("lecture-created-topic", event);
 
+		//알림 이벤트 발생
+		publishCreateNotificationEvent(savedLecture);
+
 		return savedLecture.getLectureId();
 	}
+
 
 	private void validateLectureSchedule(List<LectureSchedule> schedules, Long classId) {
 		for (LectureSchedule schedule : schedules) {
@@ -99,6 +109,7 @@ public class LectureServiceImpl implements LectureService{
 	}
 
 	@Override
+	@Transactional
 	public void deleteLecture(Long lectureId) {
 		if (!lectureRepository.existsById(lectureId)) {
 			throw new EumException(ErrorCode.LECTURE_NOT_FOUND);
@@ -129,5 +140,35 @@ public class LectureServiceImpl implements LectureService{
 
 		LectureStatusUpdatedEvent event = new LectureStatusUpdatedEvent(lectureId, savedlecture.getLectureStatus());
 		kafkaTemplate.send("lecture-status-updated-topic", event);
+
+		//스위칭 알림이벤트 -> 만약 lecture 상태가 true면
+		if(savedlecture.getLectureStatus()) {
+			publishStartNotificationEvent(savedlecture);
+		}
+	}
+
+	private List<Long> getStudentIds(Long classId) {
+		List<StudentModel> studentModels = studentReadRepository.findByClassId(classId);
+
+		return studentModels.stream()
+			.map(StudentModel::getStudentId)
+			.collect(Collectors.toList());
+	}
+
+	private void publishCreateNotificationEvent(Lecture savedLecture) {
+
+		List<Long> studentIds = getStudentIds(savedLecture.getClassId());
+
+		LectureCreatedNotificationEvent event = LectureCreatedNotificationEvent.of(savedLecture, studentIds);
+
+		kafkaTemplate.send("lecture-created-notification-topic", event);
+	}
+
+	private void publishStartNotificationEvent(Lecture savedLecture) {
+		List<Long> studentIds = getStudentIds(savedLecture.getClassId());
+
+		LectureStartedNotificationEvent event = LectureStartedNotificationEvent.of(savedLecture, studentIds);
+
+		kafkaTemplate.send("lecture-started-notification-topic", event);
 	}
 }

@@ -94,6 +94,7 @@ public class LessonServiceImpl implements LessonService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteLesson(Long lessonId) {
 		Lesson lesson = lessonRepository.findById(lessonId)
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));

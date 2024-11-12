@@ -1,6 +1,7 @@
 package com.eum.lecture_service.command.service.exam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,10 @@ import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.exam.ExamCreateEvent;
 import com.eum.lecture_service.event.event.exam.ExamDeleteEvent;
 import com.eum.lecture_service.event.event.exam.ExamUpdateEvent;
+import com.eum.lecture_service.event.event.notification.ExamCreatedNotificationEvent;
+import com.eum.lecture_service.event.event.notification.HomeworkCreatedNotificationEvent;
+import com.eum.lecture_service.query.document.eventModel.StudentModel;
+import com.eum.lecture_service.query.repository.StudentReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +32,7 @@ public class ExamServiceImpl implements ExamService {
 	private final ExamRepository examRepository;
 	private final LectureRepository lectureRepository;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
+	private final StudentReadRepository studentReadRepository;
 
 	@Override
 	@Transactional
@@ -43,6 +49,9 @@ public class ExamServiceImpl implements ExamService {
 		examRepository.save(savedExam);
 
 		publishExamCreateEvent(savedExam, examDto.getQuestionIds());
+
+		//알림이벤트
+		publishExamNotificationCreateEvent(savedExam);
 
 		return savedExam.getExamId();
 	}
@@ -141,5 +150,20 @@ public class ExamServiceImpl implements ExamService {
 			exam.getLecture().getLectureId()
 		);
 		kafkaTemplate.send("exam-delete-topic", event);
+	}
+
+	private List<Long> getStudentIds(Long classId) {
+		List<StudentModel> studentModels = studentReadRepository.findByClassId(classId);
+
+		return studentModels.stream()
+			.map(StudentModel::getStudentId)
+			.collect(Collectors.toList());
+	}
+
+	private void publishExamNotificationCreateEvent(Exam savedExam) {
+		List<Long> studentIds = getStudentIds(savedExam.getLecture().getClassId());
+
+		ExamCreatedNotificationEvent event = ExamCreatedNotificationEvent.of(savedExam, studentIds);
+		kafkaTemplate.send("exam-created-notification-topic", event);
 	}
 }

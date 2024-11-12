@@ -11,10 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LectureCreatedEvent {
+public class LectureCreatedNotificationEvent {
 
 	private Long lectureId;
 	private String title;
-	private Long teacherId;
 	private List<Long> studentIds;
 }
