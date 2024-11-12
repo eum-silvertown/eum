@@ -1,27 +1,30 @@
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {spacing} from '@theme/spacing';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { spacing } from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {borderRadius} from '@theme/borderRadius';
+import { borderRadius } from '@theme/borderRadius';
 import Book from '@components/common/Book';
 import AddLectureModal from '@components/lectureList/AddLectureModal';
-import {iconSize} from '@theme/iconSize';
-import {useModal} from 'src/hooks/useModal';
+import { iconSize } from '@theme/iconSize';
+import { useModal } from 'src/hooks/useModal';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {Picker} from '@react-native-picker/picker';
-import {useState} from 'react';
-import {colors} from 'src/hooks/useColors';
-import {getResponsiveSize} from '@utils/responsive';
-import {useQuery} from '@tanstack/react-query';
+import { Picker } from '@react-native-picker/picker';
+import { useState } from 'react';
+import { colors } from 'src/hooks/useColors';
+import { getResponsiveSize } from '@utils/responsive';
+import { useQuery } from '@tanstack/react-query';
 import {
   LectureListItemType,
   getLectureList,
 } from '@services/lectureInformation';
 import BookModal from '@components/common/BookModal';
-import {useBookModalStore} from '@store/useBookModalStore';
+import { useBookModalStore } from '@store/useBookModalStore';
+import { useAuthStore } from '@store/useAuthStore';
 
 function ClassListScreen(): React.JSX.Element {
+  const userInfo = useAuthStore(state => state.userInfo);
+  const isTeacher = userInfo.role === 'TEACHER';
   const bookPosition = useBookModalStore(state => state.bookPosition);
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
@@ -31,8 +34,8 @@ function ClassListScreen(): React.JSX.Element {
     setCurrentScreen('ClassListScreen');
   });
 
-  const {open} = useModal();
-  const {data: lectures = [], isLoading} = useQuery<LectureListItemType[]>({
+  const { open } = useModal();
+  const { data: lectures = [], isLoading } = useQuery<LectureListItemType[]>({
     queryKey: ['lectureList'],
     queryFn: getLectureList,
   });
@@ -75,18 +78,20 @@ function ClassListScreen(): React.JSX.Element {
       {bookPosition && <BookModal />}
       <View style={styles.container}>
         <View style={styles.header}>
-          <ScreenInfo title="수업" />
-          <TouchableOpacity
-            onPress={() => {
-              open(<AddLectureModal />, {
-                title: '수업 생성',
-                onClose: () => {
-                  console.log('수업 생성 모달 종료');
-                },
-              });
-            }}>
-            <AddCircleIcon width={iconSize.lg} height={iconSize.lg} />
-          </TouchableOpacity>
+          <ScreenInfo title="수강 중인 수업" />
+          {isTeacher &&
+            <TouchableOpacity
+              onPress={() => {
+                open(<AddLectureModal />, {
+                  title: '수업 생성',
+                  onClose: () => {
+                    console.log('수업 생성 모달 종료');
+                  },
+                });
+              }}>
+              <AddCircleIcon style={{ marginLeft: getResponsiveSize(4), marginVertical: getResponsiveSize(2) }} width={iconSize.lg} height={iconSize.lg} />
+            </TouchableOpacity>
+          }
         </View>
 
         <View style={styles.classListContainer}>
@@ -111,32 +116,32 @@ function ClassListScreen(): React.JSX.Element {
               <Picker.Item label="2학기" value={2} />
             </Picker>
 
-          <TouchableOpacity
-            onPress={handleCurrentSemester}
-            style={styles.currentSemesterButton}>
-            <Text>현재 학기</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.content}>
-          <View style={styles.classList}>
-            {filteredLectures.map((data, index) => (
-              <Book
-                key={index}
-                rightPosition={index * 25}
-                title={data.title}
-                subject={data.subject}
-                backgroundColor={data.backgroundColor}
-                fontColor={data.fontColor}
-                grade={data.grade}
-                classNumber={data.classNumber}
-                teacherName={data.teacher.name}
-                lectureId={data.lectureId}
-              />
-            ))}
+            <TouchableOpacity
+              onPress={handleCurrentSemester}
+              style={styles.currentSemesterButton}>
+              <Text>현재 학기</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.content}>
+            <View style={styles.classList}>
+              {filteredLectures.map((data, index) => (
+                <Book
+                  key={index}
+                  rightPosition={index * 25}
+                  title={data.title}
+                  subject={data.subject}
+                  backgroundColor={data.backgroundColor}
+                  fontColor={data.fontColor}
+                  grade={data.grade}
+                  classNumber={data.classNumber}
+                  teacherName={data.teacher.name}
+                  lectureId={data.lectureId}
+                />
+              ))}
+            </View>
           </View>
         </View>
       </View>
-    </View>
     </>
   );
 }
