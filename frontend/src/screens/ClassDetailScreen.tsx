@@ -72,6 +72,7 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
         backgroundColor={lectureDetail.backgroundColor}
         fontColor={lectureDetail.fontColor}
         pastTeacherName={lectureDetail.teacherModel.name}
+        lectureStatus={lectureDetail.lectureStatus}
       />
       <View style={styles.content}>
         <View style={styles.firstRow}>

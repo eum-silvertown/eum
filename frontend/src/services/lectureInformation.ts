@@ -148,6 +148,7 @@ export type LectureDetailType = {
   semester: number;
   grade: number;
   classNumber: number;
+  lectureStatus: boolean;
   teacherModel: TeacherType;
   schedule: ScheduleType[];
   notices: NoticeType[];
@@ -272,20 +273,26 @@ export type LectureListDayItemType = {
 };
 
 // 수업 목록 요일별 조회
-export const getLectureListDay = async (day: string, year: number, semester:number): Promise<LectureListDayItemType[]> => {
+export const getLectureListDay = async (
+  day: string,
+  year: number,
+  semester: number,
+): Promise<LectureListDayItemType[]> => {
   console.log('요일별 수업 리스트 조회 요청');
   try {
     const {data} = await authApiClient.get('/lecture/day', {
       params: {
-        day, year, semester
+        day,
+        year,
+        semester,
       },
     });
     console.log('요일별 수업 리스트 조회 응답:', data.data);
-       // lecture_period를 lecturePeriod로 매핑하여 반환
-       return data.data.map((item:any) => ({
-        ...item,
-        lecturePeriod: item.lecture_period,        
-      }));
+    // lecture_period를 lecturePeriod로 매핑하여 반환
+    return data.data.map((item: any) => ({
+      ...item,
+      lecturePeriod: item.lecture_period,
+    }));
   } catch (error) {
     console.error('요일별 수업 리스트 조회 실패:', error);
     throw error;
