@@ -1,6 +1,5 @@
-package com.eum.lecture_service.event.event.notification;
+package com.eum.notification_service.event.event;
 
-import java.io.Serializable;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -9,12 +8,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LectureNotificationEvent implements Serializable {
+@Builder
+public class LectureStartedNotificationEvent  {
     private Long lectureId;
-    private String lectureTitle;
+    private String title;
     private List<Long> studentIds;
-    private String message;
 }

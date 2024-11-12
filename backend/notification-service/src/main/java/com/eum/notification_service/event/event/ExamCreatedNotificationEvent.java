@@ -9,13 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class HomeworkCreatedEvent {
+public class ExamCreatedNotificationEvent {
 
-	private Long homeworkId;
+	private Long examId;
 	private String title;
-	private Long lectureId;
 	private List<Long> studentIds;
 }
