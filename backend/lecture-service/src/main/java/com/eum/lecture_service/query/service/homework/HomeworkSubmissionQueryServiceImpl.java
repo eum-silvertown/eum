@@ -1,17 +1,27 @@
 package com.eum.lecture_service.query.service.homework;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.eum.lecture_service.command.entity.lecture.Lecture;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
+import com.eum.lecture_service.query.document.LectureModel;
 import com.eum.lecture_service.query.document.StudentOverviewModel;
+import com.eum.lecture_service.query.document.eventModel.StudentModel;
+import com.eum.lecture_service.query.document.lectureInfo.HomeworkInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo;
 import com.eum.lecture_service.query.dto.homework.HomeworkProblemSubmissionInfoResponse;
 import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.homework.StudentHomeworkResponse;
+import com.eum.lecture_service.query.repository.LectureReadRepository;
 import com.eum.lecture_service.query.repository.StudentOverviewRepository;
+import com.eum.lecture_service.query.repository.StudentReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 public class HomeworkSubmissionQueryServiceImpl implements HomeworkSubmissionQueryService {
 
 	private final StudentOverviewRepository studentOverviewRepository;
+	private final StudentReadRepository studentReadRepository;
+	private final LectureReadRepository lectureReadRepository;
 
 	//특정 숙제에 대한 학생들 성적 모두 조회
 	@Override
@@ -70,4 +82,77 @@ public class HomeworkSubmissionQueryServiceImpl implements HomeworkSubmissionQue
 			.map(HomeworkSubmissionInfoResponse::fromHomeworkSubmission)
 			.collect(Collectors.toList());
 	}
+
+	@Override
+	public StudentHomeworkResponse getStudentAllLectureHomeworkOverview(Long studentId) {
+		StudentModel student = studentReadRepository.findById(studentId)
+			.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
+
+		Long classId = student.getClassId();
+
+		List<LectureModel> lectures = lectureReadRepository.findByClassId(classId);
+
+		List<StudentOverviewModel> studentOverviews = studentOverviewRepository.findByStudentId(studentId);
+
+		Map<Long, StudentOverviewModel> overviewMap = studentOverviews.stream()
+			.collect(Collectors.toMap(StudentOverviewModel::getLectureId, Function.identity()));
+
+		List<StudentHomeworkResponse.StudentHomeworkInfo> homeworkDetails = new ArrayList<>();
+		Long totalHomeworkCount = 0L;
+		Long completedHomeworkCount = 0L;
+		Double totalScore = 0.0;
+
+		for (LectureModel lecture : lectures) {
+			List<HomeworkInfo> homeworks = lecture.getHomeworks();
+			for (HomeworkInfo homework : homeworks) {
+				totalHomeworkCount++;
+
+				StudentOverviewModel overview = overviewMap.get(lecture.getLectureId());
+				HomeworkSubmissionInfo submission = null;
+				if (overview != null) {
+					submission = overview.getHomeworkSubmissionInfo().stream()
+						.filter(hs -> hs.getHomeworkId().equals(homework.getHomeworkId()))
+						.findFirst()
+						.orElse(null);
+				}
+
+				if (submission != null && submission.getIsComplete()) {
+					completedHomeworkCount++;
+					totalScore += submission.getScore() != null ? submission.getScore() : 0.0;
+
+					homeworkDetails.add(StudentHomeworkResponse.StudentHomeworkInfo.builder()
+						.homeworkId(homework.getHomeworkId())
+						.title(homework.getTitle())
+						.startTime(homework.getStartTime())
+						.endTime(homework.getEndTime())
+						.score(submission.getScore())
+						.correctCount(submission.getCorrectCount())
+						.totalCount(submission.getTotalCount())
+						.isComplete(true)
+						.build());
+				} else {
+					homeworkDetails.add(StudentHomeworkResponse.StudentHomeworkInfo.builder()
+						.homeworkId(homework.getHomeworkId())
+						.title(homework.getTitle())
+						.startTime(homework.getStartTime())
+						.endTime(homework.getEndTime())
+						.score(null)
+						.correctCount(null)
+						.totalCount(null)
+						.isComplete(false)
+						.build());
+				}
+			}
+		}
+
+		Double averageScore = completedHomeworkCount > 0 ? totalScore / completedHomeworkCount : 0.0;
+
+		return StudentHomeworkResponse.builder()
+			.totalHomeworkCount(totalHomeworkCount)
+			.completedHomeworkCount(completedHomeworkCount)
+			.averageScore(averageScore)
+			.homeworkDetails(homeworkDetails)
+			.build();
+	}
+
 }

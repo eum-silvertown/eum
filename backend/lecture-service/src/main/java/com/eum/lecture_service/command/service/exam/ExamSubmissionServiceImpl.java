@@ -64,7 +64,7 @@ public class ExamSubmissionServiceImpl implements ExamSubmissionService {
 		ExamSubmission examSubmission = examSubmissionRepository.findByExamAndStudentId(exam, studentId)
 			.orElse(null);
 
-		if (examSubmission != null && examSubmission.isCompleted()) {
+		if (examSubmission != null && examSubmission.getIsCompleted()) {
 			throw new EumException(ErrorCode.EXAM_ALREADY_SUBMITTED);
 		}
 
