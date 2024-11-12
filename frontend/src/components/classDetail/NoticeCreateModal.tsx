@@ -60,17 +60,17 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
           <Text variant="subtitle" weight="bold">
             제목
           </Text>
-          <Text style={styles.charLimitText}>({title.length} / 12자)</Text>
+          <Text style={styles.charLimitText}>({title.length} / 10자)</Text>
         </View>
         <InputField
           placeholder="제목을 입력해주세요."
           value={title}
           onChangeText={text => {
-            if (text.length <= 12) {
+            if (text.length <= 10) {
               setTitle(text);
               setTitleError(''); // 에러 메시지 초기화
             } else {
-              setTitleError('제목은 최대 12자까지 입력 가능합니다.');
+              setTitleError('제목은 최대 10자까지 입력 가능합니다.');
             }
           }}
         />
@@ -82,17 +82,17 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
           <Text variant="subtitle" weight="bold">
             내용
           </Text>
-          <Text style={styles.charLimitText}>({content.length} / 68자)</Text>
+          <Text style={styles.charLimitText}>({content.length} / 64자)</Text>
         </View>
         <InputField
           placeholder="내용을 입력해주세요."
           value={content}
           onChangeText={text => {
-            if (text.length <= 68) {
+            if (text.length <= 64) {
               setContent(text);
               setContentError(''); // 에러 메시지 초기화
             } else {
-              setContentError('내용은 최대 68자까지 입력 가능합니다.');
+              setContentError('내용은 최대 64자까지 입력 가능합니다.');
             }
           }}
         />
