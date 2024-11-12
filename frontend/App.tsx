@@ -1,6 +1,6 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { navigationRef } from '@services/NavigationService';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {navigationRef} from '@services/NavigationService';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {ScreenType} from '@store/useCurrentScreenStore';
 import LoginScreen from '@screens/LoginScreen';
@@ -21,10 +21,13 @@ import NotificationScreen from '@screens/notification/NotificationScreen';
 import LessoningStudentListScreen from '@screens/LessoningStudentListScreen';
 import MainLayout from '@components/common/MainLayout';
 import ProfileScreen from '@screens/ProfileScreen';
+import LessonCreateScreen from '@screens/LessonCreateScreen';
+
 import {Platform, UIManager} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {TextEncoder} from 'text-encoding';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 global.TextEncoder = TextEncoder;
 // 안드로이드 기본 Navbar 없애기
@@ -77,6 +80,7 @@ function App(): React.JSX.Element {
       {name: 'ClassListScreen', component: ClassListScreen},
       {name: 'ClassHomeworkListScreen', component: ClassHomeworkListScreen},
       {name: 'ClassLessonListScreen', component: ClassLessonListScreen},
+      {name: 'LessonCreateScreen', component: LessonCreateScreen},
       {name: 'HomeworkScreen', component: HomeworkScreen},
       {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
       {name: 'MyClassScreen', component: MyClassScreen},
@@ -95,29 +99,31 @@ function App(): React.JSX.Element {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <NavigationContainer ref={navigationRef}>
-        <MainLayout>
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-              animation: 'slide_from_right',
-              animationDuration: 300,
-              contentStyle: {
-                backgroundColor: 'transparent',
-              },
-            }}>
-            {screens.map((screen, index) => (
-              <Stack.Screen
-                key={index}
-                name={screen.name}
-                component={screen.component}
-              />
-            ))}
-          </Stack.Navigator>
-        </MainLayout>
-      </NavigationContainer>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer ref={navigationRef}>
+          <MainLayout>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+                animation: 'slide_from_right',
+                animationDuration: 300,
+                contentStyle: {
+                  backgroundColor: 'transparent',
+                },
+              }}>
+              {screens.map((screen, index) => (
+                <Stack.Screen
+                  key={index}
+                  name={screen.name}
+                  component={screen.component}
+                />
+              ))}
+            </Stack.Navigator>
+          </MainLayout>
+        </NavigationContainer>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
 

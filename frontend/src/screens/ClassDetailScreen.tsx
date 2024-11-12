@@ -28,7 +28,7 @@ import {getResponsiveSize} from '@utils/responsive';
 import {useBookModalStore} from '@store/useBookModalStore';
 import EmptyData from '@components/common/EmptyData';
 import {useAuthStore} from '@store/useAuthStore';
-import {useLessonStore} from '@store/useLessonStore';
+import {useLectureStore} from '@store/useLessonStore';
 
 type BookLectureProps = {
   lectureId: number;
@@ -38,7 +38,7 @@ function ClassDetailScreen({lectureId}: BookLectureProps): React.JSX.Element {
   const closeBook = useBookModalStore(state => state.closeBook);
   const userInfo = useAuthStore(state => state.userInfo);
   const isTeacher = userInfo.role === 'TEACHER';
-  const setLessonInfo = useLessonStore(state => state.setLessonInfo);
+  const setLessonInfo = useLectureStore(state => state.setLessonInfo);
 
   // 통합 강의 상세 정보 쿼리
   const {
@@ -129,7 +129,7 @@ function ClassDetailScreen({lectureId}: BookLectureProps): React.JSX.Element {
             </View>
             <View style={styles.chartLayout}>
               {isTeacher ? (
-                <ClassHandleButtonList />
+                <ClassHandleButtonList lectureId={lectureDetail.lectureId}/>
               ) : (
                 <Chart
                   studentScores={
