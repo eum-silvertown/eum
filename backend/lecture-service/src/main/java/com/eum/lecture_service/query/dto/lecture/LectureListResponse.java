@@ -28,7 +28,7 @@ public class LectureListResponse {
 	private Boolean lectureStatus;
 	private TeacherModel teacher;
 	private List<String> scheduleDays;
-	private Long lecture_period;
+	private List<Long> lecture_period;
 
 	public static LectureListResponse fromLectureModel(LectureModel lecture, ClassModel classModel, TeacherModel teacher) {
 		return LectureListResponse.builder()
@@ -52,11 +52,10 @@ public class LectureListResponse {
 	}
 
 	public static LectureListResponse fromLectureModelWithPeriod(LectureModel lecture, String day, ClassModel classModel, TeacherModel teacher) {
-		Long period = lecture.getSchedule().stream()
+		List<Long> period = lecture.getSchedule().stream()
 			.filter(s -> s.getDay().equals(day))
 			.map(ScheduleInfo::getPeriod)
-			.findFirst()
-			.orElse(null);
+			.collect(Collectors.toList());
 		LectureListResponse lectureListResponse = fromLectureModel(lecture, classModel, teacher);
 		lectureListResponse.setLecture_period(period);
 		return lectureListResponse;
