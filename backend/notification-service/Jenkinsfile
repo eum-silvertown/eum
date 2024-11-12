@@ -47,6 +47,20 @@ pipeline {
             }
         }
 
+        stage('Inject Firebase Config') {
+            when {
+                expression { return env.BUILD_REQUIRED == 'true' }
+            }
+            steps {
+                withCredentials([file(credentialsId: 'firebaseAccountKey', variable: 'FIREBASE_JSON')]) {
+                    sh '''
+                        mkdir -p ${SERVICE_DIR}/src/main/resources
+                        cp $FIREBASE_JSON ${SERVICE_DIR}/src/main/resources/firebaseAccountKey.json
+                    '''
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             when {
                 expression { return env.BUILD_REQUIRED == 'true' }
