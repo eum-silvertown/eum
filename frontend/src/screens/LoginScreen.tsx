@@ -18,7 +18,7 @@ import {setAutoLogin} from '@utils/secureStorage';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import { useAuthStore } from '@store/useAuthStore';
+import {useAuthStore} from '@store/useAuthStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -59,7 +59,6 @@ function LoginScreen(): React.JSX.Element {
       });
       setCurrentScreen('HomeScreen');
       authStore.setIsLoggedIn(true);
-
     } catch (error: any) {
       // 에러 메시지를 string으로 변환하여 상태에 설정
       if (error?.message) {
@@ -94,7 +93,7 @@ function LoginScreen(): React.JSX.Element {
       </View>
 
       <View style={styles.loginfield}>
-        <View>
+        <View style={{gap: spacing.md}}>
           <InputField
             label="아이디"
             value={id}
@@ -204,7 +203,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  inputField: {},
   submitButton: {
     backgroundColor: colors.dark.background.main,
     textAlign: 'center',
@@ -221,7 +219,7 @@ const styles = StyleSheet.create({
   },
   accountContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: spacing.xl,
+    justifyContent: 'space-around',
+    
   },
 });

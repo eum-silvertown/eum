@@ -91,8 +91,7 @@ export default InputField;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    width: '100%',
-    marginBottom: spacing.md,
+    width: '100%',    
   },
   inputLabel: {
     marginBottom: spacing.sm,
