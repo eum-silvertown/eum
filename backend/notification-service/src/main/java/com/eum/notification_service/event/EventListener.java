@@ -17,28 +17,28 @@ public class EventListener {
 
 	private final NotificationService notificationService;
 
-	@KafkaListener(topics = "lecture-created-topic", groupId = "notification-group", properties = {
+	@KafkaListener(topics = "lecture-created-notification-topic", groupId = "notification-group", properties = {
 		"spring.json.value.default.type=com.eum.notification_service.event.event.LectureCreatedNotificationEvent"
 	})
 	public void handleLectureCreated(LectureCreatedNotificationEvent event) {
 		notificationService.sendLectureCreatedNotifications(event);
 	}
 
-	@KafkaListener(topics = "lecture-started-topic", groupId = "notification-group", properties = {
+	@KafkaListener(topics = "lecture-started-notification-topic", groupId = "notification-group", properties = {
 		"spring.json.value.default.type=com.eum.notification_service.event.event.LectureStartedNotificationEvent"
 	})
 	public void handleLectureStatusUpdated(LectureStartedNotificationEvent event) {
 		notificationService.sendLectureStatusUpdatedNotifications(event);
 	}
 
-	@KafkaListener(topics = "exam-created-topic", groupId = "notification-group", properties = {
+	@KafkaListener(topics = "exam-created-notification-topic", groupId = "notification-group", properties = {
 		"spring.json.value.default.type=com.eum.notification_service.event.event.ExamCreatedNotificationEvent"
 	})
 	public void handleExamCreated(ExamCreatedNotificationEvent event) {
 		notificationService.sendExamCreatedNotifications(event);
 	}
 
-	@KafkaListener(topics = "homework-created-topic", groupId = "notification-group", properties = {
+	@KafkaListener(topics = "homework-created-notification-topic", groupId = "notification-group", properties = {
 		"spring.json.value.default.type=com.eum.notification_service.event.event.HomeworkCreatedNotificationEvent"
 	})
 	public void handleHomeworkCreated(HomeworkCreatedNotificationEvent event) {
