@@ -63,14 +63,14 @@ function StudentRealTimeCanvasRefSection({
         setPaths(prevPaths => mergeSimilarPaths([...prevPaths, { ...newPathData, path: newPath }]));
       }
     } catch (error) {
-      console.error('Failed to decompress or parse left_to_right_move data:', error);
+      console.error('Failed to decompress or parse data:', error);
     }
   };
 
-  const mergeSimilarPaths = (paths: PathData[]): PathData[] => {
+  const mergeSimilarPaths = (newPaths: PathData[]): PathData[] => {
     const mergedPaths: PathData[] = [];
 
-    paths.forEach(currentPath => {
+    newPaths.forEach(currentPath => {
       const lastMergedPath = mergedPaths[mergedPaths.length - 1];
 
       if (

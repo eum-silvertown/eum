@@ -43,6 +43,7 @@ function ClassHeader({
   pastTeacherName,
   lectureStatus,
 }: ClassHeaderProps): React.JSX.Element {
+
   const navigation = useNavigation<NavigationProps>();
   const {open} = useModal();
 
@@ -120,7 +121,7 @@ function ClassHeader({
         navigation.navigate('LessoningStudentListScreen');
       } else {
         // isTeacher가 false일 때는 data를 포함하여 navigate 호출
-        navigation.navigate('LessoningScreen', {data: null});
+        navigation.navigate('LessoningScreen');
       }
     } else {
       Alert.alert('수업 종료됨', '이 수업은 종료되었습니다.');

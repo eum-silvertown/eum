@@ -81,8 +81,8 @@ function LessoningStudentListScreen(): React.JSX.Element {
     }
   };
 
-  const handleParticipantPress = (memberId: number) => {
-    navigation.navigate('LessoningScreen', {data: memberId});
+  const handleParticipantPress = () => {
+    navigation.navigate('LessoningScreen');
   };
 
   return (
@@ -106,7 +106,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
         renderItem={({item}) => (
           <ParticipantCard
             participant={item}
-            onPress={() => handleParticipantPress(Number(item.id))} // 클릭 이벤트 핸들러
+            onPress={() => handleParticipantPress()} // 클릭 이벤트 핸들러
           />
         )}
       />

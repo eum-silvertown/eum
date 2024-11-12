@@ -8,13 +8,7 @@ import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
-type CanvasComponentProps = {
-  startRecording?: () => void;
-  stopRecording?: () => void;
-  isRecording?: boolean;
-};
-
-const TeacherLessoningGridInteractionTool = ({}: CanvasComponentProps) => {
+const TeacherLessoningGridInteractionTool = () => {
   const navigation = useNavigation<NavigationProps>();
 
   const handleExit = () => {
@@ -28,16 +22,14 @@ const TeacherLessoningGridInteractionTool = ({}: CanvasComponentProps) => {
           {/* 필기 화면 닫기 */}
           <TouchableOpacity
             style={styles.iconTouchLayout}
-            onPress={() => navigation.navigate('LessoningScreen')}>
+            onPress={() =>
+              navigation.navigate('LessoningScreen')
+            }>
             <DrawingTabletIcon
               width={iconSize.mdPlus}
               height={iconSize.mdPlus}
             />
-            <Text
-              style={styles.btnTitle}
-              onPress={() => navigation.navigate('LessoningScreen')}>
-              문제 필기로 이동하기
-            </Text>
+            <Text style={styles.btnTitle}>문제 페이지 이동하기</Text>
           </TouchableOpacity>
           {/* 종료 버튼 */}
           <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
