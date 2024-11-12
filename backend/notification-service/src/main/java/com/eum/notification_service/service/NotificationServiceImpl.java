@@ -3,6 +3,7 @@ package com.eum.notification_service.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,33 +25,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
-	private final NotificationRepository notificationRepository;
+	private static final String FCM_KEY_PREFIX = "fcm:member:";
 
-	private String getFcmTokenByMemberId(Long memberId) {
-		return "user-token";
+	private final NotificationRepository notificationRepository;
+	private final RedisTemplate<String, String> redisTemplate;
+
+	@Override
+	public void saveFCMToken(String token, Long memberId) {
+		String key = FCM_KEY_PREFIX + memberId;
+		redisTemplate.opsForHash().put(key, "fcmToken", token);
 	}
 
-
-	private void sendFcmNotification(Long memberId, String title, String body) {
-		String fcmToken = getFcmTokenByMemberId(memberId);
-		if (fcmToken == null) {
-			return;
-		}
-
-		Message message = Message.builder()
-			.setToken(fcmToken)
-			.setNotification(Notification.builder()
-				.setTitle(title)
-				.setBody(body)
-				.build())
-			.build();
-
-		try {
-			String response = FirebaseMessaging.getInstance().send(message);
-			System.out.println("FCM 메시지 응답: " + response);
-		} catch (Exception e) {
-			throw new EumException(ErrorCode.FIREBASE_SENDING_ERROR);
-		}
+	@Override
+	public void deleteFCMToken(Long memberId) {
+		String key = FCM_KEY_PREFIX + memberId;
+		redisTemplate.delete(key);
 	}
 
 	@Override
@@ -149,5 +138,32 @@ public class NotificationServiceImpl implements NotificationService {
 
 		notification.setIsRead(true);
 		notificationRepository.save(notification);
+	}
+
+	private void sendFcmNotification(Long memberId, String title, String body) {
+		String fcmToken = getFcmTokenByMemberId(memberId);
+
+		Message message = Message.builder()
+				.setToken(fcmToken)
+				.setNotification(Notification.builder()
+						.setTitle(title)
+						.setBody(body)
+						.build())
+				.build();
+
+		try {
+			String response = FirebaseMessaging.getInstance().send(message);
+			System.out.println("FCM 메시지 응답: " + response);
+		} catch (Exception e) {
+			throw new EumException(ErrorCode.FIREBASE_SENDING_ERROR);
+		}
+	}
+
+	private String getFcmTokenByMemberId(Long memberId) {
+		String key = FCM_KEY_PREFIX + memberId;
+		if(Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
+			throw new EumException(ErrorCode.FCM_TOKEN_NOT_FOUND);
+		}
+		return redisTemplate.opsForHash().get(key, "fcmToken").toString();
 	}
 }

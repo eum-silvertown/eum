@@ -20,6 +20,7 @@ public enum ErrorCode {
 
 	// Notification
 	NOTIFICATION_NOT_FOUND("N001", "알림 찾기 실패", HttpStatus.NOT_FOUND),
+	FCM_TOKEN_NOT_FOUND("N002", "FCM 토큰 찾기 실패", HttpStatus.NOT_FOUND),
 	;
 
 	private final String code;

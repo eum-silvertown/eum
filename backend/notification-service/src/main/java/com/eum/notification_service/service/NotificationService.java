@@ -10,6 +10,10 @@ import com.eum.notification_service.event.event.LectureStartedEvent;
 
 public interface NotificationService {
 
+	void saveFCMToken(String token, Long memberId);
+
+	void deleteFCMToken(Long memberId);
+
 	void sendLectureCreatedNotifications(LectureCreatedEvent event);
 
 	void sendLectureStatusUpdatedNotifications(LectureStartedEvent event);
