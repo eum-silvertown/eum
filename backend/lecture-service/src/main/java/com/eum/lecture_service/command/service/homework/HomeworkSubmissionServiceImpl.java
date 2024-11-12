@@ -32,6 +32,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
+	@Transactional
 	public HomeworkSubmission submitHomeworkProblems(Long homeworkId, Long studentId,
 		List<HomeworkProblemSubmissionDto> homeworkProblemSubmissions) {
 

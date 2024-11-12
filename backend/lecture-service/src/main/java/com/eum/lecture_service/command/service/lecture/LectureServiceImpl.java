@@ -109,6 +109,7 @@ public class LectureServiceImpl implements LectureService{
 	}
 
 	@Override
+	@Transactional
 	public void deleteLecture(Long lectureId) {
 		if (!lectureRepository.existsById(lectureId)) {
 			throw new EumException(ErrorCode.LECTURE_NOT_FOUND);

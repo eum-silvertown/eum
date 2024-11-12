@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.eum.lecture_service.command.dto.homework.HomeworkDto;
 import com.eum.lecture_service.command.entity.homework.Homework;
@@ -34,10 +35,10 @@ public class HomeworkServiceImpl implements HomeworkService {
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
+	@Transactional
 	public Long createHomework(HomeworkDto homeworkDto) {
 		Lecture lecture = lectureRepository.findById(homeworkDto.getLectureId())
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
-
 		checkDuplicateTitle(lecture.getHomeworks(), homeworkDto.getTitle());
 
 		Homework homework = homeworkDto.toHomeworkEntity(lecture);
@@ -55,6 +56,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 
 
 	@Override
+	@Transactional
 	public Long updateHomework(Long homeworkId, HomeworkDto homeworkDto) {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_NOT_FOUND));
@@ -71,6 +73,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteHomework(Long homeworkId) {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_NOT_FOUND));
