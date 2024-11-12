@@ -14,17 +14,23 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { colors } from 'src/hooks/useColors';
 import { getFolder, getRootFolder } from 'src/services/questionBox';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import CreateInput from '@components/questionBox/CreateInput';
 import { createLesson, CreateLessonRequest } from '@services/lessonService';
+import { createExam, CreateExamRequest } from '@services/examService';
 import { useMutation } from '@tanstack/react-query';
 
 import { useLessonStore } from '@store/useLessonStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { createHomework, CreateHomeworkRequest } from '@services/homeworkService';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function QuestionCreateScreen(): React.JSX.Element {
   const route = useRoute();
-  const { lectureId } = route.params as { lectureId: number };
+  const navigation = useNavigation<NavigationProps>();
+  const { lectureId, action } = route.params as { lectureId: number; action: 'lesson' | 'exam' | 'homework' };
 
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
@@ -37,8 +43,22 @@ function QuestionCreateScreen(): React.JSX.Element {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [questionIds, setQuestionIds] = useState<number[]>([]);
 
+  const getCurrentTime = (): Date => {
+    const now = new Date();
+    // 한국 시간대 적용 (UTC+9)
+    now.setHours(now.getHours() + 9);
+    // 초와 밀리초를 0으로 설정하여 제거
+    now.setSeconds(0, 0);
+    return now;
+  };
+
+  const [startTime, setStartTime] = useState<Date | null>(getCurrentTime());
+  const [endTime, setEndTime] = useState<Date | null>(getCurrentTime());
+
   const setLessonInfo = useLessonStore(state => state.setLessonInfo);
-  const mutation = useMutation({
+
+  // Lesson 생성
+  const lessonMutation = useMutation({
     mutationFn: (newLessonData: CreateLessonRequest) =>
       createLesson(newLessonData),
     onSuccess: () => {
@@ -47,6 +67,32 @@ function QuestionCreateScreen(): React.JSX.Element {
     },
     onError: error => {
       console.error('레슨 생성 실패:', error);
+    },
+  });
+
+  // Exam 생성
+  const examMutation = useMutation({
+    mutationFn: (newExamData: CreateExamRequest) =>
+      createExam(newExamData),
+    onSuccess: () => {
+      console.log('시험 생성 완료');
+      navigation.goBack();
+    },
+    onError: error => {
+      console.error('시험 생성 실패:', error);
+    },
+  });
+
+  // Homework 생성
+  const homeworkMutation = useMutation({
+    mutationFn: (newHomeworkData: CreateHomeworkRequest) =>
+      createHomework(newHomeworkData),
+    onSuccess: () => {
+      console.log('시험 생성 완료');
+      navigation.goBack();
+    },
+    onError: error => {
+      console.error('시험 생성 실패:', error);
     },
   });
 
@@ -92,15 +138,45 @@ function QuestionCreateScreen(): React.JSX.Element {
     setQuestionIds(prevIds => [...prevIds, file.id]);
   };
 
-  const handleCreateLesson = () => {
-    if (title && questionIds.length > 0) {
-      mutation.mutate({
-        lectureId: lectureId, // 예시로 고정된 lectureId; 실제 데이터로 대체해야 함
+  const handleCreateLectureAction = () => {
+    if (!title || questionIds.length === 0) {
+      console.warn('제목과 파일을 추가해주세요.');
+      return;
+    }
+
+    if (action === 'lesson') {
+      // 레슨 생성 로직
+      lessonMutation.mutate({
+        lectureId: lectureId,
         title: title,
         questionIds: questionIds,
       });
-    } else {
-      console.warn('제목과 파일을 추가해주세요.');
+    } else if (action === 'exam') {
+      // 시험 생성 로직
+      if (startTime && endTime) {
+        examMutation.mutate({
+          lectureId: lectureId,
+          title: title,
+          startTime: String(startTime),
+          endTime: String(endTime),
+          questionIds: questionIds,
+        });
+      } else {
+        console.warn('시험 시작 시간과 종료 시간을 설정해주세요.');
+      }
+    } else if (action === 'homework') {
+      // 숙제 생성 로직
+      if (startTime && endTime) {
+        homeworkMutation.mutate({
+          lectureId: lectureId,
+          title: title,
+          startTime: String(startTime),
+          endTime: String(endTime),
+          questionIds: questionIds,
+        });
+      } else {
+        console.warn('숙제 시작 시간과 종료 시간을 설정해주세요.');
+      }
     }
   };
 
@@ -126,8 +202,11 @@ function QuestionCreateScreen(): React.JSX.Element {
       <CreateInput
         title={title}
         setTitle={setTitle}
-        selectedFiles={selectedFiles} // 파일 제목 전달
-        onCreateLesson={handleCreateLesson}
+        selectedFiles={selectedFiles}
+        handleCreateLectureAction={handleCreateLectureAction}
+        selectType={action}
+        setStartTime={setStartTime}
+        setEndTime={setEndTime}
       />
     </View>
   );

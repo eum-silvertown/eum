@@ -15,18 +15,19 @@ type LectureIdProps = {
 function ClassHandleButtonList({lectureId}: LectureIdProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
 
-  const handleStartLesson = () => {
-    navigation.navigate('QuestionCreateScreen', {lectureId});
+  const handleStartLesson = (action: 'lesson' | 'exam' | 'homework') => {
+    navigation.navigate('QuestionCreateScreen', {lectureId, action});
   };
+
   return (
     <View style={styles.buttonList}>
-      <TouchableOpacity style={styles.classButton} onPress={handleStartLesson}>
+      <TouchableOpacity style={styles.classButton} onPress={() => handleStartLesson('lesson')}>
         <Text style={styles.buttonText}>수업 시작하기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.testButton}>
+      <TouchableOpacity style={styles.testButton} onPress={() => handleStartLesson('exam')}>
         <Text style={styles.buttonText}>시험 내기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.homeworkButton}>
+      <TouchableOpacity style={styles.homeworkButton} onPress={() => handleStartLesson('homework')}>
         <Text style={styles.buttonText}>숙제 내기</Text>
       </TouchableOpacity>
     </View>
