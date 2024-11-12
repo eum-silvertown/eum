@@ -19,6 +19,7 @@ import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo
 import com.eum.lecture_service.query.dto.homework.HomeworkInfoResponse;
 import com.eum.lecture_service.query.dto.homework.HomeworkProblemSubmissionInfoResponse;
 import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.homework.StudentHomeworkResponse;
 import com.eum.lecture_service.query.service.homework.HomeworkQueryService;
 import com.eum.lecture_service.query.service.homework.HomeworkSubmissionQueryService;
 
@@ -107,6 +108,20 @@ public class HomeworkQueryController {
 		List<HomeworkSubmissionInfoResponse> response = homeworkSubmissionQueryService.getAllHomeworkSubmissionsByStudent(
 			lectureId, studentId);
 		return CommonResponse.success(response, "특정 학생의 모든 숙제 제출 내역 조회 성공");
+	}
+
+	//학생이 자기의 숙제 정보를 전부 조회
+	@GetMapping("/{studentId}")
+	public CommonResponse<?> getStudentHomework(
+		@RequestHeader("X-MEMBER-ROLE") String role,
+		@RequestHeader("X-MEMBER-ID") Long memberId,
+		@PathVariable Long studentId
+	) {
+		checkAccessPermission(role, memberId, studentId);
+		StudentHomeworkResponse response = homeworkSubmissionQueryService.getStudentAllLectureHomeworkOverview(
+			studentId);
+
+		return CommonResponse.success(response, "학생 숙제에 대한 총 정리");
 	}
 
 	// 역할이 TEACHER인지 확인하는 메서드

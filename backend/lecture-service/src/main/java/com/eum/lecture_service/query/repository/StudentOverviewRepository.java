@@ -12,4 +12,6 @@ public interface StudentOverviewRepository extends MongoRepository<StudentOvervi
 	Optional<StudentOverviewModel> findByStudentIdAndLectureId(Long studentId, Long lectureId);
 
 	List<StudentOverviewModel> findByLectureId(Long lectureId);
+
+	List<StudentOverviewModel> findByStudentId(Long studentId);
 }
