@@ -165,13 +165,13 @@ export default function ProfileScreen(): React.JSX.Element {
 
       if (uploadResponse.status === 200) {
         getUserInfo();
-        Alert.alert('업로드 성공', '이미지가 S3에 업로드되었습니다.');
+        Alert.alert('변경 완료', '프로필 이미지가 변경 되었습니다.');
       } else {
         Alert.alert('업로드 실패', '이미지 업로드에 실패했습니다.');
       }
     } catch (error) {
       console.error('S3 업로드 오류:', error);
-      Alert.alert('업로드 오류', 'S3 업로드 중 오류가 발생했습니다.');
+      Alert.alert('업로드 오류', '이미지 업로드 중 오류가 발생했습니다.');
     }
   };
 
