@@ -16,7 +16,7 @@ function ClassHandleButtonList({lectureId}: LectureIdProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
 
   const handleStartLesson = () => {
-    navigation.navigate('LessonCreateScreen', {data: {lectureId}});
+    navigation.navigate('LessonCreateScreen', {lectureId});
   };
   return (
     <View style={styles.buttonList}>

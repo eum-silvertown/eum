@@ -15,10 +15,15 @@ import {Pressable, StyleSheet, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
 import {getFolder, getRootFolder} from 'src/services/questionBox';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 import CreateInput from '@components/questionBox/CreateInput';
+import {createLesson, CreateLessonRequest} from '@services/lessonService';
+import {useMutation} from '@tanstack/react-query';
 
 function LessonCreateScreen(): React.JSX.Element {
+  const route = useRoute();
+  const {lectureId} = route.params as {lectureId: number};
+
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
   );
@@ -27,7 +32,19 @@ function LessonCreateScreen(): React.JSX.Element {
   });
 
   const [title, setTitle] = useState(''); // 제목 상태
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]); // Drag & Drop으로 추가된 파일 리스트
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [questionIds, setQuestionIds] = useState<number[]>([]);
+
+  const mutation = useMutation({
+    mutationFn: (newLessonData: CreateLessonRequest) =>
+      createLesson(newLessonData),
+    onSuccess: () => {
+      console.log('레슨 생성 완료');
+    },
+    onError: error => {
+      console.error('레슨 생성 실패:', error);
+    },
+  });
 
   const currentFolder = useQuestionExplorerStore(state => state.currentFolder);
   const updateFolderChildren = useQuestionExplorerStore(
@@ -65,9 +82,22 @@ function LessonCreateScreen(): React.JSX.Element {
       console.error('Failed to fetch folder children:', error);
     }
   };
-  // Drag & Drop을 통한 파일 추가 처리
+
   const handleFileDrop = (file: QuestionBoxType) => {
     setSelectedFiles(prevFiles => [...prevFiles, file.title]);
+    setQuestionIds(prevIds => [...prevIds, file.id]);
+  };
+
+  const handleCreateLesson = () => {
+    if (title && questionIds.length > 0) {
+      mutation.mutate({
+        lectureId: lectureId, // 예시로 고정된 lectureId; 실제 데이터로 대체해야 함
+        title: title,
+        questionIds: questionIds,
+      });
+    } else {
+      console.warn('제목과 파일을 추가해주세요.');
+    }
   };
 
   return (
@@ -79,7 +109,8 @@ function LessonCreateScreen(): React.JSX.Element {
           {currentFolder?.map((item, index) => (
             <Pressable
               key={index}
-              onPress={() => {
+              onPress={() => folderPressHandler(item)}
+              onLongPress={() => {
                 handleFileDrop(item);
               }}
               style={styles.fileItem}>
@@ -91,7 +122,8 @@ function LessonCreateScreen(): React.JSX.Element {
       <CreateInput
         title={title}
         setTitle={setTitle}
-        selectedFiles={selectedFiles}
+        selectedFiles={selectedFiles} // 파일 제목 전달
+        onCreateLesson={handleCreateLesson}
       />
     </View>
   );

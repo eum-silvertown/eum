@@ -1,4 +1,3 @@
-// CreateInput.tsx
 import React from 'react';
 import {
   View,
@@ -15,18 +14,15 @@ type CreateInputProps = {
   title: string;
   setTitle: (title: string) => void;
   selectedFiles: string[];
+  onCreateLesson: () => void;
 };
 
-const CreateInput: React.FC<CreateInputProps> = ({
+function CreateInput({
   title,
   setTitle,
   selectedFiles,
-}) => {
-  const handleButtonPress = () => {
-    // TODO: 버튼 눌렀을 때 실행할 로직을 여기에 추가
-    console.log('추가 버튼이 눌렸습니다.');
-  };
-
+  onCreateLesson,
+}: CreateInputProps): React.JSX.Element {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>수업 제목</Text>
@@ -43,12 +39,12 @@ const CreateInput: React.FC<CreateInputProps> = ({
         renderItem={({item}) => <Text style={styles.fileName}>{item}</Text>}
       />
       {/* 하단 추가 버튼 */}
-      <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
-        <Text style={styles.buttonText}>추가</Text>
+      <TouchableOpacity style={styles.button} onPress={onCreateLesson}>
+        <Text style={styles.buttonText}>레슨 생성</Text>
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

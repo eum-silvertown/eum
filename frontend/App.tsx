@@ -90,6 +90,7 @@ function App(): React.JSX.Element {
         {name: 'ClassLessonListScreen', component: ClassLessonListScreen},
         {name: 'HomeworkScreen', component: HomeworkScreen},
         {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
+        {name: 'LessonCreateScreen', component: LessonCreateScreen},
         {name: 'MyClassScreen', component: MyClassScreen},
         {name: 'NotificationScreen', component: NotificationScreen},
         {name: 'LessoningScreen', component: LessoningScreen},

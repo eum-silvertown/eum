@@ -1,13 +1,13 @@
 import { authApiClient } from '@services/apiClient';
 
 // 레슨 생성
-type CreateLessonRequest = {
+export type CreateLessonRequest = {
   lectureId: number;
   title: string;
   questionIds: number[];
 };
 
-type CreateLessonResponse = {
+export type CreateLessonResponse = {
   lessonId: number;
 };
 
@@ -32,7 +32,7 @@ export const createLesson = async (
 };
 
 // 레슨 삭제
-type DeleteLessonResponse = {
+export type DeleteLessonResponse = {
   code: string;
   data: null;
   message: string;
@@ -52,7 +52,7 @@ export const deleteLesson = async (lessonId: number): Promise<void> => {
 };
 
 // 레슨 상세 조회
-type LessonDetailResponse = {
+export type LessonDetailResponse = {
   questionIds: number[];
   questionAnswers: string[];
   studentAnswers: string[];
