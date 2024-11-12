@@ -16,7 +16,7 @@ export type ScreenType = {
   LessoningStudentListScreen: undefined;
   ProfileScreen: undefined;
   ClassListScreen: undefined;
-  LessonCreateScreen: {lectureId: number};
+  QuestionCreateScreen: {lectureId: number};
   ClassLessonListScreen: {data: any[] | undefined};
   ClassExamListScreen: {data: any[] | undefined};
   ClassHomeworkListScreen: {data: any[] | undefined};

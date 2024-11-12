@@ -20,7 +20,7 @@ import CreateInput from '@components/questionBox/CreateInput';
 import {createLesson, CreateLessonRequest} from '@services/lessonService';
 import {useMutation} from '@tanstack/react-query';
 
-function LessonCreateScreen(): React.JSX.Element {
+function QuestionCreateScreen(): React.JSX.Element {
   const route = useRoute();
   const {lectureId} = route.params as {lectureId: number};
 
@@ -28,7 +28,7 @@ function LessonCreateScreen(): React.JSX.Element {
     state => state.setCurrentScreen,
   );
   useFocusEffect(() => {
-    setCurrentScreen('LessonCreateScreen');
+    setCurrentScreen('QuestionCreateScreen');
   });
 
   const [title, setTitle] = useState(''); // 제목 상태
@@ -158,4 +158,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LessonCreateScreen;
+export default QuestionCreateScreen;

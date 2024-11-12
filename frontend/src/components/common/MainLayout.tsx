@@ -28,7 +28,7 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
   const screensWithoutSidebar = [
     'LessoningScreen',
     'LessoningStudentListScreen',
-    'LessonCreateScreen',
+    'QuestionCreateScreen',
   ];
 
   useEffect(() => {
