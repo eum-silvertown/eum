@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, TouchableOpacity, StyleSheet, Alert} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
 import {spacing} from '@theme/spacing';
@@ -15,6 +15,8 @@ type LectureIdProps = {
 const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [titleError, setTitleError] = useState('');
+  const [contentError, setContentError] = useState('');
   const {closeAll} = useModal();
   const queryClient = useQueryClient();
 
@@ -24,13 +26,12 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
     onSuccess: () => {
       console.log('성공적으로 공지사항을 게시했습니다.');
       queryClient.invalidateQueries({
-        queryKey: ['memorizeWordList', lectureId],
+        queryKey: ['lectureDetail', lectureId],
       });
       closeAll();
     },
     onError: error => {
       console.error('공지사항 생성 실패:', error);
-      Alert.alert('실패', '공지사항 생성에 실패했습니다. 다시 시도해 주세요.');
     },
   });
 
@@ -43,30 +44,61 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
       };
       mutation.mutate(newNoticeData);
     } else {
-      Alert.alert('오류', '제목과 내용을 모두 입력해 주세요.');
+      if (!title.trim()) {
+        setTitleError('제목을 입력해 주세요.');
+      }
+      if (!content.trim()) {
+        setContentError('내용을 입력해 주세요.');
+      }
     }
   };
 
   return (
-    <View>
-      <View style={[styles.titleContainer]}>
-        <Text variant="subtitle" weight="bold">
-          제목
-        </Text>
+    <>
+      <View style={styles.titleContainer}>
+        <View style={styles.titleHeader}>
+          <Text variant="subtitle" weight="bold">
+            제목
+          </Text>
+          <Text style={styles.charLimitText}>({title.length} / 10자)</Text>
+        </View>
         <InputField
           placeholder="제목을 입력해주세요."
-          onChangeText={setTitle}
+          value={title}
+          onChangeText={text => {
+            if (text.length <= 10) {
+              setTitle(text);
+              setTitleError(''); // 에러 메시지 초기화
+            } else {
+              setTitleError('제목은 최대 10자까지 입력 가능합니다.');
+            }
+          }}
         />
+        {titleError ? <Text style={styles.errorText}>{titleError}</Text> : null}
       </View>
 
-      <View style={[styles.contentContainer]}>
-        <Text variant="subtitle" weight="bold">
-          내용
-        </Text>
+      <View style={styles.contentContainer}>
+        <View style={styles.titleHeader}>
+          <Text variant="subtitle" weight="bold">
+            내용
+          </Text>
+          <Text style={styles.charLimitText}>({content.length} / 64자)</Text>
+        </View>
         <InputField
           placeholder="내용을 입력해주세요."
-          onChangeText={setContent}
+          value={content}
+          onChangeText={text => {
+            if (text.length <= 64) {
+              setContent(text);
+              setContentError(''); // 에러 메시지 초기화
+            } else {
+              setContentError('내용은 최대 64자까지 입력 가능합니다.');
+            }
+          }}
         />
+        {contentError ? (
+          <Text style={styles.errorText}>{contentError}</Text>
+        ) : null}
       </View>
 
       <TouchableOpacity onPress={createNewNotice} style={styles.submitButton}>
@@ -74,7 +106,7 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
           게시
         </Text>
       </TouchableOpacity>
-    </View>
+    </>
   );
 };
 
@@ -85,17 +117,19 @@ const styles = StyleSheet.create({
   contentContainer: {
     marginBottom: spacing.xl,
   },
-  importanceLevelContainer: {
+  titleHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  importanceButton: {
-    flex: 1,
-    backgroundColor: colors.light.background.main,
-    padding: spacing.md,
-    borderRadius: 5,
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  charLimitText: {
+    color: '#888', // 회색 텍스트 색상
+    fontSize: 12,
+  },
+  errorText: {
+    color: 'red', // 에러 메시지 텍스트 색상
+    fontSize: 12,
+    marginTop: spacing.sm,
   },
   submitButton: {
     backgroundColor: colors.light.background.main,

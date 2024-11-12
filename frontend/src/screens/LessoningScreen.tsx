@@ -1,16 +1,15 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, Text, Button} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Text, Button } from 'react-native';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
 import StudentRealTimeCanvasSection from '@components/classLessoning/StudentRealTimeCanvasSection';
-import {useAuthStore} from '@store/useAuthStore';
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {getResponsiveSize} from '@utils/responsive';
+import { useAuthStore } from '@store/useAuthStore';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { getResponsiveSize } from '@utils/responsive';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
-import NetInfo from '@react-native-community/netinfo';
 
 function LessoningScreen(): React.JSX.Element {
   const userInfo = useAuthStore(state => state.userInfo);
@@ -72,19 +71,6 @@ function LessoningScreen(): React.JSX.Element {
         } else {
           console.warn('Disconnected without additional information.');
         }
-
-        // 네트워크 상태 확인
-        NetInfo.fetch().then(state => {
-          if (!state.isConnected) {
-            console.warn(
-              'No internet connection - possibly the reason for disconnection',
-            );
-          } else {
-            console.log(
-              'Internet connection is active - checking for other issues',
-            );
-          }
-        });
       },
       onWebSocketError: error => {
         console.error('WebSocket Error:', error);
@@ -184,7 +170,7 @@ function LessoningScreen(): React.JSX.Element {
             style={[
               styles.connectionChip,
               // eslint-disable-next-line react-native/no-inline-styles
-              {backgroundColor: isConnected ? 'green' : 'red'},
+              { backgroundColor: isConnected ? 'green' : 'red' },
             ]}>
             <Text style={styles.connectionChipText}>
               {isConnected ? 'Connected' : 'Not connected'}
@@ -236,7 +222,7 @@ function LessoningScreen(): React.JSX.Element {
         style={[
           styles.connectionChip,
           // eslint-disable-next-line react-native/no-inline-styles
-          {backgroundColor: isConnected ? 'green' : 'red'},
+          { backgroundColor: isConnected ? 'green' : 'red' },
         ]}>
         <Text style={styles.connectionChipText}>
           {isConnected ? 'Connected' : 'Not connected'}

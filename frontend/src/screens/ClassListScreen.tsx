@@ -36,7 +36,6 @@ function ClassListScreen(): React.JSX.Element {
     queryKey: ['lectureList'],
     queryFn: getLectureList,
   });
-  const teacherName = '롹';
 
   const currentYear = new Date().getFullYear();
   const currentSemester = new Date().getMonth() < 6 ? 1 : 2;
@@ -112,32 +111,32 @@ function ClassListScreen(): React.JSX.Element {
               <Picker.Item label="2학기" value={2} />
             </Picker>
 
-            <TouchableOpacity
-              onPress={handleCurrentSemester}
-              style={styles.currentSemesterButton}>
-              <Text>현재 학기</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.content}>
-            <View style={styles.classList}>
-              {filteredLectures.map((data, index) => (
-                <Book
-                  key={index}
-                  rightPosition={index * 25}
-                  title={data.title}
-                  subject={data.subject}
-                  backgroundColor={data.backgroundColor}
-                  fontColor={data.fontColor}
-                  grade={data.grade}
-                  classNumber={data.classNumber}
-                  teacherName={teacherName}
-                  lectureId={data.lectureId}
-                />
-              ))}
-            </View>
+          <TouchableOpacity
+            onPress={handleCurrentSemester}
+            style={styles.currentSemesterButton}>
+            <Text>현재 학기</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.content}>
+          <View style={styles.classList}>
+            {filteredLectures.map((data, index) => (
+              <Book
+                key={index}
+                rightPosition={index * 25}
+                title={data.title}
+                subject={data.subject}
+                backgroundColor={data.backgroundColor}
+                fontColor={data.fontColor}
+                grade={data.grade}
+                classNumber={data.classNumber}
+                teacherName={data.teacher.name}
+                lectureId={data.lectureId}
+              />
+            ))}
           </View>
         </View>
       </View>
+    </View>
     </>
   );
 }
