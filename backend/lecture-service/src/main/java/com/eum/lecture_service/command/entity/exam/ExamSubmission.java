@@ -50,7 +50,7 @@ public class ExamSubmission {
 	private Long totalCount;
 
 	@Column(name = "is_completed")
-	private boolean isCompleted;
+	private Boolean isCompleted;
 
 	@OneToMany(mappedBy = "examSubmission", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ExamProblemSubmission> examProblemSubmissions;

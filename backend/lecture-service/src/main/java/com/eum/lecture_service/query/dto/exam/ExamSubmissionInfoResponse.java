@@ -17,6 +17,7 @@ public class ExamSubmissionInfoResponse {
 	private Double score;
 	private Long correctCount;
 	private Long totalCount;
+	private Boolean isCompleted;
 	private List<ExamProblemSubmissionInfoResponse> problemSubmissions;
 
 	public static ExamSubmissionInfoResponse fromExamSubmission(ExamSubmissionInfo examSubmissionInfo) {
@@ -26,6 +27,7 @@ public class ExamSubmissionInfoResponse {
 			.score(examSubmissionInfo.getScore())
 			.correctCount(examSubmissionInfo.getCorrectCount())
 			.totalCount(examSubmissionInfo.getTotalCount())
+			.isCompleted(examSubmissionInfo.getIsCompleted())
 			.problemSubmissions(
 				examSubmissionInfo.getProblemSubmissions().stream()
 					.map(ExamProblemSubmissionInfoResponse::fromExamProblemSubmission)

@@ -22,5 +22,6 @@ public class ExamSubmissionCreateEvent {
 	private Double score;
 	private Long correctCount;
 	private Long totalCount;
+	private Boolean isCompleted;
 	private List<ExamProblemSubmissionEventDto> problemSubmissions;
 }

@@ -20,5 +20,6 @@ public class ExamSubmissionInfo {
 	private Double score;
 	private Long correctCount;
 	private Long totalCount;
+	private Boolean isCompleted;
 	private List<ExamProblemSubmissionInfo> problemSubmissions;
 }
