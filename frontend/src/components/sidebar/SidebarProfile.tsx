@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '12.5%',
     gap: spacing.lg,
-    marginBottom: spacing.lg,
-    padding: getResponsiveSize(8),
+    marginBottom: spacing.xs,
+    padding: getResponsiveSize(7.5),
     overflow: 'hidden',
   },
   profileImageContainer: {
