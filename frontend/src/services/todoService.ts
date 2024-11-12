@@ -3,13 +3,13 @@ import {authApiClient} from './apiClient';
 interface TodoDataType {
   title: string;
   content: string;
-  prioirty: number;
+  priority: number;
 }
 
 // Todo 목록 조회
 export const getTodos = async (): Promise<any> => {
   try {
-    const response = await authApiClient.get('/todo-service');
+    const response = await authApiClient.get('/todo');
 
     console.log('Todo 목록 조회 성공,', response.data);
     return response.data;
@@ -25,7 +25,7 @@ export const createTodo = async (
 ): Promise<any> => {
   try {
     const response = await authApiClient.post(
-      `/todo-service`,
+      `/todo`,
       todoItem,
     );
 
@@ -44,7 +44,7 @@ export const updateTodo = async (
 ): Promise<any> => {
   try {
     const response = await authApiClient.put(
-      `/todo-service/${todoId}`,
+      `/todo/${todoId}`,
       todoItem,
     );
 
@@ -59,7 +59,7 @@ export const updateTodo = async (
 // Todo 삭제
 export const deleteTodo = async (todoId: number): Promise<any> => {
   try {
-    const response = await authApiClient.delete(`/todo-service/${todoId}`);
+    const response = await authApiClient.delete(`/todo/${todoId}`);
 
     console.log('Todo 수정 성공', response.data);
     return response.data;
@@ -75,7 +75,8 @@ export const toggleTodo = async (
   status: boolean,
 ): Promise<any> => {
   try {
-    const response = await authApiClient.patch(`/todo-service/${todoId}`, {status});
+    const response = await authApiClient.patch(`/todo/${todoId}`, {status});
+    console.log('Todo 상태 토글 성공', response.data);
   } catch (error) {
     console.log('Todo 상태 토글 실패', error);
     throw error;

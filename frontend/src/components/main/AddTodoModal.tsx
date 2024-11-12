@@ -14,7 +14,7 @@ interface AddTodoModalProps {
     id: number;
     title: string;
     content: string;
-    prioirty: number;
+    priority: number;
   };
 }
 
@@ -37,7 +37,7 @@ const AddTodoModal = ({
   const [title, setTitle] = useState(todo?.title || '');
   const [content, setContent] = useState(todo?.content || '');
   const [selectedImportance, setSelectedImportance] = useState(
-    todo?.prioirty || 0,
+    todo?.priority || 0,
   );
   const {close} = useModalContext();
 
@@ -68,9 +68,9 @@ const AddTodoModal = ({
         ? await updateTodo(todo?.id!, {
             title,
             content,
-            prioirty: selectedImportance,
+            priority: selectedImportance,
           })
-        : await createTodo({title, content, prioirty: selectedImportance});
+        : await createTodo({title, content, priority: selectedImportance});
 
       console.log(isEditMode ? '투두 수정 성공' : '투두 생성 성공', response);
 
