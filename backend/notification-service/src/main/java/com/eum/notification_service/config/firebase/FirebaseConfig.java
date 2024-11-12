@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.core.io.ClassPathResource;
 
 @Configuration
 public class FirebaseConfig {
@@ -18,11 +19,10 @@ public class FirebaseConfig {
 	@PostConstruct
 	public void init() {
 		try {
-			FileInputStream serviceAccount =
-				new FileInputStream("path/to/serviceAccountKey.json");
+			ClassPathResource resource = new ClassPathResource("firebaseAccountKey.json");
 
 			FirebaseOptions options = new FirebaseOptions.Builder()
-				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
+				.setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
 				.build();
 
 			FirebaseApp.initializeApp(options);
