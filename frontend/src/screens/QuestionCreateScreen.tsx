@@ -19,7 +19,7 @@ import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/nativ
 import CreateInput from '@components/questionBox/CreateInput';
 import { createLesson, CreateLessonRequest } from '@services/lessonService';
 import { createExam, CreateExamRequest } from '@services/examService';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useLessonStore } from '@store/useLessonStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,6 +31,7 @@ function QuestionCreateScreen(): React.JSX.Element {
   const route = useRoute();
   const navigation = useNavigation<NavigationProps>();
   const { lectureId, action } = route.params as { lectureId: number; action: 'lesson' | 'exam' | 'homework' };
+  const queryClient = useQueryClient();
 
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
@@ -63,6 +64,9 @@ function QuestionCreateScreen(): React.JSX.Element {
       createLesson(newLessonData),
     onSuccess: () => {
       console.log('레슨 생성 완료');
+      queryClient.invalidateQueries({
+        queryKey: ['lectureDetail', lectureId],
+      });
       setLessonInfo(lectureId, questionIds);
     },
     onError: error => {
@@ -76,6 +80,9 @@ function QuestionCreateScreen(): React.JSX.Element {
       createExam(newExamData),
     onSuccess: () => {
       console.log('시험 생성 완료');
+      queryClient.invalidateQueries({
+        queryKey: ['lectureDetail', lectureId],
+      });
       navigation.goBack();
     },
     onError: error => {
@@ -89,6 +96,9 @@ function QuestionCreateScreen(): React.JSX.Element {
       createHomework(newHomeworkData),
     onSuccess: () => {
       console.log('시험 생성 완료');
+      queryClient.invalidateQueries({
+        queryKey: ['lectureDetail', lectureId],
+      });
       navigation.goBack();
     },
     onError: error => {
@@ -139,6 +149,8 @@ function QuestionCreateScreen(): React.JSX.Element {
   };
 
   const handleCreateLectureAction = () => {
+    const formattedStartTime = startTime ? startTime.toISOString().split('.')[0] : ''; // 빈 문자열로 기본값 설정
+    const formattedEndTime = endTime ? endTime.toISOString().split('.')[0] : '';
     if (!title || questionIds.length === 0) {
       console.warn('제목과 파일을 추가해주세요.');
       return;
@@ -157,8 +169,8 @@ function QuestionCreateScreen(): React.JSX.Element {
         examMutation.mutate({
           lectureId: lectureId,
           title: title,
-          startTime: String(startTime),
-          endTime: String(endTime),
+          startTime: formattedStartTime,
+          endTime: formattedEndTime,
           questionIds: questionIds,
         });
       } else {
@@ -170,8 +182,8 @@ function QuestionCreateScreen(): React.JSX.Element {
         homeworkMutation.mutate({
           lectureId: lectureId,
           title: title,
-          startTime: String(startTime),
-          endTime: String(endTime),
+          startTime: formattedStartTime,
+          endTime: formattedEndTime,
           questionIds: questionIds,
         });
       } else {
