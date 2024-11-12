@@ -1,4 +1,4 @@
-package com.eum.notification_service.config.exception;
+package com.eum.notification_service.common.exception;
 
 import org.springframework.http.HttpStatus;
 
@@ -14,6 +14,12 @@ public enum ErrorCode {
 
 	// Firebase
 	FIREBASE_CONNECT_ERROR("F001", "파이어베이스 연결 오류", HttpStatus.INTERNAL_SERVER_ERROR),
+	FIREBASE_SENDING_ERROR("F002", "메시지 전송 실패", HttpStatus.INTERNAL_SERVER_ERROR),
+
+	AUTHORITY_PERMISSION_ERROR("C001", "권한 오류", HttpStatus.UNAUTHORIZED),
+
+	// Notification
+	NOTIFICATION_NOT_FOUND("N001", "알림 찾기 실패", HttpStatus.NOT_FOUND),
 	;
 
 	private final String code;

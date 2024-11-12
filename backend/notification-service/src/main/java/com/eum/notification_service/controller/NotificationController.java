@@ -1,0 +1,37 @@
+package com.eum.notification_service.controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.eum.notification_service.common.CommonResponse;
+import com.eum.notification_service.dto.NotificationDto;
+import com.eum.notification_service.service.NotificationService;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/notification")
+public class NotificationController {
+
+	private final NotificationService notificationService;
+
+	@GetMapping
+	public CommonResponse<?> getNotifications(@RequestHeader("X-MEMBER-ID") Long memberId) {
+		List<NotificationDto> response = notificationService.getUnreadNotifications(memberId);
+
+		return CommonResponse.success(response, "조회 성공");
+	}
+
+	@PostMapping("/{notificationId}/read")
+	public CommonResponse<?> markAsRead(@PathVariable Long notificationId, @RequestHeader("X-MEMBER-ID") Long memberId) {
+		notificationService.markAsRead(notificationId, memberId);
+		return CommonResponse.success("성공적으로 읽음 처리 성공");
+	}
+}

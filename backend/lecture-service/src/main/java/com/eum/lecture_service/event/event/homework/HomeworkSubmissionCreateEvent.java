@@ -22,5 +22,6 @@ public class HomeworkSubmissionCreateEvent {
 	private Double score;
 	private Long correctCount;
 	private Long totalCount;
+	private Boolean isComplete;
 	private List<HomeworkProblemSubmissionEventDto> problemSubmissions;
 }

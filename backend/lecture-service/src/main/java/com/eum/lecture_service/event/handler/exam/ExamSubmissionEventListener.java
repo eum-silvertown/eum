@@ -68,6 +68,7 @@ public class ExamSubmissionEventListener {
 			event.getScore(),
 			event.getCorrectCount(),
 			event.getTotalCount(),
+			event.getIsCompleted(),
 			examProblemSubmissionInfos
 		);
 	}

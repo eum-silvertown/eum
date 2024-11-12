@@ -104,7 +104,7 @@ public class ExamSubmissionServiceImpl implements ExamSubmissionService {
 		examSubmission.setCorrectCount(correctCount);
 		examSubmission.setTotalCount(totalCount);
 		examSubmission.setScore(score);
-		examSubmission.setCompleted(true);
+		examSubmission.setIsCompleted(true);
 
 		examSubmissionRepository.save(examSubmission);
 	}
@@ -129,6 +129,7 @@ public class ExamSubmissionServiceImpl implements ExamSubmissionService {
 		event.setScore(examSubmission.getScore());
 		event.setCorrectCount(examSubmission.getCorrectCount());
 		event.setTotalCount(examSubmission.getTotalCount());
+		event.setIsCompleted(examSubmission.getIsCompleted());
 		event.setProblemSubmissions(createProblemSubmissionEvents(examProblemSubmissionList));
 		return event;
 	}

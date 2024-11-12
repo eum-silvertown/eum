@@ -1,4 +1,4 @@
-package com.eum.notification_service.config.exception;
+package com.eum.notification_service.common.exception;
 
 import lombok.Builder;
 import lombok.Getter;
