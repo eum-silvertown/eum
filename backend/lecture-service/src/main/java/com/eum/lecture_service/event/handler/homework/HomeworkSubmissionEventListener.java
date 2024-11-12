@@ -68,6 +68,7 @@ public class HomeworkSubmissionEventListener {
 			event.getScore(),
 			event.getCorrectCount(),
 			event.getTotalCount(),
+			event.getIsComplete(),
 			problemSubmissionInfos
 		);
 	}

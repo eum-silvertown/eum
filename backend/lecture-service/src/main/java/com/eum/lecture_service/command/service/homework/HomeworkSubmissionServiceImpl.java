@@ -91,6 +91,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		homeworkSubmission.setCorrectCount(correctCount);
 		homeworkSubmission.setTotalCount(totalCount);
 		homeworkSubmission.setScore(score);
+		homeworkSubmission.setIsCompleted(true);
 
 		homeworkSubmissionRepository.save(homeworkSubmission);
 	}
@@ -113,6 +114,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		event.setCorrectCount(homeworkSubmission.getCorrectCount());
 		event.setTotalCount(homeworkSubmission.getTotalCount());
 		event.setLectureId(lectureId);
+		event.setIsComplete(homeworkSubmission.getIsCompleted());
 		event.setProblemSubmissions(createProblemSubmissionEvents(homeworkProblemSubmissionList));
 		return event;
 	}

@@ -16,6 +16,7 @@ public class HomeworkSubmissionInfoResponse {
     private Double score;
     private Long correctCount;
     private Long totalCount;
+    private Boolean isCompleted;
     private List<HomeworkProblemSubmissionInfoResponse> problemSubmissions;
 
     public static HomeworkSubmissionInfoResponse fromHomeworkSubmission(HomeworkSubmissionInfo homeworkSubmission) {
@@ -23,6 +24,7 @@ public class HomeworkSubmissionInfoResponse {
             .homeworkSubmissionId(homeworkSubmission.getHomeworkSubmissionId())
             .homeworkId(homeworkSubmission.getHomeworkId())
             .score(homeworkSubmission.getScore())
+            .isCompleted(homeworkSubmission.getIsComplete())
             .correctCount(homeworkSubmission.getCorrectCount())
             .totalCount(homeworkSubmission.getTotalCount())
             .problemSubmissions(

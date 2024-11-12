@@ -20,5 +20,6 @@ public class HomeworkSubmissionInfo {
 	private Double score;
 	private Long correctCount;
 	private Long totalCount;
+	private Boolean isComplete;
 	private List<HomeworkProblemSubmissionInfo> problemSubmissions;
 }
