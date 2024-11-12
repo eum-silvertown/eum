@@ -6,7 +6,6 @@ import SidebarExpandIcon from '@assets/icons/sidebarExpandIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
-import {getResponsiveSize} from '@utils/responsive';
 import {borderRadius} from '@theme/borderRadius';
 
 function Sidebar(): React.JSX.Element {
