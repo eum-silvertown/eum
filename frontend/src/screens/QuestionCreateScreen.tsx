@@ -17,13 +17,13 @@ import { getFolder, getRootFolder } from 'src/services/questionBox';
 import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import CreateInput from '@components/questionBox/CreateInput';
-import { createLesson, CreateLessonRequest } from '@services/lessonService';
+import { createLesson, CreateLessonRequest, switchLessonStatus, SwitchLessonStatusResponse } from '@services/lessonService';
 import { createExam, CreateExamRequest } from '@services/examService';
+import { createHomework, CreateHomeworkRequest } from '@services/homeworkService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useLessonStore } from '@store/useLessonStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { createHomework, CreateHomeworkRequest } from '@services/homeworkService';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -58,6 +58,22 @@ function QuestionCreateScreen(): React.JSX.Element {
 
   const setLessonInfo = useLessonStore(state => state.setLessonInfo);
 
+  // 수업 상태 변경
+  const switchLectureStatusMutation = useMutation({
+    mutationFn: (moveLectureId: number) => switchLessonStatus(moveLectureId),
+    onSuccess: (data: SwitchLessonStatusResponse) => {
+      console.log('수업 상태 변경 완료:', data.message);
+      // 상태 변경이 성공하면 이동
+      navigation.navigate('LessoningStudentListScreen');
+    },
+    onError: error => {
+      console.error('수업 상태 변경 실패:', error);
+    },
+  });
+  const handleSwitchLectureStatus = () => {
+    switchLectureStatusMutation.mutate(lectureId);
+  };
+
   // Lesson 생성
   const lessonMutation = useMutation({
     mutationFn: (newLessonData: CreateLessonRequest) =>
@@ -68,6 +84,7 @@ function QuestionCreateScreen(): React.JSX.Element {
         queryKey: ['lectureDetail', lectureId],
       });
       setLessonInfo(lectureId, questionIds);
+      handleSwitchLectureStatus();
     },
     onError: error => {
       console.error('레슨 생성 실패:', error);

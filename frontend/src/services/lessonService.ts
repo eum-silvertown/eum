@@ -77,3 +77,28 @@ export const getLessonDetail = async (
     throw error;
   }
 };
+
+// 수업 상태 변경
+export type SwitchLessonStatusResponse = {
+  status: string;
+  data: null;
+  message: string;
+};
+
+export const switchLessonStatus = async (
+  lectureId: number
+): Promise<SwitchLessonStatusResponse> => {
+  try {
+    console.log(`수업 상태 변경 요청: lectureId = ${lectureId}`);
+
+    const { data } = await authApiClient.post<SwitchLessonStatusResponse>(
+      `/lecture/${lectureId}/switch`
+    );
+
+    console.log('수업 상태 변경 응답:', data);
+    return data;
+  } catch (error) {
+    console.error('수업 상태 변경 실패:', error);
+    throw error;
+  }
+};
