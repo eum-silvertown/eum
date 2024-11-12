@@ -27,6 +27,9 @@ import {Platform, UIManager} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {TextEncoder} from 'text-encoding';
+import {getAutoLoginStatus} from '@utils/secureStorage';
+import {refreshAuthToken} from '@services/authService';
+import {useAuthStore} from '@store/useAuthStore';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 global.TextEncoder = TextEncoder;
@@ -49,6 +52,8 @@ interface ScreenProps {
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
+  const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
+
   const [screens, setScreens] = useState<ScreenProps[]>([]);
 
   // const screens: ScreenProps[] = [
@@ -69,30 +74,53 @@ function App(): React.JSX.Element {
   // ];
 
   useEffect(() => {
-    setScreens([
-      {name: 'LoginScreen', component: LoginScreen},
-      {name: 'HomeScreen', component: HomeScreen},
-      {name: 'FindIdScreen', component: FindIdScreen},
-      {name: 'FindPasswordScreen', component: FindPasswordScreen},
-      {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
-      {name: 'SignUpScreen', component: SignUpScreen},
-      {name: 'ClassExamListScreen', component: ClassExamListScreen},
-      {name: 'ClassListScreen', component: ClassListScreen},
-      {name: 'ClassHomeworkListScreen', component: ClassHomeworkListScreen},
-      {name: 'ClassLessonListScreen', component: ClassLessonListScreen},
-      {name: 'LessonCreateScreen', component: LessonCreateScreen},
-      {name: 'HomeworkScreen', component: HomeworkScreen},
-      {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
-      {name: 'MyClassScreen', component: MyClassScreen},
-      {name: 'NotificationScreen', component: NotificationScreen},
-      {name: 'LessoningScreen', component: LessoningScreen},
-      {
-        name: 'LessoningStudentListScreen',
-        component: LessoningStudentListScreen,
-      },
-      {name: 'ProfileScreen', component: ProfileScreen},
-    ]);
-  }, []);
+    const initializeScreens = async () => {
+      const autoLoginEnabled = await getAutoLoginStatus();
+      console.log('자동 로그인 여부 체크 :', autoLoginEnabled);
+      const initialScreens: ScreenProps[] = [
+        {name: 'LoginScreen', component: LoginScreen},
+        {name: 'HomeScreen', component: HomeScreen},
+        {name: 'FindIdScreen', component: FindIdScreen},
+        {name: 'FindPasswordScreen', component: FindPasswordScreen},
+        {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
+        {name: 'SignUpScreen', component: SignUpScreen},
+        {name: 'ClassExamListScreen', component: ClassExamListScreen},
+        {name: 'ClassListScreen', component: ClassListScreen},
+        {name: 'ClassHomeworkListScreen', component: ClassHomeworkListScreen},
+        {name: 'ClassLessonListScreen', component: ClassLessonListScreen},
+        {name: 'HomeworkScreen', component: HomeworkScreen},
+        {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
+        {name: 'MyClassScreen', component: MyClassScreen},
+        {name: 'NotificationScreen', component: NotificationScreen},
+        {name: 'LessoningScreen', component: LessoningScreen},
+        {
+          name: 'LessoningStudentListScreen',
+          component: LessoningStudentListScreen,
+        },
+        {name: 'ProfileScreen', component: ProfileScreen},
+      ];
+
+      if (autoLoginEnabled) {
+        try {
+          await refreshAuthToken();
+          setIsLoggedIn(true);
+          // HomeScreen을 0번 인덱스로, LoginScreen을 1번 인덱스로 설정
+          [initialScreens[0], initialScreens[1]] = [
+            initialScreens[1],
+            initialScreens[0],
+          ];
+        } catch (error) {
+          console.log('Token refresh error:', error);
+          setIsLoggedIn(false);
+        }
+      } else {
+        setIsLoggedIn(false);
+      }
+      setScreens(initialScreens);
+    };
+
+    initializeScreens();
+  }, [setIsLoggedIn]);
 
   if (screens.length === 0) {
     return <></>;

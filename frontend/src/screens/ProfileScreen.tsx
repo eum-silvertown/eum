@@ -165,13 +165,13 @@ export default function ProfileScreen(): React.JSX.Element {
 
       if (uploadResponse.status === 200) {
         getUserInfo();
-        Alert.alert('업로드 성공', '이미지가 S3에 업로드되었습니다.');
+        Alert.alert('변경 완료', '프로필 이미지가 변경 되었습니다.');
       } else {
         Alert.alert('업로드 실패', '이미지 업로드에 실패했습니다.');
       }
     } catch (error) {
       console.error('S3 업로드 오류:', error);
-      Alert.alert('업로드 오류', 'S3 업로드 중 오류가 발생했습니다.');
+      Alert.alert('업로드 오류', '이미지 업로드 중 오류가 발생했습니다.');
     }
   };
 
@@ -180,8 +180,13 @@ export default function ProfileScreen(): React.JSX.Element {
     try {
       await logOut(); //
       setAutoLogin(false);
-      navigation.navigate('LoginScreen'); // 로그아웃 성공 시 로그인 페이지로 이동
+
       setCurrentScreen('LoginScreen');
+      // 내비게이션 스택을 초기화하여 로그인 화면으로 이동
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'LoginScreen'}],
+      });
     } catch (error) {
       console.error('로그아웃 실패:', error); // 로그아웃 실패 시 에러 처리
     }

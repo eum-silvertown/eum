@@ -50,10 +50,7 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
 
     await setToken(response.data.data.tokenResponse);
 
-    console.log(response.data.data.tokenResponse.accessToken);
-
-    const authStore = useAuthStore.getState();
-    authStore.setIsLoggedIn(true);    
+    console.log(response.data.data.tokenResponse.accessToken);    
 
     return response.data;
   } catch (error) {
