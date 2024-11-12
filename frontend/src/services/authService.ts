@@ -53,10 +53,7 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
     console.log(response.data.data.tokenResponse.accessToken);
 
     const authStore = useAuthStore.getState();
-    authStore.setIsLoggedIn(true);
-
-    // 사용자 정보 갱신
-    await getUserInfo();
+    authStore.setIsLoggedIn(true);    
 
     return response.data;
   } catch (error) {
@@ -118,7 +115,7 @@ export const refreshAuthToken = async (): Promise<any> => {
     const Tokens = await getToken();
 
     const refreshToken = Tokens.refreshToken;
-        
+
     if (!refreshToken) throw new Error('No refresh token available');
     console.log('저장된 리프레쉬 토큰', refreshToken);
     const response = await publicApiClient.post('/user/access', {refreshToken});
@@ -269,6 +266,14 @@ export const resetPasswordByVerificationCode = async (
       email,
       code: verificationCode,
     });
+  } catch (error) {
+    return Promise.reject(handleApiError(error));
+  }
+};
+
+export const deleteProfileImage = async () => {
+  try {
+    return await authApiClient.delete('/user/info/image');
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
