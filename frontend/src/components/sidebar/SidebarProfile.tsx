@@ -8,7 +8,6 @@ import {
 import {Text} from '@components/common/Text';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
 import {spacing} from '@theme/spacing';
-import {iconSize} from '@theme/iconSize';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -17,6 +16,7 @@ import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import {useAuthStore} from '@store/useAuthStore';
 import {borderWidth} from '@theme/borderWidth';
 import {colors} from 'src/hooks/useColors';
+import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -76,13 +76,11 @@ const styles = StyleSheet.create({
     height: '12.5%',
     gap: spacing.lg,
     marginBottom: spacing.lg,
-    padding: spacing.lg,
+    padding: getResponsiveSize(8),
     overflow: 'hidden',
   },
   profileImageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: iconSize.lg,
+    width: getResponsiveSize(24),
     aspectRatio: 1,
     borderWidth: borderWidth.sm,
     borderColor: colors.light.borderColor.pickerBorder,
