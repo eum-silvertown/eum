@@ -1,13 +1,13 @@
 import { authApiClient } from '@services/apiClient';
 
 // 레슨 생성
-type CreateLessonRequest = {
+export type CreateLessonRequest = {
   lectureId: number;
   title: string;
   questionIds: number[];
 };
 
-type CreateLessonResponse = {
+export type CreateLessonResponse = {
   lessonId: number;
 };
 
@@ -32,7 +32,7 @@ export const createLesson = async (
 };
 
 // 레슨 삭제
-type DeleteLessonResponse = {
+export type DeleteLessonResponse = {
   code: string;
   data: null;
   message: string;
@@ -52,7 +52,7 @@ export const deleteLesson = async (lessonId: number): Promise<void> => {
 };
 
 // 레슨 상세 조회
-type LessonDetailResponse = {
+export type LessonDetailResponse = {
   questionIds: number[];
   questionAnswers: string[];
   studentAnswers: string[];
@@ -74,6 +74,31 @@ export const getLessonDetail = async (
     return data;
   } catch (error) {
     console.error('레슨 상세 조회 실패:', error);
+    throw error;
+  }
+};
+
+// 수업 상태 변경
+export type SwitchLessonStatusResponse = {
+  status: string;
+  data: null;
+  message: string;
+};
+
+export const switchLessonStatus = async (
+  lectureId: number
+): Promise<SwitchLessonStatusResponse> => {
+  try {
+    console.log(`수업 상태 변경 요청: lectureId = ${lectureId}`);
+
+    const { data } = await authApiClient.post<SwitchLessonStatusResponse>(
+      `/lecture/${lectureId}/switch`
+    );
+
+    console.log('수업 상태 변경 응답:', data);
+    return data;
+  } catch (error) {
+    console.error('수업 상태 변경 실패:', error);
     throw error;
   }
 };

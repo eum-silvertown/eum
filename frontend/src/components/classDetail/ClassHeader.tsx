@@ -23,6 +23,7 @@ type ClassHeaderProps = {
   semester: number;
   grade: number;
   classNumber: number;
+  lectureStatus: boolean;
   backgroundColor: string;
   fontColor: string;
   pastTeacherName: string;
@@ -40,7 +41,9 @@ function ClassHeader({
   backgroundColor,
   fontColor,
   pastTeacherName,
+  lectureStatus,
 }: ClassHeaderProps): React.JSX.Element {
+
   const navigation = useNavigation<NavigationProps>();
   const {open} = useModal();
 
@@ -110,6 +113,21 @@ function ClassHeader({
     );
   };
 
+  const enterClass = () => {
+    // TODO : 아래 !lectureStatus 중 ! 제거하기
+    if (!lectureStatus) {
+      if (isTeacher) {
+        // isTeacher가 true일 때는 params 없이 navigate 호출
+        navigation.navigate('LessoningStudentListScreen');
+      } else {
+        // isTeacher가 false일 때는 data를 포함하여 navigate 호출
+        navigation.navigate('LessoningScreen');
+      }
+    } else {
+      Alert.alert('수업 종료됨', '이 수업은 종료되었습니다.');
+    }
+  };
+
   return (
     <View style={styles.header}>
       <View style={styles.titleSection}>
@@ -142,13 +160,19 @@ function ClassHeader({
       </View>
       <View style={styles.rightSection}>
         <TouchableOpacity
-          style={styles.enterButton}
-          onPress={() =>
-            navigation.navigate(
-              isTeacher ? 'LessoningStudentListScreen' : 'LessoningScreen',
-            )
-          }>
-          <Text style={styles.enterButtonText}>수업 입장</Text>
+          style={[
+            styles.enterButton,
+            !lectureStatus && styles.enterButtonDisabled,
+          ]}
+          onPress={enterClass}
+          disabled={lectureStatus}>
+          <Text
+            style={[
+              styles.enterButtonText,
+              !lectureStatus && styles.enterButtonTextDisabled,
+            ]}>
+            {lectureStatus ? '수업 입장' : '수업 종료됨'}
+          </Text>
         </TouchableOpacity>
         {isTeacher && (
           <TouchableOpacity
@@ -218,9 +242,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: spacing.lg,
   },
+  enterButtonDisabled: {
+    backgroundColor: '#BDBDBD',
+  },
   enterButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  enterButtonTextDisabled: {
+    color: '#757575',
   },
   menuIconContainer: {
     marginLeft: spacing.sm,
