@@ -1,4 +1,4 @@
-package com.eum.notification_service.event.event;
+package com.eum.lecture_service.event.event.notification;
 
 import java.util.List;
 
@@ -11,10 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LectureCreatedEvent {
+public class HomeworkCreatedNotificationEvent {
 
-	private Long lectureId;
+	private Long homeworkId;
 	private String title;
-	private Long teacherId;
 	private List<Long> studentIds;
 }
