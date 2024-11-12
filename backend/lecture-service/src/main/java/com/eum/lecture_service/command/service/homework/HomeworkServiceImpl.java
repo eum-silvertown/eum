@@ -18,6 +18,9 @@ import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.homework.HomeworkCreateEvent;
 import com.eum.lecture_service.event.event.homework.HomeworkDeleteEvent;
 import com.eum.lecture_service.event.event.homework.HomeworkUpdateEvent;
+import com.eum.lecture_service.event.event.notification.HomeworkCreatedNotificationEvent;
+import com.eum.lecture_service.query.document.eventModel.StudentModel;
+import com.eum.lecture_service.query.repository.StudentReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +30,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 
 	private final HomeworkRepository homeworkRepository;
 	private final LectureRepository lectureRepository;
+	private final StudentReadRepository studentReadRepository;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Override
@@ -43,8 +47,12 @@ public class HomeworkServiceImpl implements HomeworkService {
 
 		publishHomeworkCreateEvent(savedHomework, homeworkDto.getQuestionIds());
 
+		//알림이벤트
+		publishHomeworkNotificationCreateEvent(savedHomework);
+
 		return savedHomework.getHomeworkId();
 	}
+
 
 	@Override
 	public Long updateHomework(Long homeworkId, HomeworkDto homeworkDto) {
@@ -135,5 +143,20 @@ public class HomeworkServiceImpl implements HomeworkService {
 			homework.getLecture().getLectureId()
 		);
 		kafkaTemplate.send("homework-delete-topic", event);
+	}
+
+	private List<Long> getStudentIds(Long classId) {
+		List<StudentModel> studentModels = studentReadRepository.findByClassId(classId);
+
+		return studentModels.stream()
+			.map(StudentModel::getStudentId)
+			.collect(Collectors.toList());
+	}
+
+	private void publishHomeworkNotificationCreateEvent(Homework savedHomework) {
+		List<Long> studentIds = getStudentIds(savedHomework.getLecture().getClassId());
+
+		HomeworkCreatedNotificationEvent event = HomeworkCreatedNotificationEvent.of(savedHomework, studentIds);
+		kafkaTemplate.send("homework-created-notification-topic", event);
 	}
 }
