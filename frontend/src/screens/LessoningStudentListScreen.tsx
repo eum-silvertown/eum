@@ -5,6 +5,9 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import TeacherLessoningGridInteractionTool from '@components/classLessoning/TeacherLessoningGridInteractionTool';
 import {getResponsiveSize} from '@utils/responsive';
+import LeftIcon from '@assets/icons/leftIcon.svg';
+import RightIcon from '@assets/icons/rightIcon.svg';
+import {iconSize} from '@theme/iconSize';
 
 interface Participant {
   id: string;
@@ -99,7 +102,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
           onPress={goToPreviousPage}
           disabled={currentPage === 0}
           style={styles.arrow}>
-          <Text style={styles.arrowText}>{'<'}</Text>
+          <LeftIcon width={iconSize.lg} height={iconSize.lg} />
         </TouchableOpacity>
         <Text style={styles.pageText}>
           {currentPage + 1} / {totalPages}
@@ -108,7 +111,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
           onPress={goToNextPage}
           disabled={currentPage === totalPages - 1}
           style={styles.arrow}>
-          <Text style={styles.arrowText}>{'>'}</Text>
+          <RightIcon width={iconSize.lg} height={iconSize.lg} />
         </TouchableOpacity>
       </View>
     </View>
@@ -175,9 +178,6 @@ const styles = StyleSheet.create({
   },
   arrow: {
     padding: getResponsiveSize(2),
-  },
-  arrowText: {
-    fontSize: 20,
-    color: '#fff',
+    zIndex: 2,
   },
 });
