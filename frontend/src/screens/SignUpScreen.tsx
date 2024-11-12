@@ -272,7 +272,7 @@ function SignUpScreen(): React.JSX.Element {
       setIsVerificationSent(true);
       setEmailStatusType('success');
       setEmailStatusText(response.message);
-      Alert.alert('이메일로 인증 코드를 전송하였습니다. 확인 후 인증해주세요.')
+      Alert.alert('이메일로 인증 코드를 전송하였습니다. 확인 후 인증해주세요.');
     } catch (error) {
       setIsVerificationSent(false);
       setEmailStatusType('error');
@@ -361,7 +361,10 @@ function SignUpScreen(): React.JSX.Element {
           '회원가입 성공',
           response.message || '회원가입이 완료되었습니다.',
         );
-        navigation.navigate('HomeScreen');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'HomeScreen'}],
+        });
         setCurrentScreen('HomeScreen');
       } catch (error) {
         Alert.alert('회원가입 실패', String(error));
@@ -396,7 +399,9 @@ function SignUpScreen(): React.JSX.Element {
                 placeholder="이메일을 입력해주세요."
                 value={email}
                 onChangeText={handleEmailChange}
-                buttonText={emailVerificationLoading ? '발송 중...' : '본인 인증'}
+                buttonText={
+                  emailVerificationLoading ? '발송 중...' : '본인 인증'
+                }
                 onButtonPress={handleSendVerification}
                 statusText={emailStatusText}
                 status={emailStatusType}
@@ -408,7 +413,9 @@ function SignUpScreen(): React.JSX.Element {
                   placeholder="이메일로 받은 인증번호를 입력해주세요."
                   value={verificationCode}
                   onChangeText={setVerificationCode}
-                  buttonText={codeVerificationLoading ? '인증 중...' : '인증하기'}
+                  buttonText={
+                    codeVerificationLoading ? '인증 중...' : '인증하기'
+                  }
                   onButtonPress={handleVerificationCodeInput}
                   statusText={verificationCodeStatusText}
                   status={verificationCodeStatusType}
