@@ -1,28 +1,30 @@
 import FileContainer from '@components/questionBox/FileContainer';
 import FolderHeader from '@components/questionBox/FolderHeader';
 import MoveMenu from '@components/questionBox/MoveMenu';
-import {useCutStore} from '@store/useCutStore';
+import { useCutStore } from '@store/useCutStore';
 import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
-import {getResponsiveSize} from '@utils/responsive';
-import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import {colors} from 'src/hooks/useColors';
-import {getFolder, getRootFolder} from 'src/services/questionBox';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {useFocusEffect, useRoute} from '@react-navigation/native';
+import { borderRadius } from '@theme/borderRadius';
+import { borderWidth } from '@theme/borderWidth';
+import { spacing } from '@theme/spacing';
+import { getResponsiveSize } from '@utils/responsive';
+import React, { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { colors } from 'src/hooks/useColors';
+import { getFolder, getRootFolder } from 'src/services/questionBox';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import CreateInput from '@components/questionBox/CreateInput';
-import {createLesson, CreateLessonRequest} from '@services/lessonService';
-import {useMutation} from '@tanstack/react-query';
+import { createLesson, CreateLessonRequest } from '@services/lessonService';
+import { useMutation } from '@tanstack/react-query';
+
+import { useLessonStore } from '@store/useLessonStore';
 
 function QuestionCreateScreen(): React.JSX.Element {
   const route = useRoute();
-  const {lectureId} = route.params as {lectureId: number};
+  const { lectureId } = route.params as { lectureId: number };
 
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
@@ -35,11 +37,13 @@ function QuestionCreateScreen(): React.JSX.Element {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [questionIds, setQuestionIds] = useState<number[]>([]);
 
+  const setLessonInfo = useLessonStore(state => state.setLessonInfo);
   const mutation = useMutation({
     mutationFn: (newLessonData: CreateLessonRequest) =>
       createLesson(newLessonData),
     onSuccess: () => {
       console.log('레슨 생성 완료');
+      setLessonInfo(lectureId, questionIds);
     },
     onError: error => {
       console.error('레슨 생성 실패:', error);

@@ -16,12 +16,12 @@ export const useLectureStore = create<LectureState>(set => ({
 // Lesson 입장 시 업데이트
 interface LessonState {
   lectureId: number | null;
-  problemId: number | null;
-  setLessonInfo: (lectureId: number, problemId: number) => void;
+  questionIds: number[] | null;
+  setLessonInfo: (lectureId: number, questionIds: number[]) => void;
 }
 
 export const useLessonStore = create<LessonState>(set => ({
   lectureId: null,
-  problemId: null,
-  setLessonInfo: (lectureId, problemId) => set({lectureId, problemId}),
+  questionIds: null,
+  setLessonInfo: (lectureId, questionIds) => set({lectureId, questionIds}),
 }));
