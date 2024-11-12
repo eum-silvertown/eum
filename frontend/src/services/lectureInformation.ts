@@ -225,7 +225,7 @@ export type LectureListItemType = {
   grade: number;
   classNumber: number;
   schedule: string[];
-  name: string;
+  teacher: TeacherType;
 };
 
 export type LectureListResponse = {

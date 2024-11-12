@@ -5,7 +5,8 @@ import { iconSize } from '@theme/iconSize';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import LessonIcon from '@assets/icons/lessonIcon.svg';
 import EmptyLessonIcon from '@assets/icons/emptyLessonIcon.svg';
-
+import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
+import { Text as HeaderText } from '@components/common/Text';
 interface Lesson {
   lessonId: number;
   title: string;
@@ -28,7 +29,16 @@ const ClassLessonListScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>수업 목록</Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <BackArrowIcon />
+        </TouchableOpacity>
+        <HeaderText variant="title" style={styles.headerText} weight="bold">
+          <Text>
+            수업 목록
+          </Text>
+        </HeaderText>
+      </View>
       <FlatList
         data={lessons}
         keyExtractor={(item) => item.lessonId.toString()}
@@ -93,6 +103,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     fontWeight: 'bold',
+  },
+  header: {
+    marginTop: spacing.xl,
+    marginLeft: spacing.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerText: {
+    marginLeft: spacing.md,
   },
 });
 
