@@ -3,10 +3,10 @@ package com.eum.notification_service.service;
 import java.util.List;
 
 import com.eum.notification_service.dto.NotificationDto;
-import com.eum.notification_service.event.event.ExamCreatedEvent;
-import com.eum.notification_service.event.event.HomeworkCreatedEvent;
-import com.eum.notification_service.event.event.LectureCreatedEvent;
-import com.eum.notification_service.event.event.LectureStartedEvent;
+import com.eum.notification_service.event.event.ExamCreatedNotificationEvent;
+import com.eum.notification_service.event.event.HomeworkCreatedNotificationEvent;
+import com.eum.notification_service.event.event.LectureCreatedNotificationEvent;
+import com.eum.notification_service.event.event.LectureStartedNotificationEvent;
 
 public interface NotificationService {
 
@@ -14,13 +14,13 @@ public interface NotificationService {
 
 	void deleteFCMToken(Long memberId);
 
-	void sendLectureCreatedNotifications(LectureCreatedEvent event);
+	void sendLectureCreatedNotifications(LectureCreatedNotificationEvent event);
 
-	void sendLectureStatusUpdatedNotifications(LectureStartedEvent event);
+	void sendLectureStatusUpdatedNotifications(LectureStartedNotificationEvent event);
 
-	void sendExamCreatedNotifications(ExamCreatedEvent event);
+	void sendExamCreatedNotifications(ExamCreatedNotificationEvent event);
 
-	void sendHomeworkCreatedNotifications(HomeworkCreatedEvent event);
+	void sendHomeworkCreatedNotifications(HomeworkCreatedNotificationEvent event);
 
 	// 알림 조회, 읽음 처리 등 추가 메서드
 	List<NotificationDto> getUnreadNotifications(Long memberId);

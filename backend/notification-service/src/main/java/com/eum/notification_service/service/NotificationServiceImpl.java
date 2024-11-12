@@ -11,10 +11,10 @@ import com.eum.notification_service.common.exception.ErrorCode;
 import com.eum.notification_service.common.exception.EumException;
 import com.eum.notification_service.dto.NotificationDto;
 import com.eum.notification_service.entity.Notifications;
-import com.eum.notification_service.event.event.ExamCreatedEvent;
-import com.eum.notification_service.event.event.HomeworkCreatedEvent;
-import com.eum.notification_service.event.event.LectureCreatedEvent;
-import com.eum.notification_service.event.event.LectureStartedEvent;
+import com.eum.notification_service.event.event.ExamCreatedNotificationEvent;
+import com.eum.notification_service.event.event.HomeworkCreatedNotificationEvent;
+import com.eum.notification_service.event.event.LectureCreatedNotificationEvent;
+import com.eum.notification_service.event.event.LectureStartedNotificationEvent;
 import com.eum.notification_service.repository.NotificationRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
@@ -43,7 +43,7 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void sendLectureCreatedNotifications(LectureCreatedEvent event) {
+	public void sendLectureCreatedNotifications(LectureCreatedNotificationEvent event) {
 		String title = "새로운 강의가 생성되었습니다.";
 		String message = "강의 제목 : " + event.getTitle();
 
@@ -62,7 +62,7 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void sendLectureStatusUpdatedNotifications(LectureStartedEvent event) {
+	public void sendLectureStatusUpdatedNotifications(LectureStartedNotificationEvent event) {
 		String title = "강의가 시작되었습니다";
 		String message = "강의 제목: " + event.getTitle();
 
@@ -81,7 +81,7 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void sendExamCreatedNotifications(ExamCreatedEvent event) {
+	public void sendExamCreatedNotifications(ExamCreatedNotificationEvent event) {
 		String title = "새로운 시험이 등록되었습니다";
 		String message = "시험 제목: " + event.getTitle();
 
@@ -100,7 +100,7 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void sendHomeworkCreatedNotifications(HomeworkCreatedEvent event) {
+	public void sendHomeworkCreatedNotifications(HomeworkCreatedNotificationEvent event) {
 		String title = "새로운 숙제가 등록되었습니다";
 		String message = "숙제 제목: " + event.getTitle();
 
