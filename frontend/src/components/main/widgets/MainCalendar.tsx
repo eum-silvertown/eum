@@ -1,4 +1,11 @@
 import React, {useState} from 'react';
+<<<<<<< HEAD:frontend/src/components/main/widgets/MainCalendar.tsx
+import {StyleSheet, View} from 'react-native';
+import {Calendar, LocaleConfig} from 'react-native-calendars';
+import {getResponsiveSize} from '@utils/responsive';
+import {colors} from 'src/hooks/useColors';
+import ContentLayout from './ContentLayout';
+=======
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import ContentLayout from './ContentLayout';
 import {getResponsiveSize} from '@utils/responsive';
@@ -9,6 +16,7 @@ import IntoIcon from '@assets/icons/intoIcon.svg';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import { colors } from 'src/hooks/useColors';
+>>>>>>> 50643141294956bbe94c655f1f0414d547e6e279:frontend/src/components/main/MainCalendar.tsx
 
 const events = [
   {

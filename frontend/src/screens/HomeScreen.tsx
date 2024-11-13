@@ -2,9 +2,10 @@ import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
 import {useEffect} from 'react';
 import {getUserInfo} from '@services/authService';
-import MainTest from '@components/main/MainTest';
 import BookModal from '@components/common/BookModal';
 import {useBookModalStore} from '@store/useBookModalStore';
+import Background from '@components/main/Background';
+import Widgets from '@components/main/Widgets';
 
 function HomeScreen(): React.JSX.Element {
   const bookPosition = useBookModalStore(state => state.bookPosition);
@@ -23,7 +24,8 @@ function HomeScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       {bookPosition && <BookModal />}
-      <MainTest />
+      <Background />
+      <Widgets />
     </View>
   );
 }
