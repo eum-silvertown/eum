@@ -358,7 +358,7 @@ const MainTest = (): React.JSX.Element => {
         <View style={styles.moon} />
       </Animated.View>
 
-      <MainHeader style={{marginLeft: spacing.xxl}}/>
+      <MainHeader style={{marginLeft: spacing.xxl}} isNightTime={isNightTime}/>
 
       <View
         style={{
