@@ -13,9 +13,12 @@ interface ParticipantCardProps {
   onPress: () => void;
 }
 
-const ParticipantCard: React.FC<ParticipantCardProps> = ({participant}) => {
+const ParticipantCard: React.FC<ParticipantCardProps> = ({
+  participant,
+  onPress,
+}) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <View style={styles.card}>
         <Text style={styles.name}>{participant.name}</Text>
       </View>

@@ -16,8 +16,10 @@ import {useLectureStore, useLessonStore} from '@store/useLessonStore';
 function LessoningScreen(): React.JSX.Element {
   const lectureId = useLessonStore(state => state.lectureId);
   const questionIds = useLessonStore(state => state.questionIds);
+  const lessonId = useLessonStore(state => state.lessonId);
   const memberId = useLectureStore(state => state.memberId);
   const teacherId = useLectureStore(state => state.teacherId);
+  const isTeaching = useLessonStore(state => state.isTeaching);
 
   console.log(
     'lectureId:',
@@ -35,10 +37,8 @@ function LessoningScreen(): React.JSX.Element {
   const [receivedMessage, setReceivedMessage] = useState<string | null>(null);
   const clientRef = useRef<StompJs.Client | null>(null);
 
-  const lessonId = 37;
   const isTeacher = userInfo.role === 'TEACHER';
   const questionId = 1;
-  console.log('당신은 선생인가', isTeacher);
 
   // STOMP 클라이언트 초기화 및 설정
   useEffect(() => {
@@ -52,10 +52,12 @@ function LessoningScreen(): React.JSX.Element {
       onConnect: () => {
         console.log('STOMP client successfully connected');
         setIsConnected(true);
-
+        // Todo효진 유동 변수 추가 예정
+        const studentId = memberId;
         // 구독 설정: isTeacher에 따른 분기 처리
-        if (isTeacher) {
-          const teacherTopic = `/topic/teacher/lesson/${lessonId}`;
+        console.log('입장드가자', isTeacher, isTeaching, studentId);
+        if (isTeacher && isTeaching && studentId) {
+          const teacherTopic = `/topic/teacher/lesson/${lessonId}/member/${studentId}`;
           client.subscribe(teacherTopic, message => {
             console.log('Received message for teacher:', message.body);
             setReceivedMessage(message.body);
@@ -100,7 +102,7 @@ function LessoningScreen(): React.JSX.Element {
       client.deactivate(); // 컴포넌트 언마운트 시 연결 해제
       console.log('STOMP client deactivated');
     };
-  }, [isTeacher, lessonId, questionId]);
+  }, [isTeacher, isTeaching, lessonId, memberId, questionId]);
 
   const problems = [
     `그림과 같이 양수 $t$ 에 대하여 곡선 $y = e^{x} - 1$ 이 두 직선 $y = t$, $y = 5t$ 와 만나는 점을 각각 $\\mathrm{A}$, $\\mathrm{B}$ 라 하고, 점 $B$ 에서 $x$ 축에 내린 수선의 발을 $C$ 라 하자. 삼각형 $ \\mathrm{ACB} $ 의 넓이를 $S(t)$ 라 할 때, $\\lim_{t \\rightarrow 0+} \\frac{S(t)}{t^{2}}$ 의 값을 구하시오.
@@ -140,6 +142,7 @@ function LessoningScreen(): React.JSX.Element {
           <View style={styles.sectionContainer}>
             <ProblemSection problemText={problems[currentPage]} />
             <TeacherRealTimeCanvasSection
+              isTeaching={isTeaching}
               role={userInfo.role}
               clientRef={clientRef}
               isConnected={isConnected}

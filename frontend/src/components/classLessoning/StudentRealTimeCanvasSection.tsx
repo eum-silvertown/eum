@@ -7,6 +7,7 @@ import { throttle } from 'lodash';
 import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
 import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
 import * as StompJs from '@stomp/stompjs';
+import { useLectureStore } from '@store/useLessonStore';
 interface StudentCanvasSectionProps {
   role: string;
   clientRef: React.MutableRefObject<StompJs.Client | null>;
@@ -62,6 +63,8 @@ const StudentRealTimeCanvasSection = ({
   const [isErasing, setIsErasing] = useState(false);
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
 
+  const memberId = useLectureStore(state => state.memberId);
+
   // 압축 전송
   const sendCompressedData = (destination: string, data: any, count: number) => {
     if (!clientRef.current || !clientRef.current.active) {
@@ -71,10 +74,10 @@ const StudentRealTimeCanvasSection = ({
     const compressedData = pako.deflate(JSON.stringify(data));
     const base64EncodedData = base64.encode(String.fromCharCode(...compressedData));
     const newPayload = {
-      memberId: 63,
+      memberId: memberId,
       role: role,
       lessonId: 37,
-      questionId: 1,
+      questionId: 21,
       drawingData: base64EncodedData,
     };
 

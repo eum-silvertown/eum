@@ -10,6 +10,7 @@ import {
   SwitchLessonStatusResponse,
   switchLessonStatus,
 } from '@services/lessonService';
+import {useLessonStore} from '@store/useLessonStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 type LectureInfoProps = {
@@ -19,9 +20,11 @@ type LectureInfoProps = {
 const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
   const navigation = useNavigation<NavigationProps>();
   const queryClient = useQueryClient();
+  const setIsTeaching = useLessonStore(state => state.setIsTeaching);
 
   const handleExit = () => {
     navigation.goBack();
+    setIsTeaching(false);
   };
 
   // 수업 상태 변경
@@ -54,6 +57,11 @@ const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
     );
   };
 
+  const intoTeacherDrawing = () => {
+    setIsTeaching(false);
+    navigation.navigate('LessoningScreen');
+  };
+
   return (
     <View style={styles.InteractionToolBar}>
       <View style={styles.InteractionContainer}>
@@ -61,7 +69,7 @@ const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
           {/* 필기 화면 닫기 */}
           <TouchableOpacity
             style={styles.iconTouchLayout}
-            onPress={() => navigation.navigate('LessoningScreen')}>
+            onPress={intoTeacherDrawing}>
             <DrawingTabletIcon
               width={iconSize.mdPlus}
               height={iconSize.mdPlus}

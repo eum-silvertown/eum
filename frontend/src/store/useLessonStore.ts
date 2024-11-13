@@ -18,14 +18,18 @@ interface LessonState {
   lectureId: number | null;
   lessonId: number | null;
   questionIds: number[] | null;
+  isTeaching: boolean | null;
   setLectureId: (lectureId: number) => void;
   setLessonInfo: (lessonId: number, questionIds: number[]) => void;
+  setIsTeaching: (isTeaching: boolean) => void;
 }
 
 export const useLessonStore = create<LessonState>(set => ({
   lectureId: null,
   questionIds: null,
   lessonId: null,
-  setLectureId: (lectureId) => set({lectureId}),
-  setLessonInfo: (lessonId,questionIds) => set({lessonId,questionIds}),
+  isTeaching: null,
+  setLectureId: lectureId => set({lectureId}),
+  setLessonInfo: (lessonId, questionIds) => set({lessonId, questionIds}),
+  setIsTeaching: isTeaching => set({isTeaching}),
 }));

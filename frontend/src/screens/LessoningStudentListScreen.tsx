@@ -36,7 +36,8 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const questionIds = useLessonStore(state => state.questionIds);
   const memberId = useLectureStore(state => state.memberId);
   const teacherId = useLectureStore(state => state.teacherId);
-
+  const setLectureInfo = useLectureStore(state => state.setLectureInfo);
+  const setIsTeaching = useLessonStore(state => state.setIsTeaching);
   console.log(
     'lectureId:',
     lectureId,
@@ -55,7 +56,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const PARTICIPANTS_PER_PAGE = ROWS * COLUMNS;
 
   const [participants] = useState<Participant[]>([
-    {id: '1', name: '학생 1'},
+    {id: '83', name: '학생 83'},
     {id: '2', name: '학생 2'},
     {id: '3', name: '학생 3'},
     {id: '4', name: '학생 4'},
@@ -101,7 +102,11 @@ function LessoningStudentListScreen(): React.JSX.Element {
     }
   };
 
-  const handleParticipantPress = () => {
+  const handleParticipantPress = (id: string) => {
+    console.log(id);
+
+    setLectureInfo(Number(id), teacherId!);
+    setIsTeaching(true);
     navigation.navigate('LessoningScreen');
   };
 
@@ -109,7 +114,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
     <View style={styles.mainContainer}>
       {/* 상단 바 */}
       <View style={styles.interactionToolContainer}>
-        <TeacherLessoningGridInteractionTool lectureId={lectureId!}/>
+        <TeacherLessoningGridInteractionTool lectureId={lectureId!} />
       </View>
 
       {/* 총 인원수 */}
@@ -126,7 +131,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
         renderItem={({item}) => (
           <ParticipantCard
             participant={item}
-            onPress={() => handleParticipantPress()} // 클릭 이벤트 핸들러
+            onPress={() => handleParticipantPress(item.id)}
           />
         )}
       />

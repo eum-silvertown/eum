@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Skia, useCanvasRef } from '@shopify/react-native-skia';
+import React, {useEffect, useState} from 'react';
+import {Skia, useCanvasRef} from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
 import base64 from 'react-native-base64';
 import pako from 'pako';
-import { throttle } from 'lodash';
+import {throttle} from 'lodash';
 import TeacherLessoningInteractionTool from './TeacherLessoningInteractionTool';
 import * as StompJs from '@stomp/stompjs';
 import simplify from 'simplify-js';
+import TeacherRealTimeCanvasRefSection from './TeacherRealTimeCanvasRefSection';
+import {useLectureStore, useLessonStore} from '@store/useLessonStore';
 interface TeacherCanvasSectionProps {
+  isTeaching: boolean | null;
   role: string;
   clientRef: React.MutableRefObject<StompJs.Client | null>;
   isConnected: boolean;
@@ -40,8 +43,8 @@ const MAX_STACK_SIZE = 5;
 let syncCount = 0;
 let syncMoveCount = 0;
 
-
 const TeacherCanvasSection = ({
+  isTeaching,
   role,
   clientRef,
   currentPage,
@@ -66,6 +69,10 @@ const TeacherCanvasSection = ({
   const roundToTwoDecimals = (value: number): number => {
     return Math.round(value * 100) / 100;
   };
+
+  const teacherId = useLectureStore(state => state.teacherId);
+  const lessonId = useLessonStore(state => state.lessonId);
+
   useEffect(() => {
     if (receivedMessage) {
       // 받은 메시지 처리 로직
@@ -74,19 +81,25 @@ const TeacherCanvasSection = ({
     }
   }, [receivedMessage]);
   // 압축 전송
-  const sendCompressedData = (destination: string, data: any, count: number) => {
+  const sendCompressedData = (
+    destination: string,
+    data: any,
+    count: number,
+  ) => {
     if (!clientRef.current || !clientRef.current.active) {
       console.log('STOMP client is not connected');
       return;
     }
 
     const compressedData = pako.deflate(JSON.stringify(data));
-    const base64EncodedData = base64.encode(String.fromCharCode(...compressedData));
+    const base64EncodedData = base64.encode(
+      String.fromCharCode(...compressedData),
+    );
     const newPayload = {
-      memberId: 63,
+      memberId: teacherId,
       role: role,
-      lessonId: 37,
-      questionId: 1,
+      lessonId: lessonId,
+      questionId: 21,
       drawingData: base64EncodedData,
     };
 
@@ -95,14 +108,19 @@ const TeacherCanvasSection = ({
       body: JSON.stringify(newPayload),
     });
 
-    console.log(`[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`);
+    console.log(
+      `[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`,
+    );
   };
 
   // 실시간 전송 - Move 시
   const throttledSendData = throttle((pathData: PathData) => {
     syncMoveCount += 1;
     sendCompressedData('/app/move', pathData, syncMoveCount);
-    console.log(`[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`, pathData);
+    console.log(
+      `[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`,
+      pathData,
+    );
   }, 400); // 200ms마다 전송
 
   useEffect(() => {
@@ -114,7 +132,9 @@ const TeacherCanvasSection = ({
 
     // STOMP 전송 함수 호출
     sendCompressedData('/app/draw', dataToSend, syncCount);
-    console.log(`[Paths Updated] Sync 전송 횟수: ${syncCount} | paths 개수: ${paths.length}`);
+    console.log(
+      `[Paths Updated] Sync 전송 횟수: ${syncCount} | paths 개수: ${paths.length}`,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paths, clientRef]);
 
@@ -143,7 +163,7 @@ const TeacherCanvasSection = ({
         // 개별 경로로 지우기 작업 수행
         if (isInEraseArea) {
           pathDeleted = true; // 경로 삭제 플래그 설정
-          addToUndoStack({ type: 'erase', pathData });
+          addToUndoStack({type: 'erase', pathData});
           console.log('지우개로 개별 경로 삭제:', pathData); // 디버깅 로그
         }
         return !isInEraseArea; // 삭제 대상이 아닌 경우만 남김
@@ -169,7 +189,9 @@ const TeacherCanvasSection = ({
   };
 
   const undo = () => {
-    if (undoStack.length === 0) { return; }
+    if (undoStack.length === 0) {
+      return;
+    }
 
     const lastAction = undoStack[undoStack.length - 1];
     setUndoStack(undoStack.slice(0, -1));
@@ -184,7 +206,9 @@ const TeacherCanvasSection = ({
   };
 
   const redo = () => {
-    if (redoStack.length === 0) { return; }
+    if (redoStack.length === 0) {
+      return;
+    }
 
     const lastRedoAction = redoStack[redoStack.length - 1];
     setRedoStack(redoStack.slice(0, -1));
@@ -213,7 +237,7 @@ const TeacherCanvasSection = ({
     const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
 
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -226,13 +250,13 @@ const TeacherCanvasSection = ({
     const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
     const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else if (currentPath) {
       // 현재 경로에 새로운 포인트 추가
       currentPath.lineTo(
         Math.round(locationX * 100) / 100, // 좌표 정밀도 소수점 두 자리로 제한
-        Math.round(locationY * 100) / 100
+        Math.round(locationY * 100) / 100,
       );
       canvasRef.current?.redraw();
 
@@ -246,13 +270,13 @@ const TeacherCanvasSection = ({
 
       // 경로 간소화 알고리즘을 적용하여 불필요한 점을 줄이기
       const simplifiedPathData = simplify(
-        [{ x: locationX, y: locationY }],
+        [{x: locationX, y: locationY}],
         0.5, // 간소화 허용 오차
-        true
+        true,
       );
 
       // 간소화된 좌표 목록을 PathData에 추가하여 전송
-      throttledSendData({ ...pathData, path: simplifiedPathData });
+      throttledSendData({...pathData, path: simplifiedPathData});
       console.log(`[Simplified Path Data]: ${simplifiedPathData}`);
     }
   };
@@ -268,7 +292,7 @@ const TeacherCanvasSection = ({
         opacity: penOpacity,
       };
       addPath(newPathData);
-      addToUndoStack({ type: 'draw', pathData: newPathData });
+      addToUndoStack({type: 'draw', pathData: newPathData});
       setCurrentPath(null);
       setRedoStack([]); // redo 스택 초기화
       // console.log('[Path Added] New path 추가됨:', newPathData);
@@ -293,6 +317,9 @@ const TeacherCanvasSection = ({
 
   return (
     <>
+      {isTeaching && (
+        <TeacherRealTimeCanvasRefSection receivedMessage={receivedMessage} />
+      )}
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}
