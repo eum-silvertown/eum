@@ -40,8 +40,6 @@ public class LessonController {
 			return CommonResponse.success(lessonId, "레슨 생성 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		} catch (Exception e) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -59,8 +57,6 @@ public class LessonController {
 			return CommonResponse.success(updatedLessonId, "레슨 수정 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		} catch (Exception e) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -77,8 +73,6 @@ public class LessonController {
 			return CommonResponse.success("레슨 삭제 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		} catch (Exception e) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 

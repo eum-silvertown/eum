@@ -46,9 +46,6 @@ public class ExamController {
             return CommonResponse.success(examId, "시험 생성 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -67,8 +64,6 @@ public class ExamController {
             return CommonResponse.success(updatedExamId, "시험 수정 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-        } catch (Exception e) {
-            throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -86,8 +81,6 @@ public class ExamController {
             return CommonResponse.success("시험 삭제 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-        } catch (Exception e) {
-            throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -107,9 +100,6 @@ public class ExamController {
             return CommonResponse.success(id, "시험 제출 성공");
         } catch (IllegalArgumentException e) {
             throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }

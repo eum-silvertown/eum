@@ -8,7 +8,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.eum.lecture_service.command.dto.exam.ExamProblemSubmissionDto;
 import com.eum.lecture_service.command.dto.homework.HomeworkProblemSubmissionDto;
+import com.eum.lecture_service.command.entity.exam.Exam;
+import com.eum.lecture_service.command.entity.exam.ExamProblemSubmission;
+import com.eum.lecture_service.command.entity.exam.ExamSubmission;
 import com.eum.lecture_service.command.entity.homework.Homework;
 import com.eum.lecture_service.command.entity.homework.HomeworkProblemSubmission;
 import com.eum.lecture_service.command.entity.homework.HomeworkSubmission;
@@ -41,7 +45,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 		validateHomeworkTime(homework);
 
-		HomeworkSubmission homeworkSubmission = createHomeworkSubmission(homework, studentId);
+		HomeworkSubmission homeworkSubmission = findOrCreateHomeworkSubmission(homework, studentId);
 
 		List<HomeworkProblemSubmission> homeworkProblemSubmissionList = saveHomeworkProblemSubmissions(
 			homeworkProblemSubmissions, homeworkSubmission, studentId);
@@ -61,20 +65,31 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		}
 	}
 
-	private HomeworkSubmission createHomeworkSubmission(Homework homework, Long studentId) {
-		HomeworkSubmission homeworkSubmission = HomeworkSubmission.builder()
-			.homework(homework)
-			.studentId(studentId)
-			.build();
+	private HomeworkSubmission findOrCreateHomeworkSubmission(Homework homework, Long studentId) {
+		HomeworkSubmission homeworkSubmission = homeworkSubmissionRepository.findByHomeworkAndStudentId(homework, studentId)
+			.orElse(null);
+
+		if (homeworkSubmission != null && homeworkSubmission.getIsCompleted()) {
+			throw new EumException(ErrorCode.EXAM_ALREADY_SUBMITTED);
+		}
+
+		if (homeworkSubmission == null) {
+			homeworkSubmission = HomeworkSubmission.builder()
+				.homework(homework)
+				.studentId(studentId)
+				.isCompleted(false)
+				.build();
+		}
+
 		return homeworkSubmissionRepository.save(homeworkSubmission);
 	}
 
 	private List<HomeworkProblemSubmission> saveHomeworkProblemSubmissions(
-		List<HomeworkProblemSubmissionDto> homeworkProblemSubmissions,
+		List<HomeworkProblemSubmissionDto> problemSubmissions,
 		HomeworkSubmission homeworkSubmission,
 		Long studentId) {
 
-		List<HomeworkProblemSubmission> homeworkProblemSubmissionList = homeworkProblemSubmissions.stream()
+		List<HomeworkProblemSubmission> homeworkProblemSubmissionList = problemSubmissions.stream()
 			.map(dto -> dto.toEntity(homeworkSubmission, studentId))
 			.collect(Collectors.toList());
 
@@ -88,7 +103,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 			.count();
 
 		Long totalCount = (long) homeworkProblemSubmissionList.size();
-		double score = (double) correctCount / totalCount * 100;
+		double score = totalCount > 0 ? ((double) correctCount / totalCount) * 100 : 0.0;
 
 		homeworkSubmission.setCorrectCount(correctCount);
 		homeworkSubmission.setTotalCount(totalCount);
@@ -103,7 +118,6 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		Long lectureId) {
 
 		HomeworkSubmissionCreateEvent event = createHomeworkSubmissionCreateEvent(homeworkSubmission, lectureId, homeworkProblemSubmissionList);
-
 		kafkaTemplate.send("homework-submission-event", event);
 	}
 

@@ -40,8 +40,6 @@ public class LectureController {
 			return CommonResponse.success(lectureId, "수업 생성 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		} catch (Exception e) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 

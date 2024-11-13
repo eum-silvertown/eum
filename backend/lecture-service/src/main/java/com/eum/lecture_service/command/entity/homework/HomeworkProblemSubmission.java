@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Builder
@@ -37,9 +38,11 @@ public class HomeworkProblemSubmission {
 	@Column(name = "student_id", nullable = false)
 	private Long studentId;
 
+	@Setter
 	@Column(name = "is_correct")
 	private Boolean isCorrect;
 
+	@Setter
 	@Column(name = "homework_solution")
 	private String homeworkSolution;
 }
