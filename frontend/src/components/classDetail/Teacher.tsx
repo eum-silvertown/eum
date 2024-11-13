@@ -1,23 +1,18 @@
 import React from 'react';
 import { Text } from '@components/common/Text';
-import {
-  View,
-  StyleSheet,
-  ImageBackground,
-  TouchableOpacity,
-} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
 import { spacing } from '@theme/spacing';
-import defaultTeacherPhoto from '@assets/images/teacher.png';
 import PencilIcon from '@assets/icons/pencilIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import { getResponsiveSize } from '@utils/responsive';
+import { SvgUri } from 'react-native-svg';
 
 type TeacherProps = {
   isTeacher: boolean;
   name?: string;
   telephone?: string;
   email?: string;
-  photo?: string | null;
+  photo?: string;
 };
 
 function Teacher({
@@ -41,11 +36,15 @@ function Teacher({
       </View>
       <View style={styles.profileContainer}>
         <View style={styles.photoContainer}>
-          <ImageBackground
-            source={photo ? { uri: photo } : defaultTeacherPhoto} // photo가 null이면 기본 이미지 사용
-            style={styles.photo}
-            imageStyle={styles.photoImage}
-          />
+          {photo && photo.endsWith('.svg') ? (
+            <SvgUri uri={photo} width="100%" height="100%" /> // 외부 SVG URL 사용
+          ) : (
+            <ImageBackground
+              source={{ uri: photo }}
+              style={styles.photo}
+              imageStyle={styles.photoImage}
+            />
+          )}
         </View>
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>{name}</Text>
