@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: spacing.xl,
     paddingHorizontal: spacing.xxl,
+    backgroundColor: 'white',
   },
   contentContainer: {
     flexDirection: 'row',

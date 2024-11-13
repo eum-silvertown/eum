@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "427678799850",
+    "project_id": "eum-project-5ae08",
+    "storage_bucket": "eum-project-5ae08.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427678799850:android:af988e06dfd703b6b10493",
+        "android_client_info": {
+          "package_name": "com.link"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBa3e7Ky3eSmglnKB3fao2CgZj05N0kn3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

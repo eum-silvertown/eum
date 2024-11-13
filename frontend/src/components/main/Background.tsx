@@ -1,55 +1,30 @@
-import React, {useCallback, useRef} from 'react';
-import {
-  StyleSheet,
-  View,
-  Animated,
-  Dimensions,
-  ScrollView,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from 'react-native';
+import React from 'react';
+import {StyleSheet, View, Animated, Dimensions} from 'react-native';
 import Clouds from './background/Clouds';
 import Stars from './background/Stars';
 import Sky from './background/Sky';
-import TimeTable from './Timetable';
 import CelestialObjects from './background/CelestialObjects';
 
-const STARTING_HOUR = 9;
-const ENDING_HOUR = 22;
-const TRANSITION_HOUR = 17;
+interface BackgroundProps {
+  timeProgressAnim: Animated.Value;
+  currentTimeAnim: Animated.Value;
+  isNightTime: Animated.AnimatedInterpolation<string | number>;
+  screenWidth: number;
+  startingHour: number;
+  endingHour: number;
+  transitionHour: number;
+}
 
-export default function Background(): React.JSX.Element {
-  const screenWidth = Dimensions.get('window').width;
+export default function Background({
+  endingHour,
+  isNightTime,
+  currentTimeAnim,
+  screenWidth,
+  startingHour,
+  timeProgressAnim,
+  transitionHour,
+}: BackgroundProps): React.JSX.Element {
   const screenHeight = Dimensions.get('window').height;
-
-  const timeProgressAnim = useRef(new Animated.Value(0)).current;
-  const currentTimeAnim = useRef(new Animated.Value(STARTING_HOUR)).current;
-  const scrollViewRef = useRef<ScrollView>(null);
-
-  const hourWidth = screenWidth / 4;
-
-  // 스크롤 이벤트 핸들러
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const offsetX = event.nativeEvent.contentOffset.x;
-      const currentHour = Math.floor(offsetX / hourWidth) + STARTING_HOUR;
-      const progress = (offsetX % hourWidth) / hourWidth;
-      const exactTime = currentHour + progress;
-
-      currentTimeAnim.setValue(exactTime);
-      timeProgressAnim.setValue(
-        (exactTime - STARTING_HOUR) / (ENDING_HOUR - STARTING_HOUR),
-      );
-    },
-    [hourWidth, timeProgressAnim, currentTimeAnim],
-  );
-
-  // isNightTime을 Animated.Value로 계산
-  const isNightTime = currentTimeAnim.interpolate({
-    inputRange: [TRANSITION_HOUR - 1, TRANSITION_HOUR],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  });
 
   return (
     <View style={styles.container}>
@@ -64,27 +39,12 @@ export default function Background(): React.JSX.Element {
       </Animated.View>
 
       <CelestialObjects
-        startingHour={STARTING_HOUR}
-        endingHour={ENDING_HOUR}
-        transitionHour={TRANSITION_HOUR}
+        startingHour={startingHour}
+        endingHour={endingHour}
+        transitionHour={transitionHour}
         screenWidth={screenWidth}
         timeAnim={currentTimeAnim}
       />
-
-      <ScrollView
-        ref={scrollViewRef}
-        horizontal
-        style={styles.scrollView}
-        showsHorizontalScrollIndicator={false}
-        onScroll={handleScroll}
-        scrollEventThrottle={33}>
-        <TimeTable
-          endingHour={ENDING_HOUR}
-          hourWidth={hourWidth}
-          isNightTime={isNightTime}
-          startingHour={STARTING_HOUR}
-        />
-      </ScrollView>
     </View>
   );
 }
@@ -95,10 +55,5 @@ const styles = StyleSheet.create({
     zIndex: -1,
     width: '100%',
     height: '100%',
-  },
-  scrollView: {
-    position: 'absolute',
-    bottom: 50,
-    height: '50%',
   },
 });

@@ -1,4 +1,5 @@
 import {NavigationContainer} from '@react-navigation/native';
+import messaging from '@react-native-firebase/messaging';
 import {navigationRef} from '@services/NavigationService';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
@@ -31,6 +32,7 @@ import {getAutoLoginStatus} from '@utils/secureStorage';
 import {refreshAuthToken} from '@services/authService';
 import {useAuthStore} from '@store/useAuthStore';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {saveFCMToken} from '@services/notificationService';
 
 global.TextEncoder = TextEncoder;
 // 안드로이드 기본 Navbar 없애기
@@ -52,6 +54,7 @@ interface ScreenProps {
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
+  const isLoggedIn = useAuthStore(state => state.isLoggedIn);
   const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
 
   const [screens, setScreens] = useState<ScreenProps[]>([]);
@@ -123,6 +126,18 @@ function App(): React.JSX.Element {
     initializeScreens();
   }, [setIsLoggedIn]);
 
+  async function getFCMToken() {
+    const token = await messaging().getToken();
+    saveFCMToken(token);
+  }
+
+  // 로그인 시 FCM 토큰 DB에 저장
+  useEffect(() => {
+    if (isLoggedIn) {
+      getFCMToken();
+    }
+  }, [isLoggedIn]);
+
   if (screens.length === 0) {
     return <></>;
   }
@@ -135,7 +150,7 @@ function App(): React.JSX.Element {
             <Stack.Navigator
               screenOptions={{
                 headerShown: false,
-                animation: 'slide_from_right',
+                animation: 'simple_push',
                 animationDuration: 300,
                 contentStyle: {
                   backgroundColor: 'transparent',
