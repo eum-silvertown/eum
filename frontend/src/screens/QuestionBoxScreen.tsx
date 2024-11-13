@@ -2,6 +2,7 @@ import FileContainer from '@components/questionBox/FileContainer';
 import FileOptionModal from '@components/questionBox/FileOptionModal';
 import FolderHeader from '@components/questionBox/FolderHeader';
 import MoveMenu from '@components/questionBox/MoveMenu';
+import QuestionDetail from '@components/questionBox/QuestionDetail';
 import {useCutStore} from '@store/useCutStore';
 import {
   QuestionBoxType,
@@ -11,7 +12,7 @@ import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
 import {useModal} from 'src/hooks/useModal';
@@ -19,6 +20,9 @@ import {getFolder, getRootFolder} from 'src/services/questionBox';
 
 function QuestionBoxScreen(): React.JSX.Element {
   const {open} = useModal();
+  const [isDetailOpened, setIsDetailOpened] = useState(false);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const [selectedFileId, setSelectedFileId] = useState(0);
   const currentFolder = useQuestionExplorerStore(state => state.currentFolder);
   const updateFolderChildren = useQuestionExplorerStore(
     state => state.updateFolderChildren,
@@ -66,7 +70,20 @@ function QuestionBoxScreen(): React.JSX.Element {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      onLayout={event => {
+        const {height} = event.nativeEvent.layout;
+        console.log(height);
+        setContainerHeight(height);
+      }}
+      style={styles.container}>
+      <QuestionDetail
+        isOpened={isDetailOpened}
+        setIsOpened={setIsDetailOpened}
+        containerHeight={containerHeight}
+        selectedFileId={selectedFileId}
+        setSelectedFileId={setSelectedFileId}
+      />
       <View style={styles.contentContainer}>
         {cutFolderId !== 0 && <MoveMenu />}
         <FolderHeader />
@@ -77,6 +94,9 @@ function QuestionBoxScreen(): React.JSX.Element {
               onPress={() => {
                 if (item.type === 'folder') {
                   folderPressHandler(item);
+                } else {
+                  setSelectedFileId(item.id);
+                  setIsDetailOpened(true);
                 }
               }}
               onLongPress={() => {
@@ -94,8 +114,8 @@ function QuestionBoxScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     width: '100%',
+    height: '100%',
     backgroundColor: 'white',
     borderRadius: borderRadius.lg,
     padding: spacing.xl,
