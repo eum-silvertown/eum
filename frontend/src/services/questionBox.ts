@@ -328,3 +328,25 @@ export async function moveQuestion(fileId: number, toId: number) {
     throw error;
   }
 }
+
+export type DetailQuestionType = {
+  fileId: number;
+  parentId: number;
+  title: string;
+  content: string;
+  answer: string;
+};
+
+export async function detailQuestion(
+  fileId: number,
+): Promise<DetailQuestionType> {
+  try {
+    const {data} = await authApiClient.get<ApiResponse<DetailQuestionType>>(
+      `file/${fileId}`,
+    );
+    return data.data;
+  } catch (error) {
+    console.error('Failed to detailQuestion: ', error);
+    throw error;
+  }
+}
