@@ -22,6 +22,7 @@ import {
   getLectureListDay,
 } from '@services/lectureInformation';
 import { useQuery } from '@tanstack/react-query';
+import MainHeader from './MainHeader';
 
 interface TimeColor {
   startHour: number;
@@ -356,6 +357,8 @@ const MainTest = (): React.JSX.Element => {
         ]}>
         <View style={styles.moon} />
       </Animated.View>
+
+      <MainHeader style={{marginLeft: spacing.xxl}}/>
 
       <View
         style={{

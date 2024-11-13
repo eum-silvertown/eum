@@ -6,7 +6,7 @@ import {colors} from 'src/hooks/useColors';
 import {borderWidth} from '@theme/borderWidth';
 import {getResponsiveSize} from '@utils/responsive';
 import {Text} from '@components/common/Text';
-import { borderRadius } from '@theme/borderRadius';
+import {borderRadius} from '@theme/borderRadius';
 
 interface CustomDropdownPickerProps {
   label?: string;
@@ -46,7 +46,12 @@ const CustomDropdownPicker = ({
           onValueChange={handleSelectItem}
           style={styles.picker}>
           {items.map((item, index) => (
-            <Picker.Item key={index} label={item.label} value={item.value} />
+            <Picker.Item
+              style={styles.pickerContent}
+              key={index}
+              label={item.label}
+              value={item.value}
+            />
           ))}
         </Picker>
       </View>
@@ -64,10 +69,15 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.sm,
     backgroundColor: 'white',
     height: getResponsiveSize(25),
+    justifyContent: 'center',
   },
-  picker: {    
+  picker: {
     color: colors.light.background.main,
   },
+  pickerContent: {
+    fontSize: getResponsiveSize(8),
+  },
+
   label: {
     marginBottom: spacing.sm,
   },
