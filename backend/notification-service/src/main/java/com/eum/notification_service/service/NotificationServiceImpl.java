@@ -141,6 +141,21 @@ public class NotificationServiceImpl implements NotificationService {
 		notificationRepository.save(notification);
 	}
 
+	@Override
+	public void markAsReadNotifications(List<Long> notificationIds, Long memberId) {
+		for(Long notificationId : notificationIds) {
+			Notifications notification = notificationRepository.findById(notificationId)
+				.orElseThrow(() -> new EumException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+			if (!notification.getMemberId().equals(memberId)) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+
+			notification.setIsRead(true);
+			notificationRepository.save(notification);
+		}
+	}
+
 	private void sendFcmNotification(Long memberId, String title, String body) {
 		String fcmToken = getFcmTokenByMemberId(memberId);
 
