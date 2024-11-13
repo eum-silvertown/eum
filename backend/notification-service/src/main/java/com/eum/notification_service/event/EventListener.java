@@ -10,9 +10,11 @@ import com.eum.notification_service.event.event.LectureStartedNotificationEvent;
 import com.eum.notification_service.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EventListener {
 
 	private final NotificationService notificationService;
@@ -21,6 +23,7 @@ public class EventListener {
 		"spring.json.value.default.type=com.eum.notification_service.event.event.LectureCreatedNotificationEvent"
 	})
 	public void handleLectureCreated(LectureCreatedNotificationEvent event) {
+		log.info("강의 생성 알림 요청 들어옴");
 		notificationService.sendLectureCreatedNotifications(event);
 	}
 
@@ -28,6 +31,7 @@ public class EventListener {
 		"spring.json.value.default.type=com.eum.notification_service.event.event.LectureStartedNotificationEvent"
 	})
 	public void handleLectureStatusUpdated(LectureStartedNotificationEvent event) {
+		log.info("강의 시작 알림 요청 들어옴");
 		notificationService.sendLectureStatusUpdatedNotifications(event);
 	}
 
@@ -35,6 +39,7 @@ public class EventListener {
 		"spring.json.value.default.type=com.eum.notification_service.event.event.ExamCreatedNotificationEvent"
 	})
 	public void handleExamCreated(ExamCreatedNotificationEvent event) {
+		log.info("시험 생성 알림 요청 들어옴");
 		notificationService.sendExamCreatedNotifications(event);
 	}
 
@@ -42,6 +47,7 @@ public class EventListener {
 		"spring.json.value.default.type=com.eum.notification_service.event.event.HomeworkCreatedNotificationEvent"
 	})
 	public void handleHomeworkCreated(HomeworkCreatedNotificationEvent event) {
+		log.info("숙제 생성 알림 요청 들어옴");
 		notificationService.sendHomeworkCreatedNotifications(event);
 	}
 }
