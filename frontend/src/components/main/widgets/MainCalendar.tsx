@@ -8,7 +8,6 @@ import {Text} from '@components/common/Text';
 import IntoIcon from '@assets/icons/intoIcon.svg';
 import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
-import { colors } from 'src/hooks/useColors';
 
 const events = [
   {
@@ -81,7 +80,6 @@ export default function MainCalendar(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    
     flex: 1,
     padding: getResponsiveSize(10),
     gap: spacing.md,

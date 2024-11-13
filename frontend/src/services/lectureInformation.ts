@@ -266,10 +266,10 @@ export type LectureListDayItemType = {
     name: string;
     email: string;
     tel: string;
-    image: string | null; // 이미지가 없을 수 있으므로 null 허용
+    image: string | null;
   };
   scheduleDays: string[];
-  lecturePeriod: number; // lecture_period -> lecturePeriod
+  lecturePeriod: number[];
 };
 
 // 수업 목록 요일별 조회
