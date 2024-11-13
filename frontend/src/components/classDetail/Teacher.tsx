@@ -1,9 +1,7 @@
 import React from 'react';
 import { Text } from '@components/common/Text';
-import { View, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { spacing } from '@theme/spacing';
-import PencilIcon from '@assets/icons/pencilIcon.svg';
-import { iconSize } from '@theme/iconSize';
 import { getResponsiveSize } from '@utils/responsive';
 import { SvgUri } from 'react-native-svg';
 
@@ -16,7 +14,6 @@ type TeacherProps = {
 };
 
 function Teacher({
-  isTeacher,
   name = '선생님 이름',
   telephone = '010-1234-5678',
   email = 'teacher@example.com',
@@ -28,11 +25,6 @@ function Teacher({
         <Text variant="subtitle" weight="bold" style={styles.subtitle}>
           선생님 소개
         </Text>
-        {isTeacher && (
-          <TouchableOpacity style={styles.pencilIcon}>
-            <PencilIcon width={iconSize.sm} height={iconSize.sm} />
-          </TouchableOpacity>
-        )}
       </View>
       <View style={styles.profileContainer}>
         <View style={styles.photoContainer}>
@@ -106,7 +98,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing.md,
   },
   infoText: {
-    marginBottom: spacing.xs,
+    marginBottom: spacing.sm,
   },
 });
 
