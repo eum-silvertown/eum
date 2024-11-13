@@ -11,7 +11,7 @@ import {
 import Clouds from './background/Clouds';
 import Stars from './background/Stars';
 import Sky from './background/Sky';
-import TimeTable from './TimeTable';
+import TimeTable from './Timetable';
 import CelestialObjects from './background/CelestialObjects';
 
 const STARTING_HOUR = 9;

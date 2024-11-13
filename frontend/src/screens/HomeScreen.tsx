@@ -6,7 +6,7 @@ import BookModal from '@components/common/BookModal';
 import {useBookModalStore} from '@store/useBookModalStore';
 import Background from '@components/main/Background';
 import Widgets from '@components/main/Widgets';
-
+import MainHeader from '@components/main/MainHeader';
 function HomeScreen(): React.JSX.Element {
   const bookPosition = useBookModalStore(state => state.bookPosition);
 
@@ -25,6 +25,7 @@ function HomeScreen(): React.JSX.Element {
     <View style={styles.container}>
       {bookPosition && <BookModal />}
       <Background />
+      <MainHeader style={{marginLeft:spacing.xxl}}/>
       <Widgets />
     </View>
   );
