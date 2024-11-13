@@ -12,6 +12,7 @@ import com.eum.lecture_service.event.dto.HomeworkProblemSubmissionEventDto;
 import com.eum.lecture_service.event.event.homework.HomeworkSubmissionCreateEvent;
 import com.eum.lecture_service.query.document.StudentOverviewModel;
 import com.eum.lecture_service.query.document.TeacherOverviewModel;
+import com.eum.lecture_service.query.document.studentInfo.ExamSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkProblemSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.Overview;
@@ -22,9 +23,11 @@ import com.eum.lecture_service.query.repository.StudentOverviewRepository;
 import com.eum.lecture_service.query.repository.TeacherOverviewRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HomeworkSubmissionEventListener {
 
 	private final StudentOverviewRepository studentOverviewRepository;
@@ -36,16 +39,17 @@ public class HomeworkSubmissionEventListener {
 	public void handleHomeworkSubmissionCreatedEvent(HomeworkSubmissionCreateEvent event) {
 		Long studentId = event.getStudentId();
 		Long lectureId = event.getLectureId();
+		System.out.println("들어오나?");
 
 		StudentOverviewModel studentModel = studentOverviewRepository.findByStudentIdAndLectureId(studentId, lectureId)
 			.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
 
-		HomeworkSubmissionInfo submissionInfo = createHomeworkSubmissionInfo(event);
+		HomeworkSubmissionInfo homeworkSubmissionInfo = createHomeworkSubmissionInfo(event);
 
 		if (studentModel.getHomeworkSubmissionInfo() == null) {
 			studentModel.setHomeworkSubmissionInfo(new ArrayList<>());
 		}
-		studentModel.getHomeworkSubmissionInfo().add(submissionInfo);
+		studentModel.getHomeworkSubmissionInfo().add(homeworkSubmissionInfo);
 
 		updateStudentScores(studentModel);
 		updateStudentOverview(studentModel);
@@ -89,18 +93,9 @@ public class HomeworkSubmissionEventListener {
 			studentModel.setOverview(overview);
 		}
 
-		long totalSolvedProblems = 0;
 		List<HomeworkSubmissionInfo> submissions = studentModel.getHomeworkSubmissionInfo();
 
-		for (HomeworkSubmissionInfo submission : submissions) {
-			List<HomeworkProblemSubmissionInfo> problemSubmissions = submission.getProblemSubmissions();
-			for (HomeworkProblemSubmissionInfo problemSubmission : problemSubmissions) {
-				if (problemSubmission.getIsCorrect()) {
-					totalSolvedProblems++;
-				}
-			}
-		}
-		overview.setHomeworkCount(totalSolvedProblems);
+		overview.setHomeworkCount((long)submissions.size());
 	}
 
 	private void updateStudentScores(StudentOverviewModel studentModel) {
@@ -109,7 +104,7 @@ public class HomeworkSubmissionEventListener {
 			.mapToDouble(HomeworkSubmissionInfo::getScore)
 			.sum();
 		int submissionCount = submissions.size();
-		double avgScore = totalScore / submissionCount;
+		double avgScore = submissionCount > 0 ? totalScore / submissionCount : 0.0;
 
 		StudentScores scores = studentModel.getStudentScores();
 		if (scores == null) {

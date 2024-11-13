@@ -34,7 +34,7 @@ public class MemberEventListener {
 			.name(event.getName())
 			.email(event.getEmail())
 			.tel(event.getTel())
-			.image(event.getImage())
+			.image("https://d101-eum-bucket.s3.ap-northeast-2.amazonaws.com/image/default.svg")
 			.build();
 
 		teacherReadRepository.save(teacher);
@@ -78,7 +78,7 @@ public class MemberEventListener {
 		StudentModel student = StudentModel.builder()
 			.studentId(event.getStudentId())
 			.name(event.getName())
-			.image(event.getImage())
+			.image("https://d101-eum-bucket.s3.ap-northeast-2.amazonaws.com/image/default.svg")
 			.classId(event.getClassId())
 			.grade(event.getGrade())
 			.classNumber(event.getClassNumber())

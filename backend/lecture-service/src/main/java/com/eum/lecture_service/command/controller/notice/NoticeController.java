@@ -39,8 +39,6 @@ public class NoticeController {
 			return CommonResponse.success(noticeId, "공지사항 생성 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		} catch (Exception e) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 
 	}
@@ -59,8 +57,6 @@ public class NoticeController {
 			return CommonResponse.success("공지사항 수정 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		} catch (Exception e) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 
 	}
@@ -78,8 +74,6 @@ public class NoticeController {
 			return CommonResponse.success("공지사항 삭제 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
-		} catch (Exception e) {
-			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 
 	}
