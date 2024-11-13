@@ -31,12 +31,12 @@ function LessoningScreen(): React.JSX.Element {
     'teacherId:',
     teacherId,
   );
+  // const problemIds = useLessonStore(state => state.questionIds);
 
   const userInfo = useAuthStore(state => state.userInfo);
   const [isConnected, setIsConnected] = useState(false);
   const [receivedMessage, setReceivedMessage] = useState<string | null>(null);
   const clientRef = useRef<StompJs.Client | null>(null);
-
   const isTeacher = userInfo.role === 'TEACHER';
   const questionId = 1;
 
@@ -44,7 +44,7 @@ function LessoningScreen(): React.JSX.Element {
   useEffect(() => {
     const client = new StompJs.Client({
       webSocketFactory: () =>
-        new SockJS('http://k11d101.p.ssafy.io/ws-gateway/drawing'),
+        new SockJS('http://192.168.100.187:8080/ws-gateway/drawing'),
       debug: str => console.log('STOMP Debug:', str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -52,21 +52,20 @@ function LessoningScreen(): React.JSX.Element {
       onConnect: () => {
         console.log('STOMP client successfully connected');
         setIsConnected(true);
-        // Todo효진 유동 변수 추가 예정
-        const studentId = memberId;
         // 구독 설정: isTeacher에 따른 분기 처리
-        console.log('입장드가자', isTeacher, isTeaching, studentId);
-        if (isTeacher && isTeaching && studentId) {
-          const teacherTopic = `/topic/teacher/lesson/${lessonId}/member/${studentId}`;
+        console.log('입장드가자', isTeacher, isTeaching, memberId);
+        if (isTeacher) {
+          const teacherTopic = `/user/teacher/lesson/${lessonId}/member/${memberId}`;
+          console.log('@@@@@@@@@@@@', teacherTopic);
           client.subscribe(teacherTopic, message => {
             console.log('Received message for teacher:', message.body);
             setReceivedMessage(message.body);
           });
           console.log(`Subscribed to teacher topic: ${teacherTopic}`);
-        } else {
-          const studentTopic = `/topic/lesson/${lessonId}/question/${questionId}`;
+        } else if (!isTeacher) {
+          const studentTopic = `/topic/lesson/${lessonId}/question/22`;
           client.subscribe(studentTopic, message => {
-            // console.log('Received message for student:', message.body);
+            console.log('Received message for student:', message.body);
             setReceivedMessage(message.body);
           });
           console.log(`Subscribed to student topic: ${studentTopic}`);
@@ -177,6 +176,7 @@ function LessoningScreen(): React.JSX.Element {
       <View style={styles.sectionContainer}>
         <ProblemSection problemText={problems[currentPage]} />
         <StudentRealTimeCanvasSection
+          lessonId={lessonId!}
           role={userInfo.role}
           clientRef={clientRef}
           isConnected={isConnected}

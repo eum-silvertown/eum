@@ -25,6 +25,8 @@ function TeacherRealTimeCanvasRefSection({
 
   useEffect(() => {
     if (receivedMessage) {
+      console.log('receivedMessage', receivedMessage);
+
       const messageObject = JSON.parse(receivedMessage);
       if (messageObject.drawingData) {
         handleSync(messageObject.drawingData);

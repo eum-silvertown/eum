@@ -43,7 +43,7 @@ const MAX_STACK_SIZE = 5;
 let syncCount = 0;
 let syncMoveCount = 0;
 
-const TeacherCanvasSection = ({
+const TeacherRealTimeCanvasSection = ({
   isTeaching,
   role,
   clientRef,
@@ -73,13 +73,6 @@ const TeacherCanvasSection = ({
   const teacherId = useLectureStore(state => state.teacherId);
   const lessonId = useLessonStore(state => state.lessonId);
 
-  useEffect(() => {
-    if (receivedMessage) {
-      // 받은 메시지 처리 로직
-      console.log('Received message in Teacher:', receivedMessage);
-      // 받은 데이터를 처리하거나 화면에 반영할 수 있음
-    }
-  }, [receivedMessage]);
   // 압축 전송
   const sendCompressedData = (
     destination: string,
@@ -99,7 +92,7 @@ const TeacherCanvasSection = ({
       memberId: teacherId,
       role: role,
       lessonId: lessonId,
-      questionId: 21,
+      questionId: 22,
       drawingData: base64EncodedData,
     };
 
@@ -108,19 +101,19 @@ const TeacherCanvasSection = ({
       body: JSON.stringify(newPayload),
     });
 
-    console.log(
-      `[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`,
-    );
+    // console.log(
+    //   `[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`,
+    // );
   };
 
   // 실시간 전송 - Move 시
   const throttledSendData = throttle((pathData: PathData) => {
     syncMoveCount += 1;
     sendCompressedData('/app/move', pathData, syncMoveCount);
-    console.log(
-      `[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`,
-      pathData,
-    );
+    // console.log(
+    //   `[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`,
+    //   pathData,
+    // );
   }, 400); // 200ms마다 전송
 
   useEffect(() => {
@@ -277,7 +270,7 @@ const TeacherCanvasSection = ({
 
       // 간소화된 좌표 목록을 PathData에 추가하여 전송
       throttledSendData({...pathData, path: simplifiedPathData});
-      console.log(`[Simplified Path Data]: ${simplifiedPathData}`);
+      // console.log(`[Simplified Path Data]: ${simplifiedPathData}`);
     }
   };
 
@@ -351,4 +344,4 @@ const TeacherCanvasSection = ({
   );
 };
 
-export default TeacherCanvasSection;
+export default TeacherRealTimeCanvasSection;
