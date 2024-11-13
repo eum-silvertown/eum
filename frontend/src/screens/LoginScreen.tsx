@@ -126,7 +126,8 @@ function LoginScreen(): React.JSX.Element {
             status="error"
             statusText={loginErrorText}
           />
-          <View style={styles.checkboxContainer}>
+          {/* 자동 로그인 항시 사용으로 인한 주석 처리 */}
+          {/* <View style={styles.checkboxContainer}>
             <TouchableOpacity
               onPress={() => setIsChecked(!isChecked)} // 클릭 시 체크박스 상태 변경
               style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -137,7 +138,7 @@ function LoginScreen(): React.JSX.Element {
               />
               <Text>자동 로그인</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleLogin}>
@@ -204,11 +205,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   submitButton: {
-    backgroundColor: colors.dark.background.main,
-    textAlign: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.light.background.main,
+    paddingVertical: spacing.md,
+    alignItems: 'center',    
+    alignSelf: 'center',
     width: '100%',
-    height: '10%',
   },
   submitButtonText: {
     textAlign: 'center',
