@@ -63,7 +63,7 @@ export type TeacherType = {
   name: string;
   email: string;
   tel: string;
-  image: string | null;
+  image: string;
 };
 
 // 스케줄 타입 정의
@@ -115,7 +115,7 @@ export type StudentScoreType = {
 // 학생 개요 타입 정의
 export type StudentOverviewType = {
   studentId: number;
-  studentImage: string | null;
+  studentImage: string;
   studentName: string;
   studentScores: StudentScoreType;
 };

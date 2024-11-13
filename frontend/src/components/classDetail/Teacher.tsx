@@ -12,7 +12,7 @@ type TeacherProps = {
   name?: string;
   telephone?: string;
   email?: string;
-  photo?: string;
+  photo: string;
 };
 
 function Teacher({
