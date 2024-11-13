@@ -90,18 +90,8 @@ public class ExamSubmissionEventListener {
 			overview = new Overview();
 			studentModel.setOverview(overview);
 		}
-
-		long totalSolvedProblems = 0;
-		List<ExamSubmissionInfo> submissions = studentModel.getExamSubmissionInfo();
-		for (ExamSubmissionInfo submission : submissions) {
-			List<ExamProblemSubmissionInfo> problemSubmissionInfos = submission.getProblemSubmissions();
-			for (ExamProblemSubmissionInfo problemSubmissionInfo : problemSubmissionInfos) {
-				if (problemSubmissionInfo.getIsCorrect()) {
-					totalSolvedProblems++;
-				}
-			}
-		}
-		overview.setExamCount(totalSolvedProblems);
+		List<ExamSubmissionInfo> examSubmissionInfo = studentModel.getExamSubmissionInfo();
+		overview.setExamCount((long)examSubmissionInfo.size());
 	}
 
 	private void updateStudentScores(StudentOverviewModel studentModel) {
