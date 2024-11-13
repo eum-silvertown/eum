@@ -14,7 +14,7 @@ import BookModal from '@components/common/BookModal';
 import {useBookModalStore} from '@store/useBookModalStore';
 import Background from '@components/main/Background';
 import Widgets from '@components/main/Widgets';
-import TimeTable from '@components/main/TimeTable';
+import TimeTable from '@components/main/Timetable';
 
 const STARTING_HOUR = 9;
 const ENDING_HOUR = 22;

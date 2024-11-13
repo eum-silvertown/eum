@@ -21,9 +21,12 @@ function TeacherRealTimeCanvasRefSection({
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
+  console.log('학생 캔버스 받을 준비 완료');
 
   useEffect(() => {
     if (receivedMessage) {
+      console.log('receivedMessage', receivedMessage);
+
       const messageObject = JSON.parse(receivedMessage);
       if (messageObject.drawingData) {
         handleSync(messageObject.drawingData);

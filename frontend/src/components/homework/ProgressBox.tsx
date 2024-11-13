@@ -67,7 +67,6 @@ function ProgressBox({
   unit,
   icon,
   isLessonDetail,
-  navigateData,
 }: ProgressBoxProps): React.JSX.Element {
 
   const navigation = useNavigation<NavigationProps>();
@@ -78,14 +77,14 @@ function ProgressBox({
     // 각 title에 맞게 이동할 페이지를 지정
     switch (title) {
       case '수업':
-        navigation.navigate('ClassLessonListScreen', { data: navigateData });
+        navigation.navigate('ClassLessonListScreen');
 
         break;
       case '시험':
-        navigation.navigate('ClassExamListScreen', { data: navigateData });
+        navigation.navigate('ClassExamListScreen');
         break;
       case '숙제':
-        navigation.navigate('ClassHomeworkListScreen', { data: navigateData });
+        navigation.navigate('ClassHomeworkListScreen');
         break;
       default:
         console.log('Invalid title');

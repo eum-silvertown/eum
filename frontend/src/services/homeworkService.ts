@@ -34,41 +34,6 @@ export const createHomework = async (
   }
 };
 
-// 숙제 수정
-export type UpdateHomeworkRequest = {
-  lectureId: number;
-  title: string;
-  startTime: string;
-  endTime: string;
-  questionIds: number[];
-};
-
-export type UpdateHomeworkResponse = {
-  homeworkId: number;
-};
-
-export const updateHomework = async (
-  homeworkId: number,
-  homeworkData: UpdateHomeworkRequest,
-): Promise<UpdateHomeworkResponse> => {
-  try {
-    console.log('숙제 수정 요청 데이터:', homeworkData);
-
-    const { data } = await authApiClient.put<{
-      code: string;
-      data: UpdateHomeworkResponse;
-      message: string;
-    }>(`/homework/${homeworkId}`, homeworkData);
-
-    console.log('숙제 수정 응답:', data);
-
-    return data.data;
-  } catch (error) {
-    console.error('숙제 수정 실패:', error);
-    throw error;
-  }
-};
-
 // 숙제 삭제
 export const deleteHomework = async (homeworkId: number): Promise<void> => {
   try {

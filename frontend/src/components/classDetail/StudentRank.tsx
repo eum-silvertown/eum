@@ -12,6 +12,8 @@ import { StudentOverviewType } from 'src/services/lectureInformation';
 import First from '@assets/images/first.png';
 import Second from '@assets/images/second.png';
 import Third from '@assets/images/third.png';
+import { SvgUri } from 'react-native-svg';
+import { colors } from 'src/hooks/useColors';
 
 interface StudentRankProps {
   studentsInfo?: StudentOverviewType[];
@@ -53,7 +55,16 @@ const StudentRank = ({
               <View style={styles.imageContainer}>
                 <Text style={styles.rank}>{index + 1}등</Text>
                 {item.studentImage ? (
-                  <Image source={{ uri: item.studentImage }} style={styles.studentImage} />
+                  item.studentImage.endsWith('.svg') ? (
+                    // eslint-disable-next-line react-native/no-inline-styles
+                    <SvgUri uri={item.studentImage} width={32} height={32} style={{
+                      borderRadius: 30,
+                      borderWidth: 1,
+                      borderColor: '#ddd',
+                    }} />
+                  ) : (
+                    <Image source={{ uri: item.studentImage }} width={32} height={32} style={styles.studentImage} />
+                  )
                 ) : (
                   <PersonIcon width={32} height={32} style={styles.studentImage} />
                 )}
@@ -78,7 +89,7 @@ const StudentRank = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: getResponsiveSize(8),
+    padding: getResponsiveSize(10),
     borderRadius: 8,
   },
   listContainer: {
@@ -96,8 +107,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   studentImage: {
-    width: '100%',
-    height: '100%',
+    width: getResponsiveSize(32),
+    height: getResponsiveSize(32),
     borderRadius: 30,
     borderWidth: 1,
     borderColor: '#ddd',
@@ -113,16 +124,17 @@ const styles = StyleSheet.create({
   },
   rankIcon: {
     position: 'absolute',
-    bottom: 0, // 이미지 하단에 배치
+    bottom: 4,
     right: 0,
     width: getResponsiveSize(12),
     height: getResponsiveSize(12),
   },
   studentName: {
+    top: -4,
     fontSize: 12,
-    color: '#333',
     textAlign: 'center',
-    marginTop: getResponsiveSize(4),
+    fontWeight: 'bold',
+    color: colors.light.text.main,
   },
 });
 

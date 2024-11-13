@@ -1,10 +1,10 @@
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
-import { getResponsiveSize } from '@utils/responsive';
+import {iconSize} from '@theme/iconSize';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -25,10 +25,6 @@ const TeacherLessoningInteractionTool = ({
   onPrevPage,
 }: CanvasComponentProps) => {
   const navigation = useNavigation<NavigationProps>();
-
-  const handleExit = () => {
-    navigation.goBack();
-  };
 
   return (
     <View style={styles.InteractionToolBar}>
@@ -71,11 +67,6 @@ const TeacherLessoningInteractionTool = ({
               </Text>
             </TouchableOpacity>
           </View>
-
-          {/* 퇴장 버튼 */}
-          <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
-            <Text style={styles.exitButtonText}>수업 종료하기</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -97,7 +88,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: getResponsiveSize(8),
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
