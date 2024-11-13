@@ -9,13 +9,14 @@ import {
 import TeacherScreenMoveIcon from '@assets/icons/teacherScreenMoveIcon.svg';
 import TeacherScreenOffIcon from '@assets/icons/teacherScreenOffIcon.svg';
 import TeacherScreenOnIcon from '@assets/icons/teacherScreenOnIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { getResponsiveSize } from '@utils/responsive';
-
+import {iconSize} from '@theme/iconSize';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {useState} from 'react';
+import {getResponsiveSize} from '@utils/responsive';
+import {useQueryClient} from '@tanstack/react-query';
+import {useLessonStore} from '@store/useLessonStore';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 interface LessoningInteractionToolForStudentProps {
@@ -35,8 +36,13 @@ const StudentLessoningInteractionTool = ({
 }: LessoningInteractionToolForStudentProps) => {
   const navigation = useNavigation<NavigationProps>();
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
+  const queryClient = useQueryClient();
+  const lectureId = useLessonStore(state => state.lectureId);
 
   const handleExit = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['lectureDetail', lectureId],
+    });
     navigation.goBack();
   };
 
@@ -177,7 +183,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: getResponsiveSize(8),
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,

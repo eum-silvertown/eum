@@ -161,13 +161,17 @@ function ClassHeader({
             !lectureStatus && styles.enterButtonDisabled,
           ]}
           onPress={enterClass}
-          disabled={lectureStatus}>
+          disabled={!lectureStatus}>
           <Text
             style={[
               styles.enterButtonText,
               !lectureStatus && styles.enterButtonTextDisabled,
             ]}>
-            {lectureStatus ? '수업 재입장' : '수업 중이 아닙니다'}
+            {lectureStatus
+              ? isTeacher
+                ? '수업 재입장'
+                : '수업 입장'
+              : '수업 중이 아닙니다'}
           </Text>
         </TouchableOpacity>
         {isTeacher && (

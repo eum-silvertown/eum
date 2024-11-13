@@ -51,7 +51,6 @@ function ClassDetailScreen({lectureId}: BookLectureProps): React.JSX.Element {
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId),
   });
-  console.log(lectureDetail?.lessons);
 
   // zustand에 필요한 값 저장
   useEffect(() => {
