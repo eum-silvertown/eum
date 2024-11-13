@@ -74,8 +74,10 @@ function QuestionCreateScreen(): React.JSX.Element {
   const switchLectureStatusMutation = useMutation({
     mutationFn: (moveLectureId: number) => switchLessonStatus(moveLectureId),
     onSuccess: (data: SwitchLessonStatusResponse) => {
+      queryClient.invalidateQueries({
+        queryKey: ['lectureDetail', lectureId],
+      });
       console.log('수업 상태 변경 완료:', data.message);
-      // 상태 변경이 성공하면 현재 화면을 대체하고 이동
       navigation.replace('LessoningStudentListScreen');
     },
     onError: error => {
@@ -92,9 +94,6 @@ function QuestionCreateScreen(): React.JSX.Element {
       createLesson(newLessonData),
     onSuccess: () => {
       console.log('레슨 생성 완료');
-      queryClient.invalidateQueries({
-        queryKey: ['lectureDetail', lectureId],
-      });
       setLessonInfo(lectureId, questionIds);
       handleSwitchLectureStatus();
     },
@@ -123,14 +122,14 @@ function QuestionCreateScreen(): React.JSX.Element {
     mutationFn: (newHomeworkData: CreateHomeworkRequest) =>
       createHomework(newHomeworkData),
     onSuccess: () => {
-      console.log('시험 생성 완료');
+      console.log('숙제 생성 완료');
       queryClient.invalidateQueries({
         queryKey: ['lectureDetail', lectureId],
       });
       navigation.goBack();
     },
     onError: error => {
-      console.error('시험 생성 실패:', error);
+      console.error('숙제 생성 실패:', error);
     },
   });
 

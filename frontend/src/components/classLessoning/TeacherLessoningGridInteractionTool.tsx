@@ -5,7 +5,7 @@ import {ScreenType} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
 import {getResponsiveSize} from '@utils/responsive';
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {
   SwitchLessonStatusResponse,
   switchLessonStatus,
@@ -18,6 +18,7 @@ type LectureInfoProps = {
 
 const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
   const navigation = useNavigation<NavigationProps>();
+  const queryClient = useQueryClient();
 
   const handleExit = () => {
     navigation.goBack();
@@ -28,6 +29,9 @@ const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
     mutationFn: (moveLectureId: number) => switchLessonStatus(moveLectureId),
     onSuccess: (data: SwitchLessonStatusResponse) => {
       console.log('수업 상태 변경 완료:', data.message);
+      queryClient.invalidateQueries({
+        queryKey: ['lectureDetail', lectureId],
+      });
       handleExit();
     },
     onError: error => {
