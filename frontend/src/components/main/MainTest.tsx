@@ -1,5 +1,5 @@
-import { getCurrentDateInfo } from '@utils/dateUtils';
-import React, {useEffect, useState, useCallback, useRef, } from 'react';
+import {getCurrentDateInfo} from '@utils/dateUtils';
+import React, {useEffect, useState, useCallback, useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -9,19 +9,20 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   TouchableOpacity,
+  Easing,
 } from 'react-native';
 import LectureCreateBook from './LectureCreateBook';
 import {getResponsiveSize} from '@utils/responsive';
 import TodoList from './TodoList';
 import Weather from './Weather';
 import {spacing} from '@theme/spacing';
-import Calendar from '@components/main/MainCalendar';
+import Calendar from '@components/main/widgets/Calendar';
 import {borderRadius} from '@theme/borderRadius';
 import {
   LectureListDayItemType,
   getLectureListDay,
 } from '@services/lectureInformation';
-import { useQuery } from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 
 interface TimeColor {
   startHour: number;
@@ -42,12 +43,12 @@ const TRANSITION_HOUR = 17; // 태양에서 달로 전환되는 시간
 const TOTAL_HOURS = ENDING_HOUR - STARTING_HOUR;
 
 const MainTest = (): React.JSX.Element => {
-  const { day, year, semester } = getCurrentDateInfo();
+  const {day, year, semester} = getCurrentDateInfo();
   const {data: lectures = [], isLoading} = useQuery<LectureListDayItemType[]>({
     queryKey: ['lectureListDay'],
     queryFn: () => getLectureListDay(day, year, semester),
   });
-  
+
   const periodTimes = [8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22];
 
   const [backgroundAnim] = useState(new Animated.Value(0));
@@ -94,7 +95,45 @@ const MainTest = (): React.JSX.Element => {
     {startHour: 22, color: '#191970'}, // 밤
   ];
 
-  // 스크롤 이벤트 핸들러
+  // 하늘 객체(태양/달) 애니메이션 함수
+  const animateCelestialObjects = useCallback(
+    (exactTime: number) => {
+      // 태양 애니메이션
+      const sunProgress = Math.min(
+        1,
+        Math.max(
+          0,
+          (exactTime - STARTING_HOUR) / (TRANSITION_HOUR - STARTING_HOUR),
+        ),
+      );
+
+      Animated.timing(sunAnim, {
+        toValue: sunProgress,
+        duration: 1000, // 애니메이션 지속 시간 조정 가능
+        useNativeDriver: true,
+        easing: Easing.inOut(Easing.ease), // 부드러운 이징 효과 추가
+      }).start();
+
+      // 달 애니메이션
+      const moonProgress = Math.min(
+        1,
+        Math.max(
+          0,
+          (exactTime - TRANSITION_HOUR) / (ENDING_HOUR - TRANSITION_HOUR),
+        ),
+      );
+
+      Animated.timing(moonAnim, {
+        toValue: moonProgress,
+        duration: 1000,
+        useNativeDriver: true,
+        easing: Easing.inOut(Easing.ease),
+      }).start();
+    },
+    [sunAnim, moonAnim],
+  );
+
+  // 스크롤 이벤트 핸들러 수정
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const offsetX = event.nativeEvent.contentOffset.x;
@@ -109,28 +148,10 @@ const MainTest = (): React.JSX.Element => {
         (exactTime - STARTING_HOUR) / (ENDING_HOUR - STARTING_HOUR);
       backgroundAnim.setValue(timeProgress * (timeColors.length - 1));
 
-      // 태양 위치 업데이트 (9시-17시)
-      const sunProgress = Math.min(
-        1,
-        Math.max(
-          0,
-          (exactTime - STARTING_HOUR) / (TRANSITION_HOUR - STARTING_HOUR),
-        ),
-      );
-      sunAnim.setValue(sunProgress);
-
-      // 달 위치 업데이트 (17시-22시)
-      const moonProgress = Math.min(
-        1,
-        Math.max(
-          0,
-          (exactTime - TRANSITION_HOUR) / (ENDING_HOUR - TRANSITION_HOUR),
-        ),
-      );
-      moonAnim.setValue(moonProgress);
+      // 태양과 달 애니메이션 실행
+      animateCelestialObjects(exactTime);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [backgroundAnim, sunAnim, moonAnim, hourWidth],
+    [backgroundAnim, hourWidth, animateCelestialObjects],
   );
 
   // 구름 애니메이션
@@ -376,7 +397,7 @@ const MainTest = (): React.JSX.Element => {
         style={styles.scrollView}
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll} // 직접 핸들러 함수를 연결
-        scrollEventThrottle={32} // 약 30fps로 이벤트 발생
+        scrollEventThrottle={100} // 20fps
       >
         <View style={[styles.timeContainer, {width: totalContentWidth}]}>
           {renderTimeList()}

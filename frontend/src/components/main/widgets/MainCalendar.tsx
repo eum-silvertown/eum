@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Button} from 'react-native';
-import ContentLayout from './ContentLayout';
+import {StyleSheet, View} from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
-import {spacing} from '@theme/spacing';
+import ContentLayout from './ContentLayout';
 
 LocaleConfig.locales['ko'] = {
   monthNames: [
