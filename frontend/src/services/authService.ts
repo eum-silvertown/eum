@@ -1,6 +1,7 @@
 import {authApiClient, publicApiClient} from '@services/apiClient';
 import {setToken, getToken, clearToken} from '@utils/secureStorage';
 import {useAuthStore} from '@store/useAuthStore';
+import {removeFCMToken} from './notificationService';
 
 interface LoginCredentials {
   id: string;
@@ -50,7 +51,7 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
 
     await setToken(response.data.data.tokenResponse);
 
-    console.log(response.data.data.tokenResponse.accessToken);    
+    console.log(response.data.data.tokenResponse.accessToken);
 
     return response.data;
   } catch (error) {
@@ -61,6 +62,7 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
 // 로그아웃
 export const logOut = async (): Promise<any> => {
   try {
+    await removeFCMToken();
     await authApiClient.get('/user/logout');
     await clearToken();
 
