@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '@assets/icons/editIcon.svg';
+import EditWhiteIcon from '@assets/icons/editWhiteIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
@@ -19,10 +20,12 @@ import {useAuthStore} from '@store/useAuthStore';
 
 interface MainHeaderProps {
   style?: ViewStyle;
+  isNightTime?: boolean; // 밤 시간대 여부
 }
 
 export default function MainHeader({
   style,
+  isNightTime = false,
 }: MainHeaderProps): React.JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
   const authStore = useAuthStore();
@@ -65,23 +68,49 @@ export default function MainHeader({
         <View style={styles.editContainer}>
           <TextInput
             ref={inputRef}
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                color: isNightTime
+                  ? colors.light.text.white
+                  : colors.light.text.main,
+
+                borderColor: isNightTime
+                  ? colors.light.text.white
+                  : colors.light.text.main,
+              },
+            ]}
             value={message}
             onChangeText={setMessage}
             maxLength={50}
             onSubmitEditing={saveMessage}
           />
           <TouchableOpacity onPress={saveMessage}>
-            <EditIcon width={iconSize.lg} height={iconSize.lg} />
+            {isNightTime ? (
+              <EditWhiteIcon width={iconSize.lg} height={iconSize.lg} />
+            ) : (
+              <EditIcon width={iconSize.lg} height={iconSize.lg} />
+            )}
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.displayContainer}>
-          <Text variant="title" weight="bold">
+          <Text
+            variant="title"
+            weight="bold"
+            style={{
+              color: isNightTime
+                ? colors.light.text.white
+                : colors.light.text.main,
+            }}>
             {message || defaultMessage}
           </Text>
           <TouchableOpacity onPress={handleEditPress}>
-            <EditIcon width={iconSize.lg} height={iconSize.lg} />
+            {isNightTime ? (
+              <EditWhiteIcon width={iconSize.lg} height={iconSize.lg} />
+            ) : (
+              <EditIcon width={iconSize.lg} height={iconSize.lg} />
+            )}
           </TouchableOpacity>
         </View>
       )}
