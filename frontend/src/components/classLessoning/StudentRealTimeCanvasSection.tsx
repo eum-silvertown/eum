@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Skia, useCanvasRef } from '@shopify/react-native-skia';
+import React, {useEffect, useState} from 'react';
+import {Skia, useCanvasRef} from '@shopify/react-native-skia';
 import CanvasDrawingTool from './CanvasDrawingTool';
 import base64 from 'react-native-base64';
 import pako from 'pako';
-import { throttle } from 'lodash';
+import {throttle} from 'lodash';
 import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
 import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
 import * as StompJs from '@stomp/stompjs';
+import {useLectureStore} from '@store/useLessonStore';
 interface StudentCanvasSectionProps {
+  lessonId: number;
   role: string;
-  token: string;
   clientRef: React.MutableRefObject<StompJs.Client | null>;
   isConnected: boolean;
-  sendMessage: () => void;
   receivedMessage: string | null;
   currentPage: number;
   totalPages: number;
@@ -42,10 +42,9 @@ const MAX_STACK_SIZE = 5;
 let syncCount = 0;
 let syncMoveCount = 0;
 
-
 const StudentRealTimeCanvasSection = ({
+  lessonId,
   role,
-  token,
   clientRef,
   currentPage,
   totalPages,
@@ -61,35 +60,46 @@ const StudentRealTimeCanvasSection = ({
   const [penOpacity, setPenOpacity] = useState(1);
   const [undoStack, setUndoStack] = useState<ActionData[]>([]);
   const [redoStack, setRedoStack] = useState<ActionData[]>([]);
-  const [eraserPosition, setEraserPosition] = useState<{ x: number; y: number } | null>(null);
+  const [eraserPosition, setEraserPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
 
+  const memberId = useLectureStore(state => state.memberId);
+
   // 압축 전송
-  const sendCompressedData = (destination: string, data: any, count: number) => {
+  const sendCompressedData = (
+    destination: string,
+    data: any,
+    count: number,
+  ) => {
     if (!clientRef.current || !clientRef.current.active) {
       console.log('STOMP client is not connected');
       return;
     }
     const compressedData = pako.deflate(JSON.stringify(data));
-    const base64EncodedData = base64.encode(String.fromCharCode(...compressedData));
+    const base64EncodedData = base64.encode(
+      String.fromCharCode(...compressedData),
+    );
     const newPayload = {
-      memberId: 63,
+      memberId: memberId,
       role: role,
-      lessonId: 37,
-      questionId: 1,
+      lessonId: lessonId,
+      questionId: 22,
       drawingData: base64EncodedData,
     };
+    // console.log(newPayload);
 
     clientRef.current.publish({
       destination,
-      headers: {
-        Authorization: `${token}`,
-      },
       body: JSON.stringify(newPayload),
     });
 
-    console.log(`[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`);
+    // console.log(
+    //   `[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`,
+    // );
   };
 
   // 화면 전환 토글
@@ -101,7 +111,10 @@ const StudentRealTimeCanvasSection = ({
   const throttledSendData = throttle((pathData: PathData) => {
     syncMoveCount += 1;
     sendCompressedData('/app/move', pathData, syncMoveCount);
-    console.log(`[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`, pathData);
+    // console.log(
+    //   `[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`,
+    //   pathData,
+    // );
   }, 400); // 200ms마다 전송
 
   useEffect(() => {
@@ -113,7 +126,9 @@ const StudentRealTimeCanvasSection = ({
 
     // STOMP 전송 함수 호출
     sendCompressedData('/app/draw', dataToSend, syncCount);
-    console.log(`[Paths Updated] Sync 전송 횟수: ${syncCount} | paths 개수: ${paths.length}`);
+    // console.log(
+    //   `[Paths Updated] Sync 전송 횟수: ${syncCount} | paths 개수: ${paths.length}`,
+    // );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paths, clientRef]);
 
@@ -138,7 +153,7 @@ const StudentRealTimeCanvasSection = ({
         const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
         if (isInEraseArea) {
-          addToUndoStack({ type: 'erase', pathData });
+          addToUndoStack({type: 'erase', pathData});
           console.log('지우개로 경로 삭제:', pathData);
         }
         return !isInEraseArea;
@@ -158,7 +173,9 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const undo = () => {
-    if (undoStack.length === 0) { return; }
+    if (undoStack.length === 0) {
+      return;
+    }
 
     const lastAction = undoStack[undoStack.length - 1];
     setUndoStack(undoStack.slice(0, -1));
@@ -173,7 +190,9 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const redo = () => {
-    if (redoStack.length === 0) { return; }
+    if (redoStack.length === 0) {
+      return;
+    }
 
     const lastRedoAction = redoStack[redoStack.length - 1];
     setRedoStack(redoStack.slice(0, -1));
@@ -198,9 +217,9 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleTouchStart = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -210,9 +229,9 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleTouchMove = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const {locationX, locationY} = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -238,7 +257,7 @@ const StudentRealTimeCanvasSection = ({
         opacity: penOpacity,
       };
       addPath(newPathData);
-      addToUndoStack({ type: 'draw', pathData: newPathData });
+      addToUndoStack({type: 'draw', pathData: newPathData});
       setCurrentPath(null);
       setRedoStack([]);
       syncCount = 0;
@@ -262,7 +281,9 @@ const StudentRealTimeCanvasSection = ({
 
   return (
     <>
-      {isTeacherScreenOn && <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} />}
+      {isTeacherScreenOn && (
+        <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} />
+      )}
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}

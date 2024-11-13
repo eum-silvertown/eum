@@ -1,31 +1,68 @@
-import React from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, FlatList, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 import { spacing } from '@theme/spacing';
 import { iconSize } from '@theme/iconSize';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import LessonIcon from '@assets/icons/lessonIcon.svg';
 import EmptyLessonIcon from '@assets/icons/emptyLessonIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import { Text as HeaderText } from '@components/common/Text';
-interface Lesson {
-  lessonId: number;
-  title: string;
-  questions: number[];
-}
+import { useAuthStore } from '@store/useAuthStore';
+import { useLessonStore } from '@store/useLessonStore';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getLectureDetail, LectureDetailType } from '@services/lectureInformation';
+import { deleteLesson } from '@services/lessonService';
 
-interface RouteParams {
-  data: Lesson[];
-}
-
-const ClassLessonListScreen = () => {
+function ClassLessonListScreen(): React.JSX.Element {
   const navigation = useNavigation();
-  const route = useRoute();
-  const { data: lessons } = route.params as RouteParams;
-  console.log('lessons', lessons);
+  const queryClient = useQueryClient();
+  const lectureId = useLessonStore(state => state.lectureId);
+  const role = useAuthStore(state => state.userInfo.role);
+
+  const { data: lectureDetail } = useQuery<LectureDetailType>({
+    queryKey: ['lectureDetail', lectureId],
+    queryFn: () => getLectureDetail(lectureId!),
+  });
+
+  const { mutate: removeLesson } = useMutation({
+    mutationFn: (lessonId: number) => deleteLesson(lessonId),
+    onSuccess: () => {
+      Alert.alert('알림', '삭제되었습니다.');
+      queryClient.invalidateQueries({
+        queryKey: ['lectureDetail', lectureId],
+      });
+    },
+    onError: (error) => {
+      console.error('레슨 삭제 실패:', error);
+    },
+  });
 
   const handleLessonPress = (lessonId: number) => {
+    console.log(lessonId);
+
     // navigation.navigate('LessonDetail', { lessonId });
   };
+
+  const handleDeleteLesson = (lessonId: number) => {
+    Alert.alert(
+      '삭제',
+      '이 수업을 정말로 삭제하시겠습니까?',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          onPress: () => removeLesson(lessonId),
+          style: 'destructive',
+        },
+      ]
+    );
+  };
+
+  const lessons = lectureDetail?.lessons || [];
+  console.log('lessons:', lessons);
+
 
   return (
     <View style={styles.container}>
@@ -34,24 +71,29 @@ const ClassLessonListScreen = () => {
           <BackArrowIcon />
         </TouchableOpacity>
         <HeaderText variant="title" style={styles.headerText} weight="bold">
-          <Text>
-            수업 목록
-          </Text>
+          수업 목록
         </HeaderText>
       </View>
       <FlatList
         data={lessons}
         keyExtractor={(item) => item.lessonId.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card} onPress={() => handleLessonPress(item.lessonId)}>
+          <View style={styles.card}>
             <View style={styles.cardContent}>
-              <LessonIcon width={iconSize.md} height={iconSize.md} style={styles.icon} />
-              <View style={styles.textContainer}>
-                <Text style={styles.itemTitle}>{item.title}</Text>
-                <Text style={styles.questionsCount}>문제 개수: {item.questions.length}</Text>
-              </View>
+              <TouchableOpacity onPress={() => handleLessonPress(item.lessonId)} style={styles.lessonContent}>
+                <LessonIcon width={iconSize.md} height={iconSize.md} style={styles.icon} />
+                <View style={styles.textContainer}>
+                  <Text style={styles.itemTitle}>{item.title}</Text>
+                  <Text style={styles.questionsCount}>문제 개수: {item.questions.length}</Text>
+                </View>
+              </TouchableOpacity>
+              {role === 'TEACHER' &&
+                <TouchableOpacity onPress={() => handleDeleteLesson(item.lessonId)} style={styles.deleteButton}>
+                  <Text style={styles.deleteButtonText}>삭제하기</Text>
+                </TouchableOpacity>
+              }
             </View>
-          </TouchableOpacity>
+          </View>
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -62,25 +104,32 @@ const ClassLessonListScreen = () => {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.lg, backgroundColor: '#F9F9F9' },
+  container: { flex: 1, padding: spacing.lg },
   title: { fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: spacing.md },
   card: {
-    padding: spacing.md,
-    backgroundColor: '#FFFFFF',
+    marginHorizontal: spacing.xxl,
+    padding: spacing.xl,
+    backgroundColor: '#DAEAEA',
     marginBottom: spacing.md,
     borderRadius: 12,
-    elevation: 4,
+    elevation: 2,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
   },
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  lessonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   icon: {
     marginRight: spacing.md,
@@ -90,6 +139,16 @@ const styles = StyleSheet.create({
   },
   itemTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
   questionsCount: { fontSize: 14, color: '#666', marginTop: spacing.xs },
+  deleteButton: {
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    backgroundColor: '#ff9393',
+    borderRadius: 8,
+  },
+  deleteButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -105,7 +164,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   header: {
-    marginTop: spacing.xl,
+    marginVertical: spacing.xl,
     marginLeft: spacing.xl,
     flexDirection: 'row',
     alignItems: 'center',

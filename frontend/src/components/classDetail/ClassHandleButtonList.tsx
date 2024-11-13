@@ -10,9 +10,13 @@ type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type LectureIdProps = {
   lectureId: number;
+  lectureStatus: boolean;
 };
 
-function ClassHandleButtonList({lectureId}: LectureIdProps): React.JSX.Element {
+function ClassHandleButtonList({
+  lectureId,
+  lectureStatus,
+}: LectureIdProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
 
   const handleStartLesson = (action: 'lesson' | 'exam' | 'homework') => {
@@ -21,13 +25,22 @@ function ClassHandleButtonList({lectureId}: LectureIdProps): React.JSX.Element {
 
   return (
     <View style={styles.buttonList}>
-      <TouchableOpacity style={styles.classButton} onPress={() => handleStartLesson('lesson')}>
-        <Text style={styles.buttonText}>수업 시작하기</Text>
+      <TouchableOpacity
+        style={[styles.classButton, lectureStatus && styles.disabledButton]}
+        onPress={() => !lectureStatus && handleStartLesson('lesson')}
+        disabled={lectureStatus}>
+        <Text style={styles.buttonText}>
+          {lectureStatus ? '수업 진행 중입니다...' : '수업 시작하기'}
+        </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.testButton} onPress={() => handleStartLesson('exam')}>
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={() => handleStartLesson('exam')}>
         <Text style={styles.buttonText}>시험 내기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.homeworkButton} onPress={() => handleStartLesson('homework')}>
+      <TouchableOpacity
+        style={styles.homeworkButton}
+        onPress={() => handleStartLesson('homework')}>
         <Text style={styles.buttonText}>숙제 내기</Text>
       </TouchableOpacity>
     </View>
@@ -63,6 +76,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     borderRadius: 8,
     alignItems: 'center',
+  },
+  disabledButton: {
+    opacity: 0.5, // 버튼 비활성화 스타일
   },
   buttonText: {
     color: '#fff',

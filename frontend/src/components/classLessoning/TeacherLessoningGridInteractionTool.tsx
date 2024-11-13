@@ -1,18 +1,65 @@
-import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Text, Alert} from 'react-native';
 import DrawingTabletIcon from '@assets/icons/drawingTabletIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {ScreenType} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
 import {getResponsiveSize} from '@utils/responsive';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {
+  SwitchLessonStatusResponse,
+  switchLessonStatus,
+} from '@services/lessonService';
+import {useLessonStore} from '@store/useLessonStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
+type LectureInfoProps = {
+  lectureId: number;
+};
 
-const TeacherLessoningGridInteractionTool = () => {
+const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
   const navigation = useNavigation<NavigationProps>();
+  const queryClient = useQueryClient();
+  const setIsTeaching = useLessonStore(state => state.setIsTeaching);
 
   const handleExit = () => {
     navigation.goBack();
+    setIsTeaching(false);
+  };
+
+  // 수업 상태 변경
+  const switchLectureStatusMutation = useMutation({
+    mutationFn: (moveLectureId: number) => switchLessonStatus(moveLectureId),
+    onSuccess: (data: SwitchLessonStatusResponse) => {
+      console.log('수업 상태 변경 완료:', data.message);
+      queryClient.invalidateQueries({
+        queryKey: ['lectureDetail', lectureId],
+      });
+      handleExit();
+    },
+    onError: error => {
+      console.error('수업 상태 변경 실패:', error);
+    },
+  });
+  const handleSwitchLectureStatus = () => {
+    switchLectureStatusMutation.mutate(lectureId);
+  };
+
+  const handleExitConfirmation = () => {
+    Alert.alert(
+      '수업 종료 확인',
+      '정말로 수업을 종료하시겠습니까?',
+      [
+        {text: '취소', style: 'cancel'},
+        {text: '확인', onPress: handleSwitchLectureStatus},
+      ],
+      {cancelable: true},
+    );
+  };
+
+  const intoTeacherDrawing = () => {
+    setIsTeaching(false);
+    navigation.navigate('LessoningScreen');
   };
 
   return (
@@ -22,9 +69,7 @@ const TeacherLessoningGridInteractionTool = () => {
           {/* 필기 화면 닫기 */}
           <TouchableOpacity
             style={styles.iconTouchLayout}
-            onPress={() =>
-              navigation.navigate('LessoningScreen')
-            }>
+            onPress={intoTeacherDrawing}>
             <DrawingTabletIcon
               width={iconSize.mdPlus}
               height={iconSize.mdPlus}
@@ -32,7 +77,9 @@ const TeacherLessoningGridInteractionTool = () => {
             <Text style={styles.btnTitle}>문제 페이지 이동하기</Text>
           </TouchableOpacity>
           {/* 종료 버튼 */}
-          <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
+          <TouchableOpacity
+            onPress={handleExitConfirmation}
+            style={styles.exitButton}>
             <Text style={styles.exitButtonText}>수업 종료하기</Text>
           </TouchableOpacity>
         </View>
@@ -95,7 +142,7 @@ const styles = StyleSheet.create({
   exitButton: {
     padding: getResponsiveSize(4),
     borderRadius: 8,
-    backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
+    backgroundColor: '#FFCDD2',
     alignItems: 'center',
   },
   exitButtonText: {
