@@ -1,77 +1,86 @@
 import React, {useState} from 'react';
+<<<<<<< HEAD:frontend/src/components/main/widgets/MainCalendar.tsx
 import {StyleSheet, View} from 'react-native';
 import {Calendar, LocaleConfig} from 'react-native-calendars';
 import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
 import ContentLayout from './ContentLayout';
+=======
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import ContentLayout from './ContentLayout';
+import {getResponsiveSize} from '@utils/responsive';
+import {Calendar} from 'react-native-big-calendar';
+import 'dayjs/locale/ko'; // dayjs의 한국어 로케일 불러오기
+import {Text} from '@components/common/Text';
+import IntoIcon from '@assets/icons/intoIcon.svg';
+import {spacing} from '@theme/spacing';
+import {iconSize} from '@theme/iconSize';
+import { colors } from 'src/hooks/useColors';
+>>>>>>> 50643141294956bbe94c655f1f0414d547e6e279:frontend/src/components/main/MainCalendar.tsx
 
-LocaleConfig.locales['ko'] = {
-  monthNames: [
-    '1월',
-    '2월',
-    '3월',
-    '4월',
-    '5월',
-    '6월',
-    '7월',
-    '8월',
-    '9월',
-    '10월',
-    '11월',
-    '12월',
-  ],
-  monthNamesShort: [
-    '1월',
-    '2월',
-    '3월',
-    '4월',
-    '5월',
-    '6월',
-    '7월',
-    '8월',
-    '9월',
-    '10월',
-    '11월',
-    '12월',
-  ],
-  dayNames: [
-    '일요일',
-    '월요일',
-    '화요일',
-    '수요일',
-    '목요일',
-    '금요일',
-    '토요일',
-  ],
-  dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
-  today: '오늘',
-};
-LocaleConfig.defaultLocale = 'ko';
+const events = [
+  {
+    title: 'example',
+    start: new Date(2020, 10, 11, 10, 0),
+    end: new Date(2020, 10, 12, 10, 30),
+  },
+];
 
 export default function MainCalendar(): React.JSX.Element {
-  const [selectedDate, setSelectedDate] = useState<string>(getTodayDate());
-  const [forceUpdate, setForceUpdate] = useState<number>(0);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  // 현재 날짜 가져오기 함수
-  function getTodayDate() {
-    const today = new Date();
-    return today.toISOString().split('T')[0]; // 'YYYY-MM-DD' 형식
-  }
+  // 현재 연도와 월 가져오기
+  const getCurrentYearMonth = () => {
+    return `${currentDate.getFullYear()}년 ${currentDate.getMonth() + 1}월`;
+  };
+
+  // 이전 달로 이동
+  const goToPreviousMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() - 1);
+    setCurrentDate(newDate);
+  };
+
+  // 다음 달로 이동
+  const goToNextMonth = () => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() + 1);
+    setCurrentDate(newDate);
+  };
+
+  // 오늘 날짜로 돌아가기
+  const goToToday = () => {
+    setCurrentDate(new Date());
+  };
 
   return (
     <ContentLayout flex={1} padding={0}>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={goToPreviousMonth}>
+            <IntoIcon
+              width={iconSize.md}
+              height={iconSize.md}
+              style={{transform: [{rotate: '180deg'}]}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={goToToday}>
+            <Text weight="bold">{getCurrentYearMonth()}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={goToNextMonth}>
+            <IntoIcon width={iconSize.md} height={iconSize.md} />
+          </TouchableOpacity>
+        </View>
+
         <Calendar
-          monthFormat={'yyyy년 M월'}
-          current={getTodayDate()}
-          style={styles.calendar}
-          theme={{
-            textMonthFontSize: getResponsiveSize(10),
-            textDayHeaderFontSize: getResponsiveSize(8),
-            textDayFontSize: getResponsiveSize(8),
-            arrowColor: colors.light.text.main,
-          }}
-          enableSwipeMonths={true}
+          events={events}
+          height={getResponsiveSize(160)}
+          mode="month"
+          locale="ko"
+          date={currentDate}
+          swipeEnabled={false}
+          weekDayHeaderHighlightColor="#ABDECD"
+          eventCellTextColor="#FFFFFF"
         />
       </View>
     </ContentLayout>
@@ -80,11 +89,14 @@ export default function MainCalendar(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-  },
-  calendar: {
+    
     flex: 1,
+    padding: getResponsiveSize(10),
+    gap: spacing.md,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
 });
