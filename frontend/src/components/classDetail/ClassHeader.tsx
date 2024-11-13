@@ -159,6 +159,7 @@ function ClassHeader({
           style={[
             styles.enterButton,
             !lectureStatus && styles.enterButtonDisabled,
+            !isTeacher && styles.studentButton,
           ]}
           onPress={enterClass}
           disabled={!lectureStatus}>
@@ -255,6 +256,9 @@ const styles = StyleSheet.create({
   menuIconContainer: {
     marginLeft: spacing.sm,
     marginRight: spacing.xxl,
+  },
+  studentButton: {
+    marginRight: spacing.xxl * 1.5,
   },
 });
 
