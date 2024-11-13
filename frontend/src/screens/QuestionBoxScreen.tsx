@@ -75,7 +75,9 @@ function QuestionBoxScreen(): React.JSX.Element {
             <Pressable
               key={index}
               onPress={() => {
-                folderPressHandler(item);
+                if (item.type === 'folder') {
+                  folderPressHandler(item);
+                }
               }}
               onLongPress={() => {
                 folderLongPressHandler(item);

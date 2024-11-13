@@ -25,14 +25,21 @@ interface DrawingPoint {
   tool: Tool;
   color: string;
   type: 'start' | 'move' | 'end';
+  timestamp: number;
+  userId: string;
+  lineId: string;
 }
-
+interface DrawingState {
+  userId: string;
+  isDrawing: boolean;
+  currentLineId: string | null;
+}
 interface DrawingCanvasProps {
-  roomId: string; // 드로잉 룸 식별자
-  userId: string; // 사용자 식별자
+  roomId: string;
+  userId: string;
 }
 
-const SOCKET_URL = 'http://k11d101.p.ssafy.io/ws-gateway/drawing'; // WebSocket 서버 URL을 설정하세요
+const SOCKET_URL = 'http://k11d101.p.ssafy.io/ws-gateway/drawing';
 
 const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
   const currentTool = useRef<Tool>('whiteCholk');
@@ -40,6 +47,8 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
   const [selectedTool, setSelectedTool] = useState<Tool>('whiteCholk');
   const canvasRef = useRef<Canvas | null>(null);
   const stompClient = useRef<Client | null>(null);
+  const activeDrawings = useRef<Map<string, DrawingState>>(new Map());
+  const [isConnected, setIsConnected] = useState(false);
   const [canvasSize, setCanvasSize] = useState<{width: number; height: number}>(
     {
       width: 0,
@@ -53,6 +62,27 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
     top: number;
     bottom: number;
   } | null>(null);
+
+  // 캔버스 초기화 함수
+  const initializeCanvas = (canvas: Canvas) => {
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.fillStyle = '#004414';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  };
+
+  // 캔버스 상태 요청
+  const requestCanvasState = () => {
+    if (stompClient.current?.connected) {
+      stompClient.current.publish({
+        destination: `/app/canvas/${roomId}/state-request`,
+        body: JSON.stringify({userId}),
+      });
+    }
+  };
 
   // WebSocket 연결 설정
   useEffect(() => {
@@ -69,18 +99,30 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
 
     stompClient.current.onConnect = () => {
       console.log('Connected to WebSocket');
+      setIsConnected(true);
 
-      // 룸 구독
+      // 룸의 드로잉 이벤트 구독
       stompClient.current?.subscribe(
         `/topic/drawing/${roomId}`,
         (message: Message) => {
           handleReceivedDrawing(JSON.parse(message.body));
         },
       );
+
+      // 캔버스 상태 구독
+      stompClient.current?.subscribe(
+        `/topic/canvas/${roomId}/state`,
+        (message: Message) => {
+          handleCanvasState(JSON.parse(message.body));
+        },
+      );
+
+      // 현재 캔버스 상태 요청
+      requestCanvasState();
     };
 
-    stompClient.current.onStompError = frame => {
-      console.error('STOMP error', frame);
+    stompClient.current.onDisconnect = () => {
+      setIsConnected(false);
     };
 
     stompClient.current.activate();
@@ -90,20 +132,75 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
         stompClient.current.deactivate();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId]);
 
-  // 다른 사용자의 드로잉 데이터 처리
-  const handleReceivedDrawing = (drawingPoint: DrawingPoint) => {
-    if (!canvasRef.current) {
-      return;
-    }
+  // 캔버스 상태 수신 처리
+  const handleCanvasState = (state: {
+    lines: DrawingPoint[][];
+    timestamp: number;
+  }) => {
+    if (!canvasRef.current) return;
 
+    const canvas = canvasRef.current;
+    initializeCanvas(canvas);
+
+    // 저장된 모든 선 다시 그리기
+    state.lines.forEach(line => {
+      if (line.length > 0) {
+        const ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        line.forEach((point, index) => {
+          if (index === 0) {
+            ctx.moveTo(point.x, point.y);
+          } else {
+            if (point.tool === 'eraser') {
+              ctx.strokeStyle = '#004414';
+              ctx.lineWidth = 50;
+            } else {
+              ctx.strokeStyle = point.color;
+              ctx.lineWidth = 2;
+            }
+            ctx.lineTo(point.x, point.y);
+            ctx.stroke();
+          }
+        });
+        ctx.closePath();
+      }
+    });
+  };
+
+  // 다른 사용자의 드로잉 데이터 처리
+  const handleReceivedDrawing = (data: {
+    userId: string;
+    drawingPoint: DrawingPoint;
+  }) => {
+    if (!canvasRef.current || data.userId === userId) return;
+
+    const {userId: drawerId, drawingPoint} = data;
     const ctx = canvasRef.current.getContext('2d');
 
+    // 현재 그리기 상태 관리
+    let drawingState = activeDrawings.current.get(drawerId);
+    if (!drawingState) {
+      drawingState = {
+        userId: drawerId,
+        isDrawing: false,
+        currentLineId: null,
+      };
+      activeDrawings.current.set(drawerId, drawingState);
+    }
+
     if (drawingPoint.type === 'start') {
+      drawingState.isDrawing = true;
+      drawingState.currentLineId = drawingPoint.lineId;
       ctx.beginPath();
       ctx.moveTo(drawingPoint.x, drawingPoint.y);
-    } else if (drawingPoint.type === 'move') {
+    } else if (
+      drawingPoint.type === 'move' &&
+      drawingState.isDrawing &&
+      drawingState.currentLineId === drawingPoint.lineId
+    ) {
       if (drawingPoint.tool === 'eraser') {
         ctx.strokeStyle = '#004414';
         ctx.lineWidth = 50;
@@ -114,6 +211,8 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
       ctx.lineTo(drawingPoint.x, drawingPoint.y);
       ctx.stroke();
     } else if (drawingPoint.type === 'end') {
+      drawingState.isDrawing = false;
+      drawingState.currentLineId = null;
       ctx.closePath();
     }
   };
@@ -140,15 +239,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
       const canvas = canvasRef.current;
       canvas.width = canvasSize.width;
       canvas.height = canvasSize.height;
-
-      const ctx = canvas.getContext('2d');
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      ctx.fillStyle = '#004414';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      initializeCanvas(canvas);
     }
   }, [canvasSize]);
 
@@ -159,9 +250,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
     const {locationX, locationY, pageX, pageY} = evt.nativeEvent;
     const canvas = canvasRef.current;
 
-    if (!canvas || !canvasBounds.current) {
-      return;
-    }
+    if (!canvas || !canvasBounds.current || !isConnected) return;
 
     const {left, right, top, bottom} = canvasBounds.current;
     const ctx = canvas.getContext('2d');
@@ -169,9 +258,13 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
     const isInsideCanvas =
       pageX >= left && pageX <= right && pageY >= top && pageY <= bottom;
 
-    if (!isInsideCanvas) {
-      return;
-    }
+    if (!isInsideCanvas) return;
+
+    // 현재 그리기 작업의 고유 ID 생성 (시작할 때만)
+    const lineId =
+      type === 'start'
+        ? `${userId}-${Date.now()}`
+        : activeDrawings.current.get(userId)?.currentLineId || '';
 
     // WebSocket을 통해 드로잉 데이터 전송
     const drawingPoint: DrawingPoint = {
@@ -179,7 +272,10 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
       y: locationY,
       tool: currentTool.current,
       color: currentColor.current,
-      type: type,
+      type,
+      timestamp: Date.now(),
+      userId,
+      lineId,
     };
 
     if (stompClient.current?.connected) {
@@ -194,9 +290,18 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
 
     // 로컬 캔버스에 그리기
     if (type === 'start') {
+      activeDrawings.current.set(userId, {
+        userId,
+        isDrawing: true,
+        currentLineId: lineId,
+      });
       ctx.beginPath();
       ctx.moveTo(locationX, locationY);
-    } else if (type === 'move') {
+    } else if (
+      type === 'move' &&
+      activeDrawings.current.get(userId)?.isDrawing &&
+      activeDrawings.current.get(userId)?.currentLineId === lineId
+    ) {
       if (currentTool.current === 'eraser') {
         ctx.strokeStyle = '#004414';
         ctx.lineWidth = 50;
@@ -207,6 +312,11 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
       ctx.lineTo(locationX, locationY);
       ctx.stroke();
     } else if (type === 'end') {
+      const state = activeDrawings.current.get(userId);
+      if (state) {
+        state.isDrawing = false;
+        state.currentLineId = null;
+      }
       ctx.closePath();
     }
   };
@@ -273,6 +383,11 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
 
       <View style={styles.drawingArea} {...panResponder.panHandlers}>
         <Canvas ref={canvasRef} style={styles.canvas} />
+        {!isConnected && (
+          <View style={styles.disconnectedOverlay}>
+            <Text color="white">연결 중...</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -292,6 +407,12 @@ const styles = StyleSheet.create({
     left: 0,
     width: '100%',
     height: '100%',
+  },
+  disconnectedOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   toolbar: {
     flexDirection: 'row',
