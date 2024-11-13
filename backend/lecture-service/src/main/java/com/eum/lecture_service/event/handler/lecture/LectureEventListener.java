@@ -249,20 +249,37 @@ public class LectureEventListener {
 		double totalHomework = 0.0;
 		double totalExam = 0.0;
 		double totalAttitude = 0.0;
-		int count = studentScoresList.size();
+
+		int homeworkCount = 0;
+		int examCount = 0;
+		int attitudeCount = 0;
 
 		for (StudentScores scores : studentScoresList) {
-			totalHomework += scores.getHomeworkAvgScore() != null ? scores.getHomeworkAvgScore() : 0.0;
-			totalExam += scores.getExamAvgScore() != null ? scores.getExamAvgScore() : 0.0;
-			totalAttitude += scores.getAttitudeAvgScore() != null ? scores.getAttitudeAvgScore() : 100.0;
+			if (scores.getHomeworkAvgScore() != null) {
+				totalHomework += scores.getHomeworkAvgScore();
+				homeworkCount++;
+			}
+			if (scores.getExamAvgScore() != null) {
+				totalExam += scores.getExamAvgScore();
+				examCount++;
+			}
+			if (scores.getAttitudeAvgScore() != null) {
+				totalAttitude += scores.getAttitudeAvgScore();
+				attitudeCount++;
+			}
 		}
 
+		double averageHomework = homeworkCount > 0 ? totalHomework / homeworkCount : 0.0;
+		double averageExam = examCount > 0 ? totalExam / examCount : 0.0;
+		double averageAttitude = attitudeCount > 0 ? totalAttitude / attitudeCount : 100.0;
+
 		return ClassAverageScores.builder()
-			.homeworkAvgScore(count > 0 ? totalHomework / count : 0.0)
-			.examAvgScore(count > 0 ? totalExam / count : 0.0)
-			.attitudeAvgScore(count > 0 ? totalAttitude / count : 100.0)
+			.homeworkAvgScore(averageHomework)
+			.examAvgScore(averageExam)
+			.attitudeAvgScore(averageAttitude)
 			.build();
 	}
+
 
 	private List<StudentScores> studentScoresList(List<StudentInfo> studentInfos) {
 		return studentInfos.stream()
