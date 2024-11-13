@@ -43,10 +43,10 @@ public class ExamServiceImpl implements ExamService {
 		checkDuplicateExamTitle(lecture.getExams(), examDto.getTitle());
 
 		Exam exam = examDto.toExamEntity(lecture);
-		Exam savedExam = examRepository.save(exam);
 
-		addExamQuestions(savedExam, examDto.getQuestionIds());
-		examRepository.save(savedExam);
+
+		addExamQuestions(exam, examDto.getQuestionIds());
+		Exam savedExam = examRepository.save(exam);
 
 		publishExamCreateEvent(savedExam, examDto.getQuestionIds());
 

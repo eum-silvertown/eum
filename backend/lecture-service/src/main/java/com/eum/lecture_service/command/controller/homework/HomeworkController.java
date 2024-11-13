@@ -99,8 +99,8 @@ public class HomeworkController {
 			if (roleType == RoleType.TEACHER) {
 				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 			}
-			HomeworkSubmission homeworkSubmission = homeworkSubmissionService.submitHomeworkProblems(homeworkId, studentId, homeworkProblemSubmissions);
-			return CommonResponse.success(homeworkSubmission, "제출 성공");
+			Long id = homeworkSubmissionService.submitHomeworkProblems(homeworkId, studentId, homeworkProblemSubmissions);
+			return CommonResponse.success(id, "제출 성공");
 		} catch (IllegalArgumentException e) {
 			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
 		} catch (Exception e) {
