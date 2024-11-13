@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { spacing } from '@theme/spacing';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -11,38 +16,57 @@ import Teacher from '@components/classDetail/Teacher';
 import StudentRank from '@components/classDetail/StudentRank';
 import StudentsChart from '@components/classDetail/StudentsChart';
 import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 import {
   getLectureDetail,
   LectureDetailType,
   ClassAverageScoresType,
 } from 'src/services/lectureInformation';
-import { useQuery } from '@tanstack/react-query';
-import { getResponsiveSize } from '@utils/responsive';
-import { useBookModalStore } from '@store/useBookModalStore';
+import {useQuery} from '@tanstack/react-query';
+import {getResponsiveSize} from '@utils/responsive';
+import {useBookModalStore} from '@store/useBookModalStore';
 import EmptyData from '@components/common/EmptyData';
-import { useAuthStore } from '@store/useAuthStore';
+import {useAuthStore} from '@store/useAuthStore';
+import {useLectureStore} from '@store/useLessonStore';
 
 type BookLectureProps = {
   lectureId: number;
 };
 
-function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
+function ClassDetailScreen({lectureId}: BookLectureProps): React.JSX.Element {
   const closeBook = useBookModalStore(state => state.closeBook);
   const userInfo = useAuthStore(state => state.userInfo);
   const isTeacher = userInfo.role === 'TEACHER';
+  const setLessonInfo = useLectureStore(state => state.setLessonInfo);
 
   // 통합 강의 상세 정보 쿼리
-  const { data: lectureDetail, isLoading, isError } = useQuery<LectureDetailType>({
+  const {
+    data: lectureDetail,
+    isLoading,
+    isError,
+  } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId),
   });
 
-  const [selectedStudentScores, setSelectedStudentScores] = useState<ClassAverageScoresType | null>(null);
-  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(null);
+  // zustand에 필요한 값 저장
+  useEffect(() => {
+    if (lectureDetail) {
+      setLessonInfo(userInfo.id, lectureDetail.teacherModel.teacherId);
+    }
+  }, [lectureDetail, setLessonInfo, userInfo.id]);
 
-  const handleStudentSelect = (scores: ClassAverageScoresType, name: string) => {
+  const [selectedStudentScores, setSelectedStudentScores] =
+    useState<ClassAverageScoresType | null>(null);
+  const [selectedStudentName, setSelectedStudentName] = useState<string | null>(
+    null,
+  );
+
+  const handleStudentSelect = (
+    scores: ClassAverageScoresType,
+    name: string,
+  ) => {
     setSelectedStudentScores(scores);
     setSelectedStudentName(name);
   };
@@ -72,6 +96,7 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
         backgroundColor={lectureDetail.backgroundColor}
         fontColor={lectureDetail.fontColor}
         pastTeacherName={lectureDetail.teacherModel.name}
+        lectureStatus={lectureDetail.lectureStatus}
       />
       <View style={styles.content}>
         <View style={styles.firstRow}>
@@ -104,9 +129,13 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
             </View>
             <View style={styles.chartLayout}>
               {isTeacher ? (
-                <ClassHandleButtonList />
+                <ClassHandleButtonList lectureId={lectureDetail.lectureId}/>
               ) : (
-                <Chart studentScores={lectureDetail.studentOverviewModel?.studentScores} />
+                <Chart
+                  studentScores={
+                    lectureDetail.studentOverviewModel?.studentScores
+                  }
+                />
               )}
             </View>
           </View>
@@ -120,7 +149,8 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
               <>
                 <StudentsChart
                   classAverageScores={
-                    selectedStudentScores || lectureDetail.teacherOverviewModel?.classAverageScores
+                    selectedStudentScores ||
+                    lectureDetail.teacherOverviewModel?.classAverageScores
                   }
                   studentName={selectedStudentName || '학급 평균'}
                 />

@@ -1,6 +1,6 @@
 import {getResponsiveSize} from '@utils/responsive';
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 interface Participant {
   id: string;
@@ -10,21 +10,22 @@ interface Participant {
 
 interface ParticipantCardProps {
   participant: Participant;
+  onPress: () => void;
 }
 
 const ParticipantCard: React.FC<ParticipantCardProps> = ({participant}) => {
   return (
-    <View style={styles.card}>
-      <Text style={styles.name}>
-        {participant.isTeacher ? '선생님' : participant.name}
-      </Text>
-    </View>
+    <TouchableOpacity>
+      <View style={styles.card}>
+        <Text style={styles.name}>{participant.name}</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    width: getResponsiveSize(150),
+    width: getResponsiveSize(140),
     height: getResponsiveSize(80),
     margin: getResponsiveSize(4),
     backgroundColor: '#000000',
