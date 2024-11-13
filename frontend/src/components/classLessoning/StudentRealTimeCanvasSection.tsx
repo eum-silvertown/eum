@@ -9,10 +9,8 @@ import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
 import * as StompJs from '@stomp/stompjs';
 interface StudentCanvasSectionProps {
   role: string;
-  token: string;
   clientRef: React.MutableRefObject<StompJs.Client | null>;
   isConnected: boolean;
-  sendMessage: () => void;
   receivedMessage: string | null;
   currentPage: number;
   totalPages: number;
@@ -45,7 +43,6 @@ let syncMoveCount = 0;
 
 const StudentRealTimeCanvasSection = ({
   role,
-  token,
   clientRef,
   currentPage,
   totalPages,
@@ -83,9 +80,6 @@ const StudentRealTimeCanvasSection = ({
 
     clientRef.current.publish({
       destination,
-      headers: {
-        Authorization: `${token}`,
-      },
       body: JSON.stringify(newPayload),
     });
 

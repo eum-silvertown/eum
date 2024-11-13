@@ -9,10 +9,8 @@ import * as StompJs from '@stomp/stompjs';
 import simplify from 'simplify-js';
 interface TeacherCanvasSectionProps {
   role: string;
-  token: string;
   clientRef: React.MutableRefObject<StompJs.Client | null>;
   isConnected: boolean;
-  sendMessage: () => void;
   receivedMessage: string | null;
   currentPage: number;
   totalPages: number;
@@ -45,7 +43,6 @@ let syncMoveCount = 0;
 
 const TeacherCanvasSection = ({
   role,
-  token,
   clientRef,
   currentPage,
   totalPages,
@@ -95,9 +92,6 @@ const TeacherCanvasSection = ({
 
     clientRef.current.publish({
       destination,
-      headers: {
-        Authorization: `${token}`,
-      },
       body: JSON.stringify(newPayload),
     });
 

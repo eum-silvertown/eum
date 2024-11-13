@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, Text, Button} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 
 import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
@@ -11,7 +11,7 @@ import {getResponsiveSize} from '@utils/responsive';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
 import PulseIndicator from '@components/classLessoning/PulseIndicator';
-import { useLectureStore, useLessonStore } from '@store/useLessonStore';
+import {useLectureStore, useLessonStore} from '@store/useLessonStore';
 
 function LessoningScreen(): React.JSX.Element {
   const lectureId = useLessonStore(state => state.lectureId);
@@ -34,15 +34,6 @@ function LessoningScreen(): React.JSX.Element {
   const [isConnected, setIsConnected] = useState(false);
   const [receivedMessage, setReceivedMessage] = useState<string | null>(null);
   const clientRef = useRef<StompJs.Client | null>(null);
-  const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjYzLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTczMTEzMzM0NCwiZXhwIjoxNzMxMTM0MjA4fQ.cn1udkAOkpITcbP9lDIo2gtib-QF0OizLCy7DZWe6yU';
-  const payload = {
-    memberId: 63,
-    role: 'STUDENT',
-    lessonId: 37,
-    questionId: 1,
-    drawingData: '경로 데이터 예정4',
-  };
 
   const lessonId = 37;
   const isTeacher = userInfo.role === 'TEACHER';
@@ -111,28 +102,6 @@ function LessoningScreen(): React.JSX.Element {
     };
   }, [isTeacher, lessonId, questionId]);
 
-  // 메시지 발송 함수
-  const sendMessage = () => {
-    console.log('Attempting to send message...');
-    console.log('isConnected:', isConnected);
-    console.log('clientConnected:', clientRef.current?.active);
-
-    if (isConnected) {
-      clientRef.current?.publish({
-        headers: {
-          Authorization: `${token}`,
-        },
-        destination: '/app/draw', // 서버가 수신할 경로
-        body: JSON.stringify(payload),
-      });
-      console.log(JSON.stringify(payload));
-
-      console.log('Message sent to STOMP server');
-    } else {
-      console.log('Cannot send message - STOMP client is not connected');
-    }
-  };
-
   const problems = [
     `그림과 같이 양수 $t$ 에 대하여 곡선 $y = e^{x} - 1$ 이 두 직선 $y = t$, $y = 5t$ 와 만나는 점을 각각 $\\mathrm{A}$, $\\mathrm{B}$ 라 하고, 점 $B$ 에서 $x$ 축에 내린 수선의 발을 $C$ 라 하자. 삼각형 $ \\mathrm{ACB} $ 의 넓이를 $S(t)$ 라 할 때, $\\lim_{t \\rightarrow 0+} \\frac{S(t)}{t^{2}}$ 의 값을 구하시오.
     
@@ -172,10 +141,8 @@ function LessoningScreen(): React.JSX.Element {
             <ProblemSection problemText={problems[currentPage]} />
             <TeacherRealTimeCanvasSection
               role={userInfo.role}
-              token={token}
               clientRef={clientRef}
               isConnected={isConnected}
-              sendMessage={sendMessage}
               receivedMessage={receivedMessage}
               currentPage={currentPage + 1}
               totalPages={problems.length}
@@ -186,15 +153,6 @@ function LessoningScreen(): React.JSX.Element {
           {/* Connection Chip */}
           <View style={styles.connectionChip}>
             <PulseIndicator isConnected={isConnected} />
-          </View>
-
-          {/* Send Message Button */}
-          <View style={styles.sendMessageButton}>
-            <Button
-              title="Send Message"
-              onPress={sendMessage}
-              disabled={!isConnected}
-            />
           </View>
 
           {/* Received Message Display */}
@@ -217,10 +175,8 @@ function LessoningScreen(): React.JSX.Element {
         <ProblemSection problemText={problems[currentPage]} />
         <StudentRealTimeCanvasSection
           role={userInfo.role}
-          token={token}
           clientRef={clientRef}
           isConnected={isConnected}
-          sendMessage={sendMessage}
           receivedMessage={receivedMessage}
           currentPage={currentPage + 1}
           totalPages={problems.length}
@@ -238,15 +194,6 @@ function LessoningScreen(): React.JSX.Element {
         <Text style={styles.connectionChipText}>
           {isConnected ? 'Connected' : 'Not connected'}
         </Text>
-      </View>
-
-      {/* Send Message Button */}
-      <View style={styles.sendMessageButton}>
-        <Button
-          title="Send Message"
-          onPress={sendMessage}
-          disabled={!isConnected}
-        />
       </View>
 
       {/* Received Message Display */}
