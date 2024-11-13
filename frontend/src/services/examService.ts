@@ -33,40 +33,6 @@ export const createExam = async (
   }
 };
 
-// 시험 수정
-export type UpdateExamRequest = {
-  lectureId: number;
-  title: string;
-  startTime: string;
-  endTime: string;
-  questionIds: number[];
-};
-
-export type UpdateExamResponse = {
-  examId: number;
-};
-
-export const updateExam = async (
-  examId: number,
-  examData: UpdateExamRequest,
-): Promise<UpdateExamResponse> => {
-  try {
-    console.log(`시험 수정 요청 데이터 (examId: ${examId}):`, examData);
-
-    const { data } = await authApiClient.put<{
-      code: string;
-      data: UpdateExamResponse;
-      message: string;
-    }>(`/exam/${examId}`, examData);
-
-    console.log('시험 수정 응답:', data);
-    return data.data;
-  } catch (error) {
-    console.error('시험 수정 실패:', error);
-    throw error;
-  }
-};
-
 // 시험 삭제
 export const deleteExam = async (examId: number): Promise<void> => {
   try {

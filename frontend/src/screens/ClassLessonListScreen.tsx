@@ -37,6 +37,8 @@ function ClassLessonListScreen(): React.JSX.Element {
   });
 
   const handleLessonPress = (lessonId: number) => {
+    console.log(lessonId);
+
     // navigation.navigate('LessonDetail', { lessonId });
   };
 
@@ -85,11 +87,11 @@ function ClassLessonListScreen(): React.JSX.Element {
                   <Text style={styles.questionsCount}>문제 개수: {item.questions.length}</Text>
                 </View>
               </TouchableOpacity>
-              {role === 'TEACHER' && (
+              {role === 'TEACHER' &&
                 <TouchableOpacity onPress={() => handleDeleteLesson(item.lessonId)} style={styles.deleteButton}>
                   <Text style={styles.deleteButtonText}>삭제하기</Text>
                 </TouchableOpacity>
-              )}
+              }
             </View>
           </View>
         )}
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
   card: {
     marginHorizontal: spacing.xxl,
     padding: spacing.xl,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#DAEAEA',
     marginBottom: spacing.md,
     borderRadius: 12,
     elevation: 2,
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
   deleteButton: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    backgroundColor: '#FF5555',
+    backgroundColor: '#ff9393',
     borderRadius: 8,
   },
   deleteButtonText: {
