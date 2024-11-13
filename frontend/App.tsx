@@ -3,7 +3,6 @@ import {navigationRef} from '@services/NavigationService';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import {ScreenType} from '@store/useCurrentScreenStore';
-import {ScreenType} from '@store/useCurrentScreenStore';
 import LoginScreen from '@screens/LoginScreen';
 import FindIdScreen from '@screens/FindIdScreen';
 import FindPasswordScreen from '@screens/FindPasswordScreen';
