@@ -29,6 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private final NotificationRepository notificationRepository;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final FirebaseMessaging firebaseMessaging;
 
 	@Override
 	public void saveFCMToken(String token, Long memberId) {
@@ -152,7 +153,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.build();
 
 		try {
-			String response = FirebaseMessaging.getInstance().send(message);
+			String response = firebaseMessaging.send(message);
 			System.out.println("FCM 메시지 응답: " + response);
 		} catch (Exception e) {
 			throw new EumException(ErrorCode.FIREBASE_SENDING_ERROR);
