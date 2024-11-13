@@ -628,6 +628,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
+    gap: spacing.lg
   },
   schoolInfoContainer: {
     flexDirection: 'row',

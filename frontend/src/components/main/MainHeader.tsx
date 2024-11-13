@@ -1,6 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Text} from '@components/common/Text';
-import {StyleSheet, View, TouchableOpacity, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  TextInput,
+  ViewStyle,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '@assets/icons/editIcon.svg';
 import {iconSize} from '@theme/iconSize';
@@ -11,12 +17,18 @@ import {borderRadius} from '@theme/borderRadius';
 import {spacing} from '@theme/spacing';
 import {useAuthStore} from '@store/useAuthStore';
 
-export default function MainHeader(): React.JSX.Element {
+interface MainHeaderProps {
+  style?: ViewStyle;
+}
+
+export default function MainHeader({
+  style,
+}: MainHeaderProps): React.JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
   const authStore = useAuthStore();
   const defaultMessage = `${authStore.userInfo.name}님, 오늘도 좋은 하루 되세요!`;
-
-  const [message, setMessage] = useState('');  
+  const [message, setMessage] = useState('');
+  const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     const loadMessage = async () => {
@@ -42,15 +54,22 @@ export default function MainHeader(): React.JSX.Element {
     }
   };
 
+  const handleEditPress = () => {
+    setIsEditing(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  };
+
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, style]}>
       {isEditing ? (
         <View style={styles.editContainer}>
           <TextInput
+            ref={inputRef}
             style={styles.input}
             value={message}
             onChangeText={setMessage}
             maxLength={50}
+            onSubmitEditing={saveMessage}
           />
           <TouchableOpacity onPress={saveMessage}>
             <EditIcon width={iconSize.lg} height={iconSize.lg} />
@@ -61,7 +80,7 @@ export default function MainHeader(): React.JSX.Element {
           <Text variant="title" weight="bold">
             {message || defaultMessage}
           </Text>
-          <TouchableOpacity onPress={() => setIsEditing(true)}>
+          <TouchableOpacity onPress={handleEditPress}>
             <EditIcon width={iconSize.lg} height={iconSize.lg} />
           </TouchableOpacity>
         </View>
@@ -90,7 +109,7 @@ const styles = StyleSheet.create({
     borderColor: colors.light.text.main,
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.lg,
-    fontSize: getResponsiveSize(22),
+    fontSize: getResponsiveSize(16),
     color: colors.light.text.main,
     fontWeight: 'bold',
   },

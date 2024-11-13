@@ -49,10 +49,11 @@ export default function Todo({
   const [expanded, setExpanded] = useState(false);
   const [isDone, setIsDone] = useState(item.isDone || false);
   const animatedHeight = useRef(new Animated.Value(0)).current;
+  const animatedRotation = useRef(new Animated.Value(0)).current;
 
   // 중요도에 따른 체크박스 색상 설정 함수
-  const getCheckBoxColor = (prioirty: number) => {
-    switch (prioirty) {
+  const getCheckBoxColor = (priority: number) => {
+    switch (priority) {
       case 1:
         return '#4CAF50'; // 중요도 1 (보통 중요도)
       case 2:
@@ -63,12 +64,22 @@ export default function Todo({
         return '#2E2559'; // 기본 색상
     }
   };
+
   const toggleAccordion = () => {
     setExpanded(!expanded);
+
+    // 높이 애니메이션
     Animated.timing(animatedHeight, {
       toValue: expanded ? 0 : getResponsiveSize(30),
       duration: 300,
       useNativeDriver: false,
+    }).start();
+
+    // 회전 애니메이션
+    Animated.timing(animatedRotation, {
+      toValue: expanded ? 0 : 1,
+      duration: 300,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -86,11 +97,7 @@ export default function Todo({
   const handleEdit = () => {
     if (onEdit) onEdit();
     open(
-      <AddTodoModal
-        isEditMode={true}
-        todo={item} // 현재 투두 아이템 전달
-        onTodoListUpdate={onEdit} // 수정 후 리스트 갱신을 위해 onEdit 전달
-      />,
+      <AddTodoModal isEditMode={true} todo={item} onTodoListUpdate={onEdit} />,
       {title: '할 일 수정'},
     );
   };
@@ -111,9 +118,9 @@ export default function Todo({
     );
   };
 
-  const spin = animatedHeight.interpolate({
-    inputRange: [0, 100],
-    outputRange: ['0deg', '-180deg'],
+  const spin = animatedRotation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '-90deg'],
   });
 
   const animatedMargin = animatedHeight.interpolate({
