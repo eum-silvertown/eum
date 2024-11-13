@@ -55,7 +55,7 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 			StudentOverviewModel studentOverviewModel = studentOverviewRepository.findByStudentIdAndLectureId(memberId,
 					lecture.getLectureId())
 				.orElseThrow(() -> new EumException(ErrorCode.STUDENTMODEL_NOT_FOUND));
-
+			studentOverviewModel.getOverview().setLessonCount((long)lecture.getLessons().size());
 			return LectureDetailResponse.fromLectureModelForStudent(lecture, teacherModel, studentOverviewModel, classModel);
 		}
 		else if(ROLE_TEACHER.equals(role)) {

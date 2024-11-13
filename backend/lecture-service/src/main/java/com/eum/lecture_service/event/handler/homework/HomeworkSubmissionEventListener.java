@@ -100,11 +100,17 @@ public class HomeworkSubmissionEventListener {
 
 	private void updateStudentScores(StudentOverviewModel studentModel) {
 		List<HomeworkSubmissionInfo> submissions = studentModel.getHomeworkSubmissionInfo();
-		double totalScore = submissions.stream()
-			.mapToDouble(HomeworkSubmissionInfo::getScore)
-			.sum();
-		int submissionCount = submissions.size();
-		double avgScore = submissionCount > 0 ? totalScore / submissionCount : 0.0;
+
+		double totalScore = 0;
+		int count = 0;
+
+		for(HomeworkSubmissionInfo homeworkSubmissionInfo : submissions) {
+			if(homeworkSubmissionInfo.getIsComplete()) {
+				count++;
+				totalScore += homeworkSubmissionInfo.getScore();
+			}
+		}
+		double avgScore = count > 0 ? totalScore / count : 0.0;
 
 		StudentScores scores = studentModel.getStudentScores();
 		if (scores == null) {
@@ -137,25 +143,41 @@ public class HomeworkSubmissionEventListener {
 
 	private void updateClassAverageScores(TeacherOverviewModel teacherOverview) {
 		List<StudentInfo> studentInfos = teacherOverview.getStudents();
+
 		double totalHomework = 0.0;
 		double totalExam = 0.0;
 		double totalAttitude = 0.0;
-		int count = 0;
+
+		int homeworkCount = 0;
+		int examCount = 0;
+		int attitudeCount = 0;
 
 		for (StudentInfo studentInfo : studentInfos) {
 			StudentScores scores = studentInfo.getStudentScores();
 			if (scores != null) {
-				totalHomework += scores.getHomeworkAvgScore() != null ? scores.getHomeworkAvgScore() : 0.0;
-				totalExam += scores.getExamAvgScore() != null ? scores.getExamAvgScore() : 0.0;
-				totalAttitude += scores.getAttitudeAvgScore() != null ? scores.getAttitudeAvgScore() : 100.0;
-				count++;
+				if (scores.getHomeworkAvgScore() != null) {
+					totalHomework += scores.getHomeworkAvgScore();
+					homeworkCount++;
+				}
+				if (scores.getExamAvgScore() != null) {
+					totalExam += scores.getExamAvgScore();
+					examCount++;
+				}
+				if (scores.getAttitudeAvgScore() != null) {
+					totalAttitude += scores.getAttitudeAvgScore();
+					attitudeCount++;
+				}
 			}
 		}
 
+		double averageHomework = homeworkCount > 0 ? totalHomework / homeworkCount : 0.0;
+		double averageExam = examCount > 0 ? totalExam / examCount : 0.0;
+		double averageAttitude = attitudeCount > 0 ? totalAttitude / attitudeCount : 100.0;
+
 		ClassAverageScores classAverageScores = new ClassAverageScores(
-			count > 0 ? totalHomework / count : 0.0,
-			count > 0 ? totalExam / count : 0.0,
-			count > 0 ? totalAttitude / count : 100.0
+			averageHomework,
+			averageExam,
+			averageAttitude
 		);
 
 		teacherOverview.setClassAverageScores(classAverageScores);
