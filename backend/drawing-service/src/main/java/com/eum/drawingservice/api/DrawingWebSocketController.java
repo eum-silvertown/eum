@@ -2,8 +2,9 @@ package com.eum.drawingservice.api;
 
 import com.eum.drawingservice.dto.DrawingRequestDTO;
 import com.eum.drawingservice.entity.Role;
+import com.eum.drawingservice.global.subscribe.ChannelName;
 import com.eum.drawingservice.service.DrawingService;
-import com.eum.drawingservice.service.SubscriptionManger;
+import com.eum.drawingservice.global.subscribe.SubscriptionManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Controller;
 public class DrawingWebSocketController {
 
     private final DrawingService drawingService;
-    private final SubscriptionManger subscriptionManger;
+    private final SubscriptionManager subscriptionManger;
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/draw")
@@ -28,11 +29,12 @@ public class DrawingWebSocketController {
             messagingTemplate.convertAndSend(sendUrl, requestDTO);
         } else {
             String sessionId = headerAccessor.getSessionId();
+            String subscriptionKey = requestDTO.getLessonId() + ":" + requestDTO.getMemberId();
             String teacherDestination = "/topic/teacher/lesson/" + requestDTO.getLessonId() + "/member/" + requestDTO.getMemberId();
-            if(subscriptionManger.isSubscribed(
+            if (subscriptionManger.isSubscribed(
                     sessionId,
-                    String.valueOf(requestDTO.getLessonId()),
-                    String.valueOf(requestDTO.getMemberId()))) {
+                    ChannelName.TEACHER_LESSON_MEMBER,
+                    subscriptionKey)) {
                 messagingTemplate.convertAndSend(teacherDestination, requestDTO);
             }
         }

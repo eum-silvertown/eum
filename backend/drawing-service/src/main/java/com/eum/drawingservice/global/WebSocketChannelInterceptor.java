@@ -1,6 +1,8 @@
 package com.eum.drawingservice.global;
 
-import com.eum.drawingservice.service.SubscriptionManger;
+import com.eum.drawingservice.global.subscribe.ChannelName;
+import com.eum.drawingservice.global.subscribe.SubscriptionManager;
+import com.eum.drawingservice.global.subscribe.pattern.SubscriptionPattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -9,11 +11,14 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class WebSocketChannelInterceptor implements ChannelInterceptor {
 
-    private final SubscriptionManger subscriptionManger;
+    private final SubscriptionManager subscriptionManager;
+    private final List<SubscriptionPattern> subscriptionPatterns;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -34,33 +39,29 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
         return message;
     }
 
-    private void handleSubscribe(String destination, String sessionId) {
-        String[] parts = destination.split("/");
-        if (parts.length >= 6
-                && parts[1].equals("topic")
-                && parts[2].equals("teacher")
-                && parts[3].equals("lesson")
-                && parts[5].equals("member")) {
-            String lessonId = parts[4];
-            String memberId = parts[6];
-            subscriptionManger.subscribe(sessionId, lessonId, memberId);
+    private void handleSubscribe(String sessionId, String destination) {
+        for (SubscriptionPattern pattern : subscriptionPatterns) {
+            if (pattern.matches(destination)) {
+                ChannelName channel = pattern.getChannel(destination);
+                String subscriptionKey = pattern.getSubscriptionKey(destination);
+                subscriptionManager.subscribe(sessionId, channel, subscriptionKey);
+                break;
+            }
         }
     }
 
-    private void handleUnsubscribe(String destination, String sessionId) {
-        String[] parts = destination.split("/");
-        if (parts.length >= 5
-                && parts[1].equals("topic")
-                && parts[2].equals("teacher")
-                && parts[3].equals("lesson")
-                && parts[5].equals("member")) {
-            String lessonId = parts[4];
-            String memberId = parts[6];
-            subscriptionManger.unsubscribe(sessionId, lessonId, memberId);
+    private void handleUnsubscribe(String sessionId, String destination) {
+        for (SubscriptionPattern pattern : subscriptionPatterns) {
+            if (pattern.matches(destination)) {
+                ChannelName channel = pattern.getChannel(destination);
+                String subscriptionKey = pattern.getSubscriptionKey(destination);
+                subscriptionManager.unsubscribe(sessionId, channel, subscriptionKey);
+                break;
+            }
         }
     }
 
     private void handleDisconnect(String sessionId) {
-        subscriptionManger.removeAllSubscriptions(sessionId);
+        subscriptionManager.removeAllSubscriptions(sessionId);
     }
 }
