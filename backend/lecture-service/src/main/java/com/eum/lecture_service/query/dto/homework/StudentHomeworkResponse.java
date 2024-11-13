@@ -19,6 +19,7 @@ public class StudentHomeworkResponse {
 	public static class StudentHomeworkInfo {
 		private Long homeworkId;
 		private String title;
+		private String subject;
 		private LocalDateTime startTime;
 		private LocalDateTime endTime;
 		private Double score;

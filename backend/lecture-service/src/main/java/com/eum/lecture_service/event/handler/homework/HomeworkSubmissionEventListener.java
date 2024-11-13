@@ -12,6 +12,7 @@ import com.eum.lecture_service.event.dto.HomeworkProblemSubmissionEventDto;
 import com.eum.lecture_service.event.event.homework.HomeworkSubmissionCreateEvent;
 import com.eum.lecture_service.query.document.StudentOverviewModel;
 import com.eum.lecture_service.query.document.TeacherOverviewModel;
+import com.eum.lecture_service.query.document.studentInfo.ExamSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkProblemSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo;
 import com.eum.lecture_service.query.document.studentInfo.Overview;
@@ -22,9 +23,11 @@ import com.eum.lecture_service.query.repository.StudentOverviewRepository;
 import com.eum.lecture_service.query.repository.TeacherOverviewRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HomeworkSubmissionEventListener {
 
 	private final StudentOverviewRepository studentOverviewRepository;
@@ -36,30 +39,17 @@ public class HomeworkSubmissionEventListener {
 	public void handleHomeworkSubmissionCreatedEvent(HomeworkSubmissionCreateEvent event) {
 		Long studentId = event.getStudentId();
 		Long lectureId = event.getLectureId();
+		System.out.println("들어오나?");
 
 		StudentOverviewModel studentModel = studentOverviewRepository.findByStudentIdAndLectureId(studentId, lectureId)
 			.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
 
-		HomeworkSubmissionInfo submissionInfo = createHomeworkSubmissionInfo(event);
+		HomeworkSubmissionInfo homeworkSubmissionInfo = createHomeworkSubmissionInfo(event);
 
-		boolean updated = false;
-		if (studentModel.getHomeworkSubmissionInfo() != null) {
-			for (int i = 0; i < studentModel.getHomeworkSubmissionInfo().size(); i++) {
-				HomeworkSubmissionInfo existingSubmission = studentModel.getHomeworkSubmissionInfo().get(i);
-				if (existingSubmission.getHomeworkSubmissionId().equals(event.getHomeworkSubmissionId())) {
-					studentModel.getHomeworkSubmissionInfo().set(i, submissionInfo);
-					updated = true;
-					break;
-				}
-			}
-		} else {
+		if (studentModel.getHomeworkSubmissionInfo() == null) {
 			studentModel.setHomeworkSubmissionInfo(new ArrayList<>());
 		}
-
-		if (!updated) {
-			// 기존 제출이 없으면 새로 추가
-			studentModel.getHomeworkSubmissionInfo().add(submissionInfo);
-		}
+		studentModel.getHomeworkSubmissionInfo().add(homeworkSubmissionInfo);
 
 		updateStudentScores(studentModel);
 		updateStudentOverview(studentModel);
@@ -103,18 +93,9 @@ public class HomeworkSubmissionEventListener {
 			studentModel.setOverview(overview);
 		}
 
-		long totalSolvedProblems = 0;
 		List<HomeworkSubmissionInfo> submissions = studentModel.getHomeworkSubmissionInfo();
 
-		for (HomeworkSubmissionInfo submission : submissions) {
-			List<HomeworkProblemSubmissionInfo> problemSubmissions = submission.getProblemSubmissions();
-			for (HomeworkProblemSubmissionInfo problemSubmission : problemSubmissions) {
-				if (problemSubmission.getIsCorrect()) {
-					totalSolvedProblems++;
-				}
-			}
-		}
-		overview.setHomeworkCount(totalSolvedProblems);
+		overview.setHomeworkCount((long)submissions.size());
 	}
 
 	private void updateStudentScores(StudentOverviewModel studentModel) {
