@@ -11,8 +11,25 @@ import {getResponsiveSize} from '@utils/responsive';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
 import PulseIndicator from '@components/classLessoning/PulseIndicator';
+import { useLectureStore, useLessonStore } from '@store/useLessonStore';
 
 function LessoningScreen(): React.JSX.Element {
+  const lectureId = useLessonStore(state => state.lectureId);
+  const questionIds = useLessonStore(state => state.questionIds);
+  const memberId = useLectureStore(state => state.memberId);
+  const teacherId = useLectureStore(state => state.teacherId);
+
+  console.log(
+    'lectureId:',
+    lectureId,
+    'questionIds:',
+    questionIds,
+    'memberId:',
+    memberId,
+    'teacherId:',
+    teacherId,
+  );
+
   const userInfo = useAuthStore(state => state.userInfo);
   const [isConnected, setIsConnected] = useState(false);
   const [receivedMessage, setReceivedMessage] = useState<string | null>(null);

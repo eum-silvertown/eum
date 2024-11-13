@@ -13,6 +13,8 @@ import {iconSize} from '@theme/iconSize';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType} from '@store/useCurrentScreenStore';
+import {useLessonStore} from '@store/useLessonStore';
+import {useLectureStore} from '@store/useLessonStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 interface Participant {
@@ -29,6 +31,24 @@ function LessoningStudentListScreen(): React.JSX.Element {
   useFocusEffect(() => {
     setCurrentScreen('LessoningStudentListScreen');
   });
+
+  const lectureId = useLessonStore(state => state.lectureId);
+  const questionIds = useLessonStore(state => state.questionIds);
+  const memberId = useLectureStore(state => state.memberId);
+  const teacherId = useLectureStore(state => state.teacherId);
+
+  console.log(
+    'lectureId:',
+    lectureId,
+    'questionIds:',
+    questionIds,
+    'memberId:',
+    memberId,
+    'teacherId:',
+    teacherId,
+  );
+
+  // 학생 입장 여부 5초에 한번씩 DB 호출 필요
 
   const ROWS = 4;
   const COLUMNS = 4;
@@ -89,7 +109,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
     <View style={styles.mainContainer}>
       {/* 상단 바 */}
       <View style={styles.interactionToolContainer}>
-        <TeacherLessoningGridInteractionTool />
+        <TeacherLessoningGridInteractionTool lectureId={lectureId!}/>
       </View>
 
       {/* 총 인원수 */}
