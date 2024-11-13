@@ -29,6 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private final NotificationRepository notificationRepository;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final FirebaseMessaging firebaseMessaging;
 
 	@Override
 	public void saveFCMToken(String token, Long memberId) {
@@ -140,6 +141,21 @@ public class NotificationServiceImpl implements NotificationService {
 		notificationRepository.save(notification);
 	}
 
+	@Override
+	public void markAsReadNotifications(List<Long> notificationIds, Long memberId) {
+		for(Long notificationId : notificationIds) {
+			Notifications notification = notificationRepository.findById(notificationId)
+				.orElseThrow(() -> new EumException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+			if (!notification.getMemberId().equals(memberId)) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+
+			notification.setIsRead(true);
+			notificationRepository.save(notification);
+		}
+	}
+
 	private void sendFcmNotification(Long memberId, String title, String body) {
 		String fcmToken = getFcmTokenByMemberId(memberId);
 
@@ -152,7 +168,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.build();
 
 		try {
-			String response = FirebaseMessaging.getInstance().send(message);
+			String response = firebaseMessaging.send(message);
 			System.out.println("FCM 메시지 응답: " + response);
 		} catch (Exception e) {
 			throw new EumException(ErrorCode.FIREBASE_SENDING_ERROR);
