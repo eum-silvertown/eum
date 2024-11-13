@@ -81,7 +81,7 @@ export default function TodoList(): React.JSX.Element {
           ]}
           onPress={() => setSelectedTab('notCompleted')}>
           <Text variant="body" weight="medium">
-            진행중
+            진행 중
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
