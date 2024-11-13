@@ -55,7 +55,7 @@ function LessoningScreen(): React.JSX.Element {
         // 구독 설정: isTeacher에 따른 분기 처리
         console.log('입장드가자', isTeacher, isTeaching, memberId);
         if (isTeacher) {
-          const teacherTopic = `/user/teacher/lesson/${lessonId}/member/${memberId}`;
+          const teacherTopic = `/user/topic/teacher/lesson/${lessonId}/member/${memberId}`;
           console.log('@@@@@@@@@@@@', teacherTopic);
           client.subscribe(teacherTopic, message => {
             console.log('Received message for teacher:', message.body);
