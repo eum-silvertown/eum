@@ -7,5 +7,5 @@ import com.eum.lecture_service.command.entity.homework.HomeworkProblemSubmission
 import com.eum.lecture_service.command.entity.homework.HomeworkSubmission;
 
 public interface HomeworkSubmissionService {
-	HomeworkSubmission submitHomeworkProblems(Long homeworkId, Long studentId, List<HomeworkProblemSubmissionDto> homeworkProblemSubmissions);
+	Long submitHomeworkProblems(Long homeworkId, Long studentId, List<HomeworkProblemSubmissionDto> homeworkProblemSubmissions);
 }

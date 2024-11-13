@@ -33,7 +33,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 	@Override
 	@Transactional
-	public HomeworkSubmission submitHomeworkProblems(Long homeworkId, Long studentId,
+	public Long submitHomeworkProblems(Long homeworkId, Long studentId,
 		List<HomeworkProblemSubmissionDto> homeworkProblemSubmissions) {
 
 		Homework homework = homeworkRepository.findById(homeworkId)
@@ -48,9 +48,10 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 		updateHomeworkSubmissionScores(homeworkSubmission, homeworkProblemSubmissionList);
 
-		publishHomeworkSubmissionCreateEvent(homeworkSubmission, homeworkProblemSubmissionList, homework.getLecture().getLectureId());
+		Long lectureId = homework.getLecture().getLectureId();
+		publishHomeworkSubmissionCreateEvent(homeworkSubmission, homeworkProblemSubmissionList, lectureId);
 
-		return homeworkSubmission;
+		return homeworkSubmission.getHomeworkSubmissionId();
 	}
 
 	private void validateHomeworkTime(Homework homework) {
@@ -103,7 +104,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 		HomeworkSubmissionCreateEvent event = createHomeworkSubmissionCreateEvent(homeworkSubmission, lectureId, homeworkProblemSubmissionList);
 
-		kafkaTemplate.send("homework-submission-events", event);
+		kafkaTemplate.send("homework-submission-event", event);
 	}
 
 	private HomeworkSubmissionCreateEvent createHomeworkSubmissionCreateEvent(HomeworkSubmission homeworkSubmission, Long lectureId, List<HomeworkProblemSubmission> homeworkProblemSubmissionList) {
