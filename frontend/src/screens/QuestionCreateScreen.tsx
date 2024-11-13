@@ -1,36 +1,48 @@
 import FileContainer from '@components/questionBox/FileContainer';
 import FolderHeader from '@components/questionBox/FolderHeader';
 import MoveMenu from '@components/questionBox/MoveMenu';
-import { useCutStore } from '@store/useCutStore';
+import {useCutStore} from '@store/useCutStore';
 import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import { borderRadius } from '@theme/borderRadius';
-import { borderWidth } from '@theme/borderWidth';
-import { spacing } from '@theme/spacing';
-import { getResponsiveSize } from '@utils/responsive';
-import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { colors } from 'src/hooks/useColors';
-import { getFolder, getRootFolder } from 'src/services/questionBox';
-import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import {borderRadius} from '@theme/borderRadius';
+import {borderWidth} from '@theme/borderWidth';
+import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
+import React, {useEffect, useState} from 'react';
+import {Pressable, StyleSheet, View} from 'react-native';
+import {colors} from 'src/hooks/useColors';
+import {getFolder, getRootFolder} from 'src/services/questionBox';
+import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import CreateInput from '@components/questionBox/CreateInput';
-import { createLesson, CreateLessonRequest, switchLessonStatus, SwitchLessonStatusResponse } from '@services/lessonService';
-import { createExam, CreateExamRequest } from '@services/examService';
-import { createHomework, CreateHomeworkRequest } from '@services/homeworkService';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  createLesson,
+  CreateLessonRequest,
+  switchLessonStatus,
+  SwitchLessonStatusResponse,
+} from '@services/lessonService';
+import {createExam, CreateExamRequest} from '@services/examService';
+import {createHomework, CreateHomeworkRequest} from '@services/homeworkService';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 
-import { useLessonStore } from '@store/useLessonStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {useLessonStore} from '@store/useLessonStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function QuestionCreateScreen(): React.JSX.Element {
   const route = useRoute();
   const navigation = useNavigation<NavigationProps>();
-  const { lectureId, action } = route.params as { lectureId: number; action: 'lesson' | 'exam' | 'homework' };
+  const {lectureId, action} = route.params as {
+    lectureId: number;
+    action: 'lesson' | 'exam' | 'homework';
+  };
   const queryClient = useQueryClient();
 
   const setCurrentScreen = useCurrentScreenStore(
@@ -63,8 +75,8 @@ function QuestionCreateScreen(): React.JSX.Element {
     mutationFn: (moveLectureId: number) => switchLessonStatus(moveLectureId),
     onSuccess: (data: SwitchLessonStatusResponse) => {
       console.log('수업 상태 변경 완료:', data.message);
-      // 상태 변경이 성공하면 이동
-      navigation.navigate('LessoningStudentListScreen');
+      // 상태 변경이 성공하면 현재 화면을 대체하고 이동
+      navigation.replace('LessoningStudentListScreen');
     },
     onError: error => {
       console.error('수업 상태 변경 실패:', error);
@@ -93,8 +105,7 @@ function QuestionCreateScreen(): React.JSX.Element {
 
   // Exam 생성
   const examMutation = useMutation({
-    mutationFn: (newExamData: CreateExamRequest) =>
-      createExam(newExamData),
+    mutationFn: (newExamData: CreateExamRequest) => createExam(newExamData),
     onSuccess: () => {
       console.log('시험 생성 완료');
       queryClient.invalidateQueries({
@@ -166,7 +177,9 @@ function QuestionCreateScreen(): React.JSX.Element {
   };
 
   const handleCreateLectureAction = () => {
-    const formattedStartTime = startTime ? startTime.toISOString().split('.')[0] : ''; // 빈 문자열로 기본값 설정
+    const formattedStartTime = startTime
+      ? startTime.toISOString().split('.')[0]
+      : ''; // 빈 문자열로 기본값 설정
     const formattedEndTime = endTime ? endTime.toISOString().split('.')[0] : '';
     if (!title || questionIds.length === 0) {
       console.warn('제목과 파일을 추가해주세요.');
