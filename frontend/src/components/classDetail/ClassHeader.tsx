@@ -43,7 +43,6 @@ function ClassHeader({
   pastTeacherName,
   lectureStatus,
 }: ClassHeaderProps): React.JSX.Element {
-
   const navigation = useNavigation<NavigationProps>();
   const {open} = useModal();
 
@@ -114,13 +113,10 @@ function ClassHeader({
   };
 
   const enterClass = () => {
-    // TODO : 아래 !lectureStatus 중 ! 제거하기
-    if (!lectureStatus) {
+    if (lectureStatus) {
       if (isTeacher) {
-        // isTeacher가 true일 때는 params 없이 navigate 호출
         navigation.navigate('LessoningStudentListScreen');
       } else {
-        // isTeacher가 false일 때는 data를 포함하여 navigate 호출
         navigation.navigate('LessoningScreen');
       }
     } else {
@@ -171,7 +167,7 @@ function ClassHeader({
               styles.enterButtonText,
               !lectureStatus && styles.enterButtonTextDisabled,
             ]}>
-            {lectureStatus ? '수업 입장' : '수업 종료됨'}
+            {lectureStatus ? '수업 재입장' : '수업 중이 아닙니다'}
           </Text>
         </TouchableOpacity>
         {isTeacher && (
