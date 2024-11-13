@@ -42,10 +42,24 @@ public class HomeworkSubmissionEventListener {
 
 		HomeworkSubmissionInfo submissionInfo = createHomeworkSubmissionInfo(event);
 
-		if (studentModel.getHomeworkSubmissionInfo() == null) {
+		boolean updated = false;
+		if (studentModel.getHomeworkSubmissionInfo() != null) {
+			for (int i = 0; i < studentModel.getHomeworkSubmissionInfo().size(); i++) {
+				HomeworkSubmissionInfo existingSubmission = studentModel.getHomeworkSubmissionInfo().get(i);
+				if (existingSubmission.getHomeworkSubmissionId().equals(event.getHomeworkSubmissionId())) {
+					studentModel.getHomeworkSubmissionInfo().set(i, submissionInfo);
+					updated = true;
+					break;
+				}
+			}
+		} else {
 			studentModel.setHomeworkSubmissionInfo(new ArrayList<>());
 		}
-		studentModel.getHomeworkSubmissionInfo().add(submissionInfo);
+
+		if (!updated) {
+			// 기존 제출이 없으면 새로 추가
+			studentModel.getHomeworkSubmissionInfo().add(submissionInfo);
+		}
 
 		updateStudentScores(studentModel);
 		updateStudentOverview(studentModel);
@@ -109,7 +123,7 @@ public class HomeworkSubmissionEventListener {
 			.mapToDouble(HomeworkSubmissionInfo::getScore)
 			.sum();
 		int submissionCount = submissions.size();
-		double avgScore = totalScore / submissionCount;
+		double avgScore = submissionCount > 0 ? totalScore / submissionCount : 0.0;
 
 		StudentScores scores = studentModel.getStudentScores();
 		if (scores == null) {

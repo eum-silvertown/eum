@@ -41,9 +41,14 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 		validateHomeworkTime(homework);
 
-		HomeworkSubmission homeworkSubmission = createHomeworkSubmission(homework, studentId);
+		HomeworkSubmission homeworkSubmission = homeworkSubmissionRepository.findByHomeworkAndStudentId(homework, studentId)
+			.orElse(null);
 
-		List<HomeworkProblemSubmission> homeworkProblemSubmissionList = saveHomeworkProblemSubmissions(
+		if (homeworkSubmission == null) {
+			homeworkSubmission = createHomeworkSubmission(homework, studentId);
+		}
+
+		List<HomeworkProblemSubmission> homeworkProblemSubmissionList = saveOrUpdateHomeworkProblemSubmissions(
 			homeworkProblemSubmissions, homeworkSubmission, studentId);
 
 		updateHomeworkSubmissionScores(homeworkSubmission, homeworkProblemSubmissionList);
@@ -65,20 +70,32 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		HomeworkSubmission homeworkSubmission = HomeworkSubmission.builder()
 			.homework(homework)
 			.studentId(studentId)
+			.isCompleted(false)
 			.build();
 		return homeworkSubmissionRepository.save(homeworkSubmission);
 	}
 
-	private List<HomeworkProblemSubmission> saveHomeworkProblemSubmissions(
+	private List<HomeworkProblemSubmission> saveOrUpdateHomeworkProblemSubmissions(
 		List<HomeworkProblemSubmissionDto> homeworkProblemSubmissions,
 		HomeworkSubmission homeworkSubmission,
 		Long studentId) {
 
-		List<HomeworkProblemSubmission> homeworkProblemSubmissionList = homeworkProblemSubmissions.stream()
-			.map(dto -> dto.toEntity(homeworkSubmission, studentId))
+		List<HomeworkProblemSubmission> updatedSubmissions = homeworkProblemSubmissions.stream()
+			.map(dto -> {
+				if (dto.getHomeworkProblemSubmissionId() != null) {
+					HomeworkProblemSubmission existingSubmission = homeworkProblemSubmissionRepository.findById(dto.getHomeworkProblemSubmissionId())
+						.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_PROBLEM_SUBMISSION_NOT_FOUND));
+					existingSubmission.setIsCorrect(dto.getIsCorrect());
+					existingSubmission.setHomeworkSolution(dto.getHomeworkSolution());
+					return homeworkProblemSubmissionRepository.save(existingSubmission);
+				} else {
+					HomeworkProblemSubmission newSubmission = dto.toEntity(homeworkSubmission, studentId);
+					return homeworkProblemSubmissionRepository.save(newSubmission);
+				}
+			})
 			.collect(Collectors.toList());
 
-		return homeworkProblemSubmissionRepository.saveAll(homeworkProblemSubmissionList);
+		return updatedSubmissions;
 	}
 
 	private void updateHomeworkSubmissionScores(HomeworkSubmission homeworkSubmission,
@@ -88,7 +105,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 			.count();
 
 		Long totalCount = (long) homeworkProblemSubmissionList.size();
-		double score = (double) correctCount / totalCount * 100;
+		double score = totalCount > 0 ? ((double) correctCount / totalCount) * 100 : 0.0;
 
 		homeworkSubmission.setCorrectCount(correctCount);
 		homeworkSubmission.setTotalCount(totalCount);
