@@ -1,6 +1,7 @@
 package com.eum.lecture_service.command.dto.exam;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.eum.lecture_service.command.entity.exam.Exam;
@@ -30,6 +31,8 @@ public class ExamDto {
 		return Exam.builder()
 			.lecture(lecture)
 			.title(title)
+			.examQuestions(new ArrayList<>())
+			.examSubmissions(new ArrayList<>())
 			.startTime(startTime)
 			.endTime(endTime)
 			.build();

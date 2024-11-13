@@ -1,6 +1,7 @@
 package com.eum.lecture_service.command.dto.homework;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.eum.lecture_service.command.entity.homework.Homework;
@@ -32,6 +33,8 @@ public class HomeworkDto {
 			.title(title)
 			.startTime(startTime)
 			.endTime(endTime)
+			.homeworkQuestions(new ArrayList<>())
+			.homeworkSubmissions(new ArrayList<>())
 			.build();
 	}
 

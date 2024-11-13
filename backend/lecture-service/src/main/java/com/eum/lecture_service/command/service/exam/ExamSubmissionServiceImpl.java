@@ -33,7 +33,7 @@ public class ExamSubmissionServiceImpl implements ExamSubmissionService {
 
 	@Override
 	@Transactional
-	public ExamSubmission submitExamProblems(Long examId, Long studentId,
+	public Long submitExamProblems(Long examId, Long studentId,
 		List<ExamProblemSubmissionDto> problemSubmissions) {
 
 		Exam exam = examRepository.findById(examId)
@@ -47,10 +47,10 @@ public class ExamSubmissionServiceImpl implements ExamSubmissionService {
 			problemSubmissions, examSubmission, studentId);
 
 		updateExamSubmissionScores(examSubmission, examProblemSubmissionList);
+		Long lectureId = exam.getLecture().getLectureId();
+		publishExamSubmissionCreateEvent(examSubmission, examProblemSubmissionList, lectureId);
 
-		publishExamSubmissionCreateEvent(examSubmission, examProblemSubmissionList, exam.getLecture().getLectureId());
-
-		return examSubmission;
+		return examSubmission.getExamSubmissionId();
 	}
 
 	private void validateExamTime(Exam exam) {
