@@ -17,9 +17,9 @@ export type ScreenType = {
   ProfileScreen: undefined;
   ClassListScreen: undefined;
   QuestionCreateScreen: {lectureId: number; action: 'lesson' | 'exam' | 'homework'};
-  ClassLessonListScreen: {data: any[] | undefined};
-  ClassExamListScreen: {data: any[] | undefined};
-  ClassHomeworkListScreen: {data: any[] | undefined};
+  ClassLessonListScreen: undefined;
+  ClassExamListScreen: undefined;
+  ClassHomeworkListScreen: undefined;
 };
 
 type ScreenName = keyof ScreenType;
