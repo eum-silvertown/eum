@@ -30,13 +30,13 @@ function Notice({
   notices = [],
 }: NoticeProps): React.JSX.Element {
   const { open } = useModal();
-  const displayedNotices = notices.slice(0, 3); // 최대 3개의 공지사항만 표시
+  const displayedNotices = notices.slice(Math.max(notices.length - 3, 0)).reverse();
   const queryClient = useQueryClient();
   const { mutate: deleteMutation } = useMutation({
     mutationFn: (noticeId: number) => deleteNotice(noticeId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['memorizeWordList', lectureId],
+        queryKey: ['lectureDetail', lectureId],
       });
     },
   });
@@ -50,7 +50,6 @@ function Notice({
           text: '삭제',
           onPress: () => {
             console.log('삭제 확정');
-            // 삭제 작업 실행 코드
             deleteMutation(noticeId);
           },
           style: 'destructive',
@@ -132,7 +131,7 @@ const styles = StyleSheet.create({
   noticeLayout: {
     flexDirection: 'row',
     gap: spacing.xxl,
-    paddingHorizontal: getResponsiveSize(20),
+    paddingHorizontal: getResponsiveSize(18),
   },
   imageWrapper: {
     position: 'relative',
@@ -145,9 +144,9 @@ const styles = StyleSheet.create({
   },
   textIconContainer: {
     position: 'absolute',
-    left: getResponsiveSize(12),
-    top: getResponsiveSize(24),
-    right: getResponsiveSize(12),
+    left: getResponsiveSize(8),
+    top: getResponsiveSize(16),
+    right: getResponsiveSize(8),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -157,9 +156,9 @@ const styles = StyleSheet.create({
   },
   noticeContent: {
     position: 'absolute',
-    left: getResponsiveSize(12),
-    right: getResponsiveSize(12),
-    top: getResponsiveSize(48),
+    left: getResponsiveSize(8),
+    right: getResponsiveSize(8),
+    top: getResponsiveSize(32),
     color: '#333',
   },
   cancelIcon: {

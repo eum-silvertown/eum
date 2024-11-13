@@ -5,6 +5,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { iconSize } from '@theme/iconSize';
 import CalendarIcon from '@assets/icons/calendarIcon.svg';
 import EmptyExamIcon from '@assets/icons/emptyExamIcon.svg'; // SVG 아이콘 임포트
+import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
+import { Text as HeaderText } from '@components/common/Text';
 
 interface Exam {
   examId: string;
@@ -28,30 +30,41 @@ const ClassExamListScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>시험 목록</Text>
-      <FlatList
-        data={exams}
-        keyExtractor={(item) => item.examId}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.item} onPress={() => handleExamPress(item.examId)}>
-            <View style={styles.itemHeader}>
-              <CalendarIcon width={iconSize.sm} height={iconSize.sm} />
-              <Text style={styles.itemTitle}>{item.title}</Text>
-            </View>
-            <Text style={styles.itemText}>시작 시간: {new Date(item.startTime).toLocaleString()}</Text>
-            <Text style={styles.itemText}>종료 시간: {new Date(item.endTime).toLocaleString()}</Text>
-            <Text style={styles.itemText}>문제 개수: {item.questions.length}</Text>
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <BackArrowIcon />
           </TouchableOpacity>
-        )}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <EmptyExamIcon width={iconSize.xxl * 7} height={iconSize.xxl * 7} style={styles.emptyIcon} />
-            <Text style={styles.emptyText}>현재 등록된 시험이 없습니다.</Text>
-          </View>
-        }
-      />
-    </View>
+          <HeaderText variant="title" style={styles.headerText} weight="bold">
+            <Text>
+              시험 목록
+            </Text>
+          </HeaderText>
+        </View>
+        <FlatList
+          data={exams}
+          keyExtractor={(item) => item.examId}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.item} onPress={() => handleExamPress(item.examId)}>
+              <View style={styles.itemHeader}>
+                <CalendarIcon width={iconSize.sm} height={iconSize.sm} />
+                <Text style={styles.itemTitle}>{item.title}</Text>
+              </View>
+              <Text style={styles.itemText}>시작 시간: {new Date(item.startTime).toLocaleString()}</Text>
+              <Text style={styles.itemText}>종료 시간: {new Date(item.endTime).toLocaleString()}</Text>
+              <Text style={styles.itemText}>문제 개수: {item.questions.length}</Text>
+            </TouchableOpacity>
+          )}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <EmptyExamIcon width={iconSize.xxl * 7} height={iconSize.xxl * 7} style={styles.emptyIcon} />
+              <Text style={styles.emptyText}>현재 등록된 시험이 없습니다.</Text>
+            </View>
+          }
+        />
+      </View>
+    </>
   );
 };
 
@@ -90,6 +103,15 @@ const styles = StyleSheet.create({
     color: '#666',
     fontWeight: 'bold',
     marginBottom: spacing.md,
+  },
+  header: {
+    marginTop: spacing.xl,
+    marginLeft: spacing.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerText: {
+    marginLeft: spacing.md,
   },
 });
 

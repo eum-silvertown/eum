@@ -19,7 +19,12 @@ import {colors} from 'src/hooks/useColors';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
 import {iconSize} from '@theme/iconSize';
 import {borderWidth} from '@theme/borderWidth';
-import {getUserInfo, updateProfilePicture, logOut} from '@services/authService';
+import {
+  getUserInfo,
+  updateProfilePicture,
+  logOut,
+  deleteProfileImage,
+} from '@services/authService';
 import {useAuthStore} from '@store/useAuthStore';
 import axios from 'axios';
 
@@ -31,6 +36,7 @@ import {useModal} from 'src/hooks/useModal';
 import PasswordChangeModal from '@components/account/PasswordChangeModal';
 import SignOutModal from '@components/account/SignOutModal';
 import {setAutoLogin} from '@utils/secureStorage';
+import ConfirmationModal from '@components/common/ConfirmationModal';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -47,17 +53,16 @@ export default function ProfileScreen(): React.JSX.Element {
   const {open} = useModal();
   const authStore = useAuthStore();
 
-  useEffect(() => {
-    // 페이지가 로드될 때 한 번만 실행할 함수
-    const fetchData = async () => {
-      try {
-        // 예: API 호출 또는 초기화 작업
-        const response = await getUserInfo();
-      } catch (error) {}
-    };
+  // 유저 정보 호출
+  const fetchUserInfo = async () => {
+    try {
+      const response = await getUserInfo();
+    } catch (error) {}
+  };
 
-    fetchData(); // 함수 호출
-  }, []); // 빈 배열로 의존성 설정: 컴포넌트가 처음 로드될 때만 실행
+  useEffect(() => {
+    fetchUserInfo(); // 함수 호출
+  }, []);
 
   // 사진, 갤러리 권한 요청
   const requestPermission = async () => {
@@ -106,12 +111,13 @@ export default function ProfileScreen(): React.JSX.Element {
   // 이미지 선택 함수
   const handleImagePicker = async () => {
     const hasPermission = await requestPermission();
+
     if (hasPermission) {
       launchImageLibrary(
         {
           mediaType: 'photo',
-          //   maxWidth: 300,
-          //   maxHeight: 300,
+          maxWidth: 300,
+          maxHeight: 300,
           quality: 0.5,
         },
         async response => {
@@ -138,37 +144,34 @@ export default function ProfileScreen(): React.JSX.Element {
     }
   };
 
-  // S3 업로드용 함수
   const uploadImageToS3 = async (image: UploadResponse) => {
     try {
-      // 백엔드 서버에서 S3 업로드용 URL 가져오기
+      // 백엔드에서 전달받은 S3 업로드용 URL
       const s3Url = await updateProfilePicture();
+      console.log('업로드용 S3 URL:', s3Url);
 
-      console.log(image);
-      // PUT 요청에 이미지 데이터 전송
+      // 이미지 파일을 blob 형태로 가져오기
+      const response = await fetch(image.uri);
+      const blob = await response.blob();
 
-      const response = await axios.put(
-        s3Url,
-        {
-          uri: image.uri,
-          name: image.fileName,
-          type: image.type,
+      // axios를 사용한 S3 업로드
+      const uploadResponse = await axios.put(s3Url, blob, {
+        headers: {
+          'Content-Type': image.type,
         },
-        {
-          headers: {
-            'Content-Type': image.type, // S3에 요구되는 Content-Type 설정
-          },
-        },
-      );
+        // axios가 데이터를 그대로 전송하도록 설정
+        transformRequest: [data => data],
+      });
 
-      if (response.status === 200) {
-        Alert.alert('업로드 성공', '이미지가 S3에 업로드되었습니다.');
+      if (uploadResponse.status === 200) {
+        getUserInfo();
+        Alert.alert('변경 완료', '프로필 이미지가 변경 되었습니다.');
       } else {
         Alert.alert('업로드 실패', '이미지 업로드에 실패했습니다.');
       }
     } catch (error) {
       console.error('S3 업로드 오류:', error);
-      Alert.alert('업로드 오류', 'S3 업로드 중 오류가 발생했습니다.');
+      Alert.alert('업로드 오류', '이미지 업로드 중 오류가 발생했습니다.');
     }
   };
 
@@ -177,8 +180,13 @@ export default function ProfileScreen(): React.JSX.Element {
     try {
       await logOut(); //
       setAutoLogin(false);
-      navigation.navigate('LoginScreen'); // 로그아웃 성공 시 로그인 페이지로 이동
+
       setCurrentScreen('LoginScreen');
+      // 내비게이션 스택을 초기화하여 로그인 화면으로 이동
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'LoginScreen'}],
+      });
     } catch (error) {
       console.error('로그아웃 실패:', error); // 로그아웃 실패 시 에러 처리
     }
@@ -194,6 +202,30 @@ export default function ProfileScreen(): React.JSX.Element {
     open(<SignOutModal />, {title: '정말 탈퇴하시겠습니까?'});
   };
 
+  const handleProfileImageDelete = () => {
+    open(
+      <ConfirmationModal
+        onConfirm={async () => {
+          try {
+            await deleteProfileImage(); // 프로필 이미지 삭제
+            getUserInfo();
+            Alert.alert('삭제 완료', '프로필 이미지가 삭제되었습니다.');
+          } catch (error) {
+            console.error('프로필 이미지 삭제 오류:', error);
+            Alert.alert(
+              '삭제 오류',
+              '프로필 이미지 삭제 중 오류가 발생했습니다.',
+            );
+          }
+        }}
+        onCancel={() => {
+          console.log('삭제 취소됨');
+        }}
+      />,
+      {title: '정말 삭제하시겠습니까?'},
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScreenInfo title="회원 정보" />
@@ -204,20 +236,28 @@ export default function ProfileScreen(): React.JSX.Element {
               style={styles.profileImage}
               source={
                 authStore.userInfo && authStore.userInfo.image
-                  ? {uri: authStore.userInfo.image.url} //
-                  : defaultProfileImage // 
+                  ? {uri: authStore.userInfo.image.url}
+                  : defaultProfileImage
               }
             />
           </View>
-          <View></View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleImagePicker}
-            disabled={true}>
-            <Text color="white" weight="bold">
-              사진 변경(준비중)
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.profileImageOptions}>
+            <TouchableOpacity style={styles.button} onPress={handleImagePicker}>
+              <Text color="white" weight="bold">
+                프로필 사진 변경하기
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                {backgroundColor: colors.light.background.danger},
+              ]}
+              onPress={handleProfileImageDelete}>
+              <Text color="white" weight="bold">
+                프로필 사진 삭제하기
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.content}>
           <Text variant="subtitle" weight="bold">
@@ -327,5 +367,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  profileImageOptions: {
+    gap: spacing.lg,
   },
 });

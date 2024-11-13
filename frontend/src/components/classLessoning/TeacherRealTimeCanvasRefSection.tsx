@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
+import {useEffect, useState} from 'react';
+import {Canvas, Path, Skia, useCanvasRef} from '@shopify/react-native-skia';
 import pako from 'pako';
-import { StyleSheet, View } from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import base64 from 'react-native-base64';
 
 interface StudentCanvasSectionProps {
@@ -16,7 +16,7 @@ type PathData = {
 };
 
 // 학생 캔버스 컴포넌트
-function StudentRealTimeCanvasRefSection({
+function TeacherRealTimeCanvasRefSection({
   receivedMessage,
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
@@ -36,13 +36,17 @@ function StudentRealTimeCanvasRefSection({
   const handleSync = (base64EncodedData: string) => {
     try {
       const binaryString = base64.decode(base64EncodedData);
-      const compressedData = Uint8Array.from(binaryString.split('').map(char => char.charCodeAt(0)));
-      const decompressedData = JSON.parse(pako.inflate(compressedData, { to: 'string' }));
+      const compressedData = Uint8Array.from(
+        binaryString.split('').map(char => char.charCodeAt(0)),
+      );
+      const decompressedData = JSON.parse(
+        pako.inflate(compressedData, {to: 'string'}),
+      );
 
       const parsedPaths = decompressedData
         .map((pathData: any) => {
           const path = Skia.Path.MakeFromSVGString(pathData.path);
-          return path ? { ...pathData, path } : null;
+          return path ? {...pathData, path} : null;
         })
         .filter(Boolean);
 
@@ -55,12 +59,18 @@ function StudentRealTimeCanvasRefSection({
   const handleSyncMove = (base64EncodedData: string) => {
     try {
       const binaryString = base64.decode(base64EncodedData);
-      const compressedData = Uint8Array.from(binaryString.split('').map(char => char.charCodeAt(0)));
-      const newPathData = JSON.parse(pako.inflate(compressedData, { to: 'string' }));
+      const compressedData = Uint8Array.from(
+        binaryString.split('').map(char => char.charCodeAt(0)),
+      );
+      const newPathData = JSON.parse(
+        pako.inflate(compressedData, {to: 'string'}),
+      );
       const newPath = Skia.Path.MakeFromSVGString(newPathData.path);
 
       if (newPath) {
-        setPaths(prevPaths => mergeSimilarPaths([...prevPaths, { ...newPathData, path: newPath }]));
+        setPaths(prevPaths =>
+          mergeSimilarPaths([...prevPaths, {...newPathData, path: newPath}]),
+        );
       }
     } catch (error) {
       console.error('Failed to decompress or parse data:', error);
@@ -79,7 +89,10 @@ function StudentRealTimeCanvasRefSection({
         lastMergedPath.strokeWidth === currentPath.strokeWidth &&
         lastMergedPath.opacity === currentPath.opacity
       ) {
-        const mergedPathString = lastMergedPath.path.toSVGString() + ' ' + currentPath.path.toSVGString();
+        const mergedPathString =
+          lastMergedPath.path.toSVGString() +
+          ' ' +
+          currentPath.path.toSVGString();
         const mergedPath = Skia.Path.MakeFromSVGString(mergedPathString);
 
         if (mergedPath) {
@@ -96,7 +109,7 @@ function StudentRealTimeCanvasRefSection({
   return (
     <View style={styles.canvasLayout}>
       <Canvas style={styles.canvas} ref={canvasRef}>
-        {paths.map(({ path, color, strokeWidth, opacity }, index) => (
+        {paths.map(({path, color, strokeWidth, opacity}, index) => (
           <Path
             key={index}
             path={path}
@@ -113,7 +126,7 @@ function StudentRealTimeCanvasRefSection({
   );
 }
 
-export default StudentRealTimeCanvasRefSection;
+export default TeacherRealTimeCanvasRefSection;
 
 const styles = StyleSheet.create({
   canvasLayout: {
@@ -124,5 +137,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-  canvas: { flex: 1 },
+  canvas: {flex: 1},
 });

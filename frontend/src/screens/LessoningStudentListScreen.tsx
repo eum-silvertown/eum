@@ -5,7 +5,16 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import TeacherLessoningGridInteractionTool from '@components/classLessoning/TeacherLessoningGridInteractionTool';
 import {getResponsiveSize} from '@utils/responsive';
+import LeftIcon from '@assets/icons/leftIcon.svg';
+import RightIcon from '@assets/icons/rightIcon.svg';
+import LeftOffIcon from '@assets/icons/leftOffIcon.svg';
+import RightOffIcon from '@assets/icons/rightOffIcon.svg';
+import {iconSize} from '@theme/iconSize';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ScreenType} from '@store/useCurrentScreenStore';
 
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 interface Participant {
   id: string;
   name: string;
@@ -16,7 +25,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
   );
-
+  const navigation = useNavigation<NavigationProps>();
   useFocusEffect(() => {
     setCurrentScreen('LessoningStudentListScreen');
   });
@@ -72,6 +81,10 @@ function LessoningStudentListScreen(): React.JSX.Element {
     }
   };
 
+  const handleParticipantPress = () => {
+    navigation.navigate('LessoningScreen');
+  };
+
   return (
     <View style={styles.mainContainer}>
       {/* 상단 바 */}
@@ -89,8 +102,13 @@ function LessoningStudentListScreen(): React.JSX.Element {
         data={currentParticipants}
         keyExtractor={item => item.id}
         numColumns={COLUMNS}
-        renderItem={({item}) => <ParticipantCard participant={item} />}
         contentContainerStyle={styles.grid}
+        renderItem={({item}) => (
+          <ParticipantCard
+            participant={item}
+            onPress={() => handleParticipantPress()} // 클릭 이벤트 핸들러
+          />
+        )}
       />
 
       {/* 페이지 컨트롤 */}
@@ -98,17 +116,22 @@ function LessoningStudentListScreen(): React.JSX.Element {
         <TouchableOpacity
           onPress={goToPreviousPage}
           disabled={currentPage === 0}
-          style={styles.arrow}>
-          <Text style={styles.arrowText}>{'<'}</Text>
+          style={[styles.arrow, styles.leftArrow]}>
+          {currentPage === 0 ? (
+            <LeftOffIcon width={iconSize.xl} height={iconSize.xl} />
+          ) : (
+            <LeftIcon width={iconSize.xl} height={iconSize.xl} />
+          )}
         </TouchableOpacity>
-        <Text style={styles.pageText}>
-          {currentPage + 1} / {totalPages}
-        </Text>
         <TouchableOpacity
           onPress={goToNextPage}
           disabled={currentPage === totalPages - 1}
-          style={styles.arrow}>
-          <Text style={styles.arrowText}>{'>'}</Text>
+          style={[styles.arrow, styles.rightArrow]}>
+          {currentPage === totalPages - 1 ? (
+            <RightOffIcon width={iconSize.xl} height={iconSize.xl} />
+          ) : (
+            <RightIcon width={iconSize.xl} height={iconSize.xl} />
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -125,11 +148,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   interactionToolContainer: {
-    zIndex: 1,
+    zIndex: 2,
     position: 'absolute',
     top: 10,
     width: '100%',
-    height: '100%',
+    height: '15%',
   },
   closeButton: {
     position: 'absolute',
@@ -162,22 +185,20 @@ const styles = StyleSheet.create({
     marginTop: getResponsiveSize(80),
   },
   pageControls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: getResponsiveSize(20),
-  },
-  pageText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginHorizontal: getResponsiveSize(16),
-    color: '#fff',
+    zIndex: 1,
+    position: 'absolute',
+    width: '100%',
+    top: '50%',
   },
   arrow: {
     padding: getResponsiveSize(2),
   },
-  arrowText: {
-    fontSize: 20,
-    color: '#fff',
+  leftArrow: {
+    position: 'absolute',
+    left: getResponsiveSize(16),
+  },
+  rightArrow: {
+    position: 'absolute',
+    right: getResponsiveSize(16),
   },
 });

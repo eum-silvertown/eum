@@ -68,7 +68,7 @@ function SidebarMenus(): React.JSX.Element {
           styles.selectedBackgroundContainer,
           {
             transform: [
-              {translateY: selected * (iconSize.md + spacing.lg * 2.5)},
+              {translateY: selected * (iconSize.md + spacing.lg * 2.54)},
             ],
           },
         ]}>

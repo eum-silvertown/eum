@@ -6,7 +6,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import ClockIcon from '@assets/icons/clockIcon.svg';
 import QuestionsIcon from '@assets/icons/questionsIcon.svg';
 import EmptyHomeworkIcon from '@assets/icons/emptyHomeworkIcon.svg';
-
+import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
+import { Text as HeaderText } from '@components/common/Text';
 interface Homework {
   homeworkId: string;
   title: string;
@@ -31,7 +32,16 @@ const ClassHomeworkListScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>숙제 목록</Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <BackArrowIcon />
+        </TouchableOpacity>
+        <HeaderText variant="title" style={styles.headerText} weight="bold">
+          <Text>
+            숙제 목록
+          </Text>
+        </HeaderText>
+      </View>
       <FlatList
         data={homework}
         keyExtractor={(item) => item.homeworkId}
@@ -97,6 +107,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     fontWeight: 'bold',
+  },
+  header: {
+    marginTop: spacing.xl,
+    marginLeft: spacing.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerText: {
+    marginLeft: spacing.md,
   },
 });
 

@@ -5,8 +5,6 @@ import {useEffect, useRef} from 'react';
 import {useAuthStore} from '@store/useAuthStore';
 import Modals from './Modals';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import BookModal from './BookModal';
-import {useBookModalStore} from '@store/useBookModalStore';
 import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import {borderRadius} from '@theme/borderRadius';
@@ -30,6 +28,7 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
   const screensWithoutSidebar = [
     'LessoningScreen',
     'LessoningStudentListScreen',
+    'QuestionCreateScreen',
   ];
 
   useEffect(() => {

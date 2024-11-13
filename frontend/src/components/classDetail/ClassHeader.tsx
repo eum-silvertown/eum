@@ -1,31 +1,32 @@
-import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { Text } from '@components/common/Text';
-import { useNavigation } from '@react-navigation/native';
-import { spacing } from '@theme/spacing';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {Text} from '@components/common/Text';
+import {useNavigation} from '@react-navigation/native';
+import {spacing} from '@theme/spacing';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 import UpdateLectureModal from './UpdateLectureModal';
-import { useModal } from 'src/hooks/useModal';
-import { deleteLecture } from '@services/lectureInformation';
-import { useMutation } from '@tanstack/react-query';
-import { getResponsiveSize } from '@utils/responsive';
+import {useModal} from 'src/hooks/useModal';
+import {deleteLecture} from '@services/lectureInformation';
+import {useMutation} from '@tanstack/react-query';
+import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type ClassHeaderProps = {
   isTeacher: boolean;
-  lectureId?: number;
-  title?: string;
-  subtitle?: string;
-  schedule?: { day: string; period: number }[];
-  semester?: number;
-  grade?: number;
-  classNumber?: number;
-  backgroundColor?: string;
-  fontColor?: string;
-  pastTeacherName?: string;
+  lectureId: number;
+  title: string;
+  subtitle: string;
+  schedule: {day: string; period: number}[];
+  semester: number;
+  grade: number;
+  classNumber: number;
+  lectureStatus: boolean;
+  backgroundColor: string;
+  fontColor: string;
+  pastTeacherName: string;
 };
 
 function ClassHeader({
@@ -40,11 +41,13 @@ function ClassHeader({
   backgroundColor,
   fontColor,
   pastTeacherName,
+  lectureStatus,
 }: ClassHeaderProps): React.JSX.Element {
-  const navigation = useNavigation<NavigationProps>();
-  const { open } = useModal();
 
-  const { mutate: deleteMutation } = useMutation({
+  const navigation = useNavigation<NavigationProps>();
+  const {open} = useModal();
+
+  const {mutate: deleteMutation} = useMutation({
     mutationFn: (deleteLectureId: number) => deleteLecture(deleteLectureId),
     onSuccess: () => {
       navigation.navigate('ClassListScreen');
@@ -60,7 +63,7 @@ function ClassHeader({
           text: '삭제',
           onPress: () => {
             console.log('삭제 확정');
-            deleteMutation(lectureId!);
+            deleteMutation(lectureId);
           },
           style: 'destructive',
         },
@@ -69,7 +72,7 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      { cancelable: true },
+      {cancelable: true},
     );
   };
 
@@ -83,10 +86,10 @@ function ClassHeader({
           onPress: () =>
             open(
               <UpdateLectureModal
-                lectureId={lectureId!}
-                grade={grade!}
-                classNumber={classNumber!}
-                pastTeacherName={pastTeacherName!}
+                lectureId={lectureId}
+                grade={grade}
+                classNumber={classNumber}
+                pastTeacherName={pastTeacherName}
               />,
               {
                 title: '수업 수정',
@@ -106,8 +109,23 @@ function ClassHeader({
           style: 'cancel',
         },
       ],
-      { cancelable: true },
+      {cancelable: true},
     );
+  };
+
+  const enterClass = () => {
+    // TODO : 아래 !lectureStatus 중 ! 제거하기
+    if (!lectureStatus) {
+      if (isTeacher) {
+        // isTeacher가 true일 때는 params 없이 navigate 호출
+        navigation.navigate('LessoningStudentListScreen');
+      } else {
+        // isTeacher가 false일 때는 data를 포함하여 navigate 호출
+        navigation.navigate('LessoningScreen');
+      }
+    } else {
+      Alert.alert('수업 종료됨', '이 수업은 종료되었습니다.');
+    }
   };
 
   return (
@@ -127,9 +145,9 @@ function ClassHeader({
           {schedule?.map((item, index) => (
             <View
               key={index}
-              style={[styles.scheduleChip, { backgroundColor: backgroundColor }]}>
-              <Text style={[styles.scheduleChipText, { color: fontColor }]}>
-                {item.day}
+              style={[styles.scheduleChip, {backgroundColor: backgroundColor}]}>
+              <Text style={[styles.scheduleChipText, {color: fontColor}]}>
+                {item.day} - {item.period}교시
               </Text>
             </View>
           ))}
@@ -142,11 +160,19 @@ function ClassHeader({
       </View>
       <View style={styles.rightSection}>
         <TouchableOpacity
-          style={styles.enterButton}
-          onPress={() =>
-            navigation.navigate(isTeacher ? 'LessoningStudentListScreen' : 'LessoningScreen')
-          }>
-          <Text style={styles.enterButtonText}>수업 입장</Text>
+          style={[
+            styles.enterButton,
+            !lectureStatus && styles.enterButtonDisabled,
+          ]}
+          onPress={enterClass}
+          disabled={lectureStatus}>
+          <Text
+            style={[
+              styles.enterButtonText,
+              !lectureStatus && styles.enterButtonTextDisabled,
+            ]}>
+            {lectureStatus ? '수업 입장' : '수업 종료됨'}
+          </Text>
         </TouchableOpacity>
         {isTeacher && (
           <TouchableOpacity
@@ -178,24 +204,26 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
   },
   gradeSemesterChip: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#2e2559',
     paddingVertical: getResponsiveSize(4),
     paddingHorizontal: 8,
-    borderRadius: spacing.lg,
+    borderRadius: spacing.md,
     marginLeft: spacing.sm,
   },
   gradeSemesterText: {
     color: '#FFFFFF',
+    fontWeight: '700',
     fontSize: 12,
   },
   scheduleChip: {
     paddingVertical: getResponsiveSize(4),
     paddingHorizontal: getResponsiveSize(8),
-    borderRadius: 12,
+    borderRadius: 100,
     marginLeft: spacing.xs,
   },
   scheduleChipText: {
     fontSize: 12,
+    fontWeight: '700',
   },
   subtitle: {
     marginTop: spacing.xs,
@@ -211,12 +239,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50',
     paddingVertical: getResponsiveSize(6),
     paddingHorizontal: getResponsiveSize(12),
-    borderRadius: 8,
+    borderRadius: 10,
     marginRight: spacing.lg,
+  },
+  enterButtonDisabled: {
+    backgroundColor: '#BDBDBD',
   },
   enterButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  enterButtonTextDisabled: {
+    color: '#757575',
   },
   menuIconContainer: {
     marginLeft: spacing.sm,

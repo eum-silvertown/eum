@@ -18,18 +18,20 @@ import DeleteIcon from '@assets/icons/cancelIcon.svg';
 import {colors} from 'src/hooks/useColors';
 import {iconSize} from '@theme/iconSize';
 
-import {toggleTodo, updateTodo, deleteTodo} from '@services/todoService';
+import {toggleTodo, deleteTodo} from '@services/todoService';
 import {getResponsiveSize} from '@utils/responsive';
 import {useModal} from 'src/hooks/useModal';
 import AddTodoModal from './AddTodoModal';
+import ConfirmationModal from '@components/common/ConfirmationModal';
 
 interface TodoProps {
   item: {
     id: number;
     title: string;
-    prioirty: number;
+    priority: number;
     content: string;
     isDone: boolean;
+    createAt: string;
     updatedAt: string;
   };
   onToggleComplete?: () => void;
@@ -95,22 +97,16 @@ export default function Todo({
 
   const handleDelete = () => {
     open(
-      <View style={{alignItems: 'center'}}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={async () => {
-            try {
-              await deleteTodo(item.id);
-              if (onDelete) onDelete();
-            } catch (error) {
-              Alert.alert('할 일 삭제를 실패하였습니다.');
-            }
-          }}>
-          <Text align="center" weight="bold" color="white">
-            삭제
-          </Text>
-        </TouchableOpacity>
-      </View>,
+      <ConfirmationModal
+        onConfirm={async () => {
+          try {
+            await deleteTodo(item.id);
+            if (onDelete) onDelete();
+          } catch (error) {
+            Alert.alert('할 일 삭제를 실패하였습니다.');
+          }
+        }}
+      />,
       {title: ' 정말 삭제 하시겠습니까? '},
     );
   };
@@ -144,8 +140,8 @@ export default function Todo({
             value={isDone}
             onValueChange={handleToggleComplete}
             tintColors={{
-              true: getCheckBoxColor(item.prioirty),
-              false: getCheckBoxColor(item.prioirty),
+              true: getCheckBoxColor(item.priority),
+              false: getCheckBoxColor(item.priority),
             }}
           />
 

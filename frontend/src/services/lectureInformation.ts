@@ -148,6 +148,7 @@ export type LectureDetailType = {
   semester: number;
   grade: number;
   classNumber: number;
+  lectureStatus: boolean;
   teacherModel: TeacherType;
   schedule: ScheduleType[];
   notices: NoticeType[];
@@ -225,7 +226,7 @@ export type LectureListItemType = {
   grade: number;
   classNumber: number;
   schedule: string[];
-  name: string;
+  teacher: TeacherType;
 };
 
 export type LectureListResponse = {
@@ -244,6 +245,56 @@ export const getLectureList = async (): Promise<LectureListItemType[]> => {
     return data.data; // data 필드에 수업 리스트 배열이 포함되어 있음
   } catch (error) {
     console.error('수업 리스트 조회 실패:', error);
+    throw error;
+  }
+};
+
+// 요일별 수업 리스트 조회용 타입 정의
+export type LectureListDayItemType = {
+  lectureId: number;
+  title: string;
+  subject: string;
+  introduction: string;
+  backgroundColor: string;
+  fontColor: string;
+  year: number;
+  semester: number;
+  grade: number;
+  classNumber: number;
+  teacher: {
+    teacherId: number;
+    name: string;
+    email: string;
+    tel: string;
+    image: string | null; // 이미지가 없을 수 있으므로 null 허용
+  };
+  scheduleDays: string[];
+  lecturePeriod: number; // lecture_period -> lecturePeriod
+};
+
+// 수업 목록 요일별 조회
+export const getLectureListDay = async (
+  day: string,
+  year: number,
+  semester: number,
+): Promise<LectureListDayItemType[]> => {
+  console.log('요일별 수업 리스트 조회 요청');
+  try {
+    const {data} = await authApiClient.get('/lecture/day', {
+      params: {
+        day,
+        year,
+        semester,
+      },
+    });
+    console.log('요일별 수업 리스트 조회 응답:', data.data);
+    // lecture_period를 lecturePeriod로 매핑하여 반환
+    return data.data.map((item: any) => ({
+      ...item,
+      lecturePeriod: item.lecture_period,
+    }));
+  } catch (error) {
+    console.error('요일별 수업 리스트 조회 실패:', error);
     throw error;
   }
 };
