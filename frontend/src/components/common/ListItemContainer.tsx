@@ -1,6 +1,5 @@
 import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import {StyleSheet, View} from 'react-native';
 import {ViewProps} from 'react-native-svg/lib/typescript/fabric/utils';
@@ -41,7 +40,7 @@ const styles = StyleSheet.create({
   },
   userinfo: {
     height: getResponsiveSize(88),
-    paddingVertical: spacing.md * 1.2,
-    paddingHorizontal: spacing.xxl,
+    paddingVertical: 12,
+    paddingHorizontal: 40,
   },
 });

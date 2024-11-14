@@ -1,4 +1,3 @@
-import {spacing} from '@theme/spacing';
 import {
   Animated,
   Dimensions,
@@ -35,7 +34,7 @@ function HomeScreen(): React.JSX.Element {
     outputRange: [0, 1],
     extrapolate: 'clamp',
   });
-  
+
   // 스크롤 이벤트 핸들러
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -75,7 +74,7 @@ function HomeScreen(): React.JSX.Element {
         timeProgressAnim={timeProgressAnim}
         transitionHour={TRANSITION_HOUR}
       />
-      <MainHeader isNightTime={isNightTime}/>
+      <MainHeader isNightTime={isNightTime} />
       <Widgets />
       <ScrollView
         ref={scrollViewRef}
@@ -100,22 +99,21 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingHorizontal: spacing.xl,
     backgroundColor: 'white',
   },
   content: {
     flex: 1,
-    gap: spacing.lg,
-    marginVertical: spacing.md,
+    gap: 15,
+    marginVertical: 10,
   },
   contentTop: {
     flexDirection: 'row',
     flex: 4,
-    gap: spacing.lg,
+    gap: 15,
   },
   contentBottom: {
     flex: 5,
-    gap: spacing.md,
+    gap: 10,
   },
   scrollView: {
     position: 'absolute',

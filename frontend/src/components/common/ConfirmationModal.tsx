@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
 import {useModalContext} from 'src/contexts/useModalContext';
@@ -51,7 +50,7 @@ const ConfirmationModal = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: spacing.lg,
+    marginTop: 15,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
@@ -64,8 +63,8 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
+    paddingVertical: 10,
+    paddingHorizontal: 25,
     borderRadius: borderRadius.md,
   },
 });

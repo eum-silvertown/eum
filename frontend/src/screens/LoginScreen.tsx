@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {TouchableOpacity, StyleSheet, View, Image} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
 import serviceLogoImage from '@assets/images/serviceLogoImage.png';
@@ -91,7 +90,7 @@ function LoginScreen(): React.JSX.Element {
       </View>
 
       <View style={styles.loginfield}>
-        <View style={{gap: spacing.md}}>
+        <View style={{gap: 10}}>
           <InputField
             label="아이디"
             value={id}
@@ -176,7 +175,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: 10,
     justifyContent: 'center',
   },
   header: {
@@ -185,7 +184,7 @@ const styles = StyleSheet.create({
   },
   loginfield: {
     width: '50%',
-    gap: spacing.xl,
+    gap: 25,
   },
   passwordContainer: {
     flexDirection: 'row',
@@ -206,7 +205,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,
+    paddingVertical: 10,
     alignItems: 'center',
     alignSelf: 'center',
     width: '100%',

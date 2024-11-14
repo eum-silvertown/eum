@@ -2,7 +2,6 @@ import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Text} from '@components/common/Text';
 import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import type {LectureType} from '@store/useLectureStore'; // useLectureStore에서 Lecture 타입을 가져옴
 import {colors} from 'src/hooks/useColors';
@@ -76,10 +75,10 @@ const styles = StyleSheet.create({
   lectureContainer: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: spacing.lg,
-    marginTop: spacing.lg,
-    paddingRight: spacing.lg,
-    marginRight: spacing.lg,
+    paddingTop: 15,
+    marginTop: 15,
+    paddingRight: 15,
+    marginRight: 15,
   },
   pagesContainer: {
     width: '100%',
@@ -91,11 +90,11 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: borderRadius.sm,
     borderWidth: borderWidth.xs,
-    padding: spacing.lg,
+    padding: 15,
     justifyContent: 'space-between',
   },
   lectureTitle: {
-    marginTop: spacing.lg,
+    marginTop: 15,
   },
   lectureInfo: {
     flexDirection: 'row',
@@ -104,8 +103,8 @@ const styles = StyleSheet.create({
   },
   chip: {
     backgroundColor: 'black',
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.xl,
     justifyContent: 'center',

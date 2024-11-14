@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import ColorPicker from '@components/lectureList/ColorPicker';
 import {Picker} from '@react-native-picker/picker';
@@ -232,10 +231,7 @@ const AddLectureModal = (): React.JSX.Element => {
           <View style={styles.lectureInfoContainer}>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text
-                variant="subtitle"
-                weight="bold"
-                style={styles.contentLabel}>
+              <Text variant="subtitle" weight="bold">
                 제목
               </Text>
               <Text weight="bold">
@@ -253,7 +249,7 @@ const AddLectureModal = (): React.JSX.Element => {
                 <StatusMessage message={titleError} status="error" />
               ) : null}
             </View>
-            <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
+            <Text variant="subtitle" weight="bold">
               과목
             </Text>
             <View style={styles.pickerSet}>
@@ -272,10 +268,7 @@ const AddLectureModal = (): React.JSX.Element => {
               <StatusMessage message={subjectError} status="error" />
             ) : null}
             <View>
-              <Text
-                variant="subtitle"
-                weight="bold"
-                style={styles.contentLabel}>
+              <Text variant="subtitle" weight="bold">
                 수업 소개
               </Text>
               <InputField
@@ -292,7 +285,7 @@ const AddLectureModal = (): React.JSX.Element => {
               </View>
             </View>
 
-            <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
+            <Text variant="subtitle" weight="bold">
               학급
             </Text>
             <View style={styles.pickerSet}>
@@ -330,10 +323,7 @@ const AddLectureModal = (): React.JSX.Element => {
 
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text
-                variant="subtitle"
-                weight="bold"
-                style={styles.contentLabel}>
+              <Text variant="subtitle" weight="bold">
                 수업 시간표
               </Text>
               <TouchableOpacity onPress={addPickerSet}>
@@ -392,17 +382,14 @@ const AddLectureModal = (): React.JSX.Element => {
           <View style={styles.separator} />
 
           <View style={styles.lecturePreviewContainer}>
-            <Text variant="subtitle" weight="bold" style={styles.contentLabel}>
+            <Text variant="subtitle" weight="bold">
               생성된 수업 예시
             </Text>
             <View style={{alignItems: 'center'}}>
               {lecturePreview && <LectureCreateBook item={lecturePreview} />}
             </View>
             <View>
-              <Text
-                variant="subtitle"
-                weight="bold"
-                style={styles.contentLabel}>
+              <Text variant="subtitle" weight="bold">
                 색상 선택
               </Text>
 
@@ -490,33 +477,30 @@ const AddLectureModal = (): React.JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: spacing.md,
+    paddingVertical: 10,
   },
   content: {
     flex: 1,
     flexDirection: 'row',
-    gap: spacing.xl,
-  },
-  contentLabel: {
-    // marginBottom: spacing.sm,
+    gap: 25,
   },
   lectureInfoContainer: {
     flex: 2,
   },
   lecturePreviewContainer: {
-    gap: spacing.xs,
+    gap: 3,
     flex: 2,
   },
   createButton: {
-    marginTop: spacing.md,
-    padding: spacing.md,
+    marginTop: 10,
+    padding: 10,
     borderRadius: borderRadius.md,
     alignItems: 'center',
     backgroundColor: '#2E2559',
   },
   colorButton: {
-    marginTop: spacing.md,
-    padding: spacing.md,
+    marginTop: 10,
+    padding: 10,
     borderRadius: borderRadius.md,
     alignItems: 'center',
   },
@@ -525,8 +509,8 @@ const styles = StyleSheet.create({
     gap: getResponsiveSize(9),
   },
   confirmButton: {
-    marginTop: spacing.md,
-    padding: spacing.md,
+    marginTop: 10,
+    padding: 10,
     borderRadius: borderRadius.md,
     alignItems: 'center',
   },
@@ -535,8 +519,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xl,
-    marginBottom: spacing.xl,
+    gap: 25,
+    marginBottom: 25,
   },
   colorContainer: {
     height: '100%',
@@ -556,14 +540,14 @@ const styles = StyleSheet.create({
   currentColorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 5,
   },
   currentColorFont: {
     textShadowColor: 'black',
     textShadowRadius: 1,
   },
   pickerSet: {
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: 10,
     borderWidth: borderWidth.sm,
     borderColor: colors.light.borderColor.cardBorder,
     borderRadius: borderRadius.md,
@@ -576,10 +560,10 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: borderWidth.sm,
     borderColor: colors.light.borderColor.cardBorder,
-    marginHorizontal: spacing.sm,
+    marginHorizontal: 5,
   },
   scrollViewContent: {
-    paddingBottom: spacing.md,
+    paddingBottom: 10,
   },
   separator: {
     borderColor: '#CCC',
@@ -587,13 +571,13 @@ const styles = StyleSheet.create({
     marginBottom: getResponsiveSize(16),
   },
   errorContainer: {
-    minHeight: spacing.lg,
+    minHeight: 15,
     justifyContent: 'center',
   },
   colorPickBtn: {
     backgroundColor: '#2e2559',
     color: 'white',
-    padding: spacing.md,
+    padding: 10,
     borderRadius: borderRadius.sm,
   },
 });

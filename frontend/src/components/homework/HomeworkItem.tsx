@@ -1,7 +1,6 @@
 import {StyleSheet, View} from 'react-native';
 import {Text} from '../common/Text';
 import {HomeworkType} from '@screens/homework/HomeworkScreen';
-import {spacing} from '@theme/spacing';
 import ListItemContainer from '../common/ListItemContainer';
 import {iconSize} from '@theme/iconSize';
 import {calDueToDate} from '@utils/calDueToDate';
@@ -56,7 +55,7 @@ const styles = StyleSheet.create({
     width: iconSize.xl,
     justifyContent: 'center',
     aspectRatio: 1,
-    marginHorizontal: spacing.xl,
+    marginHorizontal: 25,
     borderRadius: 9999,
   },
   homeworkTitle: {

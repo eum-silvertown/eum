@@ -8,7 +8,6 @@ import signUpStudentImage from '@assets/images/signUpStudentImage.png';
 import signUpTeacherImage from '@assets/images/signUpTeacherImage.png';
 
 import {colors} from 'src/hooks/useColors';
-import {spacing} from '@theme/spacing';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import ScreenHeader from '@components/account/ScreenHeader';
 
@@ -78,18 +77,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light.background.white,
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: 10,
     justifyContent: 'center',
   },
   header: {
     position: 'absolute',
-    top: spacing.xl,
-    left: spacing.xl,
+    top: 25,
+    left: 25,
     flexDirection: 'row',
     alignItems: 'center',
   },
   headerText: {
-    marginLeft: spacing.sm,
+    marginLeft: 5,
   },
   selectionContainer: {
     flexDirection: 'row',
@@ -100,20 +99,20 @@ const styles = StyleSheet.create({
   optionContainer: {
     width: '48%',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: 10,
   },
   divider: {
     width: 1,
     backgroundColor: '#C1C1C1',
     height: '80%',
-    marginHorizontal: spacing.sm,
+    marginHorizontal: 5,
   },
 
   submitButton: {
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,
+    paddingVertical: 10,
     alignItems: 'center',
-    marginVertical: spacing.xl,
+    marginVertical: 25,
     alignSelf: 'center',
     width: '100%',
   },
@@ -121,6 +120,6 @@ const styles = StyleSheet.create({
     width: '100%', // 고정된 비율을 적용
     height: '70%',
     resizeMode: 'contain',
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
 });

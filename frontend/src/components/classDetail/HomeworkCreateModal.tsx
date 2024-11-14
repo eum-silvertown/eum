@@ -2,7 +2,6 @@ import React from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 
 const HomeworkCreateModal = (): React.JSX.Element => {
@@ -37,26 +36,26 @@ const HomeworkCreateModal = (): React.JSX.Element => {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    marginBottom: spacing.xl,
+    marginBottom: 25,
   },
   contentContainer: {
-    marginBottom: spacing.xl,
+    marginBottom: 25,
   },
   importanceLevelContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: spacing.sm,
+    gap: 5,
   },
   importanceButton: {
     flex: 1,
     backgroundColor: colors.light.background.main,
-    padding: spacing.md,
+    padding: 10,
     borderRadius: 5,
     alignItems: 'center',
   },
   submitButton: {
     backgroundColor: colors.light.background.main,
-    padding: spacing.md,
+    padding: 10,
     alignItems: 'center',
     borderRadius: 5,
   },

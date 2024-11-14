@@ -1,6 +1,5 @@
 import {StyleSheet, View} from 'react-native';
 import ProgressBox from './ProgressBox';
-import {spacing} from '@theme/spacing';
 import ProgressChart from './ProgressChart';
 import {memo} from 'react';
 
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: '33%',
   },
-  progressBoxes: {flexDirection: 'row', flex: 1, gap: spacing.lg},
+  progressBoxes: {flexDirection: 'row', flex: 1, gap: 15},
 
   progressChart: {
     width: '30%',

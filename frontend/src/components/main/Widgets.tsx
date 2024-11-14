@@ -1,4 +1,3 @@
-import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
 import TodoList from './widgets/TodoList';
 import Weather from './widgets/Weather';
@@ -19,7 +18,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     height: '40%',
-    gap: spacing.lg,
-    padding: spacing.xl,
+    gap: 15,
+    padding: 25,
   },
 });
