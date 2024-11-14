@@ -11,7 +11,6 @@ import {
 import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
 import {spacing} from '@theme/spacing';
-import {getResponsiveSize} from '@utils/responsive';
 import React, {useEffect, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.lg,
     borderColor: `${colors.light.background.main}7f`,
-    elevation: getResponsiveSize(2),
+    elevation: 2,
   },
   fileList: {
     flex: 1,

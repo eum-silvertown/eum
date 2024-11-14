@@ -1,5 +1,7 @@
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Canvas, Circle, Path, Skia} from '@shopify/react-native-skia';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import {Canvas, Circle, Path, Skia} from '@shopify/react-native-skia';
 import UndoOffIcon from '@assets/icons/undoOffIcon.svg';
 import UndoOnIcon from '@assets/icons/undoOnIcon.svg';
 import RedoOffIcon from '@assets/icons/redoOffIcon.svg';
@@ -10,6 +12,10 @@ import HighlighterOffIcon from '@assets/icons/highlighterOffIcon.svg';
 import HighlighterOnIcon from '@assets/icons/highlighterOnIcon.svg';
 import ToolBarToLeftIcon from '@assets/icons/toolBarToLeftIcon.svg';
 import ToolBarToRightIcon from '@assets/icons/toolBarToRightIcon.svg';
+import {iconSize} from '@theme/iconSize';
+import {getResponsiveSize} from '@utils/responsive';
+import {spacing} from '@theme/spacing';
+import {useEffect, useState} from 'react';
 import {iconSize} from '@theme/iconSize';
 import {getResponsiveSize} from '@utils/responsive';
 import {spacing} from '@theme/spacing';
@@ -35,6 +41,7 @@ type CanvasComponentProps = {
   redoStack: number | null;
   toggleEraserMode?: () => void;
   isErasing?: boolean;
+  eraserPosition?: {x: number; y: number} | null;
   eraserPosition?: {x: number; y: number} | null;
 };
 
@@ -243,10 +250,11 @@ const styles = StyleSheet.create({
     paddingVertical: getResponsiveSize(16),
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-    gap: getResponsiveSize(12),
+    gap: getResponsiveSize(18),
   },
   paletteContainer: {
     flexDirection: 'column',
@@ -286,8 +294,8 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   highlighterButton: {
-    paddingVertical: getResponsiveSize(5),
-    paddingHorizontal: getResponsiveSize(3),
+    paddingVertical: getResponsiveSize(8),
+    paddingHorizontal: getResponsiveSize(5),
     backgroundColor: '#ddd',
     borderRadius: getResponsiveSize(5),
   },

@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import MathJax from 'react-native-mathjax';
-import { StyleSheet, View, Image } from 'react-native';
+import {StyleSheet, View, Image} from 'react-native';
 
 type ProblemSectionProps = {
   problemText: string;
+  fontSize?: number;
 };
 
-function ProblemExSection({ problemText }: ProblemSectionProps): React.JSX.Element {
+function ProblemExSection({
+  problemText,
+  fontSize = 12,
+}: ProblemSectionProps): React.JSX.Element {
   // 이미지 URL 추출 함수
   const extractImageUrl = (text: string): string | null => {
     const imageRegex = /!\[.*?\]\((.*?)\)/;
@@ -23,7 +27,7 @@ function ProblemExSection({ problemText }: ProblemSectionProps): React.JSX.Eleme
   const textWithoutImage = removeImageMarkdown(problemText);
 
   const mathJaxContent = `
-    <div style="font-size: 12px; height: 50px;">
+    <div style="font-size: ${fontSize}px; height: 50px;">
       <p>${textWithoutImage}</p>
     </div>
   `;
@@ -36,8 +40,11 @@ function ProblemExSection({ problemText }: ProblemSectionProps): React.JSX.Eleme
       <MathJax html={mathJaxContent} />
       {imageUrl && (
         <Image
-          source={{ uri: imageUrl }}
-          style={[styles.image, imageLoaded ? styles.imageVisible : styles.imageHidden]}
+          source={{uri: imageUrl}}
+          style={[
+            styles.image,
+            imageLoaded ? styles.imageVisible : styles.imageHidden,
+          ]}
           resizeMode="contain"
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageLoaded(false)}

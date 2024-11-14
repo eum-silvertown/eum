@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     borderRadius: getResponsiveSize(12),
     marginTop: getResponsiveSize(4),
     marginHorizontal: 'auto',
-    padding: getResponsiveSize(8),
+    padding: getResponsiveSize(12),
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pageInfoText: {
-    marginHorizontal: getResponsiveSize(12),
+    marginHorizontal: getResponsiveSize(18),
     fontSize: 18,
     fontWeight: '600',
     color: '#333',

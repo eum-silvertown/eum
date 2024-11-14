@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     borderWidth: borderWidth.xl,
     borderRadius: borderRadius.lg,
     borderColor: '#775522',
-    elevation: getResponsiveSize(2),
+    elevation: getResponsiveSize(3),
     overflow: 'hidden',
   },
 });

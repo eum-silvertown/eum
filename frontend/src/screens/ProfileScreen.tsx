@@ -7,13 +7,12 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 
 import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {getResponsiveSize} from '@utils/responsive';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
@@ -49,14 +48,13 @@ interface UploadResponse {
 export default function ProfileScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
   const {setCurrentScreen} = useCurrentScreenStore();
-  const [imageUri, setImageUri] = useState<string | null>(null);
   const {open} = useModal();
   const authStore = useAuthStore();
 
   // 유저 정보 호출
   const fetchUserInfo = async () => {
     try {
-      const response = await getUserInfo();
+      await getUserInfo();
     } catch (error) {}
   };
 
@@ -131,7 +129,6 @@ export default function ProfileScreen(): React.JSX.Element {
             const {uri, fileName, type} = selectedAsset;
 
             if (uri && fileName && type) {
-              setImageUri(uri);
               await uploadImageToS3({uri, fileName, type});
             } else {
               console.log('이미지 선택 오류', '유효한 이미지를 선택해 주세요.');
@@ -329,7 +326,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xxl,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(1),
+    elevation: 2,
     borderRadius: borderRadius.md,
   },
   profileImageContainer: {
@@ -353,7 +350,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xxl,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(1),
+    elevation: 2,
     borderRadius: borderRadius.md,
   },
   button: {

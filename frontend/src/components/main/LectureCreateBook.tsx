@@ -38,8 +38,8 @@ export default function LectureCreateBook({
                 {
                   backgroundColor: index === 0 ? item.backgroundColor : 'white',
                   transform: [
-                    {translateY: (pages - (index + 1)) * -getResponsiveSize(2)},
-                    {translateX: (pages - (index + 1)) * getResponsiveSize(2)},
+                    {translateY: (pages - (index + 1)) * -getResponsiveSize(3)},
+                    {translateX: (pages - (index + 1)) * getResponsiveSize(3)},
                   ],
                   zIndex: -(pages - (index + 1)),
                 },
@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   lectureContainer: {
-    width: getResponsiveSize(120),
-    height: getResponsiveSize(150),
+    width: getResponsiveSize(192),
+    height: getResponsiveSize(240),
     alignItems: 'center',
     padding: spacing.lg,
   },

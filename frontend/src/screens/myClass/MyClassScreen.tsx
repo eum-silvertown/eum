@@ -4,7 +4,6 @@ import {useEffect, useState} from 'react';
 import {Image, ImageProps, StyleSheet, View} from 'react-native';
 import defaultImage from '@assets/images/defaultProfileImage.png';
 import Blackboard from '@components/myClass/Blackboard';
-import {getResponsiveSize} from '@utils/responsive';
 import ScreenInfo from '@components/common/ScreenInfo';
 import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
@@ -83,7 +82,7 @@ const styles = StyleSheet.create({
   notice: {
     width: '33%',
     padding: spacing.lg,
-    elevation: getResponsiveSize(4),
+    elevation: 4,
     borderRadius: borderRadius.lg,
     borderWidth: borderWidth.xl,
     borderColor: '#775522',
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.xl,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(2),
+    elevation: 2,
     borderRadius: borderRadius.sm,
   },
   studentImage: {

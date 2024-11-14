@@ -8,7 +8,7 @@ import {useCallback, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 
 function ProgressChart(): React.JSX.Element {
-  const SIZE = getResponsiveSize(125);
+  const SIZE = getResponsiveSize(200);
   const center = vec(SIZE / 2, SIZE / 2);
   const strokeWidth = 15;
 
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ffff99',
     borderRadius: borderRadius.lg,
-    elevation: getResponsiveSize(4),
+    elevation: getResponsiveSize(6),
   },
   chart: {
     width: '100%',

@@ -14,7 +14,8 @@ import BookModal from '@components/common/BookModal';
 import {useBookModalStore} from '@store/useBookModalStore';
 import Background from '@components/main/Background';
 import Widgets from '@components/main/Widgets';
-import TimeTable from '@components/main/Timetable';
+import Timetable from '@components/main/Timetable';
+import MainHeader from '@components/main/MainHeader';
 
 const STARTING_HOUR = 9;
 const ENDING_HOUR = 22;
@@ -34,7 +35,7 @@ function HomeScreen(): React.JSX.Element {
     outputRange: [0, 1],
     extrapolate: 'clamp',
   });
-
+  
   // 스크롤 이벤트 핸들러
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -55,7 +56,7 @@ function HomeScreen(): React.JSX.Element {
     // 유저 정보 조회
     const fetchData = async () => {
       try {
-        const response = await getUserInfo();
+        await getUserInfo();
       } catch (error) {}
     };
 
@@ -74,6 +75,7 @@ function HomeScreen(): React.JSX.Element {
         timeProgressAnim={timeProgressAnim}
         transitionHour={TRANSITION_HOUR}
       />
+      <MainHeader isNightTime={isNightTime}/>
       <Widgets />
       <ScrollView
         ref={scrollViewRef}
@@ -82,7 +84,7 @@ function HomeScreen(): React.JSX.Element {
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={33}>
-        <TimeTable
+        <Timetable
           endingHour={ENDING_HOUR}
           hourWidth={hourWidth}
           isNightTime={isNightTime}

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet, ImageBackground } from 'react-native';
-import { spacing } from '@theme/spacing';
-import { getResponsiveSize } from '@utils/responsive';
-import { SvgUri } from 'react-native-svg';
+import {Text} from '@components/common/Text';
+import {View, StyleSheet, ImageBackground} from 'react-native';
+import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
+import {SvgUri} from 'react-native-svg';
 
 type TeacherProps = {
   isTeacher: boolean;
@@ -32,7 +32,7 @@ function Teacher({
             <SvgUri uri={photo} width="100%" height="100%" /> // 외부 SVG URL 사용
           ) : (
             <ImageBackground
-              source={{ uri: photo }}
+              source={{uri: photo}}
               style={styles.photo}
               imageStyle={styles.photoImage}
             />
@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   photoContainer: {
-    width: getResponsiveSize(70),
-    height: getResponsiveSize(70),
+    width: getResponsiveSize(112),
+    height: getResponsiveSize(112),
     borderRadius: 100,
     overflow: 'hidden',
     borderWidth: 2,
@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   photo: {
-    width: getResponsiveSize(80),
-    height: getResponsiveSize(80),
+    width: getResponsiveSize(128),
+    height: getResponsiveSize(128),
     justifyContent: 'center',
     alignItems: 'center',
   },
