@@ -179,9 +179,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
     borderRadius: 12,
-    marginTop: getResponsiveSize(4),
+    marginTop: getResponsiveSize(6),
     marginHorizontal: 'auto',
-    padding: getResponsiveSize(8),
+    padding: getResponsiveSize(12),
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pageInfoText: {
-    marginHorizontal: getResponsiveSize(12),
+    marginHorizontal: getResponsiveSize(18),
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
@@ -210,8 +210,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   pageButton: {
-    paddingVertical: getResponsiveSize(4),
-    paddingHorizontal: getResponsiveSize(12),
+    paddingVertical: getResponsiveSize(6),
+    paddingHorizontal: getResponsiveSize(18),
     borderRadius: 8,
     backgroundColor: '#E0F7FA',
     alignItems: 'center',
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   exitButton: {
-    padding: getResponsiveSize(4),
+    padding: getResponsiveSize(6),
     borderRadius: 8,
     backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
     alignItems: 'center',
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '80%',
-    padding: getResponsiveSize(20),
+    padding: getResponsiveSize(32),
     backgroundColor: 'white',
     borderRadius: 10,
     alignItems: 'center',
@@ -258,15 +258,15 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: getResponsiveSize(10),
+    marginBottom: getResponsiveSize(16),
   },
   input: {
     width: '100%',
-    padding: getResponsiveSize(10),
+    padding: getResponsiveSize(16),
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    marginBottom: getResponsiveSize(20),
+    marginBottom: getResponsiveSize(32),
   },
   modalButtons: {
     flexDirection: 'row',
@@ -276,8 +276,8 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: getResponsiveSize(10),
-    marginRight: getResponsiveSize(5),
+    paddingVertical: getResponsiveSize(16),
+    marginRight: getResponsiveSize(8),
     backgroundColor: '#FFCDD2',
     borderRadius: 5,
   },
@@ -288,10 +288,10 @@ const styles = StyleSheet.create({
   submitButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: getResponsiveSize(10),
-    marginLeft: getResponsiveSize(5),
+    paddingVertical: getResponsiveSize(16),
+    marginLeft: getResponsiveSize(8),
     backgroundColor: '#C8E6C9',
-    borderRadius: getResponsiveSize(5),
+    borderRadius: getResponsiveSize(8),
   },
   submitButtonText: {
     color: '#388E3C',

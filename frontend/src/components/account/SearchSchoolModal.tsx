@@ -79,7 +79,7 @@ export default function SearchSchoolModal({
       <FlatList
         data={schoolList}
         keyExtractor={item => item.id.toString()}
-        style={{height: getResponsiveSize(200)}}
+        style={{height: getResponsiveSize(320)}}
         renderItem={({item}) => (
           <TouchableOpacity onPress={() => selectSchool(item.name)}>
             <Text>

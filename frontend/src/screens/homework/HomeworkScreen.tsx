@@ -2,7 +2,6 @@ import Flag from '@components/homework/Flag';
 import HomeworkItem from '@components/homework/HomeworkItem';
 import {borderRadius} from '@theme/borderRadius';
 import {spacing} from '@theme/spacing';
-import {getResponsiveSize} from '@utils/responsive';
 import {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import ProgressBoxes from '@components/homework/ProgressBoxes';
@@ -148,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     backgroundColor: 'white',
     overflow: 'hidden',
-    elevation: getResponsiveSize(2),
+    elevation: 2,
   },
   notebook: {
     position: 'absolute',
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
   homeworkContainer: {
     flex: 1,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(2),
+    elevation: 2,
     borderRadius: borderRadius.lg,
   },
   scrollView: {

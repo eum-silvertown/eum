@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: borderRadius.lg,
     borderTopLeftRadius: borderRadius.lg,
     borderColor: `${colors.light.background.main}7f`,
-    elevation: getResponsiveSize(2),
+    elevation: 2,
   },
   navigationButtons: {
     flexDirection: 'row',

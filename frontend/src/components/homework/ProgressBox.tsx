@@ -1,9 +1,9 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Text } from '../common/Text';
-import { spacing } from '@theme/spacing';
-import { borderRadius } from '@theme/borderRadius';
-import { getResponsiveSize } from '@utils/responsive';
-import { iconSize } from '@theme/iconSize';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Text} from '../common/Text';
+import {spacing} from '@theme/spacing';
+import {borderRadius} from '@theme/borderRadius';
+import {getResponsiveSize} from '@utils/responsive';
+import {iconSize} from '@theme/iconSize';
 import CompleteHomeworkIcon from '@assets/icons/completeHomeworkIcon.svg';
 import IncompleteHomeworkIcon from '@assets/icons/incompleteHomeworkIcon.svg';
 import HomeworkCheckIcon from '@assets/icons/homeworkCheckIcon.svg';
@@ -15,26 +15,30 @@ import {
   useAnimatedReaction,
   runOnJS,
 } from 'react-native-reanimated';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import IntoIcon from '@assets/icons/intoIcon.svg';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ScreenType } from '@store/useCurrentScreenStore';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {ScreenType} from '@store/useCurrentScreenStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
-
 
 interface ProgressBoxProps {
   color: 'blue' | 'red' | 'green';
   title: string;
   content: string;
   unit: string;
-  icon: 'complete' | 'incomplete' | 'avarageScore' | 'homeworkCheck' | 'folderCheck';
+  icon:
+    | 'complete'
+    | 'incomplete'
+    | 'avarageScore'
+    | 'homeworkCheck'
+    | 'folderCheck';
   isLessonDetail?: boolean;
   navigateData?: any[];
 }
 
-const AnimatedNumber = ({ value }: { value: number }) => {
+const AnimatedNumber = ({value}: {value: number}) => {
   const progress = useSharedValue(0);
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -68,11 +72,12 @@ function ProgressBox({
   icon,
   isLessonDetail,
 }: ProgressBoxProps): React.JSX.Element {
-
   const navigation = useNavigation<NavigationProps>();
 
   const handleNavigate = () => {
-    if (!isLessonDetail) { return; }
+    if (!isLessonDetail) {
+      return;
+    }
 
     // 각 title에 맞게 이동할 페이지를 지정
     switch (title) {
@@ -130,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: spacing.lg,
     borderRadius: borderRadius.md,
-    elevation: getResponsiveSize(4),
+    elevation: getResponsiveSize(6),
   },
   blue: {
     backgroundColor: '#D8E1FE',
