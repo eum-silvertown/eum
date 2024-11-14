@@ -2,9 +2,6 @@ import Button from '@components/common/Button';
 import {Text} from '@components/common/Text';
 import {useCutStore} from '@store/useCutStore';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
 import {moveFolder, moveQuestion} from 'src/services/questionBox';
@@ -38,7 +35,7 @@ function MoveMenu(): React.JSX.Element {
     <View style={styles.area}>
       <View style={styles.container}>
         <Text weight="bold">{title}</Text>
-        <Text style={{marginRight: spacing.lg}}>폴더</Text>
+        <Text style={{marginRight: 15}}>폴더</Text>
         <Button
           onPress={pressButtonHandler}
           variant="pressable"
@@ -56,19 +53,19 @@ const styles = StyleSheet.create({
   area: {
     alignItems: 'center',
     position: 'absolute',
-    bottom: spacing.xl,
-    left: spacing.xl,
+    bottom: 25,
+    left: 25,
     width: '100%',
   },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
-    borderWidth: borderWidth.sm,
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 25,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
   },
 });

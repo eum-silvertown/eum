@@ -13,7 +13,6 @@ import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
 import DatePicker from 'react-native-date-picker';
-import {getResponsiveSize} from '@utils/responsive';
 import {borderWidth} from '@theme/borderWidth';
 import {DetailQuestionType} from '@services/questionBox';
 import ProblemExSection from './ProblemExSection';

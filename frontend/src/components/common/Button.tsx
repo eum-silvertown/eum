@@ -31,7 +31,7 @@ function Button({
   });
   const sizes = StyleSheet.create({
     sm: {
-      width: getResponsiveSize(96),
+      width: 125,
     },
     md: {
       width: getResponsiveSize(128),
@@ -41,7 +41,7 @@ function Button({
     },
     full: {
       width: '100%',
-      height: getResponsiveSize(40),
+      height: 50,
     },
   });
 

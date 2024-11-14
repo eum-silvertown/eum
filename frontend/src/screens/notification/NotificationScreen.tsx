@@ -1,15 +1,10 @@
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
-import {iconSize} from '@theme/iconSize';
-import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
-import ScreenInfo from '@components/common/ScreenInfo';
 
 function NotificationScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
-      <ScreenInfo title="알림 센터" />
       <View style={styles.contentContainer}>
         <View style={styles.notifications}>
           <View>
@@ -30,7 +25,7 @@ function NotificationScreen(): React.JSX.Element {
                 <Text variant="caption" color="secondary">
                   2024. 11. 11 08:55
                 </Text>
-                <CancelIcon width={iconSize.sm} height={iconSize.sm} />
+                <CancelIcon width={20} height={20} />
               </View>
             </View>
           ))}
@@ -56,54 +51,54 @@ export default NotificationScreen;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.xxl,
+    paddingVertical: 25,
+    paddingHorizontal: 40,
     backgroundColor: 'white',
   },
   contentContainer: {
     flexDirection: 'row',
     width: '100%',
-    height: '92%',
-    gap: spacing.xl,
+    height: '100%',
+    gap: 25,
   },
   notifications: {
     width: '75%',
     height: '100%',
-    gap: spacing.lg,
-    padding: spacing.lg,
+    gap: 15,
+    padding: 15,
     backgroundColor: 'white',
     elevation: 2,
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
   },
   notification: {
     flexDirection: 'row',
     alignItems: 'center',
     height: '10%',
-    gap: spacing.xl,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.xl,
+    gap: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
     backgroundColor: 'white',
     elevation: 1,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
   },
   icon: {
-    width: iconSize.lg,
-    height: iconSize.lg,
+    width: 30,
+    height: 30,
     borderRadius: 9999,
     backgroundColor: 'gray',
   },
   notificationTail: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.lg,
+    gap: 15,
     marginLeft: 'auto',
   },
-  buttons: {flex: 1, gap: spacing.lg},
+  buttons: {flex: 1, gap: 15},
   button: {
     flex: 1,
-    padding: spacing.lg,
+    padding: 15,
     backgroundColor: 'white',
     elevation: 2,
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
   },
 });

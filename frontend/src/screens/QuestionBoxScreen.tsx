@@ -8,9 +8,6 @@ import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
 import React, {useEffect, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
@@ -116,14 +113,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
-    padding: spacing.xl,
+    borderRadius: 15,
+    padding: 25,
   },
   contentContainer: {
     flex: 1,
     backgroundColor: 'white',
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderRadius: 15,
     borderColor: `${colors.light.background.main}7f`,
     elevation: 2,
   },
@@ -134,8 +131,8 @@ const styles = StyleSheet.create({
   },
   fileItem: {
     width: '20%',
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 25,
+    paddingHorizontal: 10,
   },
 });
 

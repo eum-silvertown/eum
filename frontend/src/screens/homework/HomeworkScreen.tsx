@@ -1,7 +1,5 @@
 import Flag from '@components/homework/Flag';
 import HomeworkItem from '@components/homework/HomeworkItem';
-import {borderRadius} from '@theme/borderRadius';
-import {spacing} from '@theme/spacing';
 import {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import ProgressBoxes from '@components/homework/ProgressBoxes';
@@ -10,7 +8,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-// import noteSpringImage from '@assets/images/noteSpring.png';
 
 export type HomeworkType = {
   state: '완료' | '미제출';
@@ -89,20 +86,8 @@ function HomeworkScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {/* <ScreenInfo title="숙제" /> */}
-      <View style={styles.flags}>
-        <Animated.View
-          style={[
-            selectedAnimatedStyles,
-            {
-              position: 'absolute',
-              width: '10%',
-              height: '100%',
-              backgroundColor: 'yellow',
-              borderRadius: borderRadius.lg,
-            },
-          ]}
-        />
+      <View style={styles.flagsContainer}>
+        <Animated.View style={[selectedAnimatedStyles, styles.flags]} />
         {flag.map((_, index) => (
           <Flag
             key={index}
@@ -137,17 +122,24 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    gap: spacing.lg,
-    padding: spacing.lg,
-    borderRadius: borderRadius.lg,
+    gap: 15,
+    padding: 15,
+    borderRadius: 15,
   },
-  flags: {
+  flagsContainer: {
     flexDirection: 'row',
     height: '10%',
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
     backgroundColor: 'white',
     overflow: 'hidden',
     elevation: 2,
+  },
+  flags: {
+    position: 'absolute',
+    width: '10%',
+    height: '100%',
+    backgroundColor: 'yellow',
+    borderRadius: 15,
   },
   notebook: {
     position: 'absolute',
@@ -158,18 +150,18 @@ const styles = StyleSheet.create({
   notebookContainer: {
     flex: 1,
     flexDirection: 'row',
-    borderBottomEndRadius: borderRadius.sm,
-    borderTopEndRadius: borderRadius.sm,
+    borderBottomEndRadius: 5,
+    borderTopEndRadius: 5,
   },
   content: {
     flex: 1,
-    gap: spacing.lg,
+    gap: 15,
   },
   homeworkContainer: {
     flex: 1,
     backgroundColor: 'white',
     elevation: 2,
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
   },
   scrollView: {
     flex: 1,
@@ -177,7 +169,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    padding: spacing.md,
+    padding: 10,
     alignItems: 'center',
   },
 });
