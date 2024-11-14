@@ -1,6 +1,6 @@
-package com.eum.drawingservice.dto;
+package com.eum.drawingservice.domain.lesson.dto;
 
-import com.eum.drawingservice.entity.Role;
+import com.eum.drawingservice.domain.lesson.entity.Role;
 
 import lombok.Getter;
 import lombok.Setter;

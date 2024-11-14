@@ -1,9 +1,9 @@
-package com.eum.drawingservice.service;
+package com.eum.drawingservice.domain.lesson.service;
 
-import com.eum.drawingservice.dto.DrawingRequestDTO;
-import com.eum.drawingservice.dto.DrawingResponseDTO;
-import com.eum.drawingservice.entity.Drawing;
-import com.eum.drawingservice.repository.DrawingRepository;
+import com.eum.drawingservice.domain.lesson.dto.DrawingRequestDTO;
+import com.eum.drawingservice.domain.lesson.dto.DrawingResponseDTO;
+import com.eum.drawingservice.domain.lesson.entity.Drawing;
+import com.eum.drawingservice.domain.lesson.repository.DrawingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

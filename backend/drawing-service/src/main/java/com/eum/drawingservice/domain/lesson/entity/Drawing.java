@@ -1,4 +1,4 @@
-package com.eum.drawingservice.entity;
+package com.eum.drawingservice.domain.lesson.entity;
 
 import lombok.Builder;
 import lombok.Getter;
