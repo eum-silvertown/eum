@@ -11,9 +11,12 @@ import { useLessonStore } from '@store/useLessonStore';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getLectureDetail, LectureDetailType } from '@services/lectureInformation';
 import { deleteLesson } from '@services/lessonService';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassLessonListScreen(): React.JSX.Element {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps>();
   const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
   const role = useAuthStore(state => state.userInfo.role);

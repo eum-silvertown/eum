@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import {getResponsiveSize} from '@utils/responsive';
 import {useLessonStore} from '@store/useLessonStore';
@@ -10,6 +10,11 @@ import StudentCanvasSection from '@components/classActivity/StudentCanvasSection
 
 function SolveExamScreen(): React.JSX.Element {
   const lessonId = useLessonStore(state => state.lessonId);
+  const route = useRoute();
+  const {examId, questionIds} = route.params as {
+    examId: number;
+    questionIds: number[];
+  };
 
   const [currentPage, setCurrentPage] = useState(0);
 

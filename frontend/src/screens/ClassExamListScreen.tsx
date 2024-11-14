@@ -8,23 +8,27 @@ import {
   Alert,
 } from 'react-native';
 import {spacing} from '@theme/spacing';
-import {useNavigation} from '@react-navigation/native';
 import {iconSize} from '@theme/iconSize';
+import {useNavigation} from '@react-navigation/native';
 import CalendarIcon from '@assets/icons/calendarIcon.svg';
+import ClockIcon from '@assets/icons/clockIcon.svg'; // ClockIcon 추가
 import EmptyExamIcon from '@assets/icons/emptyExamIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import {Text as HeaderText} from '@components/common/Text';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import {useLessonStore} from '@store/useLessonStore';
-import {
-  LectureDetailType,
-  getLectureDetail,
-} from '@services/lectureInformation';
 import {useAuthStore} from '@store/useAuthStore';
+import {useLessonStore} from '@store/useLessonStore';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import {
+  getLectureDetail,
+  LectureDetailType,
+} from '@services/lectureInformation';
 import {deleteExam} from '@services/examService';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
-const ClassExamListScreen = () => {
-  const navigation = useNavigation();
+function ClassExamListScreen(): React.JSX.Element {
+  const navigation = useNavigation<NavigationProps>();
   const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
   const role = useAuthStore(state => state.userInfo.role);
@@ -47,10 +51,9 @@ const ClassExamListScreen = () => {
     },
   });
 
-  const handleExamPress = (examId: number) => {
-    console.log('examId:', examId);
-
-    // navigation.navigate('ExamDetail', { examId });
+  const handleExamPress = (examId: number, questionIds: number[]) => {
+    console.log('examId:', examId, 'questionIds:', questionIds);
+    navigation.navigate('SolveExamScreen', {examId, questionIds});
   };
 
   const handleDeleteExam = (examId: number) => {
@@ -68,6 +71,7 @@ const ClassExamListScreen = () => {
   };
 
   const exams = lectureDetail?.exams || [];
+  console.log('exams:', exams);
 
   return (
     <View style={styles.container}>
@@ -83,31 +87,43 @@ const ClassExamListScreen = () => {
         data={exams}
         keyExtractor={item => item.examId.toString()}
         renderItem={({item}) => (
-          <View style={styles.item}>
-            <View style={styles.itemContent}>
+          <View style={styles.card}>
+            <View style={styles.cardContent}>
               <TouchableOpacity
-                onPress={() => handleExamPress(item.examId)}
-                style={styles.itemHeader}>
-                <CalendarIcon width={iconSize.sm} height={iconSize.sm} />
-                <Text style={styles.itemTitle}>{item.title}</Text>
+                onPress={() => handleExamPress(item.examId, item.questions)}
+                style={styles.examContent}>
+                <CalendarIcon
+                  width={iconSize.md}
+                  height={iconSize.md}
+                  style={styles.icon}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.itemTitle}>{item.title}</Text>
+                  <View style={styles.iconRow}>
+                    <ClockIcon width={iconSize.sm} height={iconSize.sm} />
+                    <Text style={styles.itemText}>
+                      시작 시간: {new Date(item.startTime).toLocaleString()}
+                    </Text>
+                  </View>
+                  <View style={styles.iconRow}>
+                    <ClockIcon width={iconSize.sm} height={iconSize.sm} />
+                    <Text style={styles.itemText}>
+                      종료 시간: {new Date(item.endTime).toLocaleString()}
+                    </Text>
+                  </View>
+                  <Text style={styles.itemText}>
+                    문제 개수: {item.questions.length}
+                  </Text>
+                </View>
               </TouchableOpacity>
-              <Text style={styles.itemText}>
-                시작 시간: {new Date(item.startTime).toLocaleString()}
-              </Text>
-              <Text style={styles.itemText}>
-                종료 시간: {new Date(item.endTime).toLocaleString()}
-              </Text>
-              <Text style={styles.itemText}>
-                문제 개수: {item.questions.length}
-              </Text>
+              {role === 'TEACHER' && (
+                <TouchableOpacity
+                  onPress={() => handleDeleteExam(item.examId)}
+                  style={styles.deleteButton}>
+                  <Text style={styles.deleteButtonText}>삭제하기</Text>
+                </TouchableOpacity>
+              )}
             </View>
-            {role === 'TEACHER' && (
-              <TouchableOpacity
-                onPress={() => handleDeleteExam(item.examId)}
-                style={styles.deleteButton}>
-                <Text style={styles.deleteButtonText}>삭제하기</Text>
-              </TouchableOpacity>
-            )}
           </View>
         )}
         ListEmptyComponent={
@@ -123,17 +139,11 @@ const ClassExamListScreen = () => {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {flex: 1, padding: spacing.lg, backgroundColor: '#FFF'},
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: spacing.md,
-    color: '#333',
-  },
-  item: {
+  card: {
     marginHorizontal: spacing.xxl,
     padding: spacing.xl,
     backgroundColor: '#F9E1E1',
@@ -144,25 +154,30 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
+  },
+  cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  itemContent: {
+  examContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
-  itemHeader: {
+  icon: {
+    marginRight: spacing.md,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  itemTitle: {fontSize: 18, fontWeight: 'bold', color: '#333'},
+  iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.xs,
   },
-  itemTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginLeft: spacing.sm,
-  },
-  itemText: {fontSize: 14, color: '#666', marginBottom: spacing.xs},
+  itemText: {fontSize: 14, color: '#666', marginLeft: spacing.sm},
   deleteButton: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
@@ -180,13 +195,12 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xxl,
   },
   emptyIcon: {
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   emptyText: {
     fontSize: 16,
     color: '#666',
     fontWeight: 'bold',
-    marginBottom: spacing.md,
   },
   header: {
     marginVertical: spacing.xl,
