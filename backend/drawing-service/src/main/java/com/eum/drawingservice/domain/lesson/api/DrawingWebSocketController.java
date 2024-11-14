@@ -1,9 +1,9 @@
-package com.eum.drawingservice.api;
+package com.eum.drawingservice.domain.lesson.api;
 
-import com.eum.drawingservice.dto.DrawingRequestDTO;
-import com.eum.drawingservice.entity.Role;
+import com.eum.drawingservice.domain.lesson.dto.DrawingRequestDTO;
+import com.eum.drawingservice.domain.lesson.entity.Role;
 import com.eum.drawingservice.global.subscribe.ChannelName;
-import com.eum.drawingservice.service.DrawingService;
+import com.eum.drawingservice.domain.lesson.service.DrawingService;
 import com.eum.drawingservice.global.subscribe.SubscriptionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +14,6 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-
-import java.util.Set;
 
 @Slf4j
 @Controller
