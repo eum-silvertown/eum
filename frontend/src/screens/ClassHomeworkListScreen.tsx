@@ -1,18 +1,28 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
-import { spacing } from '@theme/spacing';
-import { iconSize } from '@theme/iconSize';
-import { useNavigation } from '@react-navigation/native';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Alert,
+} from 'react-native';
+import {spacing} from '@theme/spacing';
+import {iconSize} from '@theme/iconSize';
+import {useNavigation} from '@react-navigation/native';
 import ClockIcon from '@assets/icons/clockIcon.svg';
 import QuestionsIcon from '@assets/icons/questionsIcon.svg';
 import EmptyHomeworkIcon from '@assets/icons/emptyHomeworkIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
-import { Text as HeaderText } from '@components/common/Text';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { deleteHomework } from '@services/homeworkService';
-import { getLectureDetail, LectureDetailType } from '@services/lectureInformation';
-import { useLessonStore } from '@store/useLessonStore';
-import { useAuthStore } from '@store/useAuthStore';
+import {Text as HeaderText} from '@components/common/Text';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {deleteHomework} from '@services/homeworkService';
+import {
+  getLectureDetail,
+  LectureDetailType,
+} from '@services/lectureInformation';
+import {useLessonStore} from '@store/useLessonStore';
+import {useAuthStore} from '@store/useAuthStore';
 
 function ClassHomeworkListScreen(): React.JSX.Element {
   const navigation = useNavigation();
@@ -20,12 +30,12 @@ function ClassHomeworkListScreen(): React.JSX.Element {
   const lectureId = useLessonStore(state => state.lectureId);
   const role = useAuthStore(state => state.userInfo.role);
 
-  const { data: lectureDetail } = useQuery<LectureDetailType>({
+  const {data: lectureDetail} = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId!),
   });
 
-  const { mutate: removeHomework } = useMutation({
+  const {mutate: removeHomework} = useMutation({
     mutationFn: (homeworkId: number) => deleteHomework(homeworkId),
     onSuccess: () => {
       Alert.alert('알림', '숙제가 삭제되었습니다.');
@@ -33,7 +43,7 @@ function ClassHomeworkListScreen(): React.JSX.Element {
         queryKey: ['lectureDetail', lectureId],
       });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('숙제 삭제 실패:', error);
     },
   });
@@ -45,26 +55,21 @@ function ClassHomeworkListScreen(): React.JSX.Element {
   };
 
   const handleDeleteHomework = (homeworkId: number) => {
-    Alert.alert(
-      '숙제 삭제',
-      '이 숙제를 정말로 삭제하시겠습니까?',
-      [
-        {
-          text: '취소',
-          style: 'cancel',
-        },
-        {
-          text: '삭제',
-          onPress: () => removeHomework(homeworkId),
-          style: 'destructive',
-        },
-      ]
-    );
+    Alert.alert('숙제 삭제', '이 숙제를 정말로 삭제하시겠습니까?', [
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+      {
+        text: '삭제',
+        onPress: () => removeHomework(homeworkId),
+        style: 'destructive',
+      },
+    ]);
   };
 
   const homework = lectureDetail?.homeworks || [];
   console.log('homework:', homework);
-
 
   return (
     <View style={styles.container}>
@@ -78,34 +83,47 @@ function ClassHomeworkListScreen(): React.JSX.Element {
       </View>
       <FlatList
         data={homework}
-        keyExtractor={(item) => item.homeworkId.toString()}
-        renderItem={({ item }) => (
+        keyExtractor={item => item.homeworkId.toString()}
+        renderItem={({item}) => (
           <View style={styles.item}>
-            <TouchableOpacity onPress={() => handleHomeworkPress(item.homeworkId)}>
+            <TouchableOpacity
+              onPress={() => handleHomeworkPress(item.homeworkId)}>
               <Text style={styles.itemTitle}>{item.title}</Text>
               <View style={styles.iconRow}>
                 <ClockIcon width={iconSize.sm} height={iconSize.sm} />
-                <Text style={styles.itemText}>시작 시간: {new Date(item.startTime).toLocaleString()}</Text>
+                <Text style={styles.itemText}>
+                  시작 시간: {new Date(item.startTime).toLocaleString()}
+                </Text>
               </View>
               <View style={styles.iconRow}>
                 <ClockIcon width={iconSize.sm} height={iconSize.sm} />
-                <Text style={styles.itemText}>종료 시간: {new Date(item.endTime).toLocaleString()}</Text>
+                <Text style={styles.itemText}>
+                  종료 시간: {new Date(item.endTime).toLocaleString()}
+                </Text>
               </View>
               <View style={styles.iconRow}>
                 <QuestionsIcon width={iconSize.sm} height={iconSize.sm} />
-                <Text style={styles.itemText}>문제 개수: {item.questions.length}</Text>
+                <Text style={styles.itemText}>
+                  문제 개수: {item.questions.length}
+                </Text>
               </View>
             </TouchableOpacity>
-            {role === 'TEACHER' &&
-              <TouchableOpacity onPress={() => handleDeleteHomework(item.homeworkId)} style={styles.deleteButton}>
+            {role === 'TEACHER' && (
+              <TouchableOpacity
+                onPress={() => handleDeleteHomework(item.homeworkId)}
+                style={styles.deleteButton}>
                 <Text style={styles.deleteButtonText}>삭제하기</Text>
               </TouchableOpacity>
-            }
+            )}
           </View>
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <EmptyHomeworkIcon width={iconSize.xxl * 7} height={iconSize.xxl * 7} style={styles.emptyIcon} />
+            <EmptyHomeworkIcon
+              width={iconSize.xxl * 7}
+              height={iconSize.xxl * 7}
+              style={styles.emptyIcon}
+            />
             <Text style={styles.emptyText}>현재 등록된 숙제가 없습니다.</Text>
           </View>
         }
@@ -115,8 +133,13 @@ function ClassHomeworkListScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.lg },
-  title: { fontSize: 22, fontWeight: 'bold', color: '#333', marginBottom: spacing.md },
+  container: {flex: 1, padding: spacing.lg, backgroundColor: '#FFF'},
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: spacing.md,
+  },
   item: {
     marginHorizontal: spacing.xxl,
     padding: spacing.xl,
@@ -124,7 +147,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
@@ -132,13 +155,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  itemTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: spacing.sm },
+  itemTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: spacing.sm,
+  },
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.xs,
   },
-  itemText: { fontSize: 14, color: '#666', marginLeft: spacing.sm },
+  itemText: {fontSize: 14, color: '#666', marginLeft: spacing.sm},
   deleteButton: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,

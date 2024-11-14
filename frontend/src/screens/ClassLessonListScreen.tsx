@@ -107,7 +107,7 @@ function ClassLessonListScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.lg },
+  container: { flex: 1, padding: spacing.lg, backgroundColor: '#FFF'},
   title: { fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: spacing.md },
   card: {
     marginHorizontal: spacing.xxl,
