@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, TouchableOpacity, StyleSheet, Alert} from 'react-native';
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {createTodo, updateTodo} from '@services/todoService';
@@ -151,22 +150,22 @@ const AddTodoModal = ({
 
 const styles = StyleSheet.create({
   contentContainer: {
-    marginBottom: spacing.xl,
+    marginBottom: 25,
   },
   importanceLevelContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: spacing.sm,
+    gap: 5,
   },
   importanceButton: {
     flex: 1,
-    padding: spacing.md,
+    padding: 10,
     borderRadius: 5,
     alignItems: 'center',
   },
   submitButton: {
     backgroundColor: colors.light.background.main,
-    padding: spacing.md,
+    padding: 10,
     alignItems: 'center',
     borderRadius: 5,
   },

@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Text} from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {createNotice, LectureNoticeType} from '@services/lectureNotice';
@@ -112,10 +111,10 @@ const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    marginBottom: spacing.xl,
+    marginBottom: 25,
   },
   contentContainer: {
-    marginBottom: spacing.xl,
+    marginBottom: 25,
   },
   titleHeader: {
     flexDirection: 'row',
@@ -129,11 +128,11 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red', // 에러 메시지 텍스트 색상
     fontSize: 12,
-    marginTop: spacing.sm,
+    marginTop: 5,
   },
   submitButton: {
     backgroundColor: colors.light.background.main,
-    padding: spacing.md,
+    padding: 10,
     alignItems: 'center',
     borderRadius: 5,
   },

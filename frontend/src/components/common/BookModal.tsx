@@ -9,7 +9,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useEffect, useRef, useState} from 'react';
 import Lecture from '@components/main/Lecture';
-import {spacing} from '@theme/spacing';
 import ClassDetailScreen from '@screens/ClassDetailScreen';
 
 function BookModal(): React.JSX.Element {
@@ -30,15 +29,13 @@ function BookModal(): React.JSX.Element {
   const ANIM_DURATION = 300;
   const rotateY = useSharedValue(0);
   const containerWidth = useSharedValue(0);
-  const top = useSharedValue(bookPosition ? bookPosition.y - spacing.lg : 0);
+  const top = useSharedValue(bookPosition ? bookPosition.y - 15 : 0);
   const left = useSharedValue(
     bookPosition && containerPosition
-      ? bookPosition.x - containerPosition.x + spacing.xl
+      ? bookPosition.x - containerPosition.x + 25
       : 0,
   );
-  const width = useSharedValue(
-    bookPosition ? bookPosition.width - spacing.xl * 2 : 0,
-  );
+  const width = useSharedValue(bookPosition ? bookPosition.width - 50 : 0);
   const height = useSharedValue(bookPosition ? bookPosition.height : 0);
 
   // 표지 애니메이션 스타일
@@ -98,20 +95,20 @@ function BookModal(): React.JSX.Element {
         });
         top.value = withDelay(
           ANIM_DURATION * 2,
-          withTiming(bookPosition.y - spacing.lg, {
+          withTiming(bookPosition.y - 15, {
             duration: ANIM_DURATION,
           }),
         );
         left.value = withDelay(
           ANIM_DURATION * 2,
-          withTiming(bookPosition.x - containerPosition.x + spacing.xl, {
+          withTiming(bookPosition.x - containerPosition.x + 25, {
             duration: ANIM_DURATION,
           }),
         );
         width.value = withDelay(
           ANIM_DURATION * 2,
           withTiming(
-            bookPosition.width - spacing.xl * 2,
+            bookPosition.width - 50,
             {
               duration: ANIM_DURATION,
             },

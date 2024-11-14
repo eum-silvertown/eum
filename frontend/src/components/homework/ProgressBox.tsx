@@ -1,6 +1,5 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from '../common/Text';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
 import {iconSize} from '@theme/iconSize';
@@ -133,7 +132,7 @@ export default ProgressBox;
 const styles = StyleSheet.create({
   common: {
     flex: 1,
-    padding: spacing.lg,
+    padding: 15,
     borderRadius: borderRadius.md,
     elevation: getResponsiveSize(6),
   },
@@ -150,22 +149,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
   content: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: spacing.lg,
+    gap: 15,
   },
   contentText: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    gap: spacing.xs,
+    gap: 3,
     overflow: 'hidden',
   },
   intoButton: {
-    padding: spacing.xs,
+    padding: 3,
   },
 });

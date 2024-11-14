@@ -9,7 +9,6 @@ import {
   Alert,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
 import DatePicker from 'react-native-date-picker';
@@ -308,7 +307,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'white',
     borderRadius: borderRadius.lg,
-    marginLeft: spacing.lg,
+    marginLeft: 15,
   },
   container: {
     flex: 1,
@@ -317,7 +316,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 0.6,
     backgroundColor: '#E8F0FF',
-    marginBottom: spacing.lg,
+    marginBottom: 15,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: borderWidth.sm,
@@ -332,19 +331,19 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     borderColor: `${colors.light.background.main}7f`,
     elevation: 2,
-    padding: spacing.lg,
+    padding: 15,
     overflow: 'hidden',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: spacing.xl,
+    marginBottom: 25,
     color: colors.light.text.main,
   },
   formContainer: {
     flex: 0.6,
     backgroundColor: 'white',
-    padding: spacing.lg,
+    padding: 15,
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.md,
     borderColor: `${colors.light.background.main}7f`,
@@ -354,29 +353,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
   input: {
     borderWidth: 1,
     borderColor: '#DDD',
     borderRadius: borderRadius.sm,
-    padding: spacing.md,
-    marginBottom: spacing.lg,
+    padding: 10,
+    marginBottom: 15,
     fontSize: 16,
   },
   picker: {
-    marginVertical: spacing.md,
+    marginVertical: 10,
   },
   timeText: {
     fontSize: 16,
     color: '#333',
-    marginBottom: spacing.lg,
+    marginBottom: 15,
   },
   fileItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
+    paddingVertical: 5,
   },
   fileName: {
     fontSize: 14,
@@ -385,14 +384,14 @@ const styles = StyleSheet.create({
   removeText: {
     fontSize: 14,
     color: '#FF0000',
-    marginLeft: spacing.sm,
+    marginLeft: 5,
   },
   button: {
     backgroundColor: '#4CAF50',
-    paddingVertical: spacing.lg,
+    paddingVertical: 15,
     borderRadius: borderRadius.md,
     alignItems: 'center',
-    marginTop: spacing.lg,
+    marginTop: 15,
   },
   buttonDisabled: {
     backgroundColor: '#999',
@@ -406,7 +405,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 14,
     color: colors.light.text.main,
-    marginVertical: spacing.sm,
+    marginVertical: 5,
     fontWeight: 'bold',
   },
 });

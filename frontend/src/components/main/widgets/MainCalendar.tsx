@@ -6,7 +6,6 @@ import {Calendar} from 'react-native-big-calendar';
 import 'dayjs/locale/ko'; // dayjs의 한국어 로케일 불러오기
 import {Text} from '@components/common/Text';
 import IntoIcon from '@assets/icons/intoIcon.svg';
-import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 
 const events = [
@@ -82,7 +81,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: getResponsiveSize(16),
-    gap: spacing.md,
+    gap: 10,
   },
   header: {
     flexDirection: 'row',

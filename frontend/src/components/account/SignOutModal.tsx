@@ -1,5 +1,4 @@
 import {StyleSheet, View, TouchableOpacity, Alert} from 'react-native';
-import {spacing} from '@theme/spacing';
 import {Text} from '@components/common/Text';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
@@ -47,15 +46,15 @@ export default function SignOutModal(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: spacing.lg,
+    marginTop: 15,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
   button: {
     alignItems: 'center',
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
+    paddingVertical: 10,
+    paddingHorizontal: 25,
     borderRadius: borderRadius.md,
   },
 });

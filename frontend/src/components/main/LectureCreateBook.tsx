@@ -2,7 +2,6 @@ import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Text} from '@components/common/Text';
 import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
 
@@ -81,14 +80,14 @@ export default function LectureCreateBook({
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.md,
-    padding: spacing.md,
+    gap: 10,
+    padding: 10,
   },
   lectureContainer: {
     width: getResponsiveSize(192),
     height: getResponsiveSize(240),
     alignItems: 'center',
-    padding: spacing.lg,
+    padding: 15,
   },
   pagesContainer: {
     width: '100%',
@@ -100,11 +99,11 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: borderRadius.sm,
     borderWidth: borderWidth.xs,
-    padding: spacing.lg,
+    padding: 15,
     justifyContent: 'space-between',
   },
   lectureTitle: {
-    marginTop: spacing.lg,
+    marginTop: 15,
   },
   lectureInfo: {
     flexDirection: 'row',
@@ -113,8 +112,8 @@ const styles = StyleSheet.create({
   },
   chip: {
     backgroundColor: 'black',
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.xl,
     justifyContent: 'center',

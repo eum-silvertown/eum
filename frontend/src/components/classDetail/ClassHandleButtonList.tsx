@@ -1,7 +1,6 @@
 import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {spacing} from '@theme/spacing';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType} from '@store/useCurrentScreenStore';
@@ -52,28 +51,28 @@ export default ClassHandleButtonList;
 const styles = StyleSheet.create({
   buttonList: {
     flexDirection: 'column',
-    marginTop: spacing.md,
-    gap: spacing.lg,
-    padding: spacing.md,
+    marginTop: 10,
+    gap: 15,
+    padding: 10,
   },
   classButton: {
     backgroundColor: '#14AE5C',
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
   testButton: {
     backgroundColor: '#FF5F5F',
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
   homeworkButton: {
     backgroundColor: '#5F9FFF',
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
@@ -84,6 +83,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
-    marginBottom: spacing.xs,
+    marginBottom: 3,
   },
 });

@@ -3,7 +3,6 @@ import {Text} from '@components/common/Text';
 import {StyleSheet, View, Alert} from 'react-native';
 import ScreenHeader from '@components/account/ScreenHeader';
 import InputField from '@components/account/InputField';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {useModal} from 'src/hooks/useModal';
 import FoundIdModal from '@components/account/FoundIdModal';
@@ -95,7 +94,7 @@ function FindIdScreen(): React.JSX.Element {
       <View style={styles.inputContainer}>
         <Text weight="bold">회원가입에 사용된 이메일을 입력해주세요.</Text>
 
-        <View style={{gap: spacing.md}}>
+        <View style={{gap: 10}}>
           <InputField
             label="이메일"
             placeholder="이메일을 입력해주세요."
@@ -139,6 +138,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '40%',
-    gap: spacing.xl,
+    gap: 25,
   },
 });

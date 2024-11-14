@@ -1,7 +1,6 @@
 import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet} from 'react-native';
-import {spacing} from '@theme/spacing';
 import {Canvas, vec} from '@shopify/react-native-skia';
 import {Ring} from './Ring';
 import {typography} from '@theme/typography';
@@ -110,38 +109,38 @@ function Chart({studentScores}: ChartProps): React.JSX.Element {
 
 const styles = StyleSheet.create({
   chart: {
-    paddingVertical: spacing.md,
+    paddingVertical: 10,
   },
   subtitle: {
-    marginStart: spacing.xl,
+    marginStart: 25,
   },
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.md,
+    marginTop: 10,
     marginHorizontal: 'auto',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 15,
   },
   chartContainer: {
     width: getResponsiveSize(128),
     height: getResponsiveSize(128),
   },
   legendContainer: {
-    marginLeft: spacing.xxl,
+    marginLeft: 30,
   },
   totalScoreContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    marginBottom: spacing.md,
+    marginBottom: 10,
   },
   totalScoreLabel: {
     fontSize: typography.size.caption,
-    marginRight: spacing.xs,
+    marginRight: 3,
   },
   totalScoreValue: {
     fontSize: typography.size.title,
     fontWeight: 'bold',
-    marginRight: spacing.xs,
+    marginRight: 3,
   },
   totalScoreUnit: {
     fontSize: typography.size.body,
@@ -149,13 +148,13 @@ const styles = StyleSheet.create({
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
   colorDot: {
     width: getResponsiveSize(16),
     height: getResponsiveSize(16),
     borderRadius: 10,
-    marginRight: spacing.sm,
+    marginRight: 5,
   },
 });
 

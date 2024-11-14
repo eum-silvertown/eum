@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {spacing} from '@theme/spacing';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
 import Homework from '@components/classDetail/Homework';
@@ -197,8 +196,8 @@ function ClassDetailScreen({lectureId}: BookLectureProps): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
+    paddingHorizontal: 25,
+    paddingVertical: 15,
     position: 'relative',
   },
   bookmarkIcon: {
@@ -208,29 +207,29 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    gap: spacing.md,
+    gap: 10,
   },
   firstRow: {
     flex: 6,
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: 10,
   },
   secondRow: {
     flex: 4,
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: 10,
   },
   overviewLayout: {
     flex: 2,
     flexDirection: 'column',
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl,
+    paddingTop: 10,
+    paddingBottom: 25,
     backgroundColor: '#fafaff',
     borderRadius: 8,
   },
   mainContentLayout: {
     flex: 1,
-    gap: spacing.md,
+    gap: 10,
   },
   teacherLayout: {
     flex: 1,

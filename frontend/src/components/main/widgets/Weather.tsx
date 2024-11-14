@@ -10,14 +10,12 @@ import {
   Image,
   ActivityIndicator,
   TouchableOpacity,
-  
 } from 'react-native';
 import Config from 'react-native-config';
-import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import {colors} from 'src/hooks/useColors';
 import axios from 'axios';
-import RefreshIcon from '@assets/icons/refreshIcon.svg'
+import RefreshIcon from '@assets/icons/refreshIcon.svg';
 
 export default function Weather(): React.JSX.Element {
   const API_KEY = Config.OPENWEATHERMAP_API_KEY;
@@ -48,8 +46,8 @@ export default function Weather(): React.JSX.Element {
   };
 
   const fetchWeather = () => {
-    setLoading(true)
-    console.log('날씨 새로고침')
+    setLoading(true);
+    console.log('날씨 새로고침');
     Geolocation.getCurrentPosition(
       async position => {
         const {latitude, longitude} = position.coords;
@@ -110,7 +108,7 @@ export default function Weather(): React.JSX.Element {
           날씨
         </Text>
         <TouchableOpacity disabled={loading} onPress={fetchWeather}>
-          <RefreshIcon width={iconSize.lg} height={iconSize.lg}/>
+          <RefreshIcon width={iconSize.lg} height={iconSize.lg} />
         </TouchableOpacity>
       </View>
 
@@ -158,7 +156,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xl,
+    gap: 25,
   },
   weatherBox: {
     alignItems: 'center',
@@ -167,6 +165,6 @@ const styles = StyleSheet.create({
   weatherIcon: {
     width: iconSize.xxl,
     height: iconSize.xxl,
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
 });

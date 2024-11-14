@@ -1,7 +1,6 @@
 import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import {Text} from './Text';
 import {useColors} from 'src/hooks/useColors';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
 
@@ -23,8 +22,8 @@ function Button({
   const styles = StyleSheet.create({
     container: {
       justifyContent: 'center',
-      paddingVertical: spacing.md,
-      paddingHorizontal: spacing.lg,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
       backgroundColor: colors.background.main,
       borderRadius: borderRadius.sm,
     },

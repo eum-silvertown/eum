@@ -1,5 +1,4 @@
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 import {useEffect, useState} from 'react';
 import {Image, ImageProps, StyleSheet, View} from 'react-native';
 import defaultImage from '@assets/images/defaultProfileImage.png';
@@ -67,21 +66,21 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'white',
     borderRadius: borderRadius.lg,
-    padding: spacing.xl,
+    padding: 25,
   },
   contentContainer: {
     width: '100%',
     height: '92%',
-    gap: spacing.lg,
+    gap: 15,
   },
   topContent: {
     flexDirection: 'row',
     height: '55%',
-    gap: spacing.md,
+    gap: 10,
   },
   notice: {
     width: '33%',
-    padding: spacing.lg,
+    padding: 15,
     elevation: 4,
     borderRadius: borderRadius.lg,
     borderWidth: borderWidth.xl,
@@ -89,21 +88,21 @@ const styles = StyleSheet.create({
   },
   bottomContent: {
     flex: 1,
-    gap: spacing.lg,
+    gap: 15,
   },
   studentsContainer: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.lg,
+    gap: 15,
   },
   studentItem: {
     flexDirection: 'row',
     alignItems: 'center',
     width: `${(100 - 5.75 * 4) / 5}%`, // (100% - (gap 비율 * 6)) / 7 아이템
-    gap: spacing.lg,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xl,
+    gap: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 25,
     backgroundColor: 'white',
     elevation: 2,
     borderRadius: borderRadius.sm,
