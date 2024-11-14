@@ -12,7 +12,7 @@ import {spacing} from '@theme/spacing';
 import {useAuthStore} from '@store/useAuthStore';
 
 interface MainHeaderProps {
-  style?: ViewStyle;  
+  style?: ViewStyle;
   isNightTime?: Animated.AnimatedInterpolation<string | number>;
 }
 
