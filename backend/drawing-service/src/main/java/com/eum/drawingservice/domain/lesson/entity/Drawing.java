@@ -19,7 +19,7 @@ public class Drawing {
     private String memberId;
     private String lessonId;
     private String questionId;
-    
+
     private String width;
     private String height;
 

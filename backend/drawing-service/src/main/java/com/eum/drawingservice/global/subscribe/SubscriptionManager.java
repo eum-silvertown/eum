@@ -52,6 +52,10 @@ public class SubscriptionManager {
                 .getOrDefault(subscriptionKey, Collections.emptySet());
     }
 
+    public Map<String, Set<String>> getChannelSubscriptions(ChannelName channel) {
+        return channelSubscriptions.getOrDefault(channel, Collections.emptyMap());
+    }
+
     public void removeAllSubscriptions(String sessionId) {
         channelSubscriptions.values().forEach(keySubscription -> {
             keySubscription.values().forEach(sessionIds -> sessionIds.remove(sessionId));
