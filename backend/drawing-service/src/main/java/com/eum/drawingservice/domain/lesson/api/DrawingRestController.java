@@ -1,12 +1,12 @@
-package com.eum.drawingservice.api;
+package com.eum.drawingservice.domain.lesson.api;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.eum.drawingservice.dto.DrawingResponseDTO;
+import com.eum.drawingservice.domain.lesson.dto.DrawingResponseDTO;
 import com.eum.drawingservice.global.CommonResponse;
-import com.eum.drawingservice.service.DrawingService;
+import com.eum.drawingservice.domain.lesson.service.DrawingService;
 
 @RestController
 @RequestMapping("/drawing")

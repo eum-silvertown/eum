@@ -1,9 +1,9 @@
-package com.eum.drawingservice.service;
+package com.eum.drawingservice.domain.lesson.service;
 
-import com.eum.drawingservice.dto.DrawingRequestDTO;
-import com.eum.drawingservice.dto.DrawingResponseDTO;
-import com.eum.drawingservice.entity.Drawing;
-import com.eum.drawingservice.repository.DrawingRepository;
+import com.eum.drawingservice.domain.lesson.dto.DrawingRequestDTO;
+import com.eum.drawingservice.domain.lesson.dto.DrawingResponseDTO;
+import com.eum.drawingservice.domain.lesson.entity.Drawing;
+import com.eum.drawingservice.domain.lesson.repository.DrawingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +26,8 @@ public class DrawingServiceImpl implements DrawingService {
                     .memberId(String.valueOf(requestDTO.getMemberId()))
                     .lessonId(String.valueOf(requestDTO.getLessonId()))
                     .questionId(String.valueOf(requestDTO.getQuestionId()))
+                    .width(String.valueOf(requestDTO.getWidth()))
+                    .height(String.valueOf(requestDTO.getHeight()))
                     .drawingData(requestDTO.getDrawingData())
                     .build();
         } else {

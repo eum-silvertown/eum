@@ -1,6 +1,6 @@
-package com.eum.drawingservice.repository;
+package com.eum.drawingservice.domain.lesson.repository;
 
-import com.eum.drawingservice.entity.Drawing;
+import com.eum.drawingservice.domain.lesson.entity.Drawing;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

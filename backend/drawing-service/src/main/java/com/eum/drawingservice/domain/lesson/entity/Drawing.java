@@ -1,4 +1,4 @@
-package com.eum.drawingservice.entity;
+package com.eum.drawingservice.domain.lesson.entity;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +19,9 @@ public class Drawing {
     private String memberId;
     private String lessonId;
     private String questionId;
+    
+    private String width;
+    private String height;
 
     @Setter
     private String drawingData;
