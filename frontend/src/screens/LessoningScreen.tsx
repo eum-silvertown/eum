@@ -54,7 +54,7 @@ function LessoningScreen(): React.JSX.Element {
         setIsConnected(true);
         // 구독 설정: isTeacher에 따른 분기 처리
         console.log('입장드가자', isTeacher, isTeaching, memberId);
-        if (isTeacher) {
+        if (isTeacher && isTeaching && memberId) {
           const teacherTopic = `/user/topic/teacher/lesson/${lessonId}/member/${memberId}`;
           console.log('@@@@@@@@@@@@', teacherTopic);
           client.subscribe(teacherTopic, message => {
@@ -188,15 +188,8 @@ function LessoningScreen(): React.JSX.Element {
         />
       </View>
       {/* Connection Chip */}
-      <View
-        style={[
-          styles.connectionChip,
-          // eslint-disable-next-line react-native/no-inline-styles
-          {backgroundColor: isConnected ? 'green' : 'red'},
-        ]}>
-        <Text style={styles.connectionChipText}>
-          {isConnected ? 'Connected' : 'Not connected'}
-        </Text>
+      <View style={styles.connectionChip}>
+        <PulseIndicator isConnected={isConnected} />
       </View>
 
       {/* Received Message Display */}
