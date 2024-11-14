@@ -10,37 +10,53 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SubscriptionManager {
 
-    private final Map<String, Map<ChannelName, Set<String>>> sessionSubscriptions = new ConcurrentHashMap<>();
+    /*
+    Key : channel
+    value : {
+        Key : subscriptionKey
+        value : sessionId
+    }
+     */
+    private final Map<ChannelName, Map<String, Set<String>>> channelSubscriptions = new ConcurrentHashMap<>();
 
-    public void subscribe(String sessionId, ChannelName channel, String subscriptionKey) {
-        sessionSubscriptions.computeIfAbsent(sessionId, k -> new ConcurrentHashMap<>())
-                .computeIfAbsent(channel, k -> ConcurrentHashMap.newKeySet())
-                .add(subscriptionKey);
+    public void subscribe(ChannelName channel, String subscriptionKey, String sessionId) {
+        channelSubscriptions.computeIfAbsent(channel, k -> new ConcurrentHashMap<>())
+                .computeIfAbsent(subscriptionKey, k -> ConcurrentHashMap.newKeySet())
+                .add(sessionId);
     }
 
-    public void unsubscribe(String sessionId, ChannelName channel, String subscriptionKey) {
-        Map<ChannelName, Set<String>> channelSubscriptions = sessionSubscriptions.get(sessionId);
-        if (channelSubscriptions != null) {
-            Set<String> subscriptions = channelSubscriptions.get(channel);
-            if (subscriptions != null) {
-                subscriptions.remove(subscriptionKey);
-                if (subscriptions.isEmpty()) {
-                    channelSubscriptions.remove(channel);
+    public void unsubscribe(ChannelName channel, String subscriptionKey, String sessionId) {
+        Map<String, Set<String>> keySubscription = channelSubscriptions.get(channel);
+        if (keySubscription != null) {
+            Set<String> sessionIds = keySubscription.get(subscriptionKey);
+            if (sessionIds != null) {
+                sessionIds.remove(sessionId);
+                if (sessionIds.isEmpty()) {
+                    keySubscription.remove(subscriptionKey);
                 }
             }
-            if (channelSubscriptions.isEmpty()) {
-                sessionSubscriptions.remove(sessionId);
+            if (keySubscription.isEmpty()) {
+                channelSubscriptions.remove(channel);
             }
         }
     }
 
-    public boolean isSubscribed(String sessionId, ChannelName channel, String subscriptionKey) {
-        return sessionSubscriptions.getOrDefault(sessionId, Collections.emptyMap())
-                .getOrDefault(channel, Collections.emptySet())
-                .contains(subscriptionKey);
+    public boolean isSubscribed(ChannelName channel, String subscriptionKey, String sessionId) {
+        return channelSubscriptions.getOrDefault(channel, Collections.emptyMap())
+                .getOrDefault(subscriptionKey, Collections.emptySet())
+                .contains(sessionId);
+    }
+
+    public Set<String> getSubscribedSessions(ChannelName channel, String subscriptionKey) {
+        return channelSubscriptions.getOrDefault(channel, Collections.emptyMap())
+                .getOrDefault(subscriptionKey, Collections.emptySet());
     }
 
     public void removeAllSubscriptions(String sessionId) {
-        sessionSubscriptions.remove(sessionId);
+        channelSubscriptions.values().forEach(keySubscription -> {
+            keySubscription.values().forEach(sessionIds -> sessionIds.remove(sessionId));
+            keySubscription.values().removeIf(Set::isEmpty);
+        });
+        channelSubscriptions.values().removeIf(Map::isEmpty);
     }
 }
