@@ -87,14 +87,18 @@ export default function Todo({
       const newIsDone = !isDone;
       await toggleTodo(item.id, newIsDone);
       setIsDone(newIsDone);
-      if (onToggleComplete) onToggleComplete();
+      if (onToggleComplete) {
+        onToggleComplete();
+      }
     } catch (error) {
       Alert.alert('할 일 완료 토글을 실패하였습니다.');
     }
   };
 
   const handleEdit = () => {
-    if (onEdit) onEdit();
+    if (onEdit) {
+      onEdit();
+    }
     open(
       <AddTodoModal isEditMode={true} todo={item} onTodoListUpdate={onEdit} />,
       {title: '할 일 수정'},
@@ -107,7 +111,9 @@ export default function Todo({
         onConfirm={async () => {
           try {
             await deleteTodo(item.id);
-            if (onDelete) onDelete();
+            if (onDelete) {
+              onDelete();
+            }
           } catch (error) {
             Alert.alert('할 일 삭제를 실패하였습니다.');
           }
