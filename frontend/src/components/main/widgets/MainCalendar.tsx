@@ -65,7 +65,7 @@ export default function MainCalendar(): React.JSX.Element {
 
         <Calendar
           events={events}
-          height={getResponsiveSize(160)}
+          height={getResponsiveSize(250)}
           mode="month"
           locale="ko"
           date={currentDate}
@@ -81,7 +81,7 @@ export default function MainCalendar(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: getResponsiveSize(10),
+    padding: getResponsiveSize(16),
     gap: spacing.md,
   },
   header: {

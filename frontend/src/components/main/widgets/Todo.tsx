@@ -70,7 +70,7 @@ export default function Todo({
 
     // 높이 애니메이션
     Animated.timing(animatedHeight, {
-      toValue: expanded ? 0 : getResponsiveSize(30),
+      toValue: expanded ? 0 : getResponsiveSize(48),
       duration: 300,
       useNativeDriver: false,
     }).start();

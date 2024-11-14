@@ -226,7 +226,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
             left: pageX,
             right: pageX + width,
             top: pageY,
-            bottom: pageY + height - getResponsiveSize(30),
+            bottom: pageY + height - getResponsiveSize(48),
           };
           setCanvasSize({width, height});
         });
@@ -381,8 +381,10 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
         </Pressable>
       </View>
 
-      <View style={styles.drawingArea} {...panResponder.panHandlers}>
-        <Canvas ref={canvasRef} style={styles.canvas} />
+      <View style={styles.drawingArea}>
+        <View style={StyleSheet.absoluteFill} {...panResponder.panHandlers}>
+          <Canvas ref={canvasRef} style={styles.canvas} />
+        </View>
         {!isConnected && (
           <View style={styles.disconnectedOverlay}>
             <Text color="white">연결 중...</Text>
@@ -402,9 +404,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   canvas: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
+    flex: 1,
     width: '100%',
     height: '100%',
   },
@@ -428,28 +428,28 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   whiteCholk: {
-    width: getResponsiveSize(30),
-    height: getResponsiveSize(10),
+    width: getResponsiveSize(48),
+    height: getResponsiveSize(16),
     backgroundColor: '#fff',
     borderRadius: borderRadius.sm,
   },
   redCholk: {
-    width: getResponsiveSize(30),
-    height: getResponsiveSize(10),
+    width: getResponsiveSize(48),
+    height: getResponsiveSize(16),
     backgroundColor: '#ff4f4f',
     borderRadius: borderRadius.sm,
   },
   blueCholk: {
-    width: getResponsiveSize(30),
-    height: getResponsiveSize(10),
+    width: getResponsiveSize(48),
+    height: getResponsiveSize(16),
     backgroundColor: '#5c8fff',
     borderRadius: borderRadius.sm,
   },
   eraser: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: getResponsiveSize(60),
-    height: getResponsiveSize(30),
+    width: getResponsiveSize(96),
+    height: getResponsiveSize(48),
     backgroundColor: '#550055',
     borderRadius: borderRadius.md,
   },

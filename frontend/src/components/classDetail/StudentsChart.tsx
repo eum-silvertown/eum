@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet } from 'react-native';
-import { spacing } from '@theme/spacing';
-import { Canvas, vec } from '@shopify/react-native-skia';
-import { Ring } from './Ring';
-import { typography } from '@theme/typography';
-import { getResponsiveSize } from '@utils/responsive';
-import { ClassAverageScoresType } from 'src/services/lectureInformation';
+import React, {useEffect, useState} from 'react';
+import {Text} from '@components/common/Text';
+import {View, StyleSheet} from 'react-native';
+import {spacing} from '@theme/spacing';
+import {Canvas, vec} from '@shopify/react-native-skia';
+import {Ring} from './Ring';
+import {typography} from '@theme/typography';
+import {getResponsiveSize} from '@utils/responsive';
+import {ClassAverageScoresType} from 'src/services/lectureInformation';
 
 const width = 120;
 const height = 120;
@@ -23,17 +23,21 @@ type ChartProps = {
   studentName?: string;
 };
 
-function StudentsChart({ classAverageScores, studentName }: ChartProps): React.JSX.Element {
+function StudentsChart({
+  classAverageScores,
+  studentName,
+}: ChartProps): React.JSX.Element {
   const [canvasKey, setCanvasKey] = useState(0);
 
   useEffect(() => {
-    setCanvasKey((prevKey) => prevKey + 1);
+    setCanvasKey(prevKey => prevKey + 1);
   }, [classAverageScores]);
 
   const averageScore = Math.round(
     ((classAverageScores?.homeworkAvgScore || 0) +
       (classAverageScores?.examAvgScore || 0) +
-      (classAverageScores?.attitudeAvgScore || 0)) / 3
+      (classAverageScores?.attitudeAvgScore || 0)) /
+      3,
   );
 
   const rings = [
@@ -85,9 +89,11 @@ function StudentsChart({ classAverageScores, studentName }: ChartProps): React.J
           {rings.map((ring, index) => (
             <View key={index} style={styles.legendItem}>
               <View
-                style={[styles.colorDot, { backgroundColor: ring.colors[0] }]}
+                style={[styles.colorDot, {backgroundColor: ring.colors[0]}]}
               />
-              <Text>{ring.label} {ring.totalProgress * 100}점</Text>
+              <Text>
+                {ring.label} {ring.totalProgress * 100}점
+              </Text>
             </View>
           ))}
         </View>
@@ -111,8 +117,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   chartContainer: {
-    width: getResponsiveSize(80),
-    height: getResponsiveSize(80),
+    width: getResponsiveSize(128),
+    height: getResponsiveSize(128),
   },
   legendContainer: {
     marginLeft: spacing.xxl,
@@ -140,8 +146,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   colorDot: {
-    width: getResponsiveSize(10),
-    height: getResponsiveSize(10),
+    width: getResponsiveSize(16),
+    height: getResponsiveSize(16),
     borderRadius: 10,
     marginRight: spacing.sm,
   },

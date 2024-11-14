@@ -81,29 +81,29 @@ function CelestialObjects({
   // 애니메이션 값들 보간
   const sunTranslateX = sunAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [getResponsiveSize(20), screenWidth + getResponsiveSize(-20)],
+    outputRange: [getResponsiveSize(32), screenWidth + getResponsiveSize(-32)],
   });
 
   const sunTranslateY = sunAnim.interpolate({
     inputRange: [0, 0.5, 1],
     outputRange: [
-      getResponsiveSize(100),
-      getResponsiveSize(50),
-      getResponsiveSize(100),
+      getResponsiveSize(160),
+      getResponsiveSize(80),
+      getResponsiveSize(160),
     ],
   });
 
   const moonTranslateX = moonAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [getResponsiveSize(20), screenWidth + getResponsiveSize(-20)],
+    outputRange: [getResponsiveSize(32), screenWidth + getResponsiveSize(-32)],
   });
 
   const moonTranslateY = moonAnim.interpolate({
     inputRange: [0, 0.5, 1],
     outputRange: [
-      getResponsiveSize(100),
-      getResponsiveSize(50),
-      getResponsiveSize(100),
+      getResponsiveSize(160),
+      getResponsiveSize(80),
+      getResponsiveSize(160),
     ],
   });
 
@@ -155,14 +155,14 @@ function CelestialObjects({
 const styles = StyleSheet.create({
   celestialObject: {
     position: 'absolute',
-    width: getResponsiveSize(50),
-    height: getResponsiveSize(50),
+    width: getResponsiveSize(80),
+    height: getResponsiveSize(80),
     justifyContent: 'center',
     alignItems: 'center',
   },
   sun: {
-    width: getResponsiveSize(40),
-    height: getResponsiveSize(40),
+    width: getResponsiveSize(64),
+    height: getResponsiveSize(64),
     borderRadius: 9999,
     backgroundColor: '#FFD700',
     shadowColor: '#FFD700',
@@ -171,19 +171,19 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
   },
   sunRays: {
-    width: getResponsiveSize(50),
-    height: getResponsiveSize(50),
+    width: getResponsiveSize(80),
+    height: getResponsiveSize(80),
     position: 'absolute',
-    top: -getResponsiveSize(5),
-    left: -getResponsiveSize(5),
+    top: -getResponsiveSize(8),
+    left: -getResponsiveSize(8),
     borderRadius: 9999,
     borderWidth: 3,
     borderColor: '#FFD700',
     opacity: 0.5,
   },
   moon: {
-    width: getResponsiveSize(40),
-    height: getResponsiveSize(40),
+    width: getResponsiveSize(80),
+    height: getResponsiveSize(80),
     borderRadius: 9999,
     backgroundColor: '#F4F6F0',
     shadowColor: '#FFFFFF',

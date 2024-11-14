@@ -91,8 +91,8 @@ function ClassListScreen(): React.JSX.Element {
               }}>
               <AddCircleIcon
                 style={{
-                  marginLeft: getResponsiveSize(4),
-                  marginVertical: getResponsiveSize(2),
+                  marginLeft: getResponsiveSize(6),
+                  marginVertical: getResponsiveSize(3),
                 }}
                 width={iconSize.lg}
                 height={iconSize.lg}
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light.background.white,
     borderRadius: borderRadius.xl,
-    elevation: getResponsiveSize(2),
+    elevation: 2,
     padding: spacing.md,
   },
 });

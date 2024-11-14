@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { spacing } from '@theme/spacing';
-import { borderRadius } from '@theme/borderRadius';
-import { colors } from 'src/hooks/useColors';
+import {Picker} from '@react-native-picker/picker';
+import {spacing} from '@theme/spacing';
+import {borderRadius} from '@theme/borderRadius';
+import {colors} from 'src/hooks/useColors';
 import DatePicker from 'react-native-date-picker';
-import { getResponsiveSize } from '@utils/responsive';
-import { borderWidth } from '@theme/borderWidth';
-import { DetailQuestionType } from '@services/questionBox';
+import {getResponsiveSize} from '@utils/responsive';
+import {borderWidth} from '@theme/borderWidth';
+import {DetailQuestionType} from '@services/questionBox';
 import ProblemExSection from './ProblemExSection';
 
 type CreateInputProps = {
@@ -53,7 +53,9 @@ function CreateInput({
   const [startTime, setLocalStartTime] = useState<Date>(getCurrentTime());
   const [endTime, setLocalEndTime] = useState<Date>(getCurrentTime());
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
-  const [datePickerMode, setDatePickerMode] = useState<'start' | 'end'>('start');
+  const [datePickerMode, setDatePickerMode] = useState<'start' | 'end'>(
+    'start',
+  );
   const [selectedDuration, setSelectedDuration] = useState<number>(5);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [buttonMessage, setButtonMessage] = useState('제목을 입력하세요'); // 기본
@@ -66,7 +68,12 @@ function CreateInput({
       setButtonMessage('제목을 입력해주세요');
       return;
     }
-    if ((selectType === 'exam' || selectType === 'homework' || selectType === 'lesson') && selectedFiles.length === 0) {
+    if (
+      (selectType === 'exam' ||
+        selectType === 'homework' ||
+        selectType === 'lesson') &&
+      selectedFiles.length === 0
+    ) {
       setIsButtonDisabled(true);
       setButtonMessage('길게 터치하여 문제를 추가해주세요');
       return;
@@ -149,9 +156,13 @@ function CreateInput({
         <View style={styles.topSection}>
           {questionDetail ? (
             <View style={styles.exProblemContainer}>
-              <Text style={styles.detailText}>파일명: {questionDetail.title}</Text>
+              <Text style={styles.detailText}>
+                파일명: {questionDetail.title}
+              </Text>
               <ProblemExSection problemText={questionDetail.content} />
-              <Text style={styles.detailText}>정답: {questionDetail.answer}</Text>
+              <Text style={styles.detailText}>
+                정답: {questionDetail.answer}
+              </Text>
             </View>
           ) : (
             <>
@@ -172,12 +183,14 @@ function CreateInput({
             }}
           />
 
-          <Text style={styles.label}>선택된 문제 ({selectedFiles.length}개)</Text>
+          <Text style={styles.label}>
+            선택된 문제 ({selectedFiles.length}개)
+          </Text>
           <FlatList
             nestedScrollEnabled
             data={selectedFiles}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <View style={styles.fileItem}>
                 <Text style={styles.fileName}>{item}</Text>
                 <TouchableOpacity onPress={() => removeSelectedFile(item)}>
@@ -207,11 +220,16 @@ function CreateInput({
               <Picker
                 selectedValue={selectedDuration}
                 onValueChange={handleDurationChange}
-                style={styles.picker}
-              >
+                style={styles.picker}>
                 {[...Array(86)].map((_, i) => {
                   const minute = 5 + i; // 5분부터 시작
-                  return <Picker.Item key={minute} label={`${minute}분`} value={minute} />;
+                  return (
+                    <Picker.Item
+                      key={minute}
+                      label={`${minute}분`}
+                      value={minute}
+                    />
+                  );
                 })}
               </Picker>
             </>
@@ -252,22 +270,24 @@ function CreateInput({
           <TouchableOpacity
             style={[styles.button, isButtonDisabled && styles.buttonDisabled]}
             onPress={handleButtonPress}
-            disabled={isButtonDisabled}
-          >
+            disabled={isButtonDisabled}>
             <Text style={styles.buttonText}>
-              {isButtonDisabled ? buttonMessage :
-                selectType === 'exam'
-                  ? '시험 생성'
-                  : selectType === 'homework'
-                    ? '숙제 생성'
-                    : '레슨 생성'}
+              {isButtonDisabled
+                ? buttonMessage
+                : selectType === 'exam'
+                ? '시험 생성'
+                : selectType === 'homework'
+                ? '숙제 생성'
+                : '레슨 생성'}
             </Text>
           </TouchableOpacity>
 
           {isDatePickerVisible && (
             <DatePicker
               modal
-              title={datePickerMode === 'start' ? '시작 시간 설정' : '종료 시간 설정'}
+              title={
+                datePickerMode === 'start' ? '시작 시간 설정' : '종료 시간 설정'
+              }
               open={isDatePickerVisible}
               date={datePickerMode === 'start' ? startTime : endTime}
               mode="datetime"
@@ -304,7 +324,7 @@ const styles = StyleSheet.create({
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.md,
     borderColor: `${colors.light.background.main}7f`,
-    elevation: getResponsiveSize(2),
+    elevation: 2,
   },
   exProblemContainer: {
     backgroundColor: 'white',
@@ -312,7 +332,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: borderRadius.md,
     borderColor: `${colors.light.background.main}7f`,
-    elevation: getResponsiveSize(2),
+    elevation: 2,
     padding: spacing.lg,
     overflow: 'hidden',
   },
@@ -329,7 +349,7 @@ const styles = StyleSheet.create({
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.md,
     borderColor: `${colors.light.background.main}7f`,
-    elevation: getResponsiveSize(2),
+    elevation: 2,
   },
   label: {
     fontSize: 16,

@@ -15,7 +15,7 @@ export default function Stars({
     id: i,
     x: Math.random() * screenWidth,
     y: Math.random() * (screenHeight * 0.7),
-    size: getResponsiveSize(2) + Math.random() * getResponsiveSize(2),
+    size: getResponsiveSize(3) + Math.random() * getResponsiveSize(3),
     delay: Math.random() * 3000,
   }));
   const starAnims = stars.map(() => new Animated.Value(0));

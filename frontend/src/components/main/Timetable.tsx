@@ -45,7 +45,7 @@ export default function TimeTable({
                       <TouchableOpacity
                         key={`${lecture.lectureId}-${period}`}
                         style={{
-                          height: getResponsiveSize(150),
+                          height: getResponsiveSize(240),
                           overflow: 'hidden',
                         }}>
                         <LectureCreateBook

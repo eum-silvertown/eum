@@ -28,9 +28,9 @@ const ParticipantCard: React.FC<ParticipantCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    width: getResponsiveSize(140),
-    height: getResponsiveSize(80),
-    margin: getResponsiveSize(4),
+    width: getResponsiveSize(224),
+    height: getResponsiveSize(128),
+    margin: getResponsiveSize(6),
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
@@ -39,15 +39,15 @@ const styles = StyleSheet.create({
   },
   name: {
     position: 'absolute',
-    bottom: getResponsiveSize(8),
-    right: getResponsiveSize(8),
+    bottom: getResponsiveSize(12),
+    right: getResponsiveSize(12),
     backgroundColor: 'rgba(128, 128, 128, 0.7)',
     color: '#ffffff',
     fontSize: 14,
     fontWeight: '600',
-    paddingHorizontal: getResponsiveSize(6),
-    paddingVertical: getResponsiveSize(2),
-    borderRadius: getResponsiveSize(4),
+    paddingHorizontal: getResponsiveSize(9),
+    paddingVertical: getResponsiveSize(3),
+    borderRadius: getResponsiveSize(6),
   },
 });
 

@@ -1,4 +1,4 @@
-import { getResponsiveSize } from '@utils/responsive';
+import {getResponsiveSize} from '@utils/responsive';
 import {
   View,
   Text,
@@ -8,12 +8,12 @@ import {
   Image,
 } from 'react-native';
 import PersonIcon from '@assets/icons/personIcon.svg';
-import { StudentOverviewType } from 'src/services/lectureInformation';
+import {StudentOverviewType} from 'src/services/lectureInformation';
 import First from '@assets/images/first.png';
 import Second from '@assets/images/second.png';
 import Third from '@assets/images/third.png';
-import { SvgUri } from 'react-native-svg';
-import { colors } from 'src/hooks/useColors';
+import {SvgUri} from 'react-native-svg';
+import {colors} from 'src/hooks/useColors';
 
 interface StudentRankProps {
   studentsInfo?: StudentOverviewType[];
@@ -35,18 +35,19 @@ const StudentRank = ({
 
   const rankedStudents = [...studentsInfo].sort(
     (a, b) =>
-      calculateTotalScore(b.studentScores) - calculateTotalScore(a.studentScores),
+      calculateTotalScore(b.studentScores) -
+      calculateTotalScore(a.studentScores),
   );
 
   return (
     <View style={styles.container}>
       <FlatList
         data={rankedStudents}
-        keyExtractor={(item) => item.studentId.toString()}
+        keyExtractor={item => item.studentId.toString()}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
-        renderItem={({ item, index }) => (
+        renderItem={({item, index}) => (
           <TouchableOpacity
             onPress={() =>
               onStudentSelect(item.studentScores, item.studentName)
@@ -57,16 +58,30 @@ const StudentRank = ({
                 {item.studentImage ? (
                   item.studentImage.endsWith('.svg') ? (
                     // eslint-disable-next-line react-native/no-inline-styles
-                    <SvgUri uri={item.studentImage} width={32} height={32} style={{
-                      borderRadius: 30,
-                      borderWidth: 1,
-                      borderColor: '#ddd',
-                    }} />
+                    <SvgUri
+                      uri={item.studentImage}
+                      width={32}
+                      height={32}
+                      style={{
+                        borderRadius: 30,
+                        borderWidth: 1,
+                        borderColor: '#ddd',
+                      }}
+                    />
                   ) : (
-                    <Image source={{ uri: item.studentImage }} width={32} height={32} style={styles.studentImage} />
+                    <Image
+                      source={{uri: item.studentImage}}
+                      width={32}
+                      height={32}
+                      style={styles.studentImage}
+                    />
                   )
                 ) : (
-                  <PersonIcon width={32} height={32} style={styles.studentImage} />
+                  <PersonIcon
+                    width={32}
+                    height={32}
+                    style={styles.studentImage}
+                  />
                 )}
 
                 {/* 1~3등 아이콘을 오른쪽 하단에 겹쳐서 표시 */}
@@ -89,7 +104,7 @@ const StudentRank = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: getResponsiveSize(10),
+    padding: getResponsiveSize(16),
     borderRadius: 8,
   },
   listContainer: {
@@ -97,18 +112,18 @@ const styles = StyleSheet.create({
   },
   studentItem: {
     alignItems: 'center',
-    marginRight: getResponsiveSize(12),
+    marginRight: getResponsiveSize(18),
   },
   imageContainer: {
     position: 'relative', // 컨테이너를 상대 위치로 설정
-    width: getResponsiveSize(32),
-    height: getResponsiveSize(32),
+    width: getResponsiveSize(50),
+    height: getResponsiveSize(50),
     justifyContent: 'center',
     alignItems: 'center',
   },
   studentImage: {
-    width: getResponsiveSize(32),
-    height: getResponsiveSize(32),
+    width: getResponsiveSize(50),
+    height: getResponsiveSize(50),
     borderRadius: 30,
     borderWidth: 1,
     borderColor: '#ddd',
@@ -126,8 +141,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 4,
     right: 0,
-    width: getResponsiveSize(12),
-    height: getResponsiveSize(12),
+    width: getResponsiveSize(18),
+    height: getResponsiveSize(18),
   },
   studentName: {
     top: -4,

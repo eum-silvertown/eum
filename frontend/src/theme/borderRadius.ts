@@ -1,9 +1,9 @@
 import {getResponsiveSize} from '@utils/responsive';
 
 export const borderRadius = {
-  sm: getResponsiveSize(3),
-  md: getResponsiveSize(6),
-  lg: getResponsiveSize(9),
-  xl: getResponsiveSize(12),
-  xxl: getResponsiveSize(15),
+  sm: getResponsiveSize(4),
+  md: getResponsiveSize(8),
+  lg: getResponsiveSize(12),
+  xl: getResponsiveSize(18),
+  xxl: getResponsiveSize(24),
 } as const;

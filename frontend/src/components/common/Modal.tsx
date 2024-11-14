@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     padding: spacing.xxl,
     backgroundColor: 'white',
     borderRadius: borderRadius.lg,
-    elevation: getResponsiveSize(2),
+    elevation: getResponsiveSize(3),
   },
   header: {
     flexDirection: 'row',

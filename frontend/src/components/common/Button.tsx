@@ -31,17 +31,17 @@ function Button({
   });
   const sizes = StyleSheet.create({
     sm: {
-      width: getResponsiveSize(60),
+      width: getResponsiveSize(96),
     },
     md: {
-      width: getResponsiveSize(80),
+      width: getResponsiveSize(128),
     },
     lg: {
-      width: getResponsiveSize(100),
+      width: getResponsiveSize(160),
     },
     full: {
       width: '100%',
-      height: getResponsiveSize(25),
+      height: getResponsiveSize(40),
     },
   });
 

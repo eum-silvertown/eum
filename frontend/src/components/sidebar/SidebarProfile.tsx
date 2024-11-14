@@ -76,11 +76,11 @@ const styles = StyleSheet.create({
     height: '12.5%',
     gap: spacing.lg,
     marginBottom: spacing.xs,
-    padding: getResponsiveSize(7.5),
+    padding: getResponsiveSize(12),
     overflow: 'hidden',
   },
   profileImageContainer: {
-    width: getResponsiveSize(24),
+    width: getResponsiveSize(38),
     aspectRatio: 1,
     borderWidth: borderWidth.sm,
     borderColor: colors.light.borderColor.pickerBorder,

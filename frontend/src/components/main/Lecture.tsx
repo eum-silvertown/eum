@@ -27,8 +27,8 @@ export default function Lecture({item}: LectureProps): React.JSX.Element {
                 {
                   backgroundColor: index === 0 ? item.backgroundColor : 'white',
                   transform: [
-                    {translateY: (pages - (index + 1)) * -getResponsiveSize(2)},
-                    {translateX: (pages - (index + 1)) * getResponsiveSize(2)},
+                    {translateY: (pages - (index + 1)) * -getResponsiveSize(3)},
+                    {translateX: (pages - (index + 1)) * getResponsiveSize(3)},
                   ],
                   zIndex: -(pages - (index + 1)),
                 },

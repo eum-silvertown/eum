@@ -1,16 +1,16 @@
 import React from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import {Text} from '@components/common/Text';
+import {View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
 import postit from '@assets/images/postit.png';
-import { spacing } from '@theme/spacing';
-import { getResponsiveSize } from '@utils/responsive';
+import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { useModal } from 'src/hooks/useModal';
+import {iconSize} from '@theme/iconSize';
+import {useModal} from 'src/hooks/useModal';
 import NoticeCreateModal from './NoticeCreateModal';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
-import { deleteNotice } from '@services/lectureNotice';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {deleteNotice} from '@services/lectureNotice';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 type NoticeData = {
   noticeId: number;
@@ -29,10 +29,12 @@ function Notice({
   lectureId,
   notices = [],
 }: NoticeProps): React.JSX.Element {
-  const { open } = useModal();
-  const displayedNotices = notices.slice(Math.max(notices.length - 3, 0)).reverse();
+  const {open} = useModal();
+  const displayedNotices = notices
+    .slice(Math.max(notices.length - 3, 0))
+    .reverse();
   const queryClient = useQueryClient();
-  const { mutate: deleteMutation } = useMutation({
+  const {mutate: deleteMutation} = useMutation({
     mutationFn: (noticeId: number) => deleteNotice(noticeId),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -59,7 +61,7 @@ function Notice({
           style: 'cancel',
         },
       ],
-      { cancelable: true },
+      {cancelable: true},
     );
   };
 
@@ -84,7 +86,7 @@ function Notice({
         )}
       </View>
       <View style={styles.noticeLayout}>
-        {Array.from({ length: 3 }).map((_, index) => {
+        {Array.from({length: 3}).map((_, index) => {
           const notice = displayedNotices[index];
           return (
             <View key={index} style={styles.imageWrapper}>
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
   notice: {
     height: '50%',
     justifyContent: 'center',
-    paddingVertical: getResponsiveSize(10),
+    paddingVertical: getResponsiveSize(16),
   },
   noticeHeader: {
     flexDirection: 'row',
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
   noticeLayout: {
     flexDirection: 'row',
     gap: spacing.xxl,
-    paddingHorizontal: getResponsiveSize(18),
+    paddingHorizontal: getResponsiveSize(28),
   },
   imageWrapper: {
     position: 'relative',
@@ -144,9 +146,9 @@ const styles = StyleSheet.create({
   },
   textIconContainer: {
     position: 'absolute',
-    left: getResponsiveSize(8),
-    top: getResponsiveSize(16),
-    right: getResponsiveSize(8),
+    left: getResponsiveSize(12),
+    top: getResponsiveSize(25),
+    right: getResponsiveSize(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -156,13 +158,13 @@ const styles = StyleSheet.create({
   },
   noticeContent: {
     position: 'absolute',
-    left: getResponsiveSize(8),
-    right: getResponsiveSize(8),
-    top: getResponsiveSize(32),
+    left: getResponsiveSize(12),
+    right: getResponsiveSize(12),
+    top: getResponsiveSize(50),
     color: '#333',
   },
   cancelIcon: {
-    right: getResponsiveSize(4),
+    right: getResponsiveSize(6),
   },
 });
 

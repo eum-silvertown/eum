@@ -77,13 +77,13 @@ const styles = StyleSheet.create({
   sidebarContainer: {
     backgroundColor: 'white',
     borderRadius: borderRadius.lg,
-    elevation: getResponsiveSize(4),
+    elevation: getResponsiveSize(6),
   },
   contentWrapper: {
     flex: 1,
     backgroundColor: 'white',
     borderRadius: spacing.lg,
     overflow: 'hidden',
-    elevation: getResponsiveSize(4),
+    elevation: getResponsiveSize(6),
   },
 });

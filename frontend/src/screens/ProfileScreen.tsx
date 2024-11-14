@@ -13,7 +13,6 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {getResponsiveSize} from '@utils/responsive';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
@@ -329,7 +328,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xxl,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(1),
+    elevation: 2,
     borderRadius: borderRadius.md,
   },
   profileImageContainer: {
@@ -353,7 +352,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xxl,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(1),
+    elevation: 2,
     borderRadius: borderRadius.md,
   },
   button: {

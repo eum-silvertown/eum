@@ -68,14 +68,14 @@ const styles = StyleSheet.create({
     borderWidth: borderWidth.xs,
     borderRadius: borderRadius.sm,
     backgroundColor: 'white',
-    height: getResponsiveSize(25),
+    height: getResponsiveSize(40),
     justifyContent: 'center',
   },
   picker: {
     color: colors.light.background.main,
   },
   pickerContent: {
-    fontSize: getResponsiveSize(8),
+    fontSize: getResponsiveSize(12),
   },
 
   label: {
