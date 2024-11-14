@@ -20,6 +20,8 @@ export type ScreenType = {
   ClassLessonListScreen: undefined;
   ClassExamListScreen: undefined;
   ClassHomeworkListScreen: undefined;
+  SolveHomeworkScreen: undefined;
+  SolveExamScreen: undefined;
 };
 
 type ScreenName = keyof ScreenType;

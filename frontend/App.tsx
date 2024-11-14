@@ -23,6 +23,8 @@ import LessoningStudentListScreen from '@screens/LessoningStudentListScreen';
 import MainLayout from '@components/common/MainLayout';
 import ProfileScreen from '@screens/ProfileScreen';
 import QuestionCreateScreen from '@screens/QuestionCreateScreen';
+import SolveHomeworkScreen from '@screens/SolveHomeworkScreen';
+import SolveExamScreen from '@screens/SolveExamScreen';
 import {Keyboard, TouchableWithoutFeedback, View} from 'react-native';
 import {Platform, UIManager} from 'react-native';
 import React, {useEffect, useState} from 'react';
@@ -102,6 +104,8 @@ function App(): React.JSX.Element {
           component: LessoningStudentListScreen,
         },
         {name: 'ProfileScreen', component: ProfileScreen},
+        {name: 'SolveHomeworkScreen', component: SolveHomeworkScreen},
+        {name: 'SolveExamScreen', component: SolveExamScreen},
       ];
 
       if (autoLoginEnabled) {
