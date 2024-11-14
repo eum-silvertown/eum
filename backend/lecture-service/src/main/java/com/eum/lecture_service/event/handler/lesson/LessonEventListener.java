@@ -23,7 +23,7 @@ public class LessonEventListener {
 
 	private final LectureReadRepository lectureReadRepository;
 
-	@KafkaListener(topics = "lesson-create-topic", groupId = "lesson-group",  properties = {
+	@KafkaListener(topics = "lesson-create-event", groupId = "lesson-group",  properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.lesson.LessonCreateEvent"
 	})
 	public void handleLessonCreate(LessonCreateEvent event) {
@@ -35,7 +35,7 @@ public class LessonEventListener {
 		lectureReadRepository.save(lecture);
 	}
 
-	@KafkaListener(topics = "lesson-delete-topic", groupId = "lesson-group",  properties = {
+	@KafkaListener(topics = "lesson-delete-event", groupId = "lesson-group",  properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.lesson.LessonDeleteEvent"
 	})
 	public void handleLessonDelete(LessonDeleteEvent event) {
