@@ -56,7 +56,6 @@ function LessoningScreen(): React.JSX.Element {
         console.log('입장드가자', isTeacher, isTeaching, memberId);
         if (isTeacher && isTeaching && memberId) {
           const teacherTopic = `/user/topic/teacher/lesson/${lessonId}/member/${memberId}`;
-          console.log('@@@@@@@@@@@@', teacherTopic);
           client.subscribe(teacherTopic, message => {
             console.log('Received message for teacher:', message.body);
             setReceivedMessage(message.body);
@@ -68,7 +67,6 @@ function LessoningScreen(): React.JSX.Element {
             console.log('Received message for student:', message.body);
             setReceivedMessage(message.body);
           });
-          console.log(`Subscribed to student topic: ${studentTopic}`);
         }
       },
       onDisconnect: frame => {
