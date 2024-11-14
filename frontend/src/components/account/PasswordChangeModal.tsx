@@ -1,5 +1,5 @@
 import {StyleSheet, View, TouchableOpacity, Alert} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import InputField from './InputField';
 import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
@@ -30,13 +30,40 @@ export default function PasswordChangeModal(): React.JSX.Element {
     'success' | 'error' | 'info' | ''
   >('info');
 
-  const [confirmPasswordStatusText, setconfirmPasswordStatusText] =
+  const [confirmPasswordStatusText, setConfirmPasswordStatusText] =
     useState('');
   const [confirmPasswordStatusType, setConfirmPasswordStatusType] = useState<
     'success' | 'error' | 'info' | ''
   >('info');
 
   const handlePasswordChange = async () => {
+    setPasswrodStatusText('');
+    setConfirmPasswordStatusText('');
+    let isValid = true;
+
+    // 유효성 검사 확인
+    if (!password) {
+      setPasswordStatusType('error');
+      setPasswrodStatusText('비밀번호를 입력해주세요.');
+      isValid = false;
+    }
+
+    if (!confirmPassword) {
+      setConfirmPasswordStatusType('error');
+      setConfirmPasswordStatusText('비밀번호를 입력해주세요.');
+      isValid = false;
+    }
+
+    if (password !== confirmPassword) {
+      isValid = false;
+      setConfirmPasswordStatusText('비밀번호가 일치하지 않습니다.');
+    }
+
+    // 유효성 검사 통과 여부 확인
+    if (!isValid) {
+      return; // 유효성 검사 실패 시 함수 종료
+    }
+
     try {
       await changePassword(password);
       Alert.alert(
@@ -46,7 +73,7 @@ export default function PasswordChangeModal(): React.JSX.Element {
       await logOut();
       navigation.reset({
         index: 0,
-        routes: [{ name: 'LoginScreen' }], 
+        routes: [{name: 'LoginScreen'}],
       });
       setCurrentScreen('LoginScreen');
 
@@ -56,6 +83,22 @@ export default function PasswordChangeModal(): React.JSX.Element {
       Alert.alert('비밀번호 변경에 실패했습니다. 다시 시도해 주세요.');
     }
   };
+
+  // 비밀번호 확인 체크 로직
+  useEffect(() => {
+    if (confirmPassword) {
+      if (password !== confirmPassword) {
+        setConfirmPasswordStatusText('비밀번호가 일치하지 않습니다.');
+        setConfirmPasswordStatusType('error');
+      } else {
+        setConfirmPasswordStatusText('비밀번호가 일치합니다.');
+        setConfirmPasswordStatusType('success');
+      }
+    } else {
+      setConfirmPasswordStatusText('');
+      setConfirmPasswordStatusType('info');
+    }
+  }, [password, confirmPassword]);
 
   return (
     <View style={styles.container}>
@@ -76,6 +119,7 @@ export default function PasswordChangeModal(): React.JSX.Element {
           )
         }
         onIconPress={() => setPasswordVisible(!passwordVisible)}
+        maxLength={64}
       />
 
       {/* 비밀번호 확인 입력 필드 */}
@@ -87,6 +131,7 @@ export default function PasswordChangeModal(): React.JSX.Element {
         onChangeText={setConfirmPassword}
         statusText={confirmPasswordStatusText}
         status={confirmPasswordStatusType}
+        maxLength={64}
       />
       <TouchableOpacity style={styles.button} onPress={handlePasswordChange}>
         <Text color="white" weight="bold">
@@ -100,12 +145,13 @@ export default function PasswordChangeModal(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     marginTop: spacing.lg,
+    gap: spacing.lg,
   },
   button: {
     alignItems: 'center',
     backgroundColor: colors.light.background.main,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.sm,
   },
 });

@@ -25,7 +25,7 @@ export default function TimeTable({
   const totalContentWidth = hourWidth * (endingHour - startingHour + 1);
   const periodTimes = [8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22];
   const {day, year, semester} = getCurrentDateInfo();
-  const {data: lectures = [], isLoading} = useQuery<LectureListDayItemType[]>({
+  const {data: lectures = []} = useQuery<LectureListDayItemType[]>({
     queryKey: ['lectureListDay'],
     queryFn: () => getLectureListDay(day, year, semester),
   });

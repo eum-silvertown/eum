@@ -3,28 +3,25 @@ import {TouchableOpacity, StyleSheet, View, Image} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {Text} from '@components/common/Text';
 import {spacing} from '@theme/spacing';
-import CheckBox from '@react-native-community/checkbox';
 import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
 import serviceLogoImage from '@assets/images/serviceLogoImage.png';
 import {iconSize} from '@theme/iconSize';
 import {colors} from 'src/hooks/useColors';
-
 import {logIn} from '@services/authService';
 import InputField from '@components/account/InputField';
-
-import {setAutoLogin} from '@utils/secureStorage';
-
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import {useAuthStore} from '@store/useAuthStore';
+// import CheckBox from '@react-native-community/checkbox';
+// import {setAutoLogin} from '@utils/secureStorage';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function LoginScreen(): React.JSX.Element {
   const authStore = useAuthStore();
-  const [isChecked, setIsChecked] = useState(false);
+  // const [isChecked, setIsChecked] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigation = useNavigation<NavigationProps>();
   const {setCurrentScreen} = useCurrentScreenStore();
@@ -49,9 +46,10 @@ function LoginScreen(): React.JSX.Element {
     }
 
     try {
-      const response = await logIn({id, password});
+      await logIn({id, password});
       // 자동 로그인 설정 상태 저장
-      await setAutoLogin(isChecked);
+      // await setAutoLogin(isChecked);
+
       // 내비게이션 스택을 초기화하여 로그인 화면으로 이동
       navigation.reset({
         index: 0,
@@ -102,6 +100,7 @@ function LoginScreen(): React.JSX.Element {
               setLoginErrorText('');
             }}
             placeholder="아이디를 입력해주세요."
+            maxLength={20}
           />
           <InputField
             label="비밀번호"
@@ -125,6 +124,7 @@ function LoginScreen(): React.JSX.Element {
             onIconPress={() => setPasswordVisible(!passwordVisible)}
             status="error"
             statusText={loginErrorText}
+            maxLength={64}
           />
           {/* 자동 로그인 항시 사용으로 인한 주석 처리 */}
           {/* <View style={styles.checkboxContainer}>
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: colors.light.background.main,
     paddingVertical: spacing.md,
-    alignItems: 'center',    
+    alignItems: 'center',
     alignSelf: 'center',
     width: '100%',
   },
@@ -221,6 +221,5 @@ const styles = StyleSheet.create({
   accountContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    
   },
 });
