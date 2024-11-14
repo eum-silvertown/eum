@@ -10,10 +10,7 @@ import Animated, {
 import {Text} from './Text';
 import CloseButtonIcon from '@assets/icons/cancelIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import {borderRadius} from '@theme/borderRadius';
-import {spacing} from '@theme/spacing';
 import {ModalContext} from 'src/contexts/useModalContext';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface ModalProps {
   modal: {
@@ -97,10 +94,10 @@ export default Modal;
 
 const styles = StyleSheet.create({
   container: {
-    padding: spacing.xxl,
+    padding: 50,
     backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
-    elevation: getResponsiveSize(3),
+    borderRadius: 15,
+    elevation: 5,
   },
   header: {
     flexDirection: 'row',

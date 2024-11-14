@@ -1,16 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
 import {Animated, Pressable, StyleSheet, View} from 'react-native';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {spacing} from '@theme/spacing';
-import {borderWidth} from '@theme/borderWidth';
-import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
 import {detailQuestion, DetailQuestionType} from '@services/questionBox';
 import {useQuery} from '@tanstack/react-query';
 import {Text} from '@components/common/Text';
 import ProblemExSection from './ProblemExSection';
-import {typography} from '@theme/typography';
 
 interface QuestionDetailProps {
   isOpened: boolean;
@@ -69,13 +64,13 @@ export default function QuestionDetail({
             setIsOpened(false);
             setSelectedFileId(0);
           }}>
-          <CancelIcon width={iconSize.md} height={iconSize.md} />
+          <CancelIcon width={30} height={30} />
         </Pressable>
       </View>
       {questionDetail ? (
         <View style={styles.preview}>
           <ProblemExSection
-            fontSize={typography.size.caption}
+            fontSize={16}
             problemText={questionDetail.content}
           />
           <View>
@@ -98,25 +93,25 @@ const styles = StyleSheet.create({
     zIndex: 1,
     right: '-50%',
     width: '50%',
-    padding: spacing.xl,
+    padding: 25,
     backgroundColor: 'white',
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderRadius: 15,
     borderColor: colors.light.borderColor.pickerBorder,
     elevation: 2,
   },
   header: {
     flexDirection: 'row',
     width: '100%',
-    marginBottom: spacing.lg,
+    marginBottom: 15,
     justifyContent: 'space-between',
   },
   preview: {
     justifyContent: 'space-between',
     width: '100%',
     height: '70%',
-    padding: spacing.lg,
-    borderRadius: borderRadius.md,
+    padding: 15,
+    borderRadius: 10,
     borderColor: `${colors.light.background.main}7f`,
     backgroundColor: 'white',
     elevation: 2,
@@ -126,13 +121,13 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 14,
     color: colors.light.text.main,
-    marginVertical: spacing.sm,
+    marginVertical: 5,
     fontWeight: 'bold',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: spacing.xl,
+    marginBottom: 25,
     color: colors.light.text.main,
   },
 });

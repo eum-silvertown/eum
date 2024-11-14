@@ -1,6 +1,4 @@
 import {Text} from '@components/common/Text';
-import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {colors} from 'src/hooks/useColors';
@@ -85,12 +83,12 @@ export default FileOptionModal;
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 25,
+    paddingHorizontal: 10,
   },
   option: {
-    paddingVertical: spacing.lg,
-    borderBottomWidth: borderWidth.sm,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
     borderColor: colors.light.borderColor.cardBorder,
   },
 });
