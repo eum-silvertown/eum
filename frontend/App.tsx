@@ -23,7 +23,7 @@ import LessoningStudentListScreen from '@screens/LessoningStudentListScreen';
 import MainLayout from '@components/common/MainLayout';
 import ProfileScreen from '@screens/ProfileScreen';
 import QuestionCreateScreen from '@screens/QuestionCreateScreen';
-
+import {Keyboard, TouchableWithoutFeedback, View} from 'react-native';
 import {Platform, UIManager} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
@@ -152,29 +152,33 @@ function App(): React.JSX.Element {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <QueryClientProvider client={queryClient}>
-        <NavigationContainer ref={navigationRef}>
-          <MainLayout>
-            <Stack.Navigator
-              screenOptions={{
-                headerShown: false,
-                animation: 'simple_push',
-                animationDuration: 300,
-                contentStyle: {
-                  backgroundColor: 'transparent',
-                },
-              }}>
-              {screens.map((screen, index) => (
-                <Stack.Screen
-                  key={index}
-                  name={screen.name}
-                  component={screen.component}
-                />
-              ))}
-            </Stack.Navigator>
-          </MainLayout>
-        </NavigationContainer>
-      </QueryClientProvider>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={{flex: 1}}>
+          <QueryClientProvider client={queryClient}>
+            <NavigationContainer ref={navigationRef}>
+              <MainLayout>
+                <Stack.Navigator
+                  screenOptions={{
+                    headerShown: false,
+                    animation: 'simple_push',
+                    animationDuration: 300,
+                    contentStyle: {
+                      backgroundColor: 'transparent',
+                    },
+                  }}>
+                  {screens.map((screen, index) => (
+                    <Stack.Screen
+                      key={index}
+                      name={screen.name}
+                      component={screen.component}
+                    />
+                  ))}
+                </Stack.Navigator>
+              </MainLayout>
+            </NavigationContainer>
+          </QueryClientProvider>
+        </View>
+      </TouchableWithoutFeedback>
     </GestureHandlerRootView>
   );
 }
