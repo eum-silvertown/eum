@@ -26,7 +26,6 @@ import {
 } from '@store/useQuestionExplorerStore';
 import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {
   detailQuestion,
@@ -290,7 +289,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'white',
     borderRadius: borderRadius.lg,
-    padding: spacing.xl,
+    padding: 25,
     flexDirection: 'row',
   },
   contentContainer: {
@@ -308,8 +307,8 @@ const styles = StyleSheet.create({
   },
   fileItem: {
     width: '20%',
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 25,
+    paddingHorizontal: 10,
   },
 });
 

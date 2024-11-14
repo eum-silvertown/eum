@@ -1,7 +1,6 @@
 import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {spacing} from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
 import {borderRadius} from '@theme/borderRadius';
 import Book from '@components/common/Book';
@@ -159,7 +158,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    padding: spacing.xl,
+    padding: 25,
     backgroundColor: 'white',
   },
   content: {
@@ -175,11 +174,11 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     backgroundColor: 'white',
     borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
+    paddingHorizontal: 5,
+    paddingVertical: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 5,
   },
   classList: {
     flexDirection: 'row',
@@ -190,7 +189,7 @@ const styles = StyleSheet.create({
     width: 120,
   },
   currentSemesterButton: {
-    padding: spacing.sm,
+    padding: 5,
     borderRadius: 5,
     alignItems: 'center',
   },
@@ -199,6 +198,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light.background.white,
     borderRadius: borderRadius.xl,
     elevation: 2,
-    padding: spacing.md,
+    padding: 10,
   },
 });

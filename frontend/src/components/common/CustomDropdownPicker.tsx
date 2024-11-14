@@ -1,7 +1,6 @@
 import React from 'react';
 import {Picker} from '@react-native-picker/picker';
 import {StyleSheet, View, ViewStyle} from 'react-native';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {borderWidth} from '@theme/borderWidth';
 import {getResponsiveSize} from '@utils/responsive';
@@ -61,7 +60,7 @@ const CustomDropdownPicker = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: spacing.md,
+    marginBottom: 10,
   },
   pickerContainer: {
     borderColor: colors.light.background.main,
@@ -79,7 +78,7 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
 });
 

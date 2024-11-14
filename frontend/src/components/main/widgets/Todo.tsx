@@ -7,7 +7,6 @@ import {
   Alert,
 } from 'react-native';
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import CheckBox from '@react-native-community/checkbox';
 
@@ -88,14 +87,18 @@ export default function Todo({
       const newIsDone = !isDone;
       await toggleTodo(item.id, newIsDone);
       setIsDone(newIsDone);
-      if (onToggleComplete) onToggleComplete();
+      if (onToggleComplete) {
+        onToggleComplete();
+      }
     } catch (error) {
       Alert.alert('할 일 완료 토글을 실패하였습니다.');
     }
   };
 
   const handleEdit = () => {
-    if (onEdit) onEdit();
+    if (onEdit) {
+      onEdit();
+    }
     open(
       <AddTodoModal isEditMode={true} todo={item} onTodoListUpdate={onEdit} />,
       {title: '할 일 수정'},
@@ -108,7 +111,9 @@ export default function Todo({
         onConfirm={async () => {
           try {
             await deleteTodo(item.id);
-            if (onDelete) onDelete();
+            if (onDelete) {
+              onDelete();
+            }
           } catch (error) {
             Alert.alert('할 일 삭제를 실패하였습니다.');
           }
@@ -125,7 +130,7 @@ export default function Todo({
 
   const animatedMargin = animatedHeight.interpolate({
     inputRange: [0, 100],
-    outputRange: [0, spacing.md],
+    outputRange: [0, 10],
   });
 
   return (
@@ -183,7 +188,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    marginVertical: spacing.sm,
+    marginVertical: 5,
     borderWidth: 1,
     borderColor: colors.light.borderColor.pickerBorder,
     borderRadius: borderRadius.lg,
@@ -193,13 +198,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.lg,
-    padding: spacing.md,
+    gap: 15,
+    padding: 10,
   },
   titleContainer: {
     flex: 7,
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: 10,
     alignItems: 'center',
   },
   optionContainer: {
@@ -207,21 +212,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 5,
   },
   descriptionContainer: {
     overflow: 'hidden',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 15,
   },
   optionIcon: {
-    padding: spacing.sm,
+    padding: 5,
   },
   button: {
     alignItems: 'center',
     width: '20%',
     backgroundColor: colors.light.background.danger,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
+    paddingVertical: 10,
+    paddingHorizontal: 25,
     borderRadius: borderRadius.md,
   },
 });

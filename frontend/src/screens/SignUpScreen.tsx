@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -612,21 +611,21 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flexDirection: 'row',
-    gap: spacing.xxl,
+    gap: 40,
   },
   innerContainer: {
     flex: 1,
-    gap: spacing.lg,
+    gap: 15,
   },
   schoolInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xl,
+    gap: 25,
   },
   gradeClassContainer: {
     flex: 1,
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: 10,
     alignSelf: 'flex-end',
   },
   pickerContainer: {
@@ -636,13 +635,13 @@ const styles = StyleSheet.create({
   birthGenderContainer: {
     flexDirection: 'row',
     alignSelf: 'flex-end',
-    gap: spacing.xl,
-    marginBottom: spacing.md,
+    gap: 25,
+    marginBottom: 10,
   },
   genderContainer: {
     flexDirection: 'row',
     flex: 1,
-    gap: spacing.md,
+    gap: 10,
     justifyContent: 'center',
   },
   selectedGenderButton: {
@@ -653,8 +652,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: borderRadius.sm,
-    marginHorizontal: spacing.xs,
-    marginVertical: spacing.md,
+    marginHorizontal: 3,
+    marginVertical: 10,
     backgroundColor: colors.light.background.input,
     height: getResponsiveSize(25),
     alignSelf: 'flex-end',
@@ -664,15 +663,15 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,
+    paddingVertical: 10,
     alignItems: 'center',
-    marginVertical: spacing.xl,
+    marginVertical: 25,
     alignSelf: 'center',
     width: '50%',
   },
   divider: {
     width: 1,
     backgroundColor: '#C1C1C1',
-    marginHorizontal: spacing.sm,
+    marginHorizontal: 5,
   },
 });

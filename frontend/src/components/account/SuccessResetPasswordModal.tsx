@@ -5,10 +5,8 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
-
 
 export default function SuccessResetPasswordModal(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
@@ -35,7 +33,7 @@ export default function SuccessResetPasswordModal(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   moveOptions: {
-    marginTop: spacing.lg,
+    marginTop: 15,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },

@@ -3,10 +3,6 @@ import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
-import {typography} from '@theme/typography';
 import {useState} from 'react';
 import {Pressable, StyleSheet, TextInput, View} from 'react-native';
 import {useModalContext} from 'src/contexts/useModalContext';
@@ -64,14 +60,14 @@ export default RenameFile;
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.xl,
-    paddingTop: spacing.xl,
+    gap: 25,
+    paddingTop: 25,
   },
   input: {
-    padding: spacing.lg,
-    borderWidth: borderWidth.sm,
+    padding: 15,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: borderRadius.md,
-    fontSize: typography.size.body,
+    borderRadius: 10,
+    fontSize: 16,
   },
 });

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, TouchableOpacity, FlatList} from 'react-native';
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 import InputField from './InputField';
 import CustomDropdownPicker from '@components/common/CustomDropdownPicker';
 import Config from 'react-native-config';
@@ -67,7 +66,7 @@ export default function SearchSchoolModal({
   return (
     <View style={styles.container}>
       <CustomDropdownPicker
-        containerStyle={{marginTop: spacing.md}}
+        containerStyle={{marginTop: 10}}
         items={[
           {label: '중학교', value: 'midd_list'},
           {label: '고등학교', value: 'high_list'},
@@ -87,7 +86,7 @@ export default function SearchSchoolModal({
 
       {/* 검색 결과가 없는 경우 표시할 메시지 */}
       {isSearchComplete && schoolList.length === 0 && (
-        <Text style={{textAlign: 'center', marginTop: spacing.md}}>
+        <Text style={{textAlign: 'center', marginTop: 10}}>
           검색 결과가 없습니다.
         </Text>
       )}
@@ -109,6 +108,6 @@ export default function SearchSchoolModal({
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.md
-  }
+    gap: 10,
+  },
 });

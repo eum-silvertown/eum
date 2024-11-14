@@ -1,9 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {spacing} from '@theme/spacing';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -14,7 +12,7 @@ interface ContentLayoutProps {
 export default function ContentLayout({
   children,
   flex = 1,
-  padding = spacing.lg,
+  padding = 15,
 }: ContentLayoutProps): React.JSX.Element {
   return <View style={[styles.container, {flex, padding}]}>{children}</View>;
 }

@@ -2,7 +2,6 @@ import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet} from 'react-native';
 import ProgressBox from '@components/homework/ProgressBox';
-import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import {
   HomeworkType,
@@ -68,15 +67,15 @@ function Overview({
 const styles = StyleSheet.create({
   overview: {
     flex: 1,
-    gap: spacing.md,
+    gap: 10,
   },
   subtitle: {
-    marginStart: spacing.xl,
+    marginStart: 25,
   },
   progressLayout: {
     flex: 1,
     flexDirection: 'row',
-    gap: spacing.xxl,
+    gap: 40,
     paddingHorizontal: getResponsiveSize(32),
   },
 });

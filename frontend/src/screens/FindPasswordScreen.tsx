@@ -3,7 +3,6 @@ import {View, StyleSheet, Alert} from 'react-native';
 import {Text} from '@components/common/Text';
 import ScreenHeader from '@components/account/ScreenHeader';
 import InputField from '@components/account/InputField';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {useRoute} from '@react-navigation/native';
 import {useModal} from 'src/hooks/useModal';
@@ -87,10 +86,7 @@ function FindPasswordScreen(): React.JSX.Element {
     }
     setIsVerifyLoading(true);
     try {
-      await resetPasswordByVerificationCode(
-        email,
-        verificationCode,
-      );
+      await resetPasswordByVerificationCode(email, verificationCode);
       open(<SuccessResetPasswordModal />, {
         title: '임시 비밀번호 발급 완료',
       });
@@ -111,8 +107,8 @@ function FindPasswordScreen(): React.JSX.Element {
           회원가입에 사용된 이메일과 아이디를 입력해주세요.
         </Text>
 
-        <View style={{gap: spacing.md}}>
-          <View style={{gap: spacing.md}}>
+        <View style={{gap: 10}}>
+          <View style={{gap: 10}}>
             <InputField
               label="아이디"
               placeholder="아이디를 입력해주세요."
@@ -166,6 +162,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '40%',
-    gap: spacing.xl,
+    gap: 25,
   },
 });

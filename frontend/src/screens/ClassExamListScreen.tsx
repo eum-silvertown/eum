@@ -7,9 +7,8 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import {spacing} from '@theme/spacing';
-import {iconSize} from '@theme/iconSize';
 import {useNavigation} from '@react-navigation/native';
+import {iconSize} from '@theme/iconSize';
 import CalendarIcon from '@assets/icons/calendarIcon.svg';
 import ClockIcon from '@assets/icons/clockIcon.svg'; // ClockIcon 추가
 import EmptyExamIcon from '@assets/icons/emptyExamIcon.svg';
@@ -23,8 +22,8 @@ import {
   LectureDetailType,
 } from '@services/lectureInformation';
 import {deleteExam} from '@services/examService';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassExamListScreen(): React.JSX.Element {
@@ -142,12 +141,13 @@ function ClassExamListScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: spacing.lg, backgroundColor: '#FFF'},
-  card: {
-    marginHorizontal: spacing.xxl,
-    padding: spacing.xl,
+  container: {flex: 1, padding: 15, backgroundColor: '#FFF'},
+  title: {fontSize: 22, fontWeight: 'bold', marginBottom: 10, color: '#333'},
+  item: {
+    marginHorizontal: 40,
+    padding: 25,
     backgroundColor: '#F9E1E1',
-    marginBottom: spacing.md,
+    marginBottom: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
@@ -175,12 +175,13 @@ const styles = StyleSheet.create({
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: 3,
   },
-  itemText: {fontSize: 14, color: '#666', marginLeft: spacing.sm},
+  itemTitle: {fontSize: 18, fontWeight: 'bold', color: '#333', marginLeft: 5},
+  itemText: {fontSize: 14, color: '#666', marginBottom: 3},
   deleteButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     backgroundColor: '#FF5555',
     borderRadius: 8,
   },
@@ -192,24 +193,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: spacing.xxl,
+    paddingTop: 40,
   },
   emptyIcon: {
-    marginBottom: spacing.md,
+    marginBottom: 15,
   },
   emptyText: {
     fontSize: 16,
     color: '#666',
     fontWeight: 'bold',
+    marginBottom: 10,
   },
   header: {
-    marginVertical: spacing.xl,
-    marginLeft: spacing.xl,
+    marginVertical: 25,
+    marginLeft: 25,
     flexDirection: 'row',
     alignItems: 'center',
   },
   headerText: {
-    marginLeft: spacing.md,
+    marginLeft: 10,
   },
 });
 

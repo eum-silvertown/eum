@@ -1,8 +1,7 @@
 import React from 'react';
-import {StyleSheet, View, ViewStyle, TextStyle} from 'react-native';
+import {StyleSheet, ViewStyle, TextStyle} from 'react-native';
 import {Text} from '@components/common/Text';
 import {colors} from 'src/hooks/useColors';
-import {spacing} from '@theme/spacing';
 
 interface StatusMessageProps {
   message?: string | undefined; // 메시지 텍스트

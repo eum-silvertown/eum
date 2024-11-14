@@ -3,8 +3,6 @@ import Sidebar from '../sidebar/Sidebar';
 import {useAuthStore} from '@store/useAuthStore';
 import Modals from './Modals';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {spacing} from '@theme/spacing';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface MainLayoutProps {
   children: React.ReactElement;
@@ -43,15 +41,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    gap: spacing.lg,
-    padding: spacing.lg,
+    gap: 15,
+    padding: 15,
     backgroundColor: '#555588',
   },
   contentWrapper: {
     flex: 1,
     backgroundColor: 'white',
-    borderRadius: spacing.lg,
+    borderRadius: 10,
     overflow: 'hidden',
-    elevation: getResponsiveSize(6),
+    elevation: 5,
   },
 });

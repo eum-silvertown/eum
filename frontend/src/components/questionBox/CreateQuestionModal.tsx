@@ -4,13 +4,8 @@ import DocumentPicker, {types} from 'react-native-document-picker';
 import PagerView from 'react-native-pager-view';
 import Button from '@components/common/Button';
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
-import {typography} from '@theme/typography';
 import {colors} from 'src/hooks/useColors';
 import {createQuestion, uploadPdf} from '@services/questionBox';
-import {getResponsiveSize} from '@utils/responsive';
 import LoadingSuccessIndicator from './LoadingSuccessIndicator';
 import QuestionsPage from './QuestionPage';
 import {
@@ -38,7 +33,6 @@ const FileSelectionPage = ({
         content="파일 선택"
         size="sm"
         variant="pressable"
-        style={styles.button}
         onPress={onPickFile}
       />
     </View>
@@ -61,7 +55,7 @@ function CreateQuestionModal(): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(0);
   const mainPagerRef = useRef<PagerView>(null);
   const questionsPagerRef = useRef<PagerView>(null);
-  const heightAnim = useRef(new Animated.Value(getResponsiveSize(240))).current;
+  const heightAnim = useRef(new Animated.Value(200)).current;
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
 
   const animateHeight = (toHeight: number) => {
@@ -80,16 +74,16 @@ function CreateQuestionModal(): React.JSX.Element {
     // 현재 페이지에 따라 높이 애니메이션 적용
     switch (currentPage) {
       case 0:
-        animateHeight(getResponsiveSize(240));
+        animateHeight(200);
         break;
       case 1:
-        animateHeight(getResponsiveSize(160));
+        animateHeight(200);
         break;
       case 2:
-        animateHeight(getResponsiveSize(240));
+        animateHeight(350);
         break;
       case 3:
-        animateHeight(getResponsiveSize(160));
+        animateHeight(225);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
@@ -193,7 +187,7 @@ function CreateQuestionModal(): React.JSX.Element {
             onSelectedDone={onSelectedDone}
           />
           <View key="3" style={styles.inputContainer}>
-            <View style={{gap: spacing.lg}}>
+            <View style={{gap: 15}}>
               <Text variant="subtitle">제목</Text>
               <TextInput
                 onChangeText={onChangeText}
@@ -229,32 +223,29 @@ const styles = StyleSheet.create({
   },
   pageContent: {
     flex: 1,
-    padding: spacing.xl,
-    gap: spacing.md,
+    padding: 25,
+    gap: 10,
   },
   inputContainer: {
     flex: 1,
-    padding: spacing.lg,
-    gap: spacing.xl,
+    padding: 15,
+    gap: 25,
   },
   input: {
     alignItems: 'center',
-    height: spacing.xxl * 1.75,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
-    borderWidth: borderWidth.sm,
+    height: 75,
+    paddingVertical: 10,
+    paddingHorizontal: 25,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: borderRadius.md,
-    fontSize: typography.size.body,
+    borderRadius: 10,
+    fontSize: 15,
   },
   questionSelector: {
     flexDirection: 'row',
   },
   fileName: {
-    flex: 8,
-  },
-  button: {
-    flex: 2,
+    flex: 1,
   },
   pagerView: {
     flex: 1,

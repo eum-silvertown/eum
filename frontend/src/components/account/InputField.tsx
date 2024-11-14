@@ -7,7 +7,6 @@ import {
   KeyboardTypeOptions,
   ViewStyle,
 } from 'react-native';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
 import {borderWidth} from '@theme/borderWidth';
 import {Text} from '@components/common/Text';
@@ -95,7 +94,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   inputLabel: {
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
   inputBox: {
     width: '100%',
@@ -108,19 +107,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f4f8',
     borderBottomWidth: borderWidth.sm,
     borderBottomColor: colors.light.borderColor.cardBorder,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: 5,
     fontSize: getResponsiveSize(12),
   },
   iconButton: {
     position: 'absolute',
-    right: spacing.sm,
+    right: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
   smallButton: {
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',

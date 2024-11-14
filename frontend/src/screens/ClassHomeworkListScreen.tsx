@@ -7,7 +7,6 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import {useNavigation} from '@react-navigation/native';
 import ClockIcon from '@assets/icons/clockIcon.svg';
@@ -184,11 +183,11 @@ function ClassHomeworkListScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: spacing.lg, backgroundColor: '#FFF'},
+  container: {flex: 1, padding: 15, backgroundColor: '#FFF'},
   card: {
-    marginHorizontal: spacing.xxl,
-    padding: spacing.xl,
-    marginBottom: spacing.md,
+    marginHorizontal: 40,
+    padding: 25,
+    marginBottom: 5,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
@@ -229,7 +228,7 @@ const styles = StyleSheet.create({
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: 3,
   },
   itemText: {fontSize: 14, color: '#666', marginLeft: spacing.sm},
   deadlineText: {
@@ -238,8 +237,8 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   deleteButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     backgroundColor: '#FF5555',
     borderRadius: 8,
   },
@@ -251,10 +250,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: spacing.xxl,
+    paddingTop: 40,
   },
   emptyIcon: {
-    marginBottom: spacing.md,
+    marginBottom: 10,
   },
   emptyText: {
     fontSize: 16,
@@ -262,13 +261,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   header: {
-    marginVertical: spacing.xl,
-    marginLeft: spacing.xl,
+    marginVertical: 25,
+    marginLeft: 25,
     flexDirection: 'row',
     alignItems: 'center',
   },
   headerText: {
-    marginLeft: spacing.md,
+    marginLeft: 10,
   },
 });
 

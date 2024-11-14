@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 import LeftArrowOffIcon from '@assets/icons/leftArrowOffIcon.svg';
 import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
@@ -155,21 +154,21 @@ function Homework({homework = []}: HomeworkProps): React.JSX.Element {
 const styles = StyleSheet.create({
   homework: {
     flex: 1,
-    paddingVertical: spacing.md,
+    paddingVertical: 10,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingRight: spacing.md,
+    paddingRight: 10,
   },
   subtitle: {
-    marginStart: spacing.xl,
+    marginStart: 25,
   },
   pagination: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 5,
     marginRight: getResponsiveSize(18),
   },
   pageIndicator: {
