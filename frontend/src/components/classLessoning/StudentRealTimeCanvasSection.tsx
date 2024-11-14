@@ -8,6 +8,7 @@ import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
 import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
 import * as StompJs from '@stomp/stompjs';
 import {useLectureStore} from '@store/useLessonStore';
+import {Dimensions} from 'react-native';
 interface StudentCanvasSectionProps {
   lessonId: number;
   role: string;
@@ -38,10 +39,6 @@ type ActionData = {
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
-// 전송 확인 카운트
-let syncCount = 0;
-let syncMoveCount = 0;
-
 const StudentRealTimeCanvasSection = ({
   lessonId,
   role,
@@ -68,13 +65,11 @@ const StudentRealTimeCanvasSection = ({
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
 
   const memberId = useLectureStore(state => state.memberId);
-
+  const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
+  const width = parseFloat(deviceWidth.toFixed(4));
+  const height = parseFloat(deviceHeight.toFixed(4));
   // 압축 전송
-  const sendCompressedData = (
-    destination: string,
-    data: any,
-    count: number,
-  ) => {
+  const sendCompressedData = (destination: string, data: any) => {
     if (!clientRef.current || !clientRef.current.active) {
       console.log('STOMP client is not connected');
       return;
@@ -89,6 +84,8 @@ const StudentRealTimeCanvasSection = ({
       lessonId: lessonId,
       questionId: 22,
       drawingData: base64EncodedData,
+      width,
+      height,
     };
     // console.log(newPayload);
 
@@ -96,10 +93,6 @@ const StudentRealTimeCanvasSection = ({
       destination,
       body: JSON.stringify(newPayload),
     });
-
-    // console.log(
-    //   `[STOMP Sync] Destination: ${destination} | Count: ${count} | Data Length: ${data.length}`,
-    // );
   };
 
   // 화면 전환 토글
@@ -109,26 +102,17 @@ const StudentRealTimeCanvasSection = ({
 
   // 실시간 전송 - Move 시
   const throttledSendData = throttle((pathData: PathData) => {
-    syncMoveCount += 1;
-    sendCompressedData('/app/move', pathData, syncMoveCount);
-    // console.log(
-    //   `[Socket Sync] 실시간 전송(sync_move) | Count: ${syncMoveCount} | Path Data:`,
-    //   pathData,
-    // );
+    sendCompressedData('/app/move', pathData);
   }, 400); // 200ms마다 전송
 
   useEffect(() => {
-    syncCount += 1;
     const dataToSend = paths.map(pathData => ({
       ...pathData,
       path: pathData.path.toSVGString(),
     }));
 
     // STOMP 전송 함수 호출
-    sendCompressedData('/app/draw', dataToSend, syncCount);
-    // console.log(
-    //   `[Paths Updated] Sync 전송 횟수: ${syncCount} | paths 개수: ${paths.length}`,
-    // );
+    sendCompressedData('/app/draw', dataToSend);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paths, clientRef]);
 
@@ -260,8 +244,6 @@ const StudentRealTimeCanvasSection = ({
       addToUndoStack({type: 'draw', pathData: newPathData});
       setCurrentPath(null);
       setRedoStack([]);
-      syncCount = 0;
-      syncMoveCount = 0;
     }
   };
 
