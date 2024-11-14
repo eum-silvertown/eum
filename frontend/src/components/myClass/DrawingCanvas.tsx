@@ -1,24 +1,21 @@
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {
   View,
   StyleSheet,
   PanResponder,
   GestureResponderEvent,
-  Pressable,
   findNodeHandle,
   UIManager,
 } from 'react-native';
-import Canvas from 'react-native-canvas';
+import Canvas, {CanvasRenderingContext2D} from 'react-native-canvas';
 import SockJS from 'sockjs-client';
 import {Client, Message} from '@stomp/stompjs';
+import {useAuthStore} from '@store/useAuthStore';
+import Toolbar from './Toolbar';
 
 type Tool = 'whiteCholk' | 'redCholk' | 'blueCholk' | 'eraser';
-
 interface DrawingPoint {
   x: number;
   y: number;
@@ -29,28 +26,31 @@ interface DrawingPoint {
   userId: string;
   lineId: string;
 }
+
 interface DrawingState {
   userId: string;
   isDrawing: boolean;
   currentLineId: string | null;
 }
+
 interface DrawingCanvasProps {
   roomId: string;
   userId: string;
 }
 
-// const SOCKET_URL = 'http://k11d101.p.ssafy.io/ws-gateway/drawing';
 const SOCKET_URL = 'http://192.168.100.187:8080/ws-gateway/drawing';
+const BUFFER_INTERVAL = 1000; // 1초마다 데이터 전송
 
-const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
+const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
+  const userId = useAuthStore(state => state.userInfo.id).toString();
   const currentTool = useRef<Tool>('whiteCholk');
   const currentColor = useRef('#ffffff');
-  const [selectedTool, setSelectedTool] = useState<Tool>('whiteCholk');
   const canvasRef = useRef<Canvas | null>(null);
   const stompClient = useRef<Client | null>(null);
   const activeDrawings = useRef<Map<string, DrawingState>>(new Map());
   const [isConnected, setIsConnected] = useState(false);
   const isConnectedRef = useRef<boolean>(false);
+  const drawingBuffer = useRef<DrawingPoint[]>([]);
   const [canvasSize, setCanvasSize] = useState<{width: number; height: number}>(
     {
       width: 0,
@@ -66,7 +66,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
   } | null>(null);
 
   // 캔버스 초기화 함수
-  const initializeCanvas = (canvas: Canvas) => {
+  const initializeCanvas = useCallback((canvas: Canvas) => {
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 2;
@@ -74,17 +74,23 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
     ctx.lineJoin = 'round';
     ctx.fillStyle = '#004414';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  };
+  }, []);
 
-  // 캔버스 상태 요청
-  const requestCanvasState = () => {
-    if (stompClient.current?.connected) {
-      stompClient.current.publish({
-        destination: `/app/canvas/${roomId}/state-request`,
-        body: JSON.stringify({userId}),
-      });
-    }
-  };
+  // 드로잉 함수
+  const drawLine = useCallback(
+    (ctx: CanvasRenderingContext2D, point: DrawingPoint) => {
+      if (point.tool === 'eraser') {
+        ctx.strokeStyle = '#004414';
+        ctx.lineWidth = 50;
+      } else {
+        ctx.strokeStyle = point.color;
+        ctx.lineWidth = 2;
+      }
+      ctx.lineTo(point.x, point.y);
+      ctx.stroke();
+    },
+    [],
+  );
 
   // WebSocket 연결 설정
   useEffect(() => {
@@ -103,15 +109,19 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
       console.log('Connected to WebSocket');
       setIsConnected(true);
 
-      // 룸의 드로잉 이벤트 구독
+      // 드로잉 이벤트 구독
       stompClient.current?.subscribe(
         `/topic/classroom/1234`,
         (message: Message) => {
-          handleReceivedDrawing(JSON.parse(message.body));
+          const data = JSON.parse(message.body);
+          if (data.userId !== userId) {
+            // 자신의 드로잉이 아닐 때만 처리
+            handleReceivedDrawing(data);
+          }
         },
       );
 
-      // 스냅샷 상태 구독
+      // 캔버스 상태 구독
       stompClient.current?.subscribe(
         `/topic/queue/snapshot/1234`,
         (message: Message) => {
@@ -119,8 +129,11 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
         },
       );
 
-      // 현재 캔버스 상태 요청
-      requestCanvasState();
+      // 초기 캔버스 상태 요청
+      stompClient.current?.publish({
+        destination: `/app/canvas/${roomId}/state-request`,
+        body: JSON.stringify({userId}),
+      });
     };
 
     stompClient.current.onDisconnect = () => {
@@ -134,92 +147,170 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
         stompClient.current.deactivate();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomId]);
+  }, [roomId, userId]);
 
-  // 캔버스 상태 수신 처리
-  const handleCanvasState = (state: {
-    lines: DrawingPoint[][];
-    timestamp: number;
-  }) => {
-    if (!canvasRef.current) return;
+  // 캔버스 상태 처리
+  const handleCanvasState = useCallback(
+    (state: {lines: DrawingPoint[][]}) => {
+      if (!canvasRef.current) return;
 
-    const canvas = canvasRef.current;
-    initializeCanvas(canvas);
+      const ctx = canvasRef.current.getContext('2d');
+      initializeCanvas(canvasRef.current);
 
-    // 저장된 모든 선 다시 그리기
-    state.lines.forEach(line => {
-      if (line.length > 0) {
-        const ctx = canvas.getContext('2d');
-        ctx.beginPath();
-        line.forEach((point, index) => {
-          if (index === 0) {
-            ctx.moveTo(point.x, point.y);
-          } else {
-            if (point.tool === 'eraser') {
-              ctx.strokeStyle = '#004414';
-              ctx.lineWidth = 50;
-            } else {
-              ctx.strokeStyle = point.color;
-              ctx.lineWidth = 2;
-            }
-            ctx.lineTo(point.x, point.y);
-            ctx.stroke();
+      state.lines.forEach(line => {
+        if (line.length > 0) {
+          ctx.beginPath();
+          ctx.moveTo(line[0].x, line[0].y);
+          line.slice(1).forEach(point => {
+            drawLine(ctx, point);
+          });
+          ctx.closePath();
+        }
+      });
+    },
+    [initializeCanvas, drawLine],
+  );
+
+  // 원격 드로잉 처리
+  const handleReceivedDrawing = useCallback(
+    (data: DrawingPoint[]) => {
+      if (!canvasRef.current) return;
+
+      const ctx = canvasRef.current.getContext('2d');
+      const points = data;
+
+      points.forEach(point => {
+        const drawingState = activeDrawings.current.get(point.userId);
+
+        if (point.type === 'start') {
+          ctx.beginPath();
+          ctx.moveTo(point.x, point.y);
+          activeDrawings.current.set(point.userId, {
+            userId: point.userId,
+            isDrawing: true,
+            currentLineId: point.lineId,
+          });
+        } else if (
+          point.type === 'move' &&
+          drawingState?.isDrawing &&
+          drawingState.currentLineId === point.lineId
+        ) {
+          drawLine(ctx, point);
+        } else if (point.type === 'end') {
+          ctx.closePath();
+          if (drawingState) {
+            drawingState.isDrawing = false;
+            drawingState.currentLineId = null;
           }
+        }
+      });
+    },
+    [drawLine],
+  );
+
+  // 버퍼 플러시
+  const flushBuffer = useCallback(() => {
+    if (drawingBuffer.current.length > 0 && stompClient.current?.connected) {
+      stompClient.current.publish({
+        destination: `/app/drawing/classroom/1234`,
+        body: JSON.stringify(drawingBuffer.current),
+      });
+      drawingBuffer.current = [];
+    }
+  }, [roomId, userId]);
+
+  // 주기적 버퍼 플러시
+  useEffect(() => {
+    const intervalId = setInterval(flushBuffer, BUFFER_INTERVAL);
+    return () => clearInterval(intervalId);
+  }, [flushBuffer]);
+
+  // 로컬 드로잉 처리
+  const handleDrawing = useCallback(
+    (evt: GestureResponderEvent, type: 'start' | 'move' | 'end') => {
+      const {locationX, locationY, pageX, pageY} = evt.nativeEvent;
+      if (
+        !canvasRef.current ||
+        !canvasBounds.current ||
+        !isConnectedRef.current
+      )
+        return;
+
+      const {left, right, top, bottom} = canvasBounds.current;
+      const ctx = canvasRef.current.getContext('2d');
+
+      const isInsideCanvas =
+        pageX >= left && pageX <= right && pageY >= top && pageY <= bottom;
+
+      if (!isInsideCanvas) return;
+
+      const lineId =
+        type === 'start'
+          ? `${userId}-${Date.now()}`
+          : activeDrawings.current.get(userId)?.currentLineId || '';
+
+      // 로컬 드로잉 처리
+      if (type === 'start') {
+        ctx.beginPath();
+        ctx.moveTo(locationX, locationY);
+        activeDrawings.current.set(userId, {
+          userId,
+          isDrawing: true,
+          currentLineId: lineId,
         });
+      } else if (
+        type === 'move' &&
+        activeDrawings.current.get(userId)?.isDrawing &&
+        activeDrawings.current.get(userId)?.currentLineId === lineId
+      ) {
+        const point: DrawingPoint = {
+          x: locationX,
+          y: locationY,
+          tool: currentTool.current,
+          color: currentColor.current,
+          type,
+          timestamp: Date.now(),
+          userId,
+          lineId,
+        };
+        drawLine(ctx, point);
+      } else if (type === 'end') {
         ctx.closePath();
+        const state = activeDrawings.current.get(userId);
+        if (state) {
+          state.isDrawing = false;
+          state.currentLineId = null;
+        }
       }
-    });
-  };
 
-  // 다른 사용자의 드로잉 데이터 처리
-  const handleReceivedDrawing = (data: {
-    userId: string;
-    drawingPoint: DrawingPoint;
-  }) => {
-    if (!canvasRef.current || data.userId === userId) return;
-
-    const {userId: drawerId, drawingPoint} = data;
-    const ctx = canvasRef.current.getContext('2d');
-
-    // 현재 그리기 상태 관리
-    let drawingState = activeDrawings.current.get(drawerId);
-    if (!drawingState) {
-      drawingState = {
-        userId: drawerId,
-        isDrawing: false,
-        currentLineId: null,
+      // 드로잉 포인트를 버퍼에 추가
+      const drawingPoint: DrawingPoint = {
+        x: locationX,
+        y: locationY,
+        tool: currentTool.current,
+        color: currentColor.current,
+        type,
+        timestamp: Date.now(),
+        userId,
+        lineId,
       };
-      activeDrawings.current.set(drawerId, drawingState);
-    }
 
-    if (drawingPoint.type === 'start') {
-      drawingState.isDrawing = true;
-      drawingState.currentLineId = drawingPoint.lineId;
-      ctx.beginPath();
-      ctx.moveTo(drawingPoint.x, drawingPoint.y);
-    } else if (
-      drawingPoint.type === 'move' &&
-      drawingState.isDrawing &&
-      drawingState.currentLineId === drawingPoint.lineId
-    ) {
-      if (drawingPoint.tool === 'eraser') {
-        ctx.strokeStyle = '#004414';
-        ctx.lineWidth = 50;
-      } else {
-        ctx.strokeStyle = drawingPoint.color;
-        ctx.lineWidth = 2;
-      }
-      ctx.lineTo(drawingPoint.x, drawingPoint.y);
-      ctx.stroke();
-    } else if (drawingPoint.type === 'end') {
-      drawingState.isDrawing = false;
-      drawingState.currentLineId = null;
-      ctx.closePath();
-    }
-  };
+      drawingBuffer.current.push(drawingPoint);
+    },
+    [userId, drawLine],
+  );
 
-  const handleLayout = () => {
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: evt => handleDrawing(evt, 'start'),
+      onPanResponderMove: evt => handleDrawing(evt, 'move'),
+      onPanResponderRelease: evt => handleDrawing(evt, 'end'),
+    }),
+  ).current;
+
+  const handleLayout = useCallback(() => {
     if (canvasRef.current) {
       const handle = findNodeHandle(canvasRef.current);
       if (handle) {
@@ -234,163 +325,28 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
         });
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
-    if (canvasRef.current && canvasSize.width && canvasSize.height) {
-      const canvas = canvasRef.current;
-      canvas.width = canvasSize.width;
-      canvas.height = canvasSize.height;
-      initializeCanvas(canvas);
+    if (canvasSize.width && canvasSize.height && canvasRef.current) {
+      canvasRef.current.width = canvasSize.width;
+      canvasRef.current.height = canvasSize.height;
+      initializeCanvas(canvasRef.current);
     }
-  }, [canvasSize]);
+  }, [canvasSize, initializeCanvas]);
 
   useEffect(() => {
     isConnectedRef.current = isConnected;
   }, [isConnected]);
 
-  const handleDrawing = (
-    evt: GestureResponderEvent,
-    type: 'start' | 'move' | 'end',
-  ) => {
-    const {locationX, locationY, pageX, pageY} = evt.nativeEvent;
-    const canvas = canvasRef.current;
-    console.log('뭔데 너? isConnected', isConnectedRef.current);
-
-    if (!canvas || !canvasBounds.current || !isConnectedRef.current) return;
-
-    const {left, right, top, bottom} = canvasBounds.current;
-    const ctx = canvas.getContext('2d');
-
-    const isInsideCanvas =
-      pageX >= left && pageX <= right && pageY >= top && pageY <= bottom;
-
-    if (!isInsideCanvas) return;
-
-    // 현재 그리기 작업의 고유 ID 생성 (시작할 때만)
-    const lineId =
-      type === 'start'
-        ? `${userId}-${Date.now()}`
-        : activeDrawings.current.get(userId)?.currentLineId || '';
-
-    // WebSocket을 통해 드로잉 데이터 전송
-    const drawingPoint: DrawingPoint = {
-      x: locationX,
-      y: locationY,
-      tool: currentTool.current,
-      color: currentColor.current,
-      type,
-      timestamp: Date.now(),
-      userId,
-      lineId,
-    };
-
-    console.log(drawingPoint);
-
-    if (stompClient.current?.connected) {
-      stompClient.current.publish({
-        destination: `/app/drawing/classroom/${1234}`,
-        body: JSON.stringify(drawingPoint),
-      });
-    }
-
-    // 로컬 캔버스에 그리기
-    if (type === 'start') {
-      activeDrawings.current.set(userId, {
-        userId,
-        isDrawing: true,
-        currentLineId: lineId,
-      });
-      ctx.beginPath();
-      ctx.moveTo(locationX, locationY);
-    } else if (
-      type === 'move' &&
-      activeDrawings.current.get(userId)?.isDrawing &&
-      activeDrawings.current.get(userId)?.currentLineId === lineId
-    ) {
-      if (currentTool.current === 'eraser') {
-        ctx.strokeStyle = '#004414';
-        ctx.lineWidth = 50;
-      } else {
-        ctx.strokeStyle = currentColor.current;
-        ctx.lineWidth = 2;
-      }
-      ctx.lineTo(locationX, locationY);
-      ctx.stroke();
-    } else if (type === 'end') {
-      const state = activeDrawings.current.get(userId);
-      if (state) {
-        state.isDrawing = false;
-        state.currentLineId = null;
-      }
-      ctx.closePath();
-    }
-  };
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: evt => handleDrawing(evt, 'start'),
-      onPanResponderMove: evt => handleDrawing(evt, 'move'),
-      onPanResponderRelease: evt => handleDrawing(evt, 'end'),
-    }),
-  ).current;
-
-  const handleToolChange = (tool: Tool) => {
-    currentTool.current = tool;
-    setSelectedTool(tool);
-  };
-
   return (
     <View style={styles.container} onLayout={handleLayout}>
-      <View style={styles.toolbar}>
-        <View style={styles.cholks}>
-          <Pressable
-            style={[
-              styles.whiteCholk,
-              selectedTool === 'whiteCholk' && styles.selectedTool,
-            ]}
-            onPress={() => {
-              handleToolChange('whiteCholk');
-              currentColor.current = '#ffffff';
-            }}
-          />
-          <Pressable
-            style={[
-              styles.redCholk,
-              selectedTool === 'redCholk' && styles.selectedTool,
-            ]}
-            onPress={() => {
-              handleToolChange('redCholk');
-              currentColor.current = '#ff4f4f';
-            }}
-          />
-          <Pressable
-            style={[
-              styles.blueCholk,
-              selectedTool === 'blueCholk' && styles.selectedTool,
-            ]}
-            onPress={() => {
-              handleToolChange('blueCholk');
-              currentColor.current = '#5c8fff';
-            }}
-          />
-        </View>
-        <Pressable
-          style={[
-            styles.eraser,
-            selectedTool === 'eraser' && styles.selectedTool,
-          ]}
-          onPress={() => handleToolChange('eraser')}>
-          <Text color="white">지우개</Text>
-        </Pressable>
-      </View>
-
+      <Toolbar currentColor={currentColor} currentTool={currentTool} />
       <View style={styles.drawingArea}>
         <View style={StyleSheet.absoluteFill} {...panResponder.panHandlers}>
           <Canvas ref={canvasRef} style={styles.canvas} />
         </View>
+
         {!isConnected && (
           <View style={styles.disconnectedOverlay}>
             <Text color="white">연결 중...</Text>
@@ -419,49 +375,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  toolbar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'flex-end',
-    position: 'absolute',
-    zIndex: 1,
-    bottom: 0,
-    width: '100%',
-  },
-  cholks: {
-    flexDirection: 'row',
-    gap: spacing.lg,
-  },
-  whiteCholk: {
-    width: getResponsiveSize(48),
-    height: getResponsiveSize(16),
-    backgroundColor: '#fff',
-    borderRadius: borderRadius.sm,
-  },
-  redCholk: {
-    width: getResponsiveSize(48),
-    height: getResponsiveSize(16),
-    backgroundColor: '#ff4f4f',
-    borderRadius: borderRadius.sm,
-  },
-  blueCholk: {
-    width: getResponsiveSize(48),
-    height: getResponsiveSize(16),
-    backgroundColor: '#5c8fff',
-    borderRadius: borderRadius.sm,
-  },
-  eraser: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: getResponsiveSize(96),
-    height: getResponsiveSize(48),
-    backgroundColor: '#550055',
-    borderRadius: borderRadius.md,
-  },
-  selectedTool: {
-    borderWidth: borderWidth.md,
-    borderColor: '#ffff00',
   },
 });
 

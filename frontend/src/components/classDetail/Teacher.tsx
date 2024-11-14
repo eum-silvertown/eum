@@ -1,7 +1,6 @@
 import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet, ImageBackground} from 'react-native';
-import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import {SvgUri} from 'react-native-svg';
 
@@ -53,26 +52,26 @@ function Teacher({
 
 const styles = StyleSheet.create({
   teacher: {
-    paddingVertical: spacing.md,
+    paddingVertical: 10,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginStart: spacing.xl,
-    marginBottom: spacing.md,
+    marginStart: 25,
+    marginBottom: 10,
   },
   subtitle: {
     fontWeight: 'bold',
   },
   pencilIcon: {
-    marginLeft: spacing.md,
-    marginTop: spacing.sm,
+    marginLeft: 10,
+    marginTop: 5,
   },
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    marginTop: 15,
+    paddingHorizontal: 15,
   },
   photoContainer: {
     width: getResponsiveSize(112),
@@ -95,10 +94,10 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1,
-    marginLeft: spacing.md,
+    marginLeft: 10,
   },
   infoText: {
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
 });
 

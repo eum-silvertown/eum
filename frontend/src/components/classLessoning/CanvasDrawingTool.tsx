@@ -12,7 +12,6 @@ import ToolBarToLeftIcon from '@assets/icons/toolBarToLeftIcon.svg';
 import ToolBarToRightIcon from '@assets/icons/toolBarToRightIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {getResponsiveSize} from '@utils/responsive';
-import {spacing} from '@theme/spacing';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -257,7 +256,7 @@ const styles = StyleSheet.create({
     width: getResponsiveSize(28),
     height: getResponsiveSize(28),
     borderRadius: 15,
-    marginVertical: spacing.xs,
+    marginVertical: 3,
     borderWidth: 2,
     borderColor: 'transparent',
   },
@@ -274,7 +273,7 @@ const styles = StyleSheet.create({
     width: getResponsiveSize(28),
     height: getResponsiveSize(28),
     borderRadius: 15,
-    marginVertical: spacing.xs,
+    marginVertical: 3,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,

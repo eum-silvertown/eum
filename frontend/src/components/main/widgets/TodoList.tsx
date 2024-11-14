@@ -3,13 +3,12 @@ import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import {Text} from '@components/common/Text';
 import ContentLayout from './ContentLayout';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import Todo from './Todo';
 import AddTodoModal from './AddTodoModal';
 import {useModal} from 'src/hooks/useModal';
 import {getTodos} from '@services/todoService';
-import { colors } from 'src/hooks/useColors';
+import {colors} from 'src/hooks/useColors';
 
 interface TodoType {
   id: number;
@@ -167,26 +166,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: spacing.md,
-    marginBottom: spacing.md,
+    gap: 10,
+    marginBottom: 10,
   },
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: spacing.md,
+    marginBottom: 10,
   },
   tabButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
   },
   activeTab: {
-    borderBottomWidth: spacing.xs,
+    borderBottomWidth: 3,
     borderColor: colors.light.background.main,
   },
   emptyMessageContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.lg,
+    padding: 15,
   },
 });

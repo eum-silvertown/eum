@@ -11,7 +11,6 @@ import React, {useEffect} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 import ScreenInfo from '@components/common/ScreenInfo';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
@@ -309,22 +308,22 @@ export default function ProfileScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingVertical: spacing.xl,
-    paddingHorizontal: spacing.xxl,
+    paddingVertical: 25,
+    paddingHorizontal: 40,
   },
   contentContainer: {
     width: '100%',
     height: '92%',
-    gap: spacing.xl,
+    gap: 25,
   },
   ImageContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    gap: spacing.xl,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.xxl,
+    gap: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
     backgroundColor: 'white',
     elevation: 2,
     borderRadius: borderRadius.md,
@@ -346,26 +345,26 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '100%',
-    gap: spacing.xl,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.xxl,
+    gap: 25,
+    paddingVertical: 15,
+    paddingHorizontal: 40,
     backgroundColor: 'white',
     elevation: 2,
     borderRadius: borderRadius.md,
   },
   button: {
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
+    paddingVertical: 10,
+    paddingHorizontal: 25,
     borderRadius: borderRadius.md,
   },
   optionContainer: {
-    gap: spacing.xl,
+    gap: 25,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
   profileImageOptions: {
-    gap: spacing.lg,
+    gap: 15,
   },
 });

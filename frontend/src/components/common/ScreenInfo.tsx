@@ -1,6 +1,5 @@
 import {StyleSheet, View} from 'react-native';
 import {Text} from './Text';
-import {spacing} from '@theme/spacing';
 
 interface ScreenInfoProps {
   title: string;
@@ -19,5 +18,5 @@ function ScreenInfo({title}: ScreenInfoProps): React.JSX.Element {
 export default ScreenInfo;
 
 const styles = StyleSheet.create({
-  container: {marginBottom: spacing.xl},
+  container: {marginBottom: 25},
 });

@@ -5,7 +5,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {Text} from '@components/common/Text';
-import {spacing} from '@theme/spacing';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 interface FoundIdModalProps {
@@ -52,7 +51,7 @@ export default function FoundIdModal({
 
 const styles = StyleSheet.create({
   moveOptions: {
-    marginTop: spacing.lg,
+    marginTop: 15,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },

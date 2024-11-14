@@ -1,8 +1,7 @@
 import Lecture from '@components/main/Lecture';
-import { useBookModalStore } from '@store/useBookModalStore';
-import { spacing } from '@theme/spacing';
-import { useRef } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import {useBookModalStore} from '@store/useBookModalStore';
+import {useRef} from 'react';
+import {Pressable, StyleSheet, View} from 'react-native';
 
 interface BookProp {
   rightPosition: number;
@@ -81,6 +80,6 @@ const styles = StyleSheet.create({
     width: '25%',
     height: undefined,
     aspectRatio: 0.95,
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: 25,
   },
 });

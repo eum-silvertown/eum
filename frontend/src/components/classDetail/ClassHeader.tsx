@@ -1,7 +1,6 @@
 import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Text} from '@components/common/Text';
 import {useNavigation} from '@react-navigation/native';
-import {spacing} from '@theme/spacing';
 import {ScreenType} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
@@ -190,8 +189,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.sm,
+    paddingHorizontal: 15,
+    marginBottom: 5,
   },
   titleSection: {
     flex: 1,
@@ -201,14 +200,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    marginRight: spacing.sm,
+    marginRight: 5,
   },
   gradeSemesterChip: {
     backgroundColor: '#2e2559',
     paddingVertical: getResponsiveSize(6),
     paddingHorizontal: 8,
-    borderRadius: spacing.md,
-    marginLeft: spacing.sm,
+    borderRadius: 10,
+    marginLeft: 5,
   },
   gradeSemesterText: {
     color: '#FFFFFF',
@@ -219,14 +218,14 @@ const styles = StyleSheet.create({
     paddingVertical: getResponsiveSize(6),
     paddingHorizontal: getResponsiveSize(12),
     borderRadius: 100,
-    marginLeft: spacing.xs,
+    marginLeft: 3,
   },
   scheduleChipText: {
     fontSize: 12,
     fontWeight: '700',
   },
   subtitle: {
-    marginTop: spacing.xs,
+    marginTop: 3,
     color: '#666',
     fontSize: 14,
   },
@@ -240,7 +239,7 @@ const styles = StyleSheet.create({
     paddingVertical: getResponsiveSize(9),
     paddingHorizontal: getResponsiveSize(19),
     borderRadius: 10,
-    marginRight: spacing.lg,
+    marginRight: 15,
   },
   enterButtonDisabled: {
     backgroundColor: '#BDBDBD',
@@ -253,11 +252,11 @@ const styles = StyleSheet.create({
     color: '#757575',
   },
   menuIconContainer: {
-    marginLeft: spacing.sm,
-    marginRight: spacing.xxl,
+    marginLeft: 5,
+    marginRight: 30,
   },
   studentButton: {
-    marginRight: spacing.xxl * 1.5,
+    marginRight: 45,
   },
 });
 

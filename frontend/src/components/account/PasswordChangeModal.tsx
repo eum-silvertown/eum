@@ -4,7 +4,6 @@ import InputField from './InputField';
 import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import {spacing} from '@theme/spacing';
 import {Text} from '@components/common/Text';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
@@ -144,14 +143,14 @@ export default function PasswordChangeModal(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: spacing.lg,
-    gap: spacing.lg,
+    marginTop: 15,
+    gap: 15,
   },
   button: {
     alignItems: 'center',
     backgroundColor: colors.light.background.main,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
+    paddingVertical: 10,
+    paddingHorizontal: 25,
     borderRadius: borderRadius.sm,
   },
 });

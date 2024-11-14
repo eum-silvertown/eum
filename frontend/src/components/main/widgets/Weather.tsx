@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Config from 'react-native-config';
-import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import {colors} from 'src/hooks/useColors';
 import axios from 'axios';
@@ -186,7 +185,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xl,
+    gap: 25,
   },
   weatherBox: {
     alignItems: 'center',
@@ -195,10 +194,10 @@ const styles = StyleSheet.create({
   weatherIcon: {
     width: iconSize.xxl,
     height: iconSize.xxl,
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
   errorContainer: {
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 15,
   },
 });

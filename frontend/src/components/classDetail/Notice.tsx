@@ -2,7 +2,6 @@ import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
 import postit from '@assets/images/postit.png';
-import {spacing} from '@theme/spacing';
 import {getResponsiveSize} from '@utils/responsive';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
 import {iconSize} from '@theme/iconSize';
@@ -127,12 +126,12 @@ const styles = StyleSheet.create({
   noticeHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: spacing.lg,
-    marginStart: spacing.xl,
+    marginTop: 15,
+    marginStart: 25,
   },
   noticeLayout: {
     flexDirection: 'row',
-    gap: spacing.xxl,
+    gap: 40,
     paddingHorizontal: getResponsiveSize(28),
   },
   imageWrapper: {

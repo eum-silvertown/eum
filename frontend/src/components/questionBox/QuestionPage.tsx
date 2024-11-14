@@ -3,7 +3,6 @@ import {Text} from '@components/common/Text';
 import {borderRadius} from '@theme/borderRadius';
 import {borderWidth} from '@theme/borderWidth';
 import {iconSize} from '@theme/iconSize';
-import {spacing} from '@theme/spacing';
 import {useState} from 'react';
 import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import PagerView from 'react-native-pager-view';
@@ -97,8 +96,8 @@ function QuestionsPage({
 const styles = StyleSheet.create({
   pageContent: {
     flex: 1,
-    padding: spacing.xl,
-    gap: spacing.md,
+    padding: 25,
+    gap: 10,
   },
   pagerView: {
     flex: 1,
@@ -107,7 +106,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     width: '100%',
-    gap: spacing.md,
+    gap: 10,
   },
   checkCircle: {
     justifyContent: 'center',
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
   },
   navigationButtons: {
     flexDirection: 'row',
-    gap: spacing.lg,
+    gap: 15,
   },
   navButton: {
     width: 100,

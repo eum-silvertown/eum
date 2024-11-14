@@ -1,6 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Text} from '@components/common/Text';
-import {Animated, StyleSheet, View, TouchableOpacity, TextInput, ViewStyle} from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  TextInput,
+  ViewStyle,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '@assets/icons/editIcon.svg';
 import {iconSize} from '@theme/iconSize';
@@ -8,7 +15,6 @@ import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
 import {borderWidth} from '@theme/borderWidth';
 import {borderRadius} from '@theme/borderRadius';
-import {spacing} from '@theme/spacing';
 import {useAuthStore} from '@store/useAuthStore';
 
 interface MainHeaderProps {
@@ -63,7 +69,8 @@ export default function MainHeader({
   return (
     <View style={[styles.header, style]}>
       {isEditing ? (
-        <Animated.View style={[styles.editContainer, {backgroundColor: backgroundColor}]}>
+        <Animated.View
+          style={[styles.editContainer, {backgroundColor: backgroundColor}]}>
           <TextInput
             ref={inputRef}
             style={styles.input}
@@ -77,7 +84,8 @@ export default function MainHeader({
           </TouchableOpacity>
         </Animated.View>
       ) : (
-        <Animated.View style={[styles.editContainer, {backgroundColor: backgroundColor}]}>
+        <Animated.View
+          style={[styles.editContainer, {backgroundColor: backgroundColor}]}>
           <Text variant="title" weight="bold">
             {message || defaultMessage}
           </Text>
@@ -96,22 +104,22 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     height: '10%',
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: 25,
   },
   editContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.sm,
+    padding: 5,
     borderRadius: borderRadius.lg,
   },
   displayContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.sm,
+    padding: 5,
     borderRadius: borderRadius.lg,
   },
   input: {
-    padding: spacing.md,
+    padding: 10,
     borderColor: colors.light.text.main,
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.lg,
