@@ -44,7 +44,7 @@ function LessoningScreen(): React.JSX.Element {
   useEffect(() => {
     const client = new StompJs.Client({
       webSocketFactory: () =>
-        new SockJS('http://192.168.100.187:8080/ws-gateway/drawing'),
+        new SockJS('http://k11d101.p.ssafy.io/ws-gateway/drawing'),
       debug: str => console.log('STOMP Debug:', str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
