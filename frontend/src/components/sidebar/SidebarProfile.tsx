@@ -7,16 +7,13 @@ import {
 } from 'react-native';
 import {Text} from '@components/common/Text';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
-import {spacing} from '@theme/spacing';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import {useAuthStore} from '@store/useAuthStore';
-import {borderWidth} from '@theme/borderWidth';
 import {colors} from 'src/hooks/useColors';
-import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -74,15 +71,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '12.5%',
-    gap: spacing.lg,
-    marginBottom: spacing.xs,
-    padding: getResponsiveSize(12),
+    gap: 10,
+    padding: 16,
     overflow: 'hidden',
   },
   profileImageContainer: {
-    width: getResponsiveSize(38),
+    width: 52,
     aspectRatio: 1,
-    borderWidth: borderWidth.sm,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.pickerBorder,
     borderRadius: 9999,
     overflow: 'hidden',

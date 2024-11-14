@@ -11,11 +11,8 @@ import myClassIcon from '@assets/icons/myClassIcon.svg';
 import NotificationIcon from '@assets/icons/notificationIcon.svg';
 import {Text} from '../common/Text';
 import {SvgProps} from 'react-native-svg';
-import {spacing} from '@theme/spacing';
 import {iconSize} from '@theme/iconSize';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface MenuItem {
   name: string;
@@ -37,7 +34,7 @@ function SidebarMenus(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
   const {setCurrentScreen, currentScreen} = useCurrentScreenStore();
   const {isExpanded} = useSidebarStore();
-  const textOpacity = useRef(new Animated.Value(1)).current;
+  const opacityAnim = useRef(new Animated.Value(1)).current;
   const [selected, setSelected] = useState(0);
 
   const handlePress = useCallback(
@@ -54,52 +51,51 @@ function SidebarMenus(): React.JSX.Element {
   );
 
   useEffect(() => {
-    Animated.timing(textOpacity, {
+    Animated.timing(opacityAnim, {
       toValue: isExpanded ? 1 : 0,
       duration: 200,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
-  }, [isExpanded, textOpacity]);
+  }, [isExpanded, opacityAnim]);
 
   return (
     <View style={styles.container}>
-      <View
-        style={[
-          styles.selectedBackgroundContainer,
-          {
-            transform: [
-              {translateY: selected * (iconSize.md + spacing.lg * 2.54)},
-            ],
-          },
-        ]}>
-        <View style={styles.selectedBackground} />
-      </View>
       {menuItems.map((item, index) => (
         <Pressable
-          style={styles.menuContainer}
+          style={[styles.menuContainer]}
           key={index}
           onPress={() => handlePress(index, item.screen)}>
-          <View style={styles.icon}>
-            <item.icon
-              width={iconSize.md}
-              height={iconSize.md}
-              color={selected === index ? 'white' : '#2E2559'}
-            />
-          </View>
-          <Animated.View
+          <View
             style={[
-              styles.textContainer,
+              styles.menu,
+              // eslint-disable-next-line react-native/no-inline-styles
               {
-                opacity: textOpacity,
+                backgroundColor: selected === index ? '#2e2559' : 'white',
+                elevation: selected === index ? 3 : 0,
               },
             ]}>
-            <Text
-              weight={'bold'}
-              color={selected === index ? 'white' : 'main'}
-              numberOfLines={1}>
-              {item.name}
-            </Text>
-          </Animated.View>
+            <View style={styles.icon}>
+              <item.icon
+                width={iconSize.md}
+                height={iconSize.md}
+                color={selected === index ? 'white' : '#2E2559'}
+              />
+            </View>
+            <Animated.View
+              style={[
+                styles.textContainer,
+                {
+                  opacity: opacityAnim,
+                },
+              ]}>
+              <Text
+                weight={'bold'}
+                color={selected === index ? 'white' : 'main'}
+                numberOfLines={1}>
+                {item.name}
+              </Text>
+            </Animated.View>
+          </View>
         </Pressable>
       ))}
     </View>
@@ -110,30 +106,25 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
-  selectedBackgroundContainer: {
-    position: 'absolute',
-    width: '100%',
-    height: iconSize.md + spacing.lg * 2.5,
-    padding: spacing.md,
-  },
-  selectedBackground: {
-    flex: 1,
-    backgroundColor: '#2e2559',
-    borderRadius: borderRadius.lg,
-  },
   icon: {
     alignItems: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md + getResponsiveSize(3),
   },
   menuContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.lg,
-    padding: spacing.lg,
+    gap: 10,
+    padding: 10,
+  },
+  menu: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    gap: 15,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 10,
   },
   textContainer: {
-    width: 'auto',
     overflow: 'hidden',
   },
 });
