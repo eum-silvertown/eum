@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 
-import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
 import StudentRealTimeCanvasSection from '@components/classLessoning/StudentRealTimeCanvasSection';
 import {useAuthStore} from '@store/useAuthStore';
@@ -12,6 +11,7 @@ import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
 import PulseIndicator from '@components/classLessoning/PulseIndicator';
 import {useLectureStore, useLessonStore} from '@store/useLessonStore';
+import ProblemSection from '@components/common/ProblemSection';
 
 function LessoningScreen(): React.JSX.Element {
   const lectureId = useLessonStore(state => state.lectureId);
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     flex: 1,
-    padding: getResponsiveSize(16),
+    padding: 16,
     position: 'relative',
   },
   problemSection: {

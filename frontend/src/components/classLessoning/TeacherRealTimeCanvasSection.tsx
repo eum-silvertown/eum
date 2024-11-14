@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Skia, useCanvasRef} from '@shopify/react-native-skia';
-import CanvasDrawingTool from './CanvasDrawingTool';
+import CanvasDrawingTool from '../common/CanvasDrawingTool';
 import base64 from 'react-native-base64';
 import pako from 'pako';
 import {throttle} from 'lodash';
