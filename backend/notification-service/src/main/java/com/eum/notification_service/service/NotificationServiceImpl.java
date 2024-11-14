@@ -20,9 +20,11 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
 	private static final String FCM_KEY_PREFIX = "fcm:member:";
@@ -158,18 +160,22 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private void sendFcmNotification(Long memberId, String title, String body) {
 		String fcmToken = getFcmTokenByMemberId(memberId);
+		if (fcmToken == null || fcmToken.isEmpty()) {
+			log.warn("FCM 토큰이 존재하지 않습니다. memberId: " + memberId);
+			return;
+		}
 
 		Message message = Message.builder()
-				.setToken(fcmToken)
-				.setNotification(Notification.builder()
-						.setTitle(title)
-						.setBody(body)
-						.build())
-				.build();
+			.setToken(fcmToken)
+			.setNotification(Notification.builder()
+				.setTitle(title)
+				.setBody(body)
+				.build())
+			.build();
 
 		try {
 			String response = firebaseMessaging.send(message);
-			System.out.println("FCM 메시지 응답: " + response);
+			log.info("FCM 메시지 응답: " + response);
 		} catch (Exception e) {
 			throw new EumException(ErrorCode.FIREBASE_SENDING_ERROR);
 		}
@@ -177,9 +183,12 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private String getFcmTokenByMemberId(Long memberId) {
 		String key = FCM_KEY_PREFIX + memberId;
-		if(Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
-			throw new EumException(ErrorCode.FCM_TOKEN_NOT_FOUND);
+		log.info("Redis에서 조회 중인 키: " + key);
+		if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
+			log.warn("FCM 토큰이 존재하지 않습니다. memberId: " + memberId);
+			return null;
 		}
-		return redisTemplate.opsForHash().get(key, "fcmToken").toString();
+		Object token = redisTemplate.opsForHash().get(key, "fcmToken");
+		return token != null ? token.toString() : null;
 	}
 }
