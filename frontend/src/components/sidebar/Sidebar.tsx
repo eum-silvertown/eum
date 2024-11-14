@@ -1,7 +1,6 @@
 import {Animated, Pressable, StyleSheet} from 'react-native';
 import SidebarProfile from './SidebarProfile';
 import SidebarMenus from './SidebarMenus';
-import {spacing} from '@theme/spacing';
 import SidebarExpandIcon from '@assets/icons/sidebarExpandIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import useSidebarStore from '@store/useSidebarStore';
@@ -11,13 +10,20 @@ import {borderRadius} from '@theme/borderRadius';
 function Sidebar(): React.JSX.Element {
   const {isExpanded, toggleSidebar} = useSidebarStore();
   const iconRotateAnim = useRef(new Animated.Value(0)).current;
+  const widthAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.timing(iconRotateAnim, {
       toValue: isExpanded ? 0 : 1,
       duration: 300,
-      useNativeDriver: true, // 네이티브 드라이버 사용
+      useNativeDriver: true,
     }).start();
+    Animated.timing(widthAnim, {
+      toValue: isExpanded ? 280 : 84,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [iconRotateAnim, isExpanded]);
 
   const spin = iconRotateAnim.interpolate({
@@ -26,7 +32,7 @@ function Sidebar(): React.JSX.Element {
   });
 
   return (
-    <Animated.View style={styles.container}>
+    <Animated.View style={[styles.container, {width: widthAnim}]}>
       <SidebarProfile />
       <SidebarMenus />
       <Pressable onPress={toggleSidebar} style={styles.sidebarExpandIcon}>
@@ -41,7 +47,6 @@ function Sidebar(): React.JSX.Element {
           />
         </Animated.View>
       </Pressable>
-      {/* <Image source={SidebarImage} style={styles.sidebarImage} /> */}
     </Animated.View>
   );
 }
@@ -57,9 +62,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   sidebarExpandIcon: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    padding: spacing.xl,
+    marginTop: 'auto',
+    marginLeft: 'auto',
+    padding: 26,
   },
 });

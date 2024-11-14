@@ -78,7 +78,7 @@ function App(): React.JSX.Element {
 
   useEffect(() => {
     const initializeScreens = async () => {
-      const autoLoginEnabled = true // 항상 자동 로그인
+      const autoLoginEnabled = true; // 항상 자동 로그인
       console.log('자동 로그인 여부 체크 :', autoLoginEnabled);
       const initialScreens: ScreenProps[] = [
         {name: 'LoginScreen', component: LoginScreen},
@@ -137,6 +137,14 @@ function App(): React.JSX.Element {
       getFCMToken();
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log(remoteMessage);
+    });
+
+    return unsubscribe;
+  }, []);
 
   if (screens.length === 0) {
     return <></>;
