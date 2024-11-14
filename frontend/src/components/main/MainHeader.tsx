@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     borderColor: colors.light.text.main,
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.lg,
-    fontSize: getResponsiveSize(16),
+    fontSize: getResponsiveSize(25),
     color: colors.light.text.main,
     fontWeight: 'bold',
   },

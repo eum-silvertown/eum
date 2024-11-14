@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text } from '@components/common/Text';
-import { View, StyleSheet } from 'react-native';
+import {Text} from '@components/common/Text';
+import {View, StyleSheet} from 'react-native';
 import ProgressBox from '@components/homework/ProgressBox';
-import { spacing } from '@theme/spacing';
-import { getResponsiveSize } from '@utils/responsive';
+import {spacing} from '@theme/spacing';
+import {getResponsiveSize} from '@utils/responsive';
 import {
   HomeworkType,
   ExamType,
@@ -25,7 +25,7 @@ function Overview({
   homeworkCnt = 0,
   examCnt = 0,
   lessonCnt = 0,
-  navigateData = { lessons: [], exams: [], homeworks: [] },
+  navigateData = {lessons: [], exams: [], homeworks: []},
 }: OverviewProps): React.JSX.Element {
   return (
     <View style={styles.overview}>
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     gap: spacing.xxl,
-    paddingHorizontal: getResponsiveSize(20),
+    paddingHorizontal: getResponsiveSize(32),
   },
 });
 

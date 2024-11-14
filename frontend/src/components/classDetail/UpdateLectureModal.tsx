@@ -426,7 +426,7 @@ const UpdateLectureModal = ({
                 색상 선택
               </Text>
 
-              <View style={{height: getResponsiveSize(180)}}>
+              <View style={{height: getResponsiveSize(288)}}>
                 {!isColorPickerVisible ? (
                   <View style={styles.colorContainer}>
                     <TouchableOpacity
@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     flex: 1,
-    gap: getResponsiveSize(6),
+    gap: getResponsiveSize(9),
   },
   confirmButton: {
     marginTop: spacing.md,
@@ -571,8 +571,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   colorBox: {
-    width: getResponsiveSize(16),
-    height: getResponsiveSize(16),
+    width: getResponsiveSize(25),
+    height: getResponsiveSize(25),
     borderRadius: borderRadius.sm,
     borderWidth: borderWidth.sm,
     borderColor: colors.light.borderColor.pickerBorder,
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: getResponsiveSize(28),
+    height: getResponsiveSize(44),
   },
   picker: {
     flex: 1,
@@ -608,8 +608,8 @@ const styles = StyleSheet.create({
   },
   separator: {
     borderColor: '#CCC',
-    borderWidth: getResponsiveSize(0.2),
-    marginBottom: getResponsiveSize(10),
+    borderWidth: getResponsiveSize(0.3),
+    marginBottom: getResponsiveSize(16),
   },
   errorContainer: {
     minHeight: spacing.lg,

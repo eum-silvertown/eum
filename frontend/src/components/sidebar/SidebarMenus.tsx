@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   icon: {
     alignItems: 'center',
     paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md + getResponsiveSize(2),
+    paddingHorizontal: spacing.md + getResponsiveSize(3),
   },
   menuContainer: {
     flexDirection: 'row',

@@ -16,7 +16,7 @@ export default function Clouds({
     id: i,
     x: -100,
     y: Math.random() * (screenHeight / 3),
-    size: getResponsiveSize(20) + Math.random() * getResponsiveSize(15),
+    size: getResponsiveSize(32) + Math.random() * getResponsiveSize(24),
     delay: Math.random() * 10000,
   }));
   const cloudAnims = clouds.map(() => new Animated.Value(0));

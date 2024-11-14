@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { Text } from '@components/common/Text';
-import { spacing } from '@theme/spacing';
+import React, {useState} from 'react';
+import {View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text} from '@components/common/Text';
+import {spacing} from '@theme/spacing';
 import LeftArrowOffIcon from '@assets/icons/leftArrowOffIcon.svg';
 import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { getResponsiveSize } from '@utils/responsive';
+import {iconSize} from '@theme/iconSize';
+import {getResponsiveSize} from '@utils/responsive';
 import EmptyData from '@components/common/EmptyData';
 
 type LessonType = {
@@ -20,7 +20,7 @@ type ReplayProps = {
   lesson?: LessonType[];
 };
 
-function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
+function Replay({lesson = []}: ReplayProps): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -28,7 +28,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = lesson.slice(startIndex, startIndex + itemsPerPage);
 
-  const renderItem = ({ item }: { item: LessonType }) => (
+  const renderItem = ({item}: {item: LessonType}) => (
     <TouchableOpacity style={styles.item} onPress={() => handleItemPress(item)}>
       <View style={[styles.textContainer, styles.idContainer]}>
         <Text variant="caption" weight="bold">
@@ -72,15 +72,22 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
         </Text>
         {lesson.length > 0 && (
           <View style={styles.pagination}>
-            <TouchableOpacity onPress={handlePrevPage} disabled={currentPage === 1}>
+            <TouchableOpacity
+              onPress={handlePrevPage}
+              disabled={currentPage === 1}>
               {currentPage === 1 ? (
                 <LeftArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
               ) : (
                 <LeftArrowOnIcon width={iconSize.sm} height={iconSize.sm} />
               )}
             </TouchableOpacity>
-            <Text style={styles.pageIndicator}>{`${currentPage} / ${totalPages}`}</Text>
-            <TouchableOpacity onPress={handleNextPage} disabled={currentPage === totalPages}>
+            <Text
+              style={
+                styles.pageIndicator
+              }>{`${currentPage} / ${totalPages}`}</Text>
+            <TouchableOpacity
+              onPress={handleNextPage}
+              disabled={currentPage === totalPages}>
               {currentPage === totalPages ? (
                 <RightArrowOffIcon width={iconSize.sm} height={iconSize.sm} />
               ) : (
@@ -123,7 +130,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginRight: getResponsiveSize(12),
+    marginRight: getResponsiveSize(18),
   },
   pageIndicator: {
     fontSize: 16,
@@ -133,14 +140,14 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     backgroundColor: '#fdfeff',
-    paddingVertical: getResponsiveSize(8),
-    paddingHorizontal: getResponsiveSize(12),
-    marginHorizontal: getResponsiveSize(16),
-    marginVertical: getResponsiveSize(4),
+    paddingVertical: getResponsiveSize(12),
+    paddingHorizontal: getResponsiveSize(18),
+    marginHorizontal: getResponsiveSize(25),
+    marginVertical: getResponsiveSize(6),
     borderRadius: 10,
   },
   textContainer: {
-    paddingHorizontal: getResponsiveSize(4),
+    paddingHorizontal: getResponsiveSize(6),
     justifyContent: 'center',
   },
   idContainer: {

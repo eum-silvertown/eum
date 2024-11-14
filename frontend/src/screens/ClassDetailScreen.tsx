@@ -203,8 +203,8 @@ const styles = StyleSheet.create({
   },
   bookmarkIcon: {
     position: 'absolute',
-    top: getResponsiveSize(-6),
-    right: getResponsiveSize(12),
+    top: getResponsiveSize(-9),
+    right: getResponsiveSize(18),
   },
   content: {
     flex: 1,

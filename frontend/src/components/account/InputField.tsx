@@ -67,7 +67,7 @@ function InputField({
           maxLength={maxLength}
           keyboardType={keyboardType}
           multiline={multiline}
-          textAlignVertical={multiline ? 'top' : 'center'}          
+          textAlignVertical={multiline ? 'top' : 'center'}
         />
         {iconComponent && (
           <TouchableOpacity style={styles.iconButton} onPress={onIconPress}>
@@ -91,7 +91,7 @@ export default InputField;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    width: '100%',    
+    width: '100%',
   },
   inputLabel: {
     marginBottom: spacing.sm,
@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
   },
   inputField: {
     flex: 1,
-    height: getResponsiveSize(25),
+    height: getResponsiveSize(40),
     backgroundColor: '#f2f4f8',
     borderBottomWidth: borderWidth.sm,
     borderBottomColor: colors.light.borderColor.cardBorder,
     paddingHorizontal: spacing.sm,
-    fontSize: getResponsiveSize(8),
+    fontSize: getResponsiveSize(12),
   },
   iconButton: {
     position: 'absolute',

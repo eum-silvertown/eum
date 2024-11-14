@@ -181,10 +181,10 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: getResponsiveSize(60),
-    left: getResponsiveSize(20),
+    top: getResponsiveSize(96),
+    left: getResponsiveSize(32),
     backgroundColor: '#fff',
-    padding: getResponsiveSize(10),
+    padding: getResponsiveSize(16),
     borderRadius: 8,
   },
   closeButtonText: {
@@ -194,10 +194,10 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: getResponsiveSize(20),
-    right: getResponsiveSize(24),
+    top: getResponsiveSize(32),
+    right: getResponsiveSize(38),
     backgroundColor: '#fff',
-    padding: getResponsiveSize(8),
+    padding: getResponsiveSize(12),
     borderRadius: 8,
   },
   totalText: {
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   grid: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: getResponsiveSize(80),
+    marginTop: getResponsiveSize(128),
   },
   pageControls: {
     zIndex: 1,
@@ -216,14 +216,14 @@ const styles = StyleSheet.create({
     top: '50%',
   },
   arrow: {
-    padding: getResponsiveSize(2),
+    padding: getResponsiveSize(3),
   },
   leftArrow: {
     position: 'absolute',
-    left: getResponsiveSize(16),
+    left: getResponsiveSize(25),
   },
   rightArrow: {
     position: 'absolute',
-    right: getResponsiveSize(16),
+    right: getResponsiveSize(25),
   },
 });
