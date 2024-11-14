@@ -9,6 +9,8 @@ import {colors} from 'src/hooks/useColors';
 import {detailQuestion, DetailQuestionType} from '@services/questionBox';
 import {useQuery} from '@tanstack/react-query';
 import {Text} from '@components/common/Text';
+import ProblemExSection from './ProblemExSection';
+import {typography} from '@theme/typography';
 
 interface QuestionDetailProps {
   isOpened: boolean;
@@ -58,20 +60,34 @@ export default function QuestionDetail({
         styles.container,
         {transform: [{translateX: toggleAnim}], height: containerHeight},
       ]}>
-      <Pressable
-        style={styles.cancelIcon}
-        onPress={() => {
-          setIsOpened(false);
-          setSelectedFileId(0);
-        }}>
+      <View style={styles.header}>
         <Text variant="subtitle" weight="medium">
           {questionDetail?.title}
         </Text>
-        <CancelIcon width={iconSize.md} height={iconSize.md} />
-      </Pressable>
-      <View style={styles.preview}>
-        <Text>{questionDetail?.content}</Text>
+        <Pressable
+          onPress={() => {
+            setIsOpened(false);
+            setSelectedFileId(0);
+          }}>
+          <CancelIcon width={iconSize.md} height={iconSize.md} />
+        </Pressable>
       </View>
+      {questionDetail ? (
+        <View style={styles.preview}>
+          <ProblemExSection
+            fontSize={typography.size.caption}
+            problemText={questionDetail.content}
+          />
+          <View>
+            <Text style={styles.detailText}>정답: {questionDetail.answer}</Text>
+          </View>
+        </View>
+      ) : (
+        <>
+          <Text style={styles.sectionTitle}>미리보기</Text>
+          <Text>파일을 터치하면 문제를 미리볼 수 있습니다.</Text>
+        </>
+      )}
     </Animated.View>
   );
 }
@@ -82,24 +98,41 @@ const styles = StyleSheet.create({
     zIndex: 1,
     right: '-50%',
     width: '50%',
-    padding: spacing.lg,
+    padding: spacing.xl,
     backgroundColor: 'white',
     borderWidth: borderWidth.sm,
     borderRadius: borderRadius.lg,
     borderColor: colors.light.borderColor.pickerBorder,
     elevation: 2,
   },
-  cancelIcon: {
+  header: {
     flexDirection: 'row',
     width: '100%',
     marginBottom: spacing.lg,
     justifyContent: 'space-between',
   },
   preview: {
+    justifyContent: 'space-between',
     width: '100%',
-    height: '50%',
+    height: '70%',
     padding: spacing.lg,
-    borderWidth: borderWidth.sm,
-    borderColor: colors.light.borderColor.pickerBorder,
+    borderRadius: borderRadius.md,
+    borderColor: `${colors.light.background.main}7f`,
+    backgroundColor: 'white',
+    elevation: 2,
+    overflow: 'hidden',
+  },
+  detailText: {
+    width: '100%',
+    fontSize: 14,
+    color: colors.light.text.main,
+    marginVertical: spacing.sm,
+    fontWeight: 'bold',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: spacing.xl,
+    color: colors.light.text.main,
   },
 });

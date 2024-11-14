@@ -61,7 +61,7 @@ function CreateQuestionModal(): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(0);
   const mainPagerRef = useRef<PagerView>(null);
   const questionsPagerRef = useRef<PagerView>(null);
-  const heightAnim = useRef(new Animated.Value(getResponsiveSize(150))).current;
+  const heightAnim = useRef(new Animated.Value(getResponsiveSize(240))).current;
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
 
   const animateHeight = (toHeight: number) => {
@@ -80,16 +80,16 @@ function CreateQuestionModal(): React.JSX.Element {
     // 현재 페이지에 따라 높이 애니메이션 적용
     switch (currentPage) {
       case 0:
-        animateHeight(getResponsiveSize(150));
+        animateHeight(getResponsiveSize(240));
         break;
       case 1:
-        animateHeight(getResponsiveSize(100));
+        animateHeight(getResponsiveSize(160));
         break;
       case 2:
-        animateHeight(getResponsiveSize(250));
+        animateHeight(getResponsiveSize(240));
         break;
       case 3:
-        animateHeight(getResponsiveSize(100));
+        animateHeight(getResponsiveSize(160));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);

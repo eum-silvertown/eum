@@ -123,8 +123,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   chartContainer: {
-    width: getResponsiveSize(80),
-    height: getResponsiveSize(80),
+    width: getResponsiveSize(128),
+    height: getResponsiveSize(128),
   },
   legendContainer: {
     marginLeft: spacing.xxl,
@@ -152,8 +152,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   colorDot: {
-    width: getResponsiveSize(10),
-    height: getResponsiveSize(10),
+    width: getResponsiveSize(16),
+    height: getResponsiveSize(16),
     borderRadius: 10,
     marginRight: spacing.sm,
   },

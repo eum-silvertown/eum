@@ -5,7 +5,6 @@ import {spacing} from '@theme/spacing';
 import {StyleSheet, View} from 'react-native';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {getResponsiveSize} from '@utils/responsive';
 
 function NotificationScreen(): React.JSX.Element {
   return (
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     padding: spacing.lg,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(2),
+    elevation: 2,
     borderRadius: borderRadius.lg,
   },
   notification: {
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.xl,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(1),
+    elevation: 1,
     borderRadius: borderRadius.md,
   },
   icon: {
@@ -104,7 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: spacing.lg,
     backgroundColor: 'white',
-    elevation: getResponsiveSize(2),
+    elevation: 2,
     borderRadius: borderRadius.lg,
   },
 });
