@@ -11,7 +11,6 @@ import myClassIcon from '@assets/icons/myClassIcon.svg';
 import NotificationIcon from '@assets/icons/notificationIcon.svg';
 import {Text} from '../common/Text';
 import {SvgProps} from 'react-native-svg';
-import {iconSize} from '@theme/iconSize';
 import {useCallback, useEffect, useRef, useState} from 'react';
 
 interface MenuItem {
@@ -76,8 +75,8 @@ function SidebarMenus(): React.JSX.Element {
             ]}>
             <View style={styles.icon}>
               <item.icon
-                width={iconSize.md}
-                height={iconSize.md}
+                width={28}
+                height={28}
                 color={selected === index ? 'white' : '#2E2559'}
               />
             </View>
