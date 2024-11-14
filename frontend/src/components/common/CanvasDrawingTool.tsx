@@ -233,13 +233,13 @@ const styles = StyleSheet.create({
   canvas: {flex: 1},
   floatingToolbar: {
     position: 'absolute',
-    top: '9%',
+    top: '8%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
-    borderRadius: 12,
-    paddingHorizontal: getResponsiveSize(12),
-    paddingVertical: getResponsiveSize(25),
+    borderRadius: getResponsiveSize(12),
+    paddingHorizontal: getResponsiveSize(8),
+    paddingVertical: getResponsiveSize(16),
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   },
   selectedColor: {
     borderColor: '#ccc',
-    borderWidth: 3,
+    borderWidth: getResponsiveSize(3),
   },
   penSizeContainer: {
     flexDirection: 'column',
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 2,
+    borderWidth: getResponsiveSize(2),
     borderColor: 'transparent',
     backgroundColor: '#eee',
   },
@@ -288,6 +288,6 @@ const styles = StyleSheet.create({
     paddingVertical: getResponsiveSize(8),
     paddingHorizontal: getResponsiveSize(5),
     backgroundColor: '#ddd',
-    borderRadius: 5,
+    borderRadius: getResponsiveSize(5),
   },
 });

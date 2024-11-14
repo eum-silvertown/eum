@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 
-import ProblemSection from '@components/classLessoning/ProblemSection';
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
 import StudentRealTimeCanvasSection from '@components/classLessoning/StudentRealTimeCanvasSection';
 import {useAuthStore} from '@store/useAuthStore';
@@ -12,6 +11,7 @@ import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
 import PulseIndicator from '@components/classLessoning/PulseIndicator';
 import {useLectureStore, useLessonStore} from '@store/useLessonStore';
+import ProblemSection from '@components/common/ProblemSection';
 
 function LessoningScreen(): React.JSX.Element {
   const lectureId = useLessonStore(state => state.lectureId);
@@ -44,7 +44,7 @@ function LessoningScreen(): React.JSX.Element {
   useEffect(() => {
     const client = new StompJs.Client({
       webSocketFactory: () =>
-        new SockJS('http://192.168.100.187:8080/ws-gateway/drawing'),
+        new SockJS('http://k11d101.p.ssafy.io/ws-gateway/drawing'),
       debug: str => console.log('STOMP Debug:', str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
@@ -54,9 +54,8 @@ function LessoningScreen(): React.JSX.Element {
         setIsConnected(true);
         // 구독 설정: isTeacher에 따른 분기 처리
         console.log('입장드가자', isTeacher, isTeaching, memberId);
-        if (isTeacher) {
+        if (isTeacher && isTeaching && memberId) {
           const teacherTopic = `/user/topic/teacher/lesson/${lessonId}/member/${memberId}`;
-          console.log('@@@@@@@@@@@@', teacherTopic);
           client.subscribe(teacherTopic, message => {
             console.log('Received message for teacher:', message.body);
             setReceivedMessage(message.body);
@@ -68,7 +67,6 @@ function LessoningScreen(): React.JSX.Element {
             console.log('Received message for student:', message.body);
             setReceivedMessage(message.body);
           });
-          console.log(`Subscribed to student topic: ${studentTopic}`);
         }
       },
       onDisconnect: frame => {
@@ -188,15 +186,8 @@ function LessoningScreen(): React.JSX.Element {
         />
       </View>
       {/* Connection Chip */}
-      <View
-        style={[
-          styles.connectionChip,
-          // eslint-disable-next-line react-native/no-inline-styles
-          {backgroundColor: isConnected ? 'green' : 'red'},
-        ]}>
-        <Text style={styles.connectionChipText}>
-          {isConnected ? 'Connected' : 'Not connected'}
-        </Text>
+      <View style={styles.connectionChip}>
+        <PulseIndicator isConnected={isConnected} />
       </View>
 
       {/* Received Message Display */}
@@ -219,7 +210,7 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     flex: 1,
-    padding: getResponsiveSize(16),
+    padding: 16,
     position: 'relative',
   },
   problemSection: {
