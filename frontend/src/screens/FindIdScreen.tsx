@@ -41,6 +41,8 @@ function FindIdScreen(): React.JSX.Element {
 
   // 이메일로 인증코드 전송
   const handleSendVerification = async () => {
+    setEmailStatusText('');
+
     if (!email || !email.includes('@')) {
       setEmailStatusText('유효한 이메일 주소를 입력해주세요.');
       setEmailStatusType('error');
@@ -67,9 +69,11 @@ function FindIdScreen(): React.JSX.Element {
 
   // 인증코드로 아이디 찾기
   const handleVerificationCodeInput = async () => {
+    setVerificationCodeStatusText('');
+
     if (!verificationCode) {
       setVerificationCodeStatusType('error');
-      setVerificationCodeStatusText('인증번호를 입력해주세요.');
+      setVerificationCodeStatusText('인증코드를 입력해주세요.');
       return;
     }
     setIsVerifyLoading(true);
@@ -102,11 +106,12 @@ function FindIdScreen(): React.JSX.Element {
             onButtonPress={handleSendVerification}
             statusText={emailStatusText}
             status={emailStatusType}
+            maxLength={254}
           />
           {/* 이메일 인증코드 입력 필드 */}
           {isVerificationSent && (
             <InputField
-              label="인증번호"
+              label="인증코드"
               placeholder="이메일로 받은 인증코드를 입력해주세요."
               value={verificationCode}
               onChangeText={setVerificationCode}
@@ -114,6 +119,7 @@ function FindIdScreen(): React.JSX.Element {
               onButtonPress={handleVerificationCodeInput}
               statusText={verificationCodeStatusText}
               status={verificationCodeStatusType}
+              maxLength={8}
             />
           )}
         </View>

@@ -68,6 +68,7 @@ function InputField({
           keyboardType={keyboardType}
           multiline={multiline}
           textAlignVertical={multiline ? 'top' : 'center'}
+          autoCapitalize="none"
         />
         {iconComponent && (
           <TouchableOpacity style={styles.iconButton} onPress={onIconPress}>
