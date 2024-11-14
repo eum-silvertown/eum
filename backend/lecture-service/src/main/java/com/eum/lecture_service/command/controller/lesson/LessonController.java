@@ -43,7 +43,7 @@ public class LessonController {
 		}
 	}
 
-	@PutMapping
+	@PutMapping("/{lessonId}")
 	public CommonResponse<?> updateLesson(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long lessonId,
@@ -60,7 +60,7 @@ public class LessonController {
 		}
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/{lessonId}")
 	public CommonResponse<?> deleteLesson(
 		@RequestHeader("X-MEMBER-ROLE") String role,
 		@PathVariable Long lessonId) {
