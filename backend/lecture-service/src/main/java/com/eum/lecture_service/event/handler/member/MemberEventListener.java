@@ -45,6 +45,7 @@ public class MemberEventListener {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.TeacherInfoEvent"
 	})
 	public void createTeacher(TeacherInfoEvent event) {
+		log.info("teacher Event: {}", event);
 		TeacherModel teacher = TeacherModel.builder()
 			.teacherId(event.getTeacherId())
 			.name(event.getName())
@@ -91,6 +92,7 @@ public class MemberEventListener {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.StudentInfoEvent"
 	})
 	public void createStudent(StudentInfoEvent event) {
+		log.info("student Event: {}", event);
 		StudentModel student = StudentModel.builder()
 			.studentId(event.getStudentId())
 			.name(event.getName())
