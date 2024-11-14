@@ -177,11 +177,11 @@ const styles = StyleSheet.create({
   },
   tabButton: {
     paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,    
+    paddingHorizontal: spacing.lg,
   },
   activeTab: {
     borderBottomWidth: spacing.xs,
-    borderColor: colors.light.background.main
+    borderColor: colors.light.background.main,
   },
   emptyMessageContainer: {
     flex: 1,
