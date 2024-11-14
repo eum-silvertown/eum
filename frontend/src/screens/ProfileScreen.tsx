@@ -310,6 +310,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 25,
     paddingHorizontal: 40,
+    backgroundColor: '#fff',
   },
   contentContainer: {
     width: '100%',

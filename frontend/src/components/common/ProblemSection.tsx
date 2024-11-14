@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import MathJax from 'react-native-mathjax';
-import ZoomableView from './ZoomableView';
 import {StyleSheet, View, Image} from 'react-native';
 
 type ProblemSectionProps = {
@@ -24,29 +23,27 @@ function ProblemSection({problemText}: ProblemSectionProps): React.JSX.Element {
   const textWithoutImage = removeImageMarkdown(problemText);
 
   const mathJaxContent = `
-    <div style="padding: 24px;">
-      <p>${textWithoutImage}</p>
-    </div>
+  <div style="padding-left: 5%; padding-right: 5%; padding-top: 3%;">
+    <p style="margin: 1%; font-size:120%;">${textWithoutImage}</p>
+  </div>
   `;
 
   // 이미지 로드 성공 여부를 상태로 관리
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <ZoomableView>
-      <View style={styles.problemContainer}>
-        <MathJax html={mathJaxContent} />
-        {imageUrl && (
-          <Image
-            source={{uri: imageUrl}}
-            style={[styles.image, imageLoaded ? null : styles.imageLoading]}
-            resizeMode="contain"
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageLoaded(false)}
-          />
-        )}
-      </View>
-    </ZoomableView>
+    <View style={styles.problemContainer}>
+      <MathJax html={mathJaxContent} />
+      {imageUrl && (
+        <Image
+          source={{uri: imageUrl}}
+          style={[styles.image, imageLoaded ? null : styles.imageLoading]}
+          resizeMode="contain"
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageLoaded(false)}
+        />
+      )}
+    </View>
   );
 }
 
@@ -54,15 +51,13 @@ export default ProblemSection;
 
 const styles = StyleSheet.create({
   problemContainer: {
-    width: '50%',
-    alignSelf: 'center',
+    width: '100%',
   },
   image: {
     width: '100%',
-    aspectRatio: 3, // 이미지 비율
-    alignSelf: 'center',
+    aspectRatio: 5,
   },
   imageLoading: {
-    display: 'none', // 이미지 로드 전까지 숨기기
+    display: 'none',
   },
 });

@@ -20,9 +20,12 @@ import {
   LectureDetailType,
 } from '@services/lectureInformation';
 import {deleteLesson} from '@services/lessonService';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassLessonListScreen(): React.JSX.Element {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps>();
   const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
   const role = useAuthStore(state => state.userInfo.role);
@@ -125,7 +128,7 @@ function ClassLessonListScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 15},
+  container: {flex: 1, padding: 15, backgroundColor: '#FFF'},
   title: {fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: 10},
   card: {
     marginHorizontal: 40,

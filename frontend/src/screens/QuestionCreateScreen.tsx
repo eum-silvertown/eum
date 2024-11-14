@@ -74,6 +74,7 @@ function QuestionCreateScreen(): React.JSX.Element {
   };
 
   const [startTime, setStartTime] = useState<Date | null>(getCurrentTime());
+  const [endTime, setEndTime] = useState<Date | null>(getCurrentTime());
   const [selectedDuration, setSelectedDuration] = useState<number>(5);
 
   const setLessonInfo = useLessonStore(state => state.setLessonInfo);
@@ -199,13 +200,22 @@ function QuestionCreateScreen(): React.JSX.Element {
       return;
     }
 
-    const formattedStartTime = startTime
-      ? startTime.toISOString().split('.')[0]
-      : '';
-    const calculatedEndTime = new Date(
-      startTime!.getTime() + selectedDuration * 60000,
-    );
-    const formattedEndTime = calculatedEndTime.toISOString().split('.')[0];
+    // 9시간 보정 적용
+    const startOffsetTime = new Date(startTime!.getTime() + 9 * 3600 * 1000);
+    const formattedStartTime = startOffsetTime.toISOString().split('.')[0];
+
+    // exam일 때만 Duration을 사용하여 endTime을 계산
+    let formattedEndTime = '';
+    if (action === 'exam') {
+      const calculatedEndTime = new Date(
+        startOffsetTime.getTime() + selectedDuration * 60000,
+      );
+      formattedEndTime = calculatedEndTime.toISOString().split('.')[0];
+    } else if (action === 'homework') {
+      // homework일 때는 기존에 설정한 endTime을 사용
+      const endOffsetTime = new Date(endTime!.getTime() + 9 * 3600 * 1000);
+      formattedEndTime = endOffsetTime.toISOString().split('.')[0];
+    }
 
     if (action === 'lesson') {
       lessonMutation.mutate({
@@ -265,6 +275,7 @@ function QuestionCreateScreen(): React.JSX.Element {
         handleCreateLectureAction={handleCreateLectureAction}
         selectType={action}
         setStartTime={setStartTime}
+        setEndTime={setEndTime}
         setDuration={setSelectedDuration}
         questionDetail={questionDetail}
       />

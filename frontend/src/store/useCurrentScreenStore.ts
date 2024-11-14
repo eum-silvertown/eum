@@ -16,10 +16,15 @@ export type ScreenType = {
   LessoningStudentListScreen: undefined;
   ProfileScreen: undefined;
   ClassListScreen: undefined;
-  QuestionCreateScreen: {lectureId: number; action: 'lesson' | 'exam' | 'homework'};
+  QuestionCreateScreen: {
+    lectureId: number;
+    action: 'lesson' | 'exam' | 'homework';
+  };
   ClassLessonListScreen: undefined;
   ClassExamListScreen: undefined;
   ClassHomeworkListScreen: undefined;
+  SolveHomeworkScreen: {homeworkId: number; questionIds: number[]};
+  SolveExamScreen: {examId: number; questionIds: number[]};
 };
 
 type ScreenName = keyof ScreenType;
