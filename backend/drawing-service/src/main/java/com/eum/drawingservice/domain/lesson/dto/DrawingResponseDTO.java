@@ -9,6 +9,8 @@ import lombok.Getter;
 @Builder
 public class DrawingResponseDTO {
 	private String drawingData;
+	private double width;
+	private double height;
 	private Long lessonId;
 	private Long memberId;
 	private Long questionId;
@@ -16,6 +18,8 @@ public class DrawingResponseDTO {
 	public static DrawingResponseDTO of(Drawing drawing) {
 		return DrawingResponseDTO.builder()
 				.drawingData(drawing.getDrawingData())
+				.width(Double.parseDouble(drawing.getWidth()))
+				.height(Double.parseDouble(drawing.getHeight()))
 				.lessonId(Long.valueOf(drawing.getLessonId()))
 				.memberId(Long.valueOf(drawing.getMemberId()))
 				.questionId(Long.valueOf(drawing.getQuestionId()))

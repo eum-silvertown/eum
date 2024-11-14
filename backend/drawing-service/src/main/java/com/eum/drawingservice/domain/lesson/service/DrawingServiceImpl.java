@@ -26,6 +26,8 @@ public class DrawingServiceImpl implements DrawingService {
                     .memberId(String.valueOf(requestDTO.getMemberId()))
                     .lessonId(String.valueOf(requestDTO.getLessonId()))
                     .questionId(String.valueOf(requestDTO.getQuestionId()))
+                    .width(String.valueOf(requestDTO.getWidth()))
+                    .height(String.valueOf(requestDTO.getHeight()))
                     .drawingData(requestDTO.getDrawingData())
                     .build();
         } else {

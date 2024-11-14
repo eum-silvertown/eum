@@ -12,5 +12,7 @@ public class DrawingRequestDTO {
     private Role role;
     private Long lessonId;
     private Long questionId;
+    private double width;
+    private double height;
     private String drawingData;
 }
