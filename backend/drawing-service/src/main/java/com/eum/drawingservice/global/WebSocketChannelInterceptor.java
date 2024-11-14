@@ -35,7 +35,6 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
         } else if (StompCommand.DISCONNECT.equals(command)) {
             handleDisconnect(sessionId);
         }
-
         return message;
     }
 
@@ -44,7 +43,7 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
             if (pattern.matches(destination)) {
                 ChannelName channel = pattern.getChannel(destination);
                 String subscriptionKey = pattern.getSubscriptionKey(destination);
-                subscriptionManager.subscribe(sessionId, channel, subscriptionKey);
+                subscriptionManager.subscribe(channel, subscriptionKey, sessionId);
                 break;
             }
         }
@@ -55,7 +54,7 @@ public class WebSocketChannelInterceptor implements ChannelInterceptor {
             if (pattern.matches(destination)) {
                 ChannelName channel = pattern.getChannel(destination);
                 String subscriptionKey = pattern.getSubscriptionKey(destination);
-                subscriptionManager.unsubscribe(sessionId, channel, subscriptionKey);
+                subscriptionManager.unsubscribe(channel, subscriptionKey, sessionId);
                 break;
             }
         }
