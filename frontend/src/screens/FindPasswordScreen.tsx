@@ -42,6 +42,9 @@ function FindPasswordScreen(): React.JSX.Element {
 
   // 이메일과 아이디로 인증 코드 요청
   const handleSendVerification = async () => {
+    setUserIdStatusText('');
+    setEmailStatusText('');
+
     if (!email || !email.includes('@')) {
       setEmailStatusText('유효한 이메일 주소를 입력해주세요.');
       setEmailStatusType('error');
@@ -75,6 +78,8 @@ function FindPasswordScreen(): React.JSX.Element {
 
   // 인증 코드 확인 및 임시 비밀번호 발급
   const handleVerificationCodeInput = async () => {
+    setVerificationCodeStatusText('');
+
     if (!verificationCode) {
       setVerificationCodeStatusType('error');
       setVerificationCodeStatusText('인증번호를 입력해주세요.');
@@ -82,7 +87,7 @@ function FindPasswordScreen(): React.JSX.Element {
     }
     setIsVerifyLoading(true);
     try {
-      const response = await resetPasswordByVerificationCode(
+      await resetPasswordByVerificationCode(
         email,
         verificationCode,
       );
@@ -115,6 +120,7 @@ function FindPasswordScreen(): React.JSX.Element {
               onChangeText={setUserId}
               statusText={userIdStatusText}
               status={userIdStatusType}
+              maxLength={20}
             />
             <InputField
               label="이메일"
@@ -126,12 +132,13 @@ function FindPasswordScreen(): React.JSX.Element {
               onButtonPress={handleSendVerification}
               statusText={emailStatusText}
               status={emailStatusType}
+              maxLength={254}
             />
           </View>
           {/* 인증 코드 입력 필드 */}
           {isVerificationSent && (
             <InputField
-              label="인증번호"
+              label="인증코드"
               placeholder="이메일로 받은 인증코드를 입력해주세요."
               value={verificationCode}
               onChangeText={setVerificationCode}
@@ -139,6 +146,7 @@ function FindPasswordScreen(): React.JSX.Element {
               onButtonPress={handleVerificationCodeInput}
               statusText={verificationCodeStatusText}
               status={verificationCodeStatusType}
+              maxLength={8}
             />
           )}
         </View>

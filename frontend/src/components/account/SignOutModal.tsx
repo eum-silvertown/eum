@@ -1,16 +1,9 @@
 import {StyleSheet, View, TouchableOpacity, Alert} from 'react-native';
-import React, {useState} from 'react';
-import InputField from './InputField';
-import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
-import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
-import {iconSize} from '@theme/iconSize';
 import {spacing} from '@theme/spacing';
 import {Text} from '@components/common/Text';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
-import {changePassword, logOut} from '@services/authService';
 import {useModalContext} from 'src/contexts/useModalContext';
-
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
@@ -24,7 +17,7 @@ export default function SignOutModal(): React.JSX.Element {
   const {setCurrentScreen} = useCurrentScreenStore();
   const handleSignOut = async () => {
     try {
-      const response = await signOut();
+      await signOut();
       Alert.alert('회원탈퇴가 완료되었습니다.');
 
       close(); // 모달 닫기

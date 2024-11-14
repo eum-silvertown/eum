@@ -1,15 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Text} from '@components/common/Text';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  TextInput,
-  ViewStyle,
-} from 'react-native';
+import {Animated, StyleSheet, View, TouchableOpacity, TextInput, ViewStyle} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '@assets/icons/editIcon.svg';
-import EditWhiteIcon from '@assets/icons/editWhiteIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
@@ -19,13 +12,13 @@ import {spacing} from '@theme/spacing';
 import {useAuthStore} from '@store/useAuthStore';
 
 interface MainHeaderProps {
-  style?: ViewStyle;
-  isNightTime?: boolean; // 밤 시간대 여부
+  style?: ViewStyle;  
+  isNightTime?: Animated.AnimatedInterpolation<string | number>;
 }
 
 export default function MainHeader({
   style,
-  isNightTime = false,
+  isNightTime = new Animated.Value(0),
 }: MainHeaderProps): React.JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
   const authStore = useAuthStore();
@@ -49,7 +42,7 @@ export default function MainHeader({
 
   const saveMessage = async () => {
     try {
-      console.log('메세지를 저장합니다:', message); // 로그 추가
+      console.log('메세지를 저장합니다:', message);
       await AsyncStorage.setItem('userMessage', message);
       setIsEditing(false);
     } catch (error) {
@@ -62,57 +55,36 @@ export default function MainHeader({
     setTimeout(() => inputRef.current?.focus(), 0);
   };
 
+  const backgroundColor = isNightTime.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['#FFFFFF00', '#FFFFFFAA'],
+  });
+
   return (
     <View style={[styles.header, style]}>
       {isEditing ? (
-        <View style={styles.editContainer}>
+        <Animated.View style={[styles.editContainer, {backgroundColor: backgroundColor}]}>
           <TextInput
             ref={inputRef}
-            style={[
-              styles.input,
-              {
-                color: isNightTime
-                  ? colors.light.text.white
-                  : colors.light.text.main,
-
-                borderColor: isNightTime
-                  ? colors.light.text.white
-                  : colors.light.text.main,
-              },
-            ]}
+            style={styles.input}
             value={message}
             onChangeText={setMessage}
             maxLength={50}
             onSubmitEditing={saveMessage}
           />
           <TouchableOpacity onPress={saveMessage}>
-            {isNightTime ? (
-              <EditWhiteIcon width={iconSize.lg} height={iconSize.lg} />
-            ) : (
-              <EditIcon width={iconSize.lg} height={iconSize.lg} />
-            )}
+            <EditIcon width={iconSize.lg} height={iconSize.lg} />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       ) : (
-        <View style={styles.displayContainer}>
-          <Text
-            variant="title"
-            weight="bold"
-            style={{
-              color: isNightTime
-                ? colors.light.text.white
-                : colors.light.text.main,
-            }}>
+        <Animated.View style={[styles.editContainer, {backgroundColor: backgroundColor}]}>
+          <Text variant="title" weight="bold">
             {message || defaultMessage}
           </Text>
           <TouchableOpacity onPress={handleEditPress}>
-            {isNightTime ? (
-              <EditWhiteIcon width={iconSize.lg} height={iconSize.lg} />
-            ) : (
-              <EditIcon width={iconSize.lg} height={iconSize.lg} />
-            )}
+            <EditIcon width={iconSize.lg} height={iconSize.lg} />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       )}
     </View>
   );
@@ -124,14 +96,19 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     height: '10%',
+    paddingHorizontal: spacing.xl,
   },
   editContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: spacing.sm,
+    borderRadius: borderRadius.lg,
   },
   displayContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: spacing.sm,
+    borderRadius: borderRadius.lg,
   },
   input: {
     padding: spacing.md,

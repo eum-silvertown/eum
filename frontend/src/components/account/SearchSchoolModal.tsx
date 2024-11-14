@@ -32,8 +32,12 @@ export default function SearchSchoolModal({
   const [schoolList, setSchoolList] = useState<SchoolListItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const {close} = useModalContext();
+  const [loading, setLoading] = useState(false);
+  const [isSearchComplete, setIsSearchComplete] = useState(false);
 
   const searchSchool = async () => {
+    setIsSearchComplete(false);
+    setLoading(true);
     try {
       const YOUR_API_URL = `https://www.career.go.kr/cnet/openapi/getOpenApi?apiKey=${API_KEY}&svcType=api&svcCode=SCHOOL&contentType=json&gubun=${selectedSchoolLevel}&searchSchulNm=${searchQuery}`;
       const response = await fetch(YOUR_API_URL);
@@ -43,11 +47,15 @@ export default function SearchSchoolModal({
         name: school.schoolName,
         region: school.region,
       }));
+
       console.log('학교 검색을 성공하였습니다.');
       console.log(selectedSchoolLevel);
       setSchoolList(schools);
     } catch (error) {
       console.error('학교 검색 중 오류가 발생했습니다.', error);
+    } finally {
+      setLoading(false);
+      setIsSearchComplete(true);
     }
   };
 
@@ -57,7 +65,7 @@ export default function SearchSchoolModal({
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <CustomDropdownPicker
         containerStyle={{marginTop: spacing.md}}
         items={[
@@ -72,10 +80,17 @@ export default function SearchSchoolModal({
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder="학교를 검색해주세요"
-        buttonText="검색"
+        buttonText={loading ? '검색중...' : '검색'}
         onButtonPress={searchSchool}
+        maxLength={50}
       />
 
+      {/* 검색 결과가 없는 경우 표시할 메시지 */}
+      {isSearchComplete && schoolList.length === 0 && (
+        <Text style={{textAlign: 'center', marginTop: spacing.md}}>
+          검색 결과가 없습니다.
+        </Text>
+      )}
       <FlatList
         data={schoolList}
         keyExtractor={item => item.id.toString()}
@@ -93,19 +108,7 @@ export default function SearchSchoolModal({
 }
 
 const styles = StyleSheet.create({
-  pickerContainer: {
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  inputFieldWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: spacing.sm,
-    height: 50,
-  },
+  container: {
+    gap: spacing.md
+  }
 });
