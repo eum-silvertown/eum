@@ -66,8 +66,8 @@ const StudentRealTimeCanvasSection = ({
 
   const memberId = useLectureStore(state => state.memberId);
   const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
-  const width = parseFloat(deviceWidth.toFixed(4));
-  const height = parseFloat(deviceHeight.toFixed(4));
+  const width = parseFloat(deviceWidth.toFixed(8));
+  const height = parseFloat(deviceHeight.toFixed(8));
   // 압축 전송
   const sendCompressedData = (destination: string, data: any) => {
     if (!clientRef.current || !clientRef.current.active) {

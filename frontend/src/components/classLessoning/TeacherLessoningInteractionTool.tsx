@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
-    borderRadius: 12,
+    borderRadius: getResponsiveSize(12),
     marginTop: getResponsiveSize(4),
     marginHorizontal: 'auto',
     padding: getResponsiveSize(8),
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   pageButton: {
     paddingVertical: getResponsiveSize(4),
     paddingHorizontal: getResponsiveSize(12),
-    borderRadius: 8,
+    borderRadius: getResponsiveSize(8),
     backgroundColor: '#E0F7FA',
     alignItems: 'center',
   },
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
   exitButton: {
     padding: getResponsiveSize(4),
-    borderRadius: 8,
+    borderRadius: getResponsiveSize(8),
     backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
     alignItems: 'center',
   },

@@ -115,7 +115,7 @@ function StudentRealTimeCanvasRefSection({
           const number = parseFloat(segment);
           return (
             number * (segment.includes('y') ? reHeightRatio : reWidthRatio)
-          ).toFixed(4);
+          ).toFixed(8);
         }
         return segment;
       })
@@ -160,8 +160,8 @@ function StudentRealTimeCanvasRefSection({
             transform: [
               {translateX: (deviceWidth * (1 - 1 / widthRatio)) / 2},
               {translateY: (deviceHeight * (1 - 1 / heightRatio)) / 2},
-              {scaleX: 1 / widthRatio},
-              {scaleY: 1 / heightRatio},
+              {scaleX: widthRatio / 1},
+              {scaleY: heightRatio / 1},
             ],
           },
         ]}
@@ -181,10 +181,10 @@ function StudentRealTimeCanvasRefSection({
       </Canvas>
       <View style={styles.debugContainer}>
         <Text style={styles.debugText}>
-          Width Ratio: {widthRatio.toFixed(4)}
+          Width Ratio: {widthRatio.toFixed(8)}
         </Text>
         <Text style={styles.debugText}>
-          Height Ratio: {heightRatio.toFixed(4)}
+          Height Ratio: {heightRatio.toFixed(8)}
         </Text>
       </View>
     </View>

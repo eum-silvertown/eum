@@ -71,9 +71,8 @@ const TeacherRealTimeCanvasSection = ({
   const lessonId = useLessonStore(state => state.lessonId);
   const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
 
-  // 소수점 4자리까지만 사용하는 너비와 높이
-  const width = parseFloat(deviceWidth.toFixed(4));
-  const height = parseFloat(deviceHeight.toFixed(4));
+  const width = parseFloat(deviceWidth.toFixed(1));
+  const height = parseFloat(deviceHeight.toFixed(1));
 
   // 압축 전송
   const sendCompressedData = (destination: string, data: any) => {
