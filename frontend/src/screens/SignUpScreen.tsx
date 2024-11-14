@@ -380,6 +380,7 @@ function SignUpScreen(): React.JSX.Element {
                 label="이메일"
                 placeholder="이메일을 입력해주세요."
                 value={email}
+                keyboardType="email-address"
                 onChangeText={handleEmailChange}
                 buttonText={
                   emailVerificationLoading ? '발송 중...' : '본인 인증'

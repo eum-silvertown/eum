@@ -14,7 +14,7 @@ import BookModal from '@components/common/BookModal';
 import {useBookModalStore} from '@store/useBookModalStore';
 import Background from '@components/main/Background';
 import Widgets from '@components/main/Widgets';
-import TimeTable from '@components/main/TimeTable';
+import Timetable from '@components/main/Timetable';
 import MainHeader from '@components/main/MainHeader';
 
 const STARTING_HOUR = 9;
@@ -56,7 +56,7 @@ function HomeScreen(): React.JSX.Element {
     // 유저 정보 조회
     const fetchData = async () => {
       try {
-        const response = await getUserInfo();
+        await getUserInfo();
       } catch (error) {}
     };
 
@@ -84,7 +84,7 @@ function HomeScreen(): React.JSX.Element {
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={33}>
-        <TimeTable
+        <Timetable
           endingHour={ENDING_HOUR}
           hourWidth={hourWidth}
           isNightTime={isNightTime}

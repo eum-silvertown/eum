@@ -65,7 +65,7 @@ export default function SearchSchoolModal({
   };
 
   return (
-    <View style={{gap: spacing.md}}>
+    <View style={styles.container}>
       <CustomDropdownPicker
         containerStyle={{marginTop: spacing.md}}
         items={[
@@ -80,7 +80,7 @@ export default function SearchSchoolModal({
         value={searchQuery}
         onChangeText={setSearchQuery}
         placeholder="학교를 검색해주세요"
-        buttonText={loading ? "검색중..." : "검색"}        
+        buttonText={loading ? '검색중...' : '검색'}
         onButtonPress={searchSchool}
         maxLength={50}
       />
@@ -107,4 +107,8 @@ export default function SearchSchoolModal({
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    gap: spacing.md
+  }
+});
