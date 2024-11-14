@@ -1,18 +1,12 @@
 import {Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import UpArrowIcon from '@assets/icons/backArrowIcon.svg';
-// import SearchIcon from '@assets/icons/searchIcon.svg';
 import AddFolderIcon from '@assets/icons/addFolderIcon.svg';
 import AddQuestionIcon from '@assets/icons/addQuestionIcon.svg';
-import {iconSize} from '@theme/iconSize';
 import BreadCrumb from '@components/questionBox/BreadCrumb';
-import {spacing} from '@theme/spacing';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
 import CreateFolder from './CreateFolder';
 import {useModal} from 'src/hooks/useModal';
-import {borderWidth} from '@theme/borderWidth';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
 import CreateQuestionModal from './CreateQuestionModal';
 
@@ -49,7 +43,7 @@ function FolderHeader(): React.JSX.Element {
             styles.navButton,
             currentHistoryIndex <= 0 && styles.navButtonDisabled,
           ]}>
-          <BackArrowIcon width={iconSize.md} height={iconSize.md} />
+          <BackArrowIcon width={30} height={30} />
         </Pressable>
 
         <Pressable
@@ -59,46 +53,36 @@ function FolderHeader(): React.JSX.Element {
             currentHistoryIndex >= history.length - 1 &&
               styles.navButtonDisabled,
           ]}>
-          <BackArrowIcon
-            width={iconSize.md}
-            height={iconSize.md}
-            style={styles.forwardIcon}
-          />
+          <BackArrowIcon width={30} height={30} style={styles.forwardIcon} />
         </Pressable>
 
         <Pressable
           onPress={navigateUp}
           style={[
             styles.navButton,
-            {marginLeft: spacing.lg},
+            {marginLeft: 15},
             currentPath.length === 0 && styles.navButtonDisabled,
           ]}>
-          <UpArrowIcon
-            width={iconSize.sm}
-            height={iconSize.sm}
-            style={styles.upIcon}
-          />
+          <UpArrowIcon width={30} height={30} style={styles.upIcon} />
         </Pressable>
       </View>
 
       <BreadCrumb />
 
       <View style={styles.rightIcons}>
-        {/* 검색 아이콘 */}
-        {/* <SearchIcon width={iconSize.md} height={iconSize.md} /> */}
         <TouchableOpacity
           onPress={() => {
             openFolderCreateModal();
           }}>
-          <AddFolderIcon width={iconSize.md} height={iconSize.md} />
+          <AddFolderIcon width={30} height={30} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             openQuestionCreateModal();
           }}>
           <AddQuestionIcon
-            width={iconSize.md}
-            height={iconSize.md}
+            width={30}
+            height={30}
             color={colors.light.background.main}
           />
         </TouchableOpacity>
@@ -113,23 +97,23 @@ const styles = StyleSheet.create({
   folderHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: spacing.xxl * 1.25,
-    gap: spacing.xl,
-    marginBottom: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    height: 60,
+    gap: 25,
+    marginBottom: 15,
+    paddingHorizontal: 15,
     backgroundColor: 'white',
-    borderBottomWidth: borderWidth.sm,
-    borderTopRightRadius: borderRadius.lg,
-    borderTopLeftRadius: borderRadius.lg,
+    borderBottomWidth: 1,
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
     borderColor: `${colors.light.background.main}7f`,
     elevation: 2,
   },
   navigationButtons: {
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: 10,
   },
   navButton: {
-    padding: spacing.sm,
+    padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -144,7 +128,7 @@ const styles = StyleSheet.create({
   },
   rightIcons: {
     flexDirection: 'row',
-    gap: spacing.lg,
+    gap: 15,
     marginLeft: 'auto',
   },
 });

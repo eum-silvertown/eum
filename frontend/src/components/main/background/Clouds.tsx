@@ -1,7 +1,7 @@
 import {borderRadius} from '@theme/borderRadius';
 import {getResponsiveSize} from '@utils/responsive';
-import {useCallback, useEffect} from 'react';
-import {Animated, StyleSheet} from 'react-native';
+import {useCallback, useEffect, useMemo, useRef} from 'react';
+import {Animated, StyleSheet, ViewStyle} from 'react-native';
 
 interface CloudsProps {
   screenWidth: number;
@@ -12,17 +12,29 @@ export default function Clouds({
   screenWidth,
   screenHeight,
 }: CloudsProps): React.JSX.Element {
-  const clouds = Array.from({length: 10}, (_, i) => ({
-    id: i,
-    x: -100,
-    y: Math.random() * (screenHeight / 3),
-    size: getResponsiveSize(32) + Math.random() * getResponsiveSize(24),
-    delay: Math.random() * 10000,
-  }));
-  const cloudAnims = clouds.map(() => new Animated.Value(0));
+  const clouds = useMemo(
+    () =>
+      Array.from({length: 10}, (_, i) => ({
+        id: i,
+        x: -100,
+        y: Math.random() * (screenHeight / 3),
+        size: getResponsiveSize(32) + Math.random() * getResponsiveSize(24),
+        delay: Math.random() * 10000,
+      })),
+    [screenHeight],
+  );
+
+  const cloudAnimsRef = useRef<Animated.Value[]>();
+  if (!cloudAnimsRef.current) {
+    cloudAnimsRef.current = clouds.map(() => new Animated.Value(0));
+  }
+
+  const animationRef = useRef<Animated.CompositeAnimation>();
 
   const animateClouds = useCallback(() => {
-    const animations = cloudAnims.map((anim, index) => {
+    if (!cloudAnimsRef.current) return;
+
+    const animations = cloudAnimsRef.current.map((anim, index) => {
       const totalDistance = screenWidth + clouds[index].size + 200;
 
       return Animated.sequence([
@@ -40,34 +52,47 @@ export default function Clouds({
       ]);
     });
 
-    Animated.parallel(animations).start(() => animateClouds());
-  }, [cloudAnims, clouds, screenWidth]);
+    animationRef.current?.stop();
+    animationRef.current = Animated.parallel(animations);
+    animationRef.current.start(() => {
+      if (!animationRef.current) return;
+      animateClouds();
+    });
+  }, [clouds, screenWidth]);
 
   useEffect(() => {
     animateClouds();
+    return () => {
+      animationRef.current?.stop();
+      animationRef.current = undefined;
+    };
   }, [animateClouds]);
 
   return (
     <>
-      {clouds.map((cloud, index) => (
-        <Animated.View
-          key={cloud.id}
-          style={[
-            styles.cloud,
-            {
-              left: cloud.x,
-              top: cloud.y,
-              width: cloud.size,
-              height: cloud.size * 0.6,
-              transform: [
-                {
-                  translateX: cloudAnims[index],
-                },
-              ],
-            },
-          ]}
-        />
-      ))}
+      {clouds.map((cloud, index) => {
+        // cloudAnimsRef.current가 없을 경우의 기본값 처리
+        const translateX =
+          cloudAnimsRef.current?.[index] || new Animated.Value(0);
+
+        return (
+          <Animated.View
+            key={cloud.id}
+            style={[
+              styles.cloud,
+              {
+                left: cloud.x,
+                top: cloud.y,
+                width: cloud.size,
+                height: cloud.size * 0.6,
+                transform: [{translateX}] as Animated.WithAnimatedValue<
+                  ViewStyle['transform']
+                >,
+              },
+            ]}
+          />
+        );
+      })}
     </>
   );
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {Text} from '../common/Text';
-import {spacing} from '@theme/spacing';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
 
 function BreadCrumb(): React.JSX.Element {
@@ -12,7 +11,7 @@ function BreadCrumb(): React.JSX.Element {
     <View style={styles.breadcrumb}>
       <Pressable
         onPress={navigateToHome}
-        style={{flexDirection: 'row', gap: spacing.md}}>
+        style={{flexDirection: 'row', gap: 10}}>
         <Text style={styles.breadcrumbText}>문제 보관함</Text>
         {currentPath.length > 0 && (
           <Text style={styles.breadcrumbSeparator}>/</Text>
@@ -39,15 +38,15 @@ const styles = StyleSheet.create({
   breadcrumb: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    marginVertical: spacing.md,
+    gap: 10,
+    marginVertical: 10,
     flexWrap: 'wrap',
   },
   breadcrumbText: {
     color: '#007AFF',
   },
   breadcrumbSeparator: {
-    marginHorizontal: spacing.xs,
+    marginHorizontal: 5,
     color: '#666',
   },
 });

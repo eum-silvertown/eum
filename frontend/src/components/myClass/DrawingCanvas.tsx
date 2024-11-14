@@ -39,7 +39,8 @@ interface DrawingCanvasProps {
   userId: string;
 }
 
-const SOCKET_URL = 'http://k11d101.p.ssafy.io/ws-gateway/drawing';
+// const SOCKET_URL = 'http://k11d101.p.ssafy.io/ws-gateway/drawing';
+const SOCKET_URL = 'http://192.168.100.187:8080/ws-gateway/drawing';
 
 const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
   const currentTool = useRef<Tool>('whiteCholk');
@@ -49,6 +50,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
   const stompClient = useRef<Client | null>(null);
   const activeDrawings = useRef<Map<string, DrawingState>>(new Map());
   const [isConnected, setIsConnected] = useState(false);
+  const isConnectedRef = useRef<boolean>(false);
   const [canvasSize, setCanvasSize] = useState<{width: number; height: number}>(
     {
       width: 0,
@@ -103,15 +105,15 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
 
       // 룸의 드로잉 이벤트 구독
       stompClient.current?.subscribe(
-        `/topic/drawing/${roomId}`,
+        `/topic/classroom/1234`,
         (message: Message) => {
           handleReceivedDrawing(JSON.parse(message.body));
         },
       );
 
-      // 캔버스 상태 구독
+      // 스냅샷 상태 구독
       stompClient.current?.subscribe(
-        `/topic/canvas/${roomId}/state`,
+        `/topic/queue/snapshot/1234`,
         (message: Message) => {
           handleCanvasState(JSON.parse(message.body));
         },
@@ -243,14 +245,19 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
     }
   }, [canvasSize]);
 
+  useEffect(() => {
+    isConnectedRef.current = isConnected;
+  }, [isConnected]);
+
   const handleDrawing = (
     evt: GestureResponderEvent,
     type: 'start' | 'move' | 'end',
   ) => {
     const {locationX, locationY, pageX, pageY} = evt.nativeEvent;
     const canvas = canvasRef.current;
+    console.log('뭔데 너? isConnected', isConnectedRef.current);
 
-    if (!canvas || !canvasBounds.current || !isConnected) return;
+    if (!canvas || !canvasBounds.current || !isConnectedRef.current) return;
 
     const {left, right, top, bottom} = canvasBounds.current;
     const ctx = canvas.getContext('2d');
@@ -278,13 +285,12 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId, userId}) => {
       lineId,
     };
 
+    console.log(drawingPoint);
+
     if (stompClient.current?.connected) {
       stompClient.current.publish({
-        destination: `/app/drawing/${roomId}`,
-        body: JSON.stringify({
-          userId,
-          drawingPoint,
-        }),
+        destination: `/app/drawing/classroom/${1234}`,
+        body: JSON.stringify(drawingPoint),
       });
     }
 
