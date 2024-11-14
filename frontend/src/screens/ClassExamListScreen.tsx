@@ -143,6 +143,11 @@ function ClassExamListScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {flex: 1, padding: 15, backgroundColor: '#FFF'},
   title: {fontSize: 22, fontWeight: 'bold', marginBottom: 10, color: '#333'},
+  card: {
+    marginHorizontal: 24,
+    padding: 20,
+    marginBottom: 12,
+  },
   item: {
     marginHorizontal: 40,
     padding: 25,
@@ -166,12 +171,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   icon: {
-    marginRight: spacing.md,
+    marginRight: 10,
   },
   textContainer: {
     flex: 1,
   },
-  itemTitle: {fontSize: 18, fontWeight: 'bold', color: '#333'},
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -223,18 +223,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: spacing.sm,
+    marginBottom: 5,
   },
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 3,
   },
-  itemText: {fontSize: 14, color: '#666', marginLeft: spacing.sm},
+  itemText: {fontSize: 14, color: '#666', marginLeft: 5},
   deadlineText: {
     color: '#FF5555',
     fontWeight: 'bold',
-    marginTop: spacing.xs,
+    marginTop: 5,
   },
   deleteButton: {
     paddingVertical: 5,
