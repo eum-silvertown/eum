@@ -2,11 +2,11 @@ package com.eum.notification_service.controller;
 
 import java.util.List;
 
-import com.eum.notification_service.dto.request.SaveTokenRequest;
 import org.springframework.web.bind.annotation.*;
 
 import com.eum.notification_service.common.CommonResponse;
 import com.eum.notification_service.dto.NotificationDto;
+import com.eum.notification_service.dto.request.SaveTokenRequest;
 import com.eum.notification_service.service.NotificationService;
 
 import lombok.RequiredArgsConstructor;
