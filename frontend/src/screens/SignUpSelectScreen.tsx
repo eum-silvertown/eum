@@ -4,7 +4,6 @@ import {Text} from '@components/common/Text';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import signUpStudentImage from '@assets/images/signUpStudentImage.png';
 import signUpTeacherImage from '@assets/images/signUpTeacherImage.png';
 

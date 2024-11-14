@@ -12,19 +12,15 @@ import {colors} from 'src/hooks/useColors';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-
 import SearchIcon from '@assets/icons/searchIcon.svg';
 import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
-
 import {iconSize} from '@theme/iconSize';
-
 import ScreenHeader from '@components/account/ScreenHeader';
 import InputField from '@components/account/InputField';
 import SearchSchoolModal from '@components/account/SearchSchoolModal';
 import {useModal} from 'src/hooks/useModal';
 import {getResponsiveSize} from '@utils/responsive';
-
 import {
   checkUsername,
   requestEmailVerification,
@@ -47,7 +43,7 @@ function SignUpScreen(): React.JSX.Element {
 
   const [isUsernameChecked, setIsUsernameChecked] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  
+
   // 회원가입 정보 상태
   const [userId, setUserId] = useState('');
   const [userIdStatusText, setUserIdStatusText] = useState('');
@@ -94,16 +90,7 @@ function SignUpScreen(): React.JSX.Element {
   >('info');
 
   const [selectedGrade, setSelectedGrade] = useState('0');
-  const [selectedGradeStatusText, setSelectedGradeStatusText] = useState('');
-  const [selectedGradeStatusType, setSelectedGradeStatusType] = useState<
-    'success' | 'error' | 'info' | ''
-  >('info');
-
   const [selectedClass, setSelectedClass] = useState('0');
-  const [selectedClassStatusText, setSelectedClassStatusText] = useState('');
-  const [selectedClassStatusType, setSelectedClassStatusType] = useState<
-    'success' | 'error' | 'info' | ''
-  >('info');
 
   const [birthDate, setBirthDate] = useState('');
   const [birthDateStatusText, setBirthDateStatusText] = useState('');
@@ -118,10 +105,6 @@ function SignUpScreen(): React.JSX.Element {
   >('info');
 
   const [gender, setGender] = useState('');
-  const [genderStatusText, setGenderStatusText] = useState('');
-  const [genderStatusType, setGenderStatusType] = useState<
-    'success' | 'error' | 'info' | ''
-  >('info');
 
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -196,7 +179,7 @@ function SignUpScreen(): React.JSX.Element {
     }
 
     if (!(tel.length == 13)) {
-      setTelStatusText('휴대폰 번호를 입력해주세요.');
+      setTelStatusText('휴대전화번호를 입력해주세요.');
       setTelStatusType('error');
       isValid = false;
     } else {
@@ -212,7 +195,7 @@ function SignUpScreen(): React.JSX.Element {
     }
 
     if (!(birthDate.length == 10 && gender)) {
-      setBirthDateStatusText('생년월일과 성별 정보를 확인해주세요.');
+      setBirthDateStatusText('생년월일과 성별 정보를 입력해주세요.');
       setBirthDateStatusType('error');
       isValid = false;
     } else {
@@ -246,9 +229,9 @@ function SignUpScreen(): React.JSX.Element {
         setUserIdStatusType('error');
         return;
       }
-      const response = await checkUsername(userId);
+      await checkUsername(userId);
       setUserIdStatusType('success');
-      setUserIdStatusText(response.message);
+      setUserIdStatusText('사용 가능한 ID 입니다.');
       setIsUsernameChecked(true); // 중복 체크 완료로 상태 업데이트
     } catch (error) {
       setUserIdStatusType('error');
@@ -261,13 +244,12 @@ function SignUpScreen(): React.JSX.Element {
 
   // 이메일로 인증코드 전송
   const handleSendVerification = async () => {
-    setEmailVerificationLoading(true); // 로딩 시작
-
     if (!email || !email.includes('@')) {
       setEmailStatusText('유효한 이메일 주소를 입력해주세요.');
       setEmailStatusType('error');
       return;
     }
+    setEmailVerificationLoading(true); // 로딩 시작
     try {
       const response = await requestEmailVerification(email);
       setIsVerificationSent(true);
@@ -285,11 +267,13 @@ function SignUpScreen(): React.JSX.Element {
 
   // 인증코드로 본인 인증
   const handleVerificationCodeInput = async () => {
-    setCodeVerificationLoading(true); // 로딩 시작
     if (!verificationCode) {
       setVerificationCodeStatusType('error');
-      setVerificationCodeStatusText('인증번호를 입력해주세요.');
+      setVerificationCodeStatusText('인증코드를 입력해주세요.');
+      return;
     }
+
+    setCodeVerificationLoading(true); // 로딩 시작
     try {
       const response = await verifyEmailCode(email, verificationCode);
       setVerificationCodeStatusType('success');
@@ -324,7 +308,7 @@ function SignUpScreen(): React.JSX.Element {
     // 숫자만 입력 받기
     const formattedText = text.replace(/[^0-9]/g, '').slice(0, 8);
     // 입력된 숫자를 YYYY-MM-DD 형식으로 변환
-    if (formattedText.length == 8) {
+    if (formattedText.length === 8) {
       setBirthDate(
         `${formattedText.slice(0, 4)}-${formattedText.slice(
           4,
@@ -356,12 +340,9 @@ function SignUpScreen(): React.JSX.Element {
       };
       console.log(requestData);
       try {
-        const response = await signUp(requestData);
+        await signUp(requestData);
         console.log(requestData);
-        Alert.alert(
-          '회원가입 성공',
-          response.message || '회원가입이 완료되었습니다.',
-        );
+        Alert.alert('회원가입 성공', '회원가입이 완료되었습니다.');
         navigation.reset({
           index: 0,
           routes: [{name: 'HomeScreen'}],
@@ -370,7 +351,7 @@ function SignUpScreen(): React.JSX.Element {
       } catch (error) {
         Alert.alert('회원가입 실패', String(error));
       } finally {
-        setSignUpLoading(false); // 로딩 종료
+        setSignUpLoading(false);
       }
     }
   };
@@ -388,11 +369,11 @@ function SignUpScreen(): React.JSX.Element {
                 placeholder="아이디를 입력해주세요."
                 value={userId}
                 onChangeText={handleUserIdChange}
-                maxLength={20}
                 buttonText={idLoading ? '확인 중...' : '중복 확인'}
                 onButtonPress={handleDuplicateCheck}
                 statusText={userIdStatusText}
                 status={userIdStatusType}
+                maxLength={20}
               />
               {/* 이메일 입력 필드 */}
               <InputField
@@ -406,12 +387,13 @@ function SignUpScreen(): React.JSX.Element {
                 onButtonPress={handleSendVerification}
                 statusText={emailStatusText}
                 status={emailStatusType}
+                maxLength={254}
               />
               {/* 이메일 인증코드 입력 필드 */}
               {isVerificationSent && (
                 <InputField
-                  label="인증번호"
-                  placeholder="이메일로 받은 인증번호를 입력해주세요."
+                  label="인증코드"
+                  placeholder="이메일로 받은 인증코드를 입력해주세요."
                   value={verificationCode}
                   onChangeText={setVerificationCode}
                   buttonText={
@@ -420,6 +402,7 @@ function SignUpScreen(): React.JSX.Element {
                   onButtonPress={handleVerificationCodeInput}
                   statusText={verificationCodeStatusText}
                   status={verificationCodeStatusType}
+                  maxLength={8}
                 />
               )}
               {/* 비밀번호 입력 필드 */}
@@ -445,6 +428,7 @@ function SignUpScreen(): React.JSX.Element {
                   )
                 }
                 onIconPress={() => setPasswordVisible(!passwordVisible)}
+                maxLength={64}
               />
               {/* 비밀번호 확인 입력 필드 */}
               <InputField
@@ -455,6 +439,7 @@ function SignUpScreen(): React.JSX.Element {
                 onChangeText={setConfirmPassword}
                 statusText={confirmPasswordStatusText}
                 status={confirmPasswordStatusType}
+                maxLength={64}
               />
             </View>
 
@@ -470,11 +455,12 @@ function SignUpScreen(): React.JSX.Element {
                 onChangeText={setName}
                 statusText={nameStatusText}
                 status={nameStatusType}
+                maxLength={10}
               />
-              {/* 휴대폰 번호 입력 필드 */}
+              {/* 휴대전화번호 입력 필드 */}
               <InputField
-                label="휴대폰 번호"
-                placeholder="휴대폰 번호 11자리를 입력해주세요."
+                label="휴대전화번호"
+                placeholder="휴대전화번호 11자리를 입력해주세요."
                 value={tel}
                 onChangeText={handleTelChange}
                 statusText={telStatusText}
@@ -503,6 +489,7 @@ function SignUpScreen(): React.JSX.Element {
                         },
                       })
                     }
+                    maxLength={50}
                   />
                   {/* 학년, 반 */}
                   <View style={styles.gradeClassContainer}>
@@ -628,7 +615,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-    gap: spacing.lg
+    gap: spacing.lg,
   },
   schoolInfoContainer: {
     flexDirection: 'row',
