@@ -642,7 +642,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     gap: 10,
-    justifyContent: 'center',
   },
   selectedGenderButton: {
     backgroundColor: colors.light.background.main,
@@ -653,9 +652,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: borderRadius.sm,
     marginHorizontal: 3,
-    marginVertical: 10,
     backgroundColor: colors.light.background.input,
-    height: getResponsiveSize(25),
+    height: getResponsiveSize(40),
     alignSelf: 'flex-end',
   },
   selectedGenderButtonText: {
