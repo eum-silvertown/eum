@@ -30,11 +30,15 @@ import {Platform, UIManager} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {TextEncoder} from 'text-encoding';
-import {getAutoLoginStatus} from '@utils/secureStorage';
 import {refreshAuthToken} from '@services/authService';
 import {useAuthStore} from '@store/useAuthStore';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {saveFCMToken} from '@services/notificationService';
+import {
+  saveFCMToken,
+  getUnreadNotifications,
+  getReadNotifications,
+} from '@services/notificationService';
+import {useNotificationStore} from '@store/useNotificationStore';
 
 global.TextEncoder = TextEncoder;
 // 안드로이드 기본 Navbar 없애기
@@ -60,23 +64,6 @@ function App(): React.JSX.Element {
   const setIsLoggedIn = useAuthStore(state => state.setIsLoggedIn);
 
   const [screens, setScreens] = useState<ScreenProps[]>([]);
-
-  // const screens: ScreenProps[] = [
-  //   {name: 'LoginScreen', component: LoginScreen},
-  //   {name: 'HomeScreen', component: HomeScreen},
-  //   {name: 'FindIdScreen', component: FindIdScreen},
-  //   {name: 'FindPasswordScreen', component: FindPasswordScreen},
-  //   {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
-  //   {name: 'SignUpScreen', component: SignUpScreen},
-  //   {name: 'LectureListScreen', component: LectureListScreen},
-  //   {name: 'HomeworkScreen', component: HomeworkScreen},
-  //   {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
-  //   {name: 'MyClassScreen', component: MyClassScreen},
-  //   {name: 'NotificationScreen', component: NotificationScreen},
-  //   {name: 'LessoningScreen', component: LessoningScreen},
-  //   {name: 'LessoningStudentListScreen', component: LessoningStudentListScreen},
-  //   {name: 'ProfileScreen', component: ProfileScreen},
-  // ];
 
   useEffect(() => {
     const initializeScreens = async () => {
@@ -135,11 +122,31 @@ function App(): React.JSX.Element {
     saveFCMToken(token);
   }
 
+  async function fetchNotifications() {
+    try {
+      const unreadNotifications = await getUnreadNotifications();
+      setUnreadNotifications(unreadNotifications);
+      const readNotifications = await getReadNotifications();
+      setReadNotifications(readNotifications);
+    } catch (error) {
+      console.error('Failed to fetch Notifications');
+    }
+  }
+
+  const setUnreadNotifications = useNotificationStore(
+    state => state.setUnreadNotifications,
+  );
+  const setReadNotifications = useNotificationStore(
+    state => state.setReadNotifications,
+  );
+
   // 로그인 시 FCM 토큰 DB에 저장
   useEffect(() => {
     if (isLoggedIn) {
+      fetchNotifications();
       getFCMToken();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);
 
   useEffect(() => {
