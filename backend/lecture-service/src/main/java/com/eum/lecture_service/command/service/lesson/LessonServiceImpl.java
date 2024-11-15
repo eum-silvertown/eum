@@ -119,6 +119,6 @@ public class LessonServiceImpl implements LessonService {
 			savedLesson.getTitle(),
 			lessonQuestions
 		);
-		kafkaTemplate.send("lesson-create-topic", event);
+		kafkaTemplate.send("lesson-create-event", event);
 	}
 }
