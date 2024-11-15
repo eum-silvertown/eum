@@ -135,4 +135,8 @@ public class LectureQueryServiceImpl implements LectureQueryService {
 
 		return LectureUpdateResponse.fromLectureModel(lecture);
 	}
+
+	public List<ClassModel> getAvailableClasses(String schoolName) {
+		return classReadRepository.findBySchool(schoolName);
+	}
 }

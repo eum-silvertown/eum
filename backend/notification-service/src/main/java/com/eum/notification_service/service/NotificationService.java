@@ -28,4 +28,8 @@ public interface NotificationService {
 	void markAsRead(Long notificationId, Long memberId);
 
 	void markAsReadNotifications(List<Long> notificationIds, Long memberId);
+
+	List<NotificationDto> getReadNotifications(Long memberId);
+
+	void deleteNotification(Long notificationId, Long memberId);
 }

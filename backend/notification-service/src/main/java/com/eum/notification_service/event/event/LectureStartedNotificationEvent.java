@@ -12,7 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LectureStartedNotificationEvent  {
+
     private Long lectureId;
     private String title;
     private List<Long> studentIds;
+    private String type;
+
 }

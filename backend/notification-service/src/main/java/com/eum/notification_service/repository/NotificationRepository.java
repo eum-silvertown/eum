@@ -9,4 +9,6 @@ import com.eum.notification_service.entity.Notifications;
 public interface NotificationRepository extends JpaRepository<Notifications, Long> {
 
 	List<Notifications> findByMemberIdAndIsReadFalse(Long memberId);
+
+	List<Notifications> findByMemberIdAndIsReadTrue(Long memberId);
 }
