@@ -2,7 +2,9 @@ package com.eum.notification_service.dto;
 
 import com.eum.notification_service.entity.Notifications;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Builder
 public class NotificationDto {
     private Long id;

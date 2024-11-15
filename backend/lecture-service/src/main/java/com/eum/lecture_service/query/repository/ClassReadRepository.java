@@ -8,5 +8,7 @@ import com.eum.lecture_service.query.document.eventModel.ClassModel;
 
 public interface ClassReadRepository extends MongoRepository<ClassModel, Long> {
 
-	Optional<ClassModel> findByAndSchoolAndGradeAndAndClassNumber(String className, Long grade, Long classNumber);
+
+	Optional<ClassModel> findBySchoolAndGradeAndClassNumber(String school, Long grade, Long classNumber);
+
 }
