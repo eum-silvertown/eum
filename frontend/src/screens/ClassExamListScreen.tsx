@@ -10,7 +10,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {iconSize} from '@theme/iconSize';
 import CalendarIcon from '@assets/icons/calendarIcon.svg';
-import ClockIcon from '@assets/icons/clockIcon.svg'; // ClockIcon 추가
+import ClockIcon from '@assets/icons/clockIcon.svg';
 import EmptyExamIcon from '@assets/icons/emptyExamIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import {Text as HeaderText} from '@components/common/Text';
@@ -21,7 +21,7 @@ import {
   getLectureDetail,
   LectureDetailType,
 } from '@services/lectureInformation';
-import {deleteExam} from '@services/examService';
+import {deleteExam, getExamSubmissionList} from '@services/examService';
 import {ScreenType} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
@@ -31,10 +31,16 @@ function ClassExamListScreen(): React.JSX.Element {
   const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
   const role = useAuthStore(state => state.userInfo.role);
+  const studentId = useAuthStore(state => state.userInfo.id);
 
   const {data: lectureDetail} = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId!),
+  });
+
+  const {data: examSubmissions} = useQuery({
+    queryKey: ['examSubmissionList', lectureId, studentId],
+    queryFn: () => getExamSubmissionList(lectureId!, studentId!),
   });
 
   const {mutate: removeExam} = useMutation({
@@ -68,8 +74,41 @@ function ClassExamListScreen(): React.JSX.Element {
     ]);
   };
 
-  const exams = lectureDetail?.exams || [];
-  console.log('exams:', exams);
+  const submittedExamIds = examSubmissions?.map(
+    submission => submission.examId,
+  );
+
+  const sortedExams = [...(lectureDetail?.exams || [])]
+    .map(exam => {
+      const isSubmitted = submittedExamIds?.includes(exam.examId) || false;
+      const endTime = new Date(exam.endTime);
+      const currentTime = Date.now();
+      const isPastDeadline = !isSubmitted && endTime.getTime() < currentTime;
+      const remainingTime = Math.max(0, endTime.getTime() - currentTime);
+
+      const remainingHours = Math.floor(
+        (remainingTime / (1000 * 60 * 60)) % 24,
+      );
+      const remainingMinutes = Math.floor((remainingTime / (1000 * 60)) % 60);
+      const remainingSeconds = Math.floor((remainingTime / 1000) % 60);
+
+      return {
+        ...exam,
+        isSubmitted,
+        isPastDeadline,
+        remainingHours,
+        remainingMinutes,
+        remainingSeconds,
+      };
+    })
+    .sort((a, b) => {
+      if (a.isSubmitted === b.isSubmitted) {
+        return (
+          new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+        );
+      }
+      return a.isSubmitted ? 1 : -1;
+    });
 
   return (
     <View style={styles.container}>
@@ -82,10 +121,18 @@ function ClassExamListScreen(): React.JSX.Element {
         </HeaderText>
       </View>
       <FlatList
-        data={exams}
+        data={sortedExams}
         keyExtractor={item => item.examId.toString()}
         renderItem={({item}) => (
-          <View style={styles.card}>
+          <View
+            style={[
+              styles.card,
+              item.isPastDeadline
+                ? styles.pastDeadlineCard
+                : item.isSubmitted
+                ? styles.submittedCard
+                : styles.ongoingExamCard,
+            ]}>
             <View style={styles.cardContent}>
               <TouchableOpacity
                 onPress={() => handleExamPress(item.examId, item.questions)}
@@ -112,6 +159,12 @@ function ClassExamListScreen(): React.JSX.Element {
                   <Text style={styles.itemText}>
                     문제 개수: {item.questions.length}
                   </Text>
+                  {!item.isSubmitted && !item.isPastDeadline && (
+                    <Text style={styles.remainingTimeText}>
+                      남은 시간: {item.remainingHours}시간{' '}
+                      {item.remainingMinutes}분 {item.remainingSeconds}초
+                    </Text>
+                  )}
                 </View>
               </TouchableOpacity>
               {role === 'TEACHER' && (
@@ -146,18 +199,19 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     padding: 20,
     marginBottom: 12,
-  },
-  item: {
-    marginHorizontal: 40,
-    padding: 25,
-    backgroundColor: '#F9E1E1',
-    marginBottom: 10,
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
+  },
+  notSubmittedCard: {
+    backgroundColor: '#FFDDDD', // 시간 오버 + 제출 못한 시험 배경색
+  },
+  ongoingExamCard: {
+    backgroundColor: '#FFFFFF', // 진행 중인 시험 배경색
+  },
+  submittedCard: {
+    backgroundColor: '#DDFFDD', // 시간 내 제출한 시험 배경색
+  },
+  pastDeadlineCard: {
+    backgroundColor: '#FFDDDD', // 시간 오버된 시험 배경색
   },
   cardContent: {
     flexDirection: 'row',
@@ -182,6 +236,11 @@ const styles = StyleSheet.create({
   },
   itemTitle: {fontSize: 18, fontWeight: 'bold', color: '#333', marginLeft: 5},
   itemText: {fontSize: 14, color: '#666', marginBottom: 3},
+  remainingTimeText: {
+    color: '#FFA500',
+    fontWeight: 'bold',
+    marginTop: 5,
+  },
   deleteButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -199,13 +258,12 @@ const styles = StyleSheet.create({
     paddingTop: 40,
   },
   emptyIcon: {
-    marginBottom: 15,
+    marginBottom: 10,
   },
   emptyText: {
     fontSize: 16,
     color: '#666',
     fontWeight: 'bold',
-    marginBottom: 10,
   },
   header: {
     marginVertical: 25,
