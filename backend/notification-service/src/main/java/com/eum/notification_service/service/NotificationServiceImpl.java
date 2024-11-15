@@ -58,6 +58,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.memberId(studentId)
 				.title(title)
 				.message(message)
+				.type(event.getType())
 				.isRead(false)
 				.build();
 			notificationRepository.save(notification);
@@ -77,6 +78,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.memberId(studentId)
 				.title(title)
 				.message(message)
+				.type(event.getType())
 				.isRead(false)
 				.build();
 			notificationRepository.save(notification);
@@ -96,6 +98,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.memberId(studentId)
 				.title(title)
 				.message(message)
+				.type(event.getType())
 				.isRead(false)
 				.build();
 			notificationRepository.save(notification);
@@ -115,6 +118,7 @@ public class NotificationServiceImpl implements NotificationService {
 				.memberId(studentId)
 				.title(title)
 				.message(message)
+				.type(event.getType())
 				.isRead(false)
 				.build();
 			notificationRepository.save(notification);
@@ -137,6 +141,18 @@ public class NotificationServiceImpl implements NotificationService {
 		return notifications.stream()
 			.map(NotificationDto::fromEntity)
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public void deleteNotification(Long notificationId, Long memberId) {
+		Notifications notification = notificationRepository.findById(notificationId)
+			.orElseThrow(() -> new EumException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+		if (!notification.getMemberId().equals(memberId)) {
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		}
+
+		notificationRepository.delete(notification);
 	}
 
 	@Override

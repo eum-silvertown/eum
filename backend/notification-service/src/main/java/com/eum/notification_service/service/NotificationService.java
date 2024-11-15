@@ -30,4 +30,6 @@ public interface NotificationService {
 	void markAsReadNotifications(List<Long> notificationIds, Long memberId);
 
 	List<NotificationDto> getReadNotifications(Long memberId);
+
+	void deleteNotification(Long notificationId, Long memberId);
 }

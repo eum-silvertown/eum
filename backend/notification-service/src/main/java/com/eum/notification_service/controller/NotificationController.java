@@ -54,9 +54,14 @@ public class NotificationController {
 	@PostMapping("/read")
 	public CommonResponse<?> markAsReadNotifications(
 		@RequestHeader("X-MEMBER-ID") Long memberId,
-		@RequestBody List<Long> notificationIds)
-		{
+		@RequestBody List<Long> notificationIds) {
 			notificationService.markAsReadNotifications(notificationIds, memberId);
 			return CommonResponse.success("여러개 읽음 처리 성공");
-		}
+	}
+
+	@DeleteMapping("/{notificationId}")
+	public CommonResponse<?> deleteNotification(@PathVariable Long notificationId, @RequestHeader("X-MEMBER-ID") Long memberId) {
+		notificationService.deleteNotification(notificationId, memberId);
+		return CommonResponse.success("삭제 성공");
+	}
 }
