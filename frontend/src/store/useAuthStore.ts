@@ -4,6 +4,7 @@ interface ClassInfo {
   school: string;
   grade: number;
   classNumber: number;
+  classId: number;
 }
 
 interface ImageInfo {
@@ -40,6 +41,7 @@ const initialUserInfo: UserInfo = {
     school: '',
     grade: 0,
     classNumber: 0,
+    classId: 0,
   },
   birth: '',
   image: null,
