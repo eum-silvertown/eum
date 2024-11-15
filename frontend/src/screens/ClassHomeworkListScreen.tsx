@@ -60,7 +60,7 @@ function ClassHomeworkListScreen(): React.JSX.Element {
   });
 
   const handleHomeworkPress = (homeworkId: number, questionIds: number[]) => {
-    console.log(homeworkId, questionIds);
+    navigation.navigate('SolveHomeworkScreen', {homeworkId, questionIds});
   };
 
   const handleDeleteHomework = (homeworkId: number) => {
@@ -77,21 +77,25 @@ function ClassHomeworkListScreen(): React.JSX.Element {
     ]);
   };
 
-  // 제출된 숙제 리스트에서 homeworkId만 추출
   const submittedHomeworkIds = submitHomeworkList?.map(
     submission => submission.homeworkId,
   );
 
-  // 전체 숙제 리스트를 제출 여부, 마감일에 따라 정렬하고 마감된 숙제에 대한 표시를 추가
   const sortedHomework = [...(lectureDetail?.homeworks || [])]
     .map(homework => {
       const isSubmitted = submittedHomeworkIds?.includes(homework.homeworkId);
-      const isPastDeadline =
-        !isSubmitted && new Date(homework.endTime).getTime() < Date.now();
-      return {...homework, isSubmitted, isPastDeadline};
+      const endTime = new Date(homework.endTime);
+      const currentTime = Date.now();
+      const isPastDeadline = !isSubmitted && endTime.getTime() < currentTime;
+
+      // 남은 기간 계산
+      const remainingDays = isPastDeadline
+        ? 0
+        : Math.ceil((endTime.getTime() - currentTime) / (1000 * 60 * 60 * 24));
+
+      return {...homework, isSubmitted, isPastDeadline, remainingDays};
     })
     .sort((a, b) => {
-      // 제출 여부와 마감일로 정렬
       if (a.isSubmitted === b.isSubmitted) {
         if (a.isPastDeadline === b.isPastDeadline) {
           return new Date(a.endTime).getTime() - new Date(b.endTime).getTime();
@@ -119,10 +123,12 @@ function ClassHomeworkListScreen(): React.JSX.Element {
             style={[
               styles.card,
               item.isPastDeadline
-                ? styles.pastDeadlineCard // 제출되지 않았고 마감된 숙제의 배경색
+                ? styles.pastDeadlineCard
                 : item.isSubmitted
-                ? styles.submittedCard // 제출된 숙제의 배경색
-                : styles.notSubmittedCard, // 제출되지 않은 숙제의 배경색
+                ? styles.submittedCard
+                : item.remainingDays <= 3
+                ? styles.nearingDeadlineCard
+                : styles.notSubmittedCard,
             ]}>
             <View style={styles.cardContent}>
               <TouchableOpacity
@@ -153,6 +159,11 @@ function ClassHomeworkListScreen(): React.JSX.Element {
                   {item.isPastDeadline && (
                     <Text style={styles.deadlineText}>
                       ※ 기한 내 제출되지 않음
+                    </Text>
+                  )}
+                  {!item.isSubmitted && item.remainingDays > 0 && (
+                    <Text style={styles.remainingDaysText}>
+                      남은 기간: {item.remainingDays}일
                     </Text>
                   )}
                 </View>
@@ -196,13 +207,16 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   notSubmittedCard: {
-    backgroundColor: '#F9E1E1', // 제출되지 않은 숙제 배경색
+    backgroundColor: '#EEEEEE', // 제출되지 않은 숙제 배경색
+  },
+  nearingDeadlineCard: {
+    backgroundColor: '#FFF1C1', // 마감이 가까운 숙제 배경색
   },
   submittedCard: {
     backgroundColor: '#D8E1FE', // 제출된 숙제 배경색
   },
   pastDeadlineCard: {
-    backgroundColor: '#FFE4E1', // 기한이 지난 숙제 배경색
+    backgroundColor: '#CCCCCC', // 기한이 지난 숙제 배경색
     borderColor: '#FF5555',
     borderWidth: 1,
   },
@@ -233,6 +247,11 @@ const styles = StyleSheet.create({
   itemText: {fontSize: 14, color: '#666', marginLeft: 5},
   deadlineText: {
     color: '#FF5555',
+    fontWeight: 'bold',
+    marginTop: 5,
+  },
+  remainingDaysText: {
+    color: '#FFA500',
     fontWeight: 'bold',
     marginTop: 5,
   },

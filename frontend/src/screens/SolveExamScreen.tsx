@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
-
+import {View, StyleSheet, Text} from 'react-native';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import {getResponsiveSize} from '@utils/responsive';
 import {useLessonStore} from '@store/useLessonStore';
 import ProblemSection from '@components/common/ProblemSection';
 import StudentCanvasSection from '@components/classActivity/StudentCanvasSection';
+import {useQuery} from '@tanstack/react-query';
+import {getFileDetail} from '@services/problemService';
 
 function SolveExamScreen(): React.JSX.Element {
   const lessonId = useLessonStore(state => state.lessonId);
@@ -18,8 +19,26 @@ function SolveExamScreen(): React.JSX.Element {
 
   const [currentPage, setCurrentPage] = useState(0);
 
+  // 문제 상세 정보 가져오기 - 모든 questionId에 대해 병렬로 호출
+  const {
+    data: problems,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['examProblems', questionIds],
+    queryFn: async ({queryKey}) => {
+      const [, responseQuestionIds] = queryKey; // queryKey에서 responseQuestionIds를 추출
+      const problemDetails = await Promise.all(
+        (responseQuestionIds as number[]).map(questionId =>
+          getFileDetail(questionId),
+        ),
+      );
+      return problemDetails;
+    },
+  });
+
   const handleNextPage = () => {
-    if (currentPage < problems.length - 1) {
+    if (currentPage < (problems?.length || 0) - 1) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -38,10 +57,18 @@ function SolveExamScreen(): React.JSX.Element {
     setCurrentScreen('SolveExamScreen');
   });
 
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (isError || !problems) {
+    return <Text>Error loading problems.</Text>;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
-        <ProblemSection problemText={problems[currentPage]} />
+        <ProblemSection problemText={problems[currentPage].content} />
         <StudentCanvasSection
           lessonId={lessonId!}
           currentPage={currentPage + 1}
