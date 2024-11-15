@@ -8,9 +8,10 @@ import StudentCanvasSection from '@components/classActivity/StudentCanvasSection
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getFileDetail } from '@services/problemService';
 import { HomeworkSubmissionRequest, submitHomework } from '@services/homeworkService';
+import { useAuthStore } from '@store/useAuthStore';
 
 function SolveHomeworkScreen(): React.JSX.Element {
-  const lessonId = useLessonStore(state => state.lessonId);
+  const memberId = useAuthStore(state => state.userInfo.id);
   const lectureId = useLessonStore(state => state.lectureId);
   const setCurrentScreen = useCurrentScreenStore(state => state.setCurrentScreen);
   const queryClient = useQueryClient();
@@ -102,7 +103,7 @@ function SolveHomeworkScreen(): React.JSX.Element {
 
       return {
         questionId: problem.fileId,
-        studentId: lessonId!,
+        studentId: memberId!,
         isCorrect,
         homeworkSolution,
       };
@@ -139,7 +140,7 @@ function SolveHomeworkScreen(): React.JSX.Element {
 
         {/* 학생 캔버스 섹션 */}
         <StudentCanvasSection
-          lessonId={lessonId!}
+          solveType="HOMEWORK"
           currentPage={currentPage + 1}
           totalPages={problems.length}
           onNextPage={handleNextPage}

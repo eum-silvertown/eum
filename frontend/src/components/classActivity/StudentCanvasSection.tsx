@@ -7,7 +7,7 @@ import base64 from 'react-native-base64';
 import { Alert } from 'react-native';
 
 interface StudentCanvasSectionProps {
-  lessonId: number;
+  solveType: 'EXAM' | 'HOMEWORK'
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
@@ -43,6 +43,7 @@ const StudentCanvasSection = ({
   savePaths,
   saveAnswer,
   onSubmit,
+  solveType,
 }: StudentCanvasSectionProps): React.JSX.Element => {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -271,6 +272,7 @@ const StudentCanvasSection = ({
         eraserPosition={eraserPosition}
       />
       <StudentInteractionTool
+        solveType={solveType}
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}

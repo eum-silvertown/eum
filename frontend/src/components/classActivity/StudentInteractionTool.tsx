@@ -12,6 +12,7 @@ import { getResponsiveSize } from '@utils/responsive';
 import { useNavigation } from '@react-navigation/native';
 
 interface LessoningInteractionToolForStudentProps {
+  solveType: 'EXAM' | 'HOMEWORK'
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
@@ -22,6 +23,7 @@ interface LessoningInteractionToolForStudentProps {
 }
 
 const StudentInteractionTool = ({
+  solveType,
   currentPage,
   totalPages,
   onNextPage,
@@ -107,7 +109,7 @@ const StudentInteractionTool = ({
 
           {/* 현재 제출할 답 표시 */}
           <Text style={styles.currentAnswerText}>
-            제출할 답: {hasSubmittedAnswer ? answerText || '입력하지 않음' : '입력하지 않음'}
+            답: {hasSubmittedAnswer ? answerText || '입력하지 않음' : '입력하지 않음'}
           </Text>
           {/* 정답 입력 버튼 */}
           <TouchableOpacity onPress={handleInputAnswer} style={styles.inputButton}>
@@ -116,10 +118,17 @@ const StudentInteractionTool = ({
             </Text>
           </TouchableOpacity>
 
-          {/* 숙제 제출 버튼 */}
-          <TouchableOpacity onPress={onSubmit} style={styles.submitButton}>
-            <Text style={styles.submitButtonText}>숙제 제출하기</Text>
+          <TouchableOpacity
+            onPress={onSubmit}
+            style={[
+              styles.submitButton,
+              solveType === 'EXAM' && styles.examSubmitButton, // solveType이 'EXAM'일 경우 스타일 추가
+            ]}>
+            <Text style={styles.submitButtonText}>
+              {solveType === 'EXAM' ? '시험 제출하기' : '숙제 제출하기'}
+            </Text>
           </TouchableOpacity>
+
 
           {/* 나가기 버튼 */}
           <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
@@ -186,7 +195,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '80%',
+    width: '70%',
   },
   pageControlContainer: {
     flexDirection: 'row',
@@ -323,5 +332,8 @@ const styles = StyleSheet.create({
     color: '#388E3C',
     fontWeight: 'bold',
     fontSize: getResponsiveSize(14),
+  },
+  examSubmitButton: {
+    backgroundColor: '#2196F3', // 시험 제출하기 버튼 색상
   },
 });

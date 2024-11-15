@@ -25,6 +25,7 @@ import {
 import { deleteExam, getExamSubmissionList } from '@services/examService';
 import { ScreenType } from '@store/useCurrentScreenStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useExamStore } from '@store/useExamStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -34,16 +35,21 @@ function ClassExamListScreen(): React.JSX.Element {
   const lectureId = useLessonStore(state => state.lectureId);
   const role = useAuthStore(state => state.userInfo.role);
   const studentId = useAuthStore(state => state.userInfo.id);
-
+  const { setExams } = useExamStore();
   const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId!),
   });
-
   const { data: examSubmissions } = useQuery({
     queryKey: ['examSubmissionList', lectureId, studentId],
     queryFn: () => getExamSubmissionList(lectureId!, studentId!),
   });
+
+  useEffect(() => {
+    if (lectureDetail?.exams) {
+      setExams(lectureDetail.exams);
+    }
+  }, [lectureDetail?.exams, setExams]);
 
   const { mutate: removeExam } = useMutation({
     mutationFn: (examId: number) => deleteExam(examId),
@@ -103,8 +109,12 @@ function ClassExamListScreen(): React.JSX.Element {
   const filteredExams = [...(lectureDetail?.exams || [])]
     .map(exam => {
       const isSubmitted = submittedExamIds?.includes(exam.examId) || false;
+      const startTime = new Date(exam.startTime);
       const endTime = new Date(exam.endTime);
       const now = currentTime.getTime();
+
+      const isOngoing = now >= startTime.getTime() && now <= endTime.getTime();
+      const isPastDeadline = !isSubmitted && endTime.getTime() < now;
       const remainingTime = Math.max(0, endTime.getTime() - now);
 
       const remainingHours = Math.floor(
@@ -116,7 +126,8 @@ function ClassExamListScreen(): React.JSX.Element {
       return {
         ...exam,
         isSubmitted,
-        isPastDeadline: !isSubmitted && endTime.getTime() < now,
+        isOngoing,
+        isPastDeadline,
         remainingHours,
         remainingMinutes,
         remainingSeconds,
@@ -135,6 +146,15 @@ function ClassExamListScreen(): React.JSX.Element {
         default:
           return true;
       }
+    })
+    .sort((a, b) => {
+      if (selectedFilter === '전체') {
+        // 전체 필터의 경우 진행 중인 시험을 우선적으로 정렬
+        if (a.isOngoing && !b.isOngoing) return -1;
+        if (!a.isOngoing && b.isOngoing) return 1;
+      }
+      // 기본 정렬 기준은 시작 시간 순서
+      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
     });
 
   return (
@@ -223,14 +243,13 @@ function ClassExamListScreen(): React.JSX.Element {
               height={iconSize.xxl * 7}
               style={styles.emptyIcon}
             />
-            <Text style={styles.emptyText}>현재 등록된 시험이 없습니다.</Text>
+            <Text style={styles.emptyText}>시험이 없습니다.</Text>
           </View>
         }
       />
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
