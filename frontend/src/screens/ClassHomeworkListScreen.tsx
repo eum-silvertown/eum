@@ -62,8 +62,27 @@ function ClassHomeworkListScreen(): React.JSX.Element {
 
   const [selectedFilter, setSelectedFilter] = useState<string>('전체'); // 필터 상태 관리
 
-  const handleHomeworkPress = (homeworkId: number, questionIds: number[]) => {
-    navigation.navigate('SolveHomeworkScreen', { homeworkId, questionIds });
+  const handleHomeworkPress = (homework: any) => {
+    const endTime = new Date(homework.endTime).getTime();
+    const currentTime = Date.now();
+
+    if (homework.isSubmitted) {
+      // 제출된 숙제 -> 결과 화면으로 이동
+      navigation.navigate('ConfirmSolvedScreen', {
+        typeId: homework.homeworkId,
+        questionIds: homework.questions,
+        solvedType: 'HOMEWORK',
+      });
+    } else if (currentTime <= endTime) {
+      // 기한 내 미제출 -> 숙제 풀이 화면으로 이동
+      navigation.navigate('SolveHomeworkScreen', {
+        homeworkId: homework.homeworkId,
+        questionIds: homework.questions,
+      });
+    } else {
+      // 기한 지난 미제출 -> 알림
+      Alert.alert('알림', '기한이 지난 숙제는 제출할 수 없습니다.');
+    }
   };
 
   const handleDeleteHomework = (homeworkId: number) => {
@@ -146,7 +165,7 @@ function ClassHomeworkListScreen(): React.JSX.Element {
       </View>
       <FlatList
         data={filteredHomework}
-        keyExtractor={item => item.homeworkId.toString()}
+        keyExtractor={(item) => item.homeworkId.toString()}
         renderItem={({ item }) => (
           <View
             style={[
@@ -158,13 +177,13 @@ function ClassHomeworkListScreen(): React.JSX.Element {
                   : item.remainingDays <= 3
                     ? styles.nearingDeadlineCard
                     : styles.notSubmittedCard,
-            ]}>
+            ]}
+          >
             <View style={styles.cardContent}>
               <TouchableOpacity
-                onPress={() =>
-                  handleHomeworkPress(item.homeworkId, item.questions)
-                }
-                style={styles.homeworkContent}>
+                onPress={() => handleHomeworkPress(item)}
+                style={styles.homeworkContent}
+              >
                 <View style={styles.textContainer}>
                   <Text style={styles.itemTitle}>{item.title}</Text>
                   <View style={styles.iconRow}>
@@ -200,7 +219,8 @@ function ClassHomeworkListScreen(): React.JSX.Element {
               {role === 'TEACHER' && (
                 <TouchableOpacity
                   onPress={() => handleDeleteHomework(item.homeworkId)}
-                  style={styles.deleteButton}>
+                  style={styles.deleteButton}
+                >
                   <Text style={styles.deleteButtonText}>삭제하기</Text>
                 </TouchableOpacity>
               )}

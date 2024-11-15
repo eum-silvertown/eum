@@ -76,17 +76,28 @@ function ClassExamListScreen(): React.JSX.Element {
   }, []);
 
   const handleExamPress = (exam: any) => {
-    const startTime = new Date(exam.startTime).getTime();
-    const now = currentTime.getTime();
-    if (now < startTime) {
-      Alert.alert('알림', '아직 시험이 시작되지 않았습니다.');
-    } else {
+    const endTime = new Date(exam.endTime).getTime();
+    const nowTime = Date.now();
+
+    if (exam.isSubmitted) {
+      // 제출된 시험 -> 결과 화면으로 이동
+      navigation.navigate('ConfirmSolvedScreen', {
+        typeId: exam.examId,
+        questionIds: exam.questions,
+        solvedType: 'EXAM',
+      });
+    } else if (nowTime <= endTime) {
+      // 기한 내 미제출 -> 시험 풀이 화면으로 이동
       navigation.navigate('SolveExamScreen', {
         examId: exam.examId,
         questionIds: exam.questions,
       });
+    } else {
+      // 기한 지난 미제출 -> 알림
+      Alert.alert('알림', '기한이 지난 시험은 제출할 수 없습니다.');
     }
   };
+
 
   const handleDeleteExam = (examId: number) => {
     Alert.alert('시험 삭제', '이 시험을 정말로 삭제하시겠습니까?', [

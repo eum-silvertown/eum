@@ -1,16 +1,16 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
 import StudentRealTimeCanvasSection from '@components/classLessoning/StudentRealTimeCanvasSection';
-import {useAuthStore} from '@store/useAuthStore';
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {getResponsiveSize} from '@utils/responsive';
+import { useAuthStore } from '@store/useAuthStore';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { getResponsiveSize } from '@utils/responsive';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
 import PulseIndicator from '@components/classLessoning/PulseIndicator';
-import {useLectureStore, useLessonStore} from '@store/useLessonStore';
+import { useLectureStore, useLessonStore } from '@store/useLessonStore';
 import ProblemSection from '@components/common/ProblemSection';
 
 function LessoningScreen(): React.JSX.Element {
@@ -154,15 +154,6 @@ function LessoningScreen(): React.JSX.Element {
           <View style={styles.connectionChip}>
             <PulseIndicator isConnected={isConnected} />
           </View>
-
-          {/* Received Message Display */}
-          {receivedMessage && (
-            <View style={styles.receivedMessageContainer}>
-              <Text style={styles.receivedMessageText}>
-                Received message: {receivedMessage}
-              </Text>
-            </View>
-          )}
         </View>
       </>
     );
@@ -189,15 +180,6 @@ function LessoningScreen(): React.JSX.Element {
       <View style={styles.connectionChip}>
         <PulseIndicator isConnected={isConnected} />
       </View>
-
-      {/* Received Message Display */}
-      {receivedMessage && (
-        <View style={styles.receivedMessageContainer}>
-          <Text style={styles.receivedMessageText}>
-            Received message: {receivedMessage}
-          </Text>
-        </View>
-      )}
     </View>
   );
 }
