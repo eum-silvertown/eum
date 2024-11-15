@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.eum.notification_service.common.CommonResponse;
 import com.eum.notification_service.dto.NotificationDto;
+import com.eum.notification_service.dto.request.NotificationReadDto;
 import com.eum.notification_service.dto.request.SaveTokenRequest;
 import com.eum.notification_service.service.NotificationService;
 
@@ -54,8 +55,8 @@ public class NotificationController {
 	@PostMapping("/read")
 	public CommonResponse<?> markAsReadNotifications(
 		@RequestHeader("X-MEMBER-ID") Long memberId,
-		@RequestBody List<Long> notificationIds) {
-			notificationService.markAsReadNotifications(notificationIds, memberId);
+		@RequestBody NotificationReadDto notificationReadDto) {
+			notificationService.markAsReadNotifications(notificationReadDto.getNotificationIds(), memberId);
 			return CommonResponse.success("여러개 읽음 처리 성공");
 	}
 
