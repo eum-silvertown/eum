@@ -55,8 +55,8 @@ public class NotificationController {
 	@PostMapping("/read")
 	public CommonResponse<?> markAsReadNotifications(
 		@RequestHeader("X-MEMBER-ID") Long memberId,
-		@RequestBody NotificationReadDto notificationIds) {
-			notificationService.markAsReadNotifications(notificationIds.getNotificationIds(), memberId);
+		@RequestBody NotificationReadDto notificationReadDto) {
+			notificationService.markAsReadNotifications(notificationReadDto.getNotificationIds(), memberId);
 			return CommonResponse.success("여러개 읽음 처리 성공");
 	}
 
