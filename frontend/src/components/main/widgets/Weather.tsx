@@ -10,6 +10,7 @@ import {
   Image,
   ActivityIndicator,
   TouchableOpacity,
+  useWindowDimensions,
 } from 'react-native';
 import Config from 'react-native-config';
 import {iconSize} from '@theme/iconSize';
@@ -18,6 +19,9 @@ import axios from 'axios';
 import RefreshIcon from '@assets/icons/refreshIcon.svg';
 
 export default function Weather(): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const API_KEY = Config.OPENWEATHERMAP_API_KEY;
   const [loading, setLoading] = useState<boolean>(false);
   const [temperature, setTemperature] = useState<string | null>(null);
@@ -126,9 +130,6 @@ export default function Weather(): React.JSX.Element {
   return (
     <ContentLayout flex={1}>
       <View style={styles.header}>
-        <Text variant="subtitle" weight="bold">
-          날씨
-        </Text>
         <TouchableOpacity disabled={loading} onPress={fetchWeather}>
           <RefreshIcon width={iconSize.lg} height={iconSize.lg} />
         </TouchableOpacity>
@@ -170,34 +171,38 @@ export default function Weather(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  infoContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  weatherContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 25,
-  },
-  weatherBox: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  weatherIcon: {
-    width: iconSize.xxl,
-    height: iconSize.xxl,
-    marginBottom: 5,
-  },
-  errorContainer: {
-    alignItems: 'center',
-    paddingHorizontal: 15,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    header: {
+      position: 'absolute',
+      top: width * 0.01,
+      right: width * 0.01,
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+    },
+    infoContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    weatherContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 25,
+    },
+    weatherBox: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    weatherIcon: {
+      width: iconSize.xxl,
+      height: iconSize.xxl,
+      marginBottom: 5,
+    },
+    errorContainer: {
+      alignItems: 'center',
+      paddingHorizontal: 15,
+    },
+  });
