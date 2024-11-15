@@ -12,11 +12,10 @@ import {launchImageLibrary} from 'react-native-image-picker';
 
 import {Text} from '@components/common/Text';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {borderRadius} from '@theme/borderRadius';
+
 import {colors} from 'src/hooks/useColors';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
 import {iconSize} from '@theme/iconSize';
-import {borderWidth} from '@theme/borderWidth';
 import {
   getUserInfo,
   updateProfilePicture,
@@ -327,14 +326,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     backgroundColor: 'white',
     elevation: 2,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
   },
   profileImageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     width: iconSize.xxl,
     aspectRatio: 1,
-    borderWidth: borderWidth.sm,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.pickerBorder,
     borderRadius: 9999,
     overflow: 'hidden',
@@ -351,13 +350,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     backgroundColor: 'white',
     elevation: 2,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
   },
   button: {
     backgroundColor: colors.light.background.main,
     paddingVertical: 10,
     paddingHorizontal: 25,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
   },
   optionContainer: {
     gap: 25,

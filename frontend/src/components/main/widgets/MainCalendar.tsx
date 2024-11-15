@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import ContentLayout from './ContentLayout';
-import {getResponsiveSize} from '@utils/responsive';
 import {Calendar} from 'react-native-big-calendar';
 import 'dayjs/locale/ko'; // dayjs의 한국어 로케일 불러오기
 import {Text} from '@components/common/Text';
@@ -64,7 +63,7 @@ export default function MainCalendar(): React.JSX.Element {
 
         <Calendar
           events={events}
-          height={getResponsiveSize(250)}
+          height={338}
           mode="month"
           locale="ko"
           date={currentDate}
@@ -80,7 +79,7 @@ export default function MainCalendar(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: getResponsiveSize(16),
+    padding: 22,
     gap: 10,
   },
   header: {

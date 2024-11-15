@@ -1,6 +1,3 @@
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {getResponsiveSize} from '@utils/responsive';
 import {StyleSheet, View} from 'react-native';
 import {ViewProps} from 'react-native-svg/lib/typescript/fabric/utils';
 
@@ -30,16 +27,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     backgroundColor: 'white',
-    borderRadius: borderRadius.sm,
+    borderRadius: 5,
   },
   homework: {
     width: '95%',
-    height: getResponsiveSize(88),
-    borderBottomWidth: borderWidth.sm,
+    height: 119,
+    borderBottomWidth: 1,
     borderColor: '#00000020',
   },
   userinfo: {
-    height: getResponsiveSize(88),
+    height: 119,
     paddingVertical: 12,
     paddingHorizontal: 40,
   },

@@ -24,8 +24,7 @@ import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
+
 import {colors} from 'src/hooks/useColors';
 import {
   detailQuestion,
@@ -288,15 +287,15 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
     padding: 25,
     flexDirection: 'row',
   },
   contentContainer: {
     flex: 3,
     backgroundColor: 'white',
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderRadius: 15,
     borderColor: `${colors.light.background.main}7f`,
     elevation: 2,
   },

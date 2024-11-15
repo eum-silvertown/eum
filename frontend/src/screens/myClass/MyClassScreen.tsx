@@ -4,8 +4,6 @@ import {Image, ImageProps, StyleSheet, View} from 'react-native';
 import defaultImage from '@assets/images/defaultProfileImage.png';
 import Blackboard from '@components/myClass/Blackboard';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
 
 type StudentType = {
   imageUrl: ImageProps;
@@ -65,7 +63,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
     padding: 25,
   },
   contentContainer: {
@@ -82,8 +80,8 @@ const styles = StyleSheet.create({
     width: '33%',
     padding: 15,
     elevation: 4,
-    borderRadius: borderRadius.lg,
-    borderWidth: borderWidth.xl,
+    borderRadius: 15,
+    borderWidth: 5,
     borderColor: '#775522',
   },
   bottomContent: {
@@ -105,7 +103,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     backgroundColor: 'white',
     elevation: 2,
-    borderRadius: borderRadius.sm,
+    borderRadius: 5,
   },
   studentImage: {
     width: '33%',

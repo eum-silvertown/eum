@@ -4,7 +4,6 @@ import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import TeacherLessoningGridInteractionTool from '@components/classLessoning/TeacherLessoningGridInteractionTool';
-import {getResponsiveSize} from '@utils/responsive';
 import LeftIcon from '@assets/icons/leftIcon.svg';
 import RightIcon from '@assets/icons/rightIcon.svg';
 import LeftOffIcon from '@assets/icons/leftOffIcon.svg';
@@ -181,10 +180,10 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: getResponsiveSize(96),
-    left: getResponsiveSize(32),
+    top: 130,
+    left: 43,
     backgroundColor: '#fff',
-    padding: getResponsiveSize(16),
+    padding: 22,
     borderRadius: 8,
   },
   closeButtonText: {
@@ -194,10 +193,10 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: getResponsiveSize(32),
-    right: getResponsiveSize(38),
+    top: 43,
+    right: 51,
     backgroundColor: '#fff',
-    padding: getResponsiveSize(12),
+    padding: 16,
     borderRadius: 8,
   },
   totalText: {
@@ -207,7 +206,7 @@ const styles = StyleSheet.create({
   grid: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: getResponsiveSize(128),
+    marginTop: 172,
   },
   pageControls: {
     zIndex: 1,
@@ -216,14 +215,14 @@ const styles = StyleSheet.create({
     top: '50%',
   },
   arrow: {
-    padding: getResponsiveSize(3),
+    padding: 4,
   },
   leftArrow: {
     position: 'absolute',
-    left: getResponsiveSize(25),
+    left: 34,
   },
   rightArrow: {
     position: 'absolute',
-    right: getResponsiveSize(25),
+    right: 34,
   },
 });

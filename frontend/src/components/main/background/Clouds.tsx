@@ -1,5 +1,3 @@
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {Animated, StyleSheet, ViewStyle} from 'react-native';
 
@@ -18,7 +16,7 @@ export default function Clouds({
         id: i,
         x: -100,
         y: Math.random() * (screenHeight / 3),
-        size: getResponsiveSize(32) + Math.random() * getResponsiveSize(24),
+        size: 43 + Math.random() * 32,
         delay: Math.random() * 10000,
       })),
     [screenHeight],
@@ -102,7 +100,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

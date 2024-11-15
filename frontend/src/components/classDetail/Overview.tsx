@@ -2,7 +2,6 @@ import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet} from 'react-native';
 import ProgressBox from '@components/homework/ProgressBox';
-import {getResponsiveSize} from '@utils/responsive';
 import {
   HomeworkType,
   ExamType,
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     gap: 40,
-    paddingHorizontal: getResponsiveSize(32),
+    paddingHorizontal: 43,
   },
 });
 

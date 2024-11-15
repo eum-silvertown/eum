@@ -7,7 +7,6 @@ import {getCurrentDateInfo} from '@utils/dateUtils';
 import React from 'react';
 import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
 import LectureCreateBook from './LectureCreateBook';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface TimeTableProps {
   startingHour: number;
@@ -45,7 +44,7 @@ export default function TimeTable({
                       <TouchableOpacity
                         key={`${lecture.lectureId}-${period}`}
                         style={{
-                          height: getResponsiveSize(240),
+                          height: 324,
                           overflow: 'hidden',
                         }}>
                         <LectureCreateBook

@@ -1,9 +1,6 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Text} from '@components/common/Text';
-import {borderWidth} from '@theme/borderWidth';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
 
 type LectureItemType = {
   title: string;
@@ -37,8 +34,8 @@ export default function LectureCreateBook({
                 {
                   backgroundColor: index === 0 ? item.backgroundColor : 'white',
                   transform: [
-                    {translateY: (pages - (index + 1)) * -getResponsiveSize(3)},
-                    {translateX: (pages - (index + 1)) * getResponsiveSize(3)},
+                    {translateY: (pages - (index + 1)) * -4},
+                    {translateX: (pages - (index + 1)) * 4},
                   ],
                   zIndex: -(pages - (index + 1)),
                 },
@@ -84,8 +81,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   lectureContainer: {
-    width: getResponsiveSize(192),
-    height: getResponsiveSize(240),
+    width: 259,
+    height: 324,
     alignItems: 'center',
     padding: 15,
   },
@@ -97,8 +94,8 @@ const styles = StyleSheet.create({
   lectureCover: {
     width: '100%',
     height: '100%',
-    borderRadius: borderRadius.sm,
-    borderWidth: borderWidth.xs,
+    borderRadius: 5,
+    borderWidth: 1,
     padding: 15,
     justifyContent: 'space-between',
   },
@@ -114,8 +111,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     paddingVertical: 3,
     paddingHorizontal: 10,
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -125,7 +122,7 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: 'white',
     borderColor: 'gray',
-    borderRadius: borderRadius.sm,
-    borderWidth: borderWidth.sm,
+    borderRadius: 5,
+    borderWidth: 1,
   },
 });

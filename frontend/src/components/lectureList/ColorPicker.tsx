@@ -1,4 +1,3 @@
-import {getResponsiveSize} from '@utils/responsive';
 import React, {useState, forwardRef, useImperativeHandle} from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import ColorPicker from 'react-native-wheel-color-picker';
@@ -22,8 +21,8 @@ const CustomColorPicker = forwardRef((props: ColorPickerProps, ref) => {
   return (
     <View style={[styles.container]}>
       <ColorPicker
-        thumbSize={getResponsiveSize(32)}
-        sliderSize={getResponsiveSize(18)}
+        thumbSize={43}
+        sliderSize={24}
         color={currentColor}
         onColorChange={setCurrentColor}
         onColorChangeComplete={props.onColorSelected}

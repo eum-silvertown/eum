@@ -1,7 +1,6 @@
 import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet, ImageBackground} from 'react-native';
-import {getResponsiveSize} from '@utils/responsive';
 import {SvgUri} from 'react-native-svg';
 
 type TeacherProps = {
@@ -74,8 +73,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   photoContainer: {
-    width: getResponsiveSize(112),
-    height: getResponsiveSize(112),
+    width: 151,
+    height: 151,
     borderRadius: 100,
     overflow: 'hidden',
     borderWidth: 2,
@@ -84,8 +83,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   photo: {
-    width: getResponsiveSize(128),
-    height: getResponsiveSize(128),
+    width: 172,
+    height: 172,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,6 +1,6 @@
 import {StyleSheet, View, TouchableOpacity, Alert} from 'react-native';
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
+
 import {colors} from 'src/hooks/useColors';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {useNavigation} from '@react-navigation/native';
@@ -55,6 +55,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light.background.main,
     paddingVertical: 10,
     paddingHorizontal: 25,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
   },
 });

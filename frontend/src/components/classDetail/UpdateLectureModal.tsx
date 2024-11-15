@@ -13,10 +13,8 @@ import ColorPicker from '@components/lectureList/ColorPicker';
 import {Picker} from '@react-native-picker/picker';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
+
 import LectureCreateBook from '@components/main/LectureCreateBook';
-import {getResponsiveSize} from '@utils/responsive';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import StatusMessage from '@components/account/StatusMessage';
 import {useModalContext} from 'src/contexts/useModalContext';
@@ -413,7 +411,7 @@ const UpdateLectureModal = ({
                 색상 선택
               </Text>
 
-              <View style={{height: getResponsiveSize(288)}}>
+              <View style={{height: 389}}>
                 {!isColorPickerVisible ? (
                   <View style={styles.colorContainer}>
                     <TouchableOpacity
@@ -518,24 +516,24 @@ const styles = StyleSheet.create({
   createButton: {
     marginTop: 10,
     padding: 10,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
     alignItems: 'center',
     backgroundColor: '#2E2559',
   },
   colorButton: {
     marginTop: 10,
     padding: 10,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
     alignItems: 'center',
   },
   pickerContainer: {
     flex: 1,
-    gap: getResponsiveSize(9),
+    gap: 12,
   },
   confirmButton: {
     marginTop: 10,
     padding: 10,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
     alignItems: 'center',
   },
   colorPickerContainer: {
@@ -548,17 +546,17 @@ const styles = StyleSheet.create({
   },
   colorContainer: {
     height: '100%',
-    borderWidth: borderWidth.sm,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   colorBox: {
-    width: getResponsiveSize(25),
-    height: getResponsiveSize(25),
-    borderRadius: borderRadius.sm,
-    borderWidth: borderWidth.sm,
+    width: 34,
+    height: 34,
+    borderRadius: 5,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.pickerBorder,
   },
   currentColorContainer: {
@@ -573,17 +571,17 @@ const styles = StyleSheet.create({
   },
   pickerSet: {
     paddingHorizontal: 10,
-    borderWidth: borderWidth.sm,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: getResponsiveSize(44),
+    height: 59,
   },
   picker: {
     flex: 1,
-    borderWidth: borderWidth.sm,
+    borderWidth: 1,
     borderColor: colors.light.borderColor.cardBorder,
     marginHorizontal: 5,
   },
@@ -592,8 +590,8 @@ const styles = StyleSheet.create({
   },
   separator: {
     borderColor: '#CCC',
-    borderWidth: getResponsiveSize(0.3),
-    marginBottom: getResponsiveSize(16),
+    borderWidth: 0.4,
+    marginBottom: 22,
   },
   errorContainer: {
     minHeight: 15,
@@ -603,7 +601,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2e2559',
     color: 'white',
     padding: 10,
-    borderRadius: borderRadius.sm,
+    borderRadius: 5,
   },
 });
 

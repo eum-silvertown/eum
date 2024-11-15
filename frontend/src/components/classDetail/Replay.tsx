@@ -6,7 +6,6 @@ import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import {getResponsiveSize} from '@utils/responsive';
 import EmptyData from '@components/common/EmptyData';
 
 type LessonType = {
@@ -129,7 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    marginRight: getResponsiveSize(18),
+    marginRight: 24,
   },
   pageIndicator: {
     fontSize: 16,
@@ -139,14 +138,14 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     backgroundColor: '#fdfeff',
-    paddingVertical: getResponsiveSize(12),
-    paddingHorizontal: getResponsiveSize(18),
-    marginHorizontal: getResponsiveSize(25),
-    marginVertical: getResponsiveSize(6),
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginHorizontal: 34,
+    marginVertical: 8,
     borderRadius: 10,
   },
   textContainer: {
-    paddingHorizontal: getResponsiveSize(6),
+    paddingHorizontal: 8,
     justifyContent: 'center',
   },
   idContainer: {

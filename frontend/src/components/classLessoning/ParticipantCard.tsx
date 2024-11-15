@@ -1,4 +1,3 @@
-import {getResponsiveSize} from '@utils/responsive';
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
@@ -28,9 +27,9 @@ const ParticipantCard: React.FC<ParticipantCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    width: getResponsiveSize(224),
-    height: getResponsiveSize(128),
-    margin: getResponsiveSize(6),
+    width: 302,
+    height: 172,
+    margin: 8,
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
@@ -39,15 +38,15 @@ const styles = StyleSheet.create({
   },
   name: {
     position: 'absolute',
-    bottom: getResponsiveSize(12),
-    right: getResponsiveSize(12),
+    bottom: 16,
+    right: 16,
     backgroundColor: 'rgba(128, 128, 128, 0.7)',
     color: '#ffffff',
     fontSize: 14,
     fontWeight: '600',
-    paddingHorizontal: getResponsiveSize(9),
-    paddingVertical: getResponsiveSize(3),
-    borderRadius: getResponsiveSize(6),
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
 });
 

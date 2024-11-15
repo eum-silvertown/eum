@@ -10,7 +10,6 @@ import {ScreenType} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
 import {useState} from 'react';
-import {getResponsiveSize} from '@utils/responsive';
 import {useQueryClient} from '@tanstack/react-query';
 import {useLessonStore} from '@store/useLessonStore';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
@@ -146,9 +145,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
     borderRadius: 12,
-    marginTop: getResponsiveSize(6),
+    marginTop: 8,
     marginHorizontal: 'auto',
-    padding: getResponsiveSize(12),
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
@@ -166,7 +165,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pageInfoText: {
-    marginHorizontal: getResponsiveSize(18),
+    marginHorizontal: 24,
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
@@ -177,8 +176,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   pageButton: {
-    paddingVertical: getResponsiveSize(6),
-    paddingHorizontal: getResponsiveSize(18),
+    paddingVertical: 8,
+    paddingHorizontal: 24,
     borderRadius: 8,
     backgroundColor: '#E0F7FA',
     alignItems: 'center',
@@ -187,7 +186,7 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   exitButton: {
-    padding: getResponsiveSize(6),
+    padding: 8,
     borderRadius: 8,
     backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
     alignItems: 'center',
@@ -217,7 +216,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '80%',
-    padding: getResponsiveSize(32),
+    padding: 43,
     backgroundColor: 'white',
     borderRadius: 10,
     alignItems: 'center',
@@ -225,15 +224,15 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: getResponsiveSize(16),
+    marginBottom: 21,
   },
   input: {
     width: '100%',
-    padding: getResponsiveSize(16),
+    padding: 21,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    marginBottom: getResponsiveSize(32),
+    marginBottom: 43,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -243,8 +242,8 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: getResponsiveSize(16),
-    marginRight: getResponsiveSize(8),
+    paddingVertical: 21,
+    marginRight: 11,
     backgroundColor: '#FFCDD2',
     borderRadius: 5,
   },
@@ -255,10 +254,10 @@ const styles = StyleSheet.create({
   submitButton: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: getResponsiveSize(16),
-    marginLeft: getResponsiveSize(8),
+    paddingVertical: 21,
+    marginLeft: 11,
     backgroundColor: '#C8E6C9',
-    borderRadius: getResponsiveSize(8),
+    borderRadius: 11,
   },
   submitButtonText: {
     color: '#388E3C',

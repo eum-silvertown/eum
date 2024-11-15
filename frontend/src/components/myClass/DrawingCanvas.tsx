@@ -1,5 +1,4 @@
 import {Text} from '@components/common/Text';
-import {getResponsiveSize} from '@utils/responsive';
 import React, {useRef, useState, useEffect, useCallback} from 'react';
 import {
   View,
@@ -319,7 +318,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
             left: pageX,
             right: pageX + width,
             top: pageY,
-            bottom: pageY + height - getResponsiveSize(48),
+            bottom: pageY + height - 65,
           };
           setCanvasSize({width, height});
         });

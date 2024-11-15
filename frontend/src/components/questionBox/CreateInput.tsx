@@ -9,10 +9,9 @@ import {
   Alert,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import {borderRadius} from '@theme/borderRadius';
+
 import {colors} from 'src/hooks/useColors';
 import DatePicker from 'react-native-date-picker';
-import {borderWidth} from '@theme/borderWidth';
 import {DetailQuestionType} from '@services/questionBox';
 import ProblemExSection from './ProblemExSection';
 
@@ -306,7 +305,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
     marginLeft: 15,
   },
   container: {
@@ -319,8 +318,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderRadius: 10,
     borderColor: `${colors.light.background.main}7f`,
     elevation: 2,
   },
@@ -328,7 +327,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: '100%',
     width: '100%',
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
     borderColor: `${colors.light.background.main}7f`,
     elevation: 2,
     padding: 15,
@@ -344,8 +343,8 @@ const styles = StyleSheet.create({
     flex: 0.6,
     backgroundColor: 'white',
     padding: 15,
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderRadius: 10,
     borderColor: `${colors.light.background.main}7f`,
     elevation: 2,
   },
@@ -358,7 +357,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#DDD',
-    borderRadius: borderRadius.sm,
+    borderRadius: 5,
     padding: 10,
     marginBottom: 15,
     fontSize: 16,
@@ -389,7 +388,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#4CAF50',
     paddingVertical: 15,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
     alignItems: 'center',
     marginTop: 15,
   },

@@ -1,8 +1,6 @@
 import {StyleSheet, View} from 'react-native';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
+
 import DrawingCanvas from './DrawingCanvas';
-import {borderWidth} from '@theme/borderWidth';
 
 function Blackboard(): React.JSX.Element {
   return (
@@ -25,10 +23,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    borderWidth: borderWidth.xl,
-    borderRadius: borderRadius.lg,
+    borderWidth: 5,
+    borderRadius: 15,
     borderColor: '#775522',
-    elevation: getResponsiveSize(3),
+    elevation: 4,
     overflow: 'hidden',
   },
 });
