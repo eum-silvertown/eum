@@ -31,6 +31,9 @@ public class Notifications extends BaseEntity {
 	@Column(name = "message")
 	private String message; //알림 내용
 
+	@Column(name = "type")
+	private String type;
+
 	@Setter
 	@Column(name = "is_read")
 	private Boolean isRead;
