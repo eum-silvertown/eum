@@ -4,7 +4,6 @@ import {iconSize} from '@theme/iconSize';
 import {ScreenType} from '@store/useCurrentScreenStore';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
-import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -83,10 +82,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
-    borderRadius: getResponsiveSize(12),
-    marginTop: getResponsiveSize(4),
+    borderRadius: 16,
+    marginTop: 5,
     marginHorizontal: 'auto',
-    padding: getResponsiveSize(12),
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
@@ -104,7 +103,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pageInfoText: {
-    marginHorizontal: getResponsiveSize(18),
+    marginHorizontal: 24,
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
@@ -115,9 +114,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   pageButton: {
-    paddingVertical: getResponsiveSize(4),
-    paddingHorizontal: getResponsiveSize(12),
-    borderRadius: getResponsiveSize(8),
+    paddingVertical: 5,
+    paddingHorizontal: 16,
+    borderRadius: 11,
     backgroundColor: '#E0F7FA',
     alignItems: 'center',
   },
@@ -125,8 +124,8 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   exitButton: {
-    padding: getResponsiveSize(4),
-    borderRadius: getResponsiveSize(8),
+    padding: 5,
+    borderRadius: 11,
     backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
     alignItems: 'center',
   },

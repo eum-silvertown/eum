@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {borderRadius} from '@theme/borderRadius';
+
 import {colors} from 'src/hooks/useColors';
 
 interface ContentLayoutProps {
@@ -19,7 +19,7 @@ export default function ContentLayout({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: borderRadius.xl,
+    borderRadius: 25,
     backgroundColor: `${colors.light.background.white}aa`,
   },
 });

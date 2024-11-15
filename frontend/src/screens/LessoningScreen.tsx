@@ -6,7 +6,6 @@ import StudentRealTimeCanvasSection from '@components/classLessoning/StudentReal
 import {useAuthStore} from '@store/useAuthStore';
 import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {getResponsiveSize} from '@utils/responsive';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
 import PulseIndicator from '@components/classLessoning/PulseIndicator';
@@ -223,11 +222,11 @@ const styles = StyleSheet.create({
   },
   connectionChip: {
     position: 'absolute',
-    bottom: getResponsiveSize(160),
-    right: getResponsiveSize(32),
-    paddingVertical: getResponsiveSize(12),
-    paddingHorizontal: getResponsiveSize(18),
-    borderRadius: getResponsiveSize(32),
+    bottom: 216,
+    right: 43,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 43,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -237,22 +236,22 @@ const styles = StyleSheet.create({
   },
   sendMessageButton: {
     position: 'absolute',
-    bottom: getResponsiveSize(32),
-    right: getResponsiveSize(32),
+    bottom: 43,
+    right: 43,
   },
   receivedMessageContainer: {
     position: 'absolute',
-    bottom: getResponsiveSize(250),
-    right: getResponsiveSize(32),
+    bottom: 338,
+    right: 43,
     backgroundColor: '#f0f0f0',
-    padding: getResponsiveSize(16),
-    borderRadius: getResponsiveSize(12),
+    padding: 22,
+    borderRadius: 16,
     borderColor: '#d0d0d0',
     borderWidth: 1,
-    maxWidth: getResponsiveSize(400),
+    maxWidth: 540,
   },
   receivedMessageText: {
-    fontSize: getResponsiveSize(20),
+    fontSize: 27,
     color: '#333',
   },
 });

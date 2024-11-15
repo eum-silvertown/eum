@@ -4,7 +4,6 @@ import {Text} from '@components/common/Text';
 import InputField from './InputField';
 import CustomDropdownPicker from '@components/common/CustomDropdownPicker';
 import Config from 'react-native-config';
-import {getResponsiveSize} from '@utils/responsive';
 import {useModalContext} from 'src/contexts/useModalContext';
 
 interface School {
@@ -93,7 +92,7 @@ export default function SearchSchoolModal({
       <FlatList
         data={schoolList}
         keyExtractor={item => item.id.toString()}
-        style={{height: getResponsiveSize(320)}}
+        style={{height: 432}}
         renderItem={({item}) => (
           <TouchableOpacity onPress={() => selectSchool(item.name)}>
             <Text>

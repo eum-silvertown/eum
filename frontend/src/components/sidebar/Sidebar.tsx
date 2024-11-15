@@ -5,7 +5,6 @@ import SidebarExpandIcon from '@assets/icons/sidebarExpandIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import useSidebarStore from '@store/useSidebarStore';
 import {useEffect, useRef} from 'react';
-import {borderRadius} from '@theme/borderRadius';
 
 function Sidebar(): React.JSX.Element {
   const {isExpanded, toggleSidebar} = useSidebarStore();
@@ -58,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     height: '100%',
     backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
     overflow: 'hidden',
   },
   sidebarExpandIcon: {

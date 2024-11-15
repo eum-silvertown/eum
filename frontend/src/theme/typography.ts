@@ -1,13 +1,11 @@
-import {getResponsiveSize} from '@utils/responsive';
-
 export const typography = {
   size: {
-    caption: getResponsiveSize(12),
-    body: getResponsiveSize(14),
-    subtitle: getResponsiveSize(18),
-    title: getResponsiveSize(25),
-    xl: getResponsiveSize(32),
-    xxl: getResponsiveSize(38),
+    caption: 15,
+    body: 18,
+    subtitle: 24,
+    title: 32,
+    xl: 40,
+    xxl: 48,
   },
   weight: {
     regular: 'Pretendard-Regular',

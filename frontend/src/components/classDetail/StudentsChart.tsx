@@ -4,7 +4,6 @@ import {View, StyleSheet} from 'react-native';
 import {Canvas, vec} from '@shopify/react-native-skia';
 import {Ring} from './Ring';
 import {typography} from '@theme/typography';
-import {getResponsiveSize} from '@utils/responsive';
 import {ClassAverageScoresType} from 'src/services/lectureInformation';
 
 const width = 120;
@@ -116,8 +115,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   chartContainer: {
-    width: getResponsiveSize(128),
-    height: getResponsiveSize(128),
+    width: 172,
+    height: 172,
   },
   legendContainer: {
     marginLeft: 40,
@@ -145,8 +144,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   colorDot: {
-    width: getResponsiveSize(16),
-    height: getResponsiveSize(16),
+    width: 22,
+    height: 22,
     borderRadius: 10,
     marginRight: 5,
   },

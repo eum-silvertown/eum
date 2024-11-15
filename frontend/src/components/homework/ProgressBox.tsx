@@ -1,7 +1,6 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from '../common/Text';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
+
 import {iconSize} from '@theme/iconSize';
 import CompleteHomeworkIcon from '@assets/icons/completeHomeworkIcon.svg';
 import IncompleteHomeworkIcon from '@assets/icons/incompleteHomeworkIcon.svg';
@@ -133,8 +132,8 @@ const styles = StyleSheet.create({
   common: {
     flex: 1,
     padding: 15,
-    borderRadius: borderRadius.md,
-    elevation: getResponsiveSize(6),
+    borderRadius: 10,
+    elevation: 8,
   },
   blue: {
     backgroundColor: '#D8E1FE',

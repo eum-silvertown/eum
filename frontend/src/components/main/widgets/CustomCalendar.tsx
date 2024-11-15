@@ -4,9 +4,7 @@ import ContentLayout from './ContentLayout';
 import IntoIcon from '@assets/icons/intoIcon.svg';
 import {Text} from '@components/common/Text';
 import {iconSize} from '@theme/iconSize';
-import {spacing} from '@theme/spacing';
 import {colors} from 'src/hooks/useColors';
-import {borderRadius} from '@theme/borderRadius';
 
 // 특정 달의 날짜 계산 함수
 const getDaysInMonth = (month: number, year: number) => {
@@ -110,30 +108,30 @@ export default function CustomCalendar() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: spacing.lg,
+    padding: 15,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: 15,
   },
   weekdays: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: spacing.md,
+    marginBottom: 10,
   },
   day: {
     width: `${100 / 7}%`,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: spacing.sm,
+    marginVertical: 5,
   },
   todayDay: {
     borderColor: colors.light.background.main,
     backgroundColor: colors.light.background.main,
-    borderWidth: borderRadius.sm,
-    borderRadius: borderRadius.xl,
+    borderWidth: 5,
+    borderRadius: 25,
   },
   todayText: {
     color: '#FFFFFF', // 오늘 날짜 텍스트 색상

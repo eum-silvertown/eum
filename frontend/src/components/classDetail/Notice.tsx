@@ -2,7 +2,6 @@ import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
 import postit from '@assets/images/postit.png';
-import {getResponsiveSize} from '@utils/responsive';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {useModal} from 'src/hooks/useModal';
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
   notice: {
     height: '50%',
     justifyContent: 'center',
-    paddingVertical: getResponsiveSize(16),
+    paddingVertical: 22,
   },
   noticeHeader: {
     flexDirection: 'row',
@@ -132,7 +131,7 @@ const styles = StyleSheet.create({
   noticeLayout: {
     flexDirection: 'row',
     gap: 40,
-    paddingHorizontal: getResponsiveSize(28),
+    paddingHorizontal: 38,
   },
   imageWrapper: {
     position: 'relative',
@@ -145,9 +144,9 @@ const styles = StyleSheet.create({
   },
   textIconContainer: {
     position: 'absolute',
-    left: getResponsiveSize(12),
-    top: getResponsiveSize(25),
-    right: getResponsiveSize(12),
+    left: 16,
+    top: 34,
+    right: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -157,13 +156,13 @@ const styles = StyleSheet.create({
   },
   noticeContent: {
     position: 'absolute',
-    left: getResponsiveSize(12),
-    right: getResponsiveSize(12),
-    top: getResponsiveSize(50),
+    left: 16,
+    right: 16,
+    top: 68,
     color: '#333',
   },
   cancelIcon: {
-    right: getResponsiveSize(6),
+    right: 8,
   },
 });
 

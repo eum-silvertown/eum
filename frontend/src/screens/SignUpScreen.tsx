@@ -19,14 +19,13 @@ import ScreenHeader from '@components/account/ScreenHeader';
 import InputField from '@components/account/InputField';
 import SearchSchoolModal from '@components/account/SearchSchoolModal';
 import {useModal} from 'src/hooks/useModal';
-import {getResponsiveSize} from '@utils/responsive';
 import {
   checkUsername,
   requestEmailVerification,
   signUp,
   verifyEmailCode,
 } from '@services/authService';
-import {borderRadius} from '@theme/borderRadius';
+
 import StatusMessage from '@components/account/StatusMessage';
 import CustomDropdownPicker from '@components/common/CustomDropdownPicker';
 
@@ -651,11 +650,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: borderRadius.sm,
+    borderRadius: 5,
     marginHorizontal: 3,
     marginVertical: 10,
     backgroundColor: colors.light.background.input,
-    height: getResponsiveSize(25),
+    height: 34,
     alignSelf: 'flex-end',
   },
   selectedGenderButtonText: {

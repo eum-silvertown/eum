@@ -5,7 +5,7 @@ import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
 import {iconSize} from '@theme/iconSize';
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
+
 import {colors} from 'src/hooks/useColors';
 import {changePassword, logOut} from '@services/authService';
 import {useModalContext} from 'src/contexts/useModalContext';
@@ -151,6 +151,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light.background.main,
     paddingVertical: 10,
     paddingHorizontal: 25,
-    borderRadius: borderRadius.sm,
+    borderRadius: 5,
   },
 });

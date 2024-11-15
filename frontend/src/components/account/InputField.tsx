@@ -8,11 +8,8 @@ import {
   ViewStyle,
 } from 'react-native';
 import {colors} from 'src/hooks/useColors';
-import {borderWidth} from '@theme/borderWidth';
 import {Text} from '@components/common/Text';
 import StatusMessage from '@components/account/StatusMessage';
-import {getResponsiveSize} from '@utils/responsive';
-
 interface InputFieldProps {
   label?: string;
   value?: string;
@@ -103,12 +100,12 @@ const styles = StyleSheet.create({
   },
   inputField: {
     flex: 1,
-    height: getResponsiveSize(40),
+    height: 54,
     backgroundColor: '#f2f4f8',
-    borderBottomWidth: borderWidth.sm,
+    borderBottomWidth: 1,
     borderBottomColor: colors.light.borderColor.cardBorder,
     paddingHorizontal: 5,
-    fontSize: getResponsiveSize(12),
+    fontSize: 16,
   },
   iconButton: {
     position: 'absolute',

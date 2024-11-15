@@ -1,7 +1,6 @@
 import Button from '@components/common/Button';
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
+
 import {iconSize} from '@theme/iconSize';
 import {useState} from 'react';
 import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
@@ -111,7 +110,7 @@ const styles = StyleSheet.create({
   checkCircle: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: borderWidth.sm,
+    borderWidth: 1,
     borderRadius: 9999,
     width: iconSize.md,
     height: iconSize.md,
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
   },
   questionCard: {
     flex: 1,
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
   },
   bottomButtons: {
     flexDirection: 'row',

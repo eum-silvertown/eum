@@ -11,7 +11,6 @@ import HighlighterOnIcon from '@assets/icons/highlighterOnIcon.svg';
 import ToolBarToLeftIcon from '@assets/icons/toolBarToLeftIcon.svg';
 import ToolBarToRightIcon from '@assets/icons/toolBarToRightIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import {getResponsiveSize} from '@utils/responsive';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -237,15 +236,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
-    borderRadius: getResponsiveSize(12),
-    paddingHorizontal: getResponsiveSize(8),
-    paddingVertical: getResponsiveSize(16),
+    borderRadius: 16,
+    paddingHorizontal: 11,
+    paddingVertical: 22,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
-    gap: getResponsiveSize(18),
+    gap: 24,
   },
   paletteContainer: {
     flexDirection: 'column',
@@ -253,8 +252,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   colorPalette: {
-    width: getResponsiveSize(28),
-    height: getResponsiveSize(28),
+    width: 38,
+    height: 38,
     borderRadius: 15,
     marginVertical: 3,
     borderWidth: 2,
@@ -262,7 +261,7 @@ const styles = StyleSheet.create({
   },
   selectedColor: {
     borderColor: '#ccc',
-    borderWidth: getResponsiveSize(3),
+    borderWidth: 4,
   },
   penSizeContainer: {
     flexDirection: 'column',
@@ -270,13 +269,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   penSize: {
-    width: getResponsiveSize(28),
-    height: getResponsiveSize(28),
+    width: 38,
+    height: 38,
     borderRadius: 15,
     marginVertical: 3,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: getResponsiveSize(2),
+    borderWidth: 3,
     borderColor: 'transparent',
     backgroundColor: '#eee',
   },
@@ -285,9 +284,9 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   highlighterButton: {
-    paddingVertical: getResponsiveSize(8),
-    paddingHorizontal: getResponsiveSize(5),
+    paddingVertical: 11,
+    paddingHorizontal: 7,
     backgroundColor: '#ddd',
-    borderRadius: getResponsiveSize(5),
+    borderRadius: 7,
   },
 });

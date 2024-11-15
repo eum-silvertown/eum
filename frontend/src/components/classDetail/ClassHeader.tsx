@@ -9,7 +9,6 @@ import UpdateLectureModal from './UpdateLectureModal';
 import {useModal} from 'src/hooks/useModal';
 import {deleteLecture} from '@services/lectureInformation';
 import {useMutation} from '@tanstack/react-query';
-import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -204,7 +203,7 @@ const styles = StyleSheet.create({
   },
   gradeSemesterChip: {
     backgroundColor: '#2e2559',
-    paddingVertical: getResponsiveSize(6),
+    paddingVertical: 8,
     paddingHorizontal: 8,
     borderRadius: 10,
     marginLeft: 5,
@@ -215,8 +214,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   scheduleChip: {
-    paddingVertical: getResponsiveSize(6),
-    paddingHorizontal: getResponsiveSize(12),
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderRadius: 100,
     marginLeft: 3,
   },
@@ -236,8 +235,8 @@ const styles = StyleSheet.create({
   },
   enterButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: getResponsiveSize(9),
-    paddingHorizontal: getResponsiveSize(19),
+    paddingVertical: 12,
+    paddingHorizontal: 26,
     borderRadius: 10,
     marginRight: 15,
   },

@@ -2,10 +2,7 @@ import React from 'react';
 import {Picker} from '@react-native-picker/picker';
 import {StyleSheet, View, ViewStyle} from 'react-native';
 import {colors} from 'src/hooks/useColors';
-import {borderWidth} from '@theme/borderWidth';
-import {getResponsiveSize} from '@utils/responsive';
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
 
 interface CustomDropdownPickerProps {
   label?: string;
@@ -64,17 +61,17 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     borderColor: colors.light.background.main,
-    borderWidth: borderWidth.xs,
-    borderRadius: borderRadius.sm,
+    borderWidth: 1,
+    borderRadius: 5,
     backgroundColor: 'white',
-    height: getResponsiveSize(40),
+    height: 54,
     justifyContent: 'center',
   },
   picker: {
     color: colors.light.background.main,
   },
   pickerContent: {
-    fontSize: getResponsiveSize(12),
+    fontSize: 16,
   },
 
   label: {

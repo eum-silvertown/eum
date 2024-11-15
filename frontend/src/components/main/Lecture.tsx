@@ -1,11 +1,9 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Text} from '@components/common/Text';
-import {borderWidth} from '@theme/borderWidth';
-import {borderRadius} from '@theme/borderRadius';
+
 import type {LectureType} from '@store/useLectureStore'; // useLectureStore에서 Lecture 타입을 가져옴
 import {colors} from 'src/hooks/useColors';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface LectureProps {
   item: LectureType;
@@ -26,8 +24,8 @@ export default function Lecture({item}: LectureProps): React.JSX.Element {
                 {
                   backgroundColor: index === 0 ? item.backgroundColor : 'white',
                   transform: [
-                    {translateY: (pages - (index + 1)) * -getResponsiveSize(3)},
-                    {translateX: (pages - (index + 1)) * getResponsiveSize(3)},
+                    {translateY: (pages - (index + 1)) * -4},
+                    {translateX: (pages - (index + 1)) * 4},
                   ],
                   zIndex: -(pages - (index + 1)),
                 },
@@ -88,8 +86,8 @@ const styles = StyleSheet.create({
   lectureCover: {
     width: '100%',
     height: '100%',
-    borderRadius: borderRadius.sm,
-    borderWidth: borderWidth.xs,
+    borderRadius: 5,
+    borderWidth: 1,
     padding: 15,
     justifyContent: 'space-between',
   },
@@ -105,8 +103,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     paddingVertical: 3,
     paddingHorizontal: 10,
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -116,7 +114,7 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: 'white',
     borderColor: `${colors.light.borderColor.cardBorder}7f`,
-    borderRadius: borderRadius.sm,
-    borderWidth: borderWidth.sm,
+    borderRadius: 5,
+    borderWidth: 1,
   },
 });

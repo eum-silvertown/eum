@@ -1,8 +1,6 @@
 import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
 import {Text} from './Text';
 import {useColors} from 'src/hooks/useColors';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface ButtonProps {
   style?: StyleProp<ViewStyle>;
@@ -25,7 +23,7 @@ function Button({
       paddingVertical: 10,
       paddingHorizontal: 15,
       backgroundColor: colors.background.main,
-      borderRadius: borderRadius.sm,
+      borderRadius: 5,
     },
   });
   const sizes = StyleSheet.create({
@@ -33,10 +31,10 @@ function Button({
       width: 125,
     },
     md: {
-      width: getResponsiveSize(128),
+      width: 172,
     },
     lg: {
-      width: getResponsiveSize(160),
+      width: 216,
     },
     full: {
       width: '100%',

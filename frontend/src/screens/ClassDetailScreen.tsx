@@ -23,7 +23,6 @@ import {
   ClassAverageScoresType,
 } from 'src/services/lectureInformation';
 import {useQuery} from '@tanstack/react-query';
-import {getResponsiveSize} from '@utils/responsive';
 import {useBookModalStore} from '@store/useBookModalStore';
 import EmptyData from '@components/common/EmptyData';
 import {useAuthStore} from '@store/useAuthStore';
@@ -202,8 +201,8 @@ const styles = StyleSheet.create({
   },
   bookmarkIcon: {
     position: 'absolute',
-    top: getResponsiveSize(-9),
-    right: getResponsiveSize(18),
+    top: -12,
+    right: 24,
   },
   content: {
     flex: 1,

@@ -2,7 +2,7 @@ import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {borderRadius} from '@theme/borderRadius';
+
 import Book from '@components/common/Book';
 import AddLectureModal from '@components/lectureList/AddLectureModal';
 import {iconSize} from '@theme/iconSize';
@@ -11,7 +11,6 @@ import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
 import {Picker} from '@react-native-picker/picker';
 import {useState} from 'react';
 import {colors} from 'src/hooks/useColors';
-import {getResponsiveSize} from '@utils/responsive';
 import {useQuery} from '@tanstack/react-query';
 import {
   LectureListItemType,
@@ -90,8 +89,8 @@ function ClassListScreen(): React.JSX.Element {
               }}>
               <AddCircleIcon
                 style={{
-                  marginLeft: getResponsiveSize(6),
-                  marginVertical: getResponsiveSize(3),
+                  marginLeft: 8,
+                  marginVertical: 4,
                 }}
                 width={iconSize.lg}
                 height={iconSize.lg}
@@ -173,7 +172,7 @@ const styles = StyleSheet.create({
   filter: {
     marginLeft: 'auto',
     backgroundColor: 'white',
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
     paddingHorizontal: 5,
     paddingVertical: 5,
     flexDirection: 'row',
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
   classListContainer: {
     flex: 1,
     backgroundColor: colors.light.background.white,
-    borderRadius: borderRadius.xl,
+    borderRadius: 25,
     elevation: 2,
     padding: 10,
   },

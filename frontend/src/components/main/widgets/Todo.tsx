@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
+
 import CheckBox from '@react-native-community/checkbox';
 
 import ArrowDownIcon from '@assets/icons/arrowDownIcon.svg';
@@ -18,7 +18,6 @@ import {colors} from 'src/hooks/useColors';
 import {iconSize} from '@theme/iconSize';
 
 import {toggleTodo, deleteTodo} from '@services/todoService';
-import {getResponsiveSize} from '@utils/responsive';
 import {useModal} from 'src/hooks/useModal';
 import AddTodoModal from './AddTodoModal';
 import ConfirmationModal from '@components/common/ConfirmationModal';
@@ -69,7 +68,7 @@ export default function Todo({
 
     // 높이 애니메이션
     Animated.timing(animatedHeight, {
-      toValue: expanded ? 0 : getResponsiveSize(48),
+      toValue: expanded ? 0 : 65,
       duration: 300,
       useNativeDriver: false,
     }).start();
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     borderWidth: 1,
     borderColor: colors.light.borderColor.pickerBorder,
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
     overflow: 'hidden',
   },
   headerContainer: {
@@ -227,6 +226,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light.background.danger,
     paddingVertical: 10,
     paddingHorizontal: 25,
-    borderRadius: borderRadius.md,
+    borderRadius: 10,
   },
 });

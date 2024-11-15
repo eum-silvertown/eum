@@ -11,10 +11,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '@assets/icons/editIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
-import {borderWidth} from '@theme/borderWidth';
-import {borderRadius} from '@theme/borderRadius';
+
 import {useAuthStore} from '@store/useAuthStore';
 
 interface MainHeaderProps {
@@ -110,20 +108,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 5,
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
   },
   displayContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 5,
-    borderRadius: borderRadius.lg,
+    borderRadius: 15,
   },
   input: {
     padding: 10,
     borderColor: colors.light.text.main,
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.lg,
-    fontSize: getResponsiveSize(25),
+    borderWidth: 1,
+    borderRadius: 15,
+    fontSize: 34,
     color: colors.light.text.main,
     fontWeight: 'bold',
   },

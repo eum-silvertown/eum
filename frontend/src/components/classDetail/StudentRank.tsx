@@ -1,4 +1,3 @@
-import {getResponsiveSize} from '@utils/responsive';
 import {
   View,
   Text,
@@ -104,7 +103,7 @@ const StudentRank = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: getResponsiveSize(16),
+    padding: 22,
     borderRadius: 8,
   },
   listContainer: {
@@ -112,18 +111,18 @@ const styles = StyleSheet.create({
   },
   studentItem: {
     alignItems: 'center',
-    marginRight: getResponsiveSize(18),
+    marginRight: 24,
   },
   imageContainer: {
     position: 'relative', // 컨테이너를 상대 위치로 설정
-    width: getResponsiveSize(50),
-    height: getResponsiveSize(50),
+    width: 68,
+    height: 68,
     justifyContent: 'center',
     alignItems: 'center',
   },
   studentImage: {
-    width: getResponsiveSize(50),
-    height: getResponsiveSize(50),
+    width: 68,
+    height: 68,
     borderRadius: 30,
     borderWidth: 1,
     borderColor: '#ddd',
@@ -141,8 +140,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 4,
     right: 0,
-    width: getResponsiveSize(18),
-    height: getResponsiveSize(18),
+    width: 24,
+    height: 24,
   },
   studentName: {
     top: -4,

@@ -1,14 +1,13 @@
-import {getResponsiveSize} from '@utils/responsive';
 import {StyleSheet, View} from 'react-native';
 import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
+
 import {Canvas, vec} from '@shopify/react-native-skia';
 import {Ring} from '@components/classDetail/Ring';
 import {useCallback, useState} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 
 function ProgressChart(): React.JSX.Element {
-  const SIZE = getResponsiveSize(200);
+  const SIZE = 270;
   const center = vec(SIZE / 2, SIZE / 2);
   const strokeWidth = 15;
 
@@ -66,8 +65,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ffff99',
-    borderRadius: borderRadius.lg,
-    elevation: getResponsiveSize(6),
+    borderRadius: 15,
+    elevation: 8,
   },
   chart: {
     width: '100%',
