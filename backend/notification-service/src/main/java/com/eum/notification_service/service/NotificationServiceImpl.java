@@ -131,6 +131,15 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public List<NotificationDto> getReadNotifications(Long memberId) {
+		List<Notifications> notifications = notificationRepository.findByMemberIdAndIsReadTrue(memberId);
+		return notifications.stream()
+			.map(NotificationDto::fromEntity)
+			.collect(Collectors.toList());
+	}
+
+	@Override
 	public void markAsRead(Long notificationId, Long memberId) {
 		Notifications notification = notificationRepository.findById(notificationId)
 			.orElseThrow(() -> new EumException(ErrorCode.NOTIFICATION_NOT_FOUND));

@@ -39,6 +39,12 @@ public class NotificationController {
 		return CommonResponse.success(response, "조회 성공");
 	}
 
+	@GetMapping("/read")
+	public CommonResponse<?> getReadNotifications(@RequestHeader("X-MEMBER-ID") Long memberId) {
+		List<NotificationDto> response = notificationService.getReadNotifications(memberId);
+		return CommonResponse.success(response, "조회 성공");
+	}
+
 	@PostMapping("/{notificationId}")
 	public CommonResponse<?> markAsRead(@PathVariable Long notificationId, @RequestHeader("X-MEMBER-ID") Long memberId) {
 		notificationService.markAsRead(notificationId, memberId);
