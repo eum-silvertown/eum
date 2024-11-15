@@ -34,10 +34,6 @@ export default function Background({
         <Stars screenWidth={screenWidth} screenHeight={screenHeight} />
       </Animated.View>
 
-      <Animated.View style={{opacity: Animated.subtract(1, isNightTime)}}>
-        <Clouds screenWidth={screenWidth} screenHeight={screenHeight} />
-      </Animated.View>
-
       <CelestialObjects
         startingHour={startingHour}
         endingHour={endingHour}
@@ -45,6 +41,9 @@ export default function Background({
         screenWidth={screenWidth}
         timeAnim={currentTimeAnim}
       />
+      <Animated.View style={{opacity: Animated.subtract(1, isNightTime)}}>
+        <Clouds screenWidth={screenWidth} screenHeight={screenHeight} />
+      </Animated.View>
     </View>
   );
 }
