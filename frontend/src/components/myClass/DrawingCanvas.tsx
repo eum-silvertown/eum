@@ -38,7 +38,8 @@ interface DrawingCanvasProps {
   userId: string;
 }
 
-const SOCKET_URL = 'http://192.168.100.187:8080/ws-gateway/drawing';
+// const SOCKET_URL = 'http://192.168.100.187:8080/ws-gateway/drawing';
+const SOCKET_URL = 'http://k11d101.p.ssafy.io/ws-gateway/drawing';
 const BUFFER_INTERVAL = 1000; // 1초마다 데이터 전송
 
 const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
@@ -114,7 +115,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
         `/topic/classroom/1234`,
         (message: Message) => {
           const data = JSON.parse(message.body);
-          if (data.userId !== userId) {
+          if (data.userId !== userId.toString()) {
             // 자신의 드로잉이 아닐 때만 처리
             handleReceivedDrawing(data);
           }
@@ -212,7 +213,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
   const flushBuffer = useCallback(() => {
     if (drawingBuffer.current.length > 0 && stompClient.current?.connected) {
       stompClient.current.publish({
-        destination: `/app/drawing/classroom/1234`,
+        destination: `/app/drawing/classroom/${userId}`,
         body: JSON.stringify(drawingBuffer.current),
       });
       drawingBuffer.current = [];

@@ -1,6 +1,12 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {StyleSheet, View, Animated, Pressable} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Animated,
+  Pressable,
+  useWindowDimensions,
+} from 'react-native';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import useSidebarStore from '@store/useSidebarStore';
 import HomeIcon from '@assets/icons/homeIcon.svg';
@@ -11,7 +17,7 @@ import myClassIcon from '@assets/icons/myClassIcon.svg';
 import NotificationIcon from '@assets/icons/notificationIcon.svg';
 import {Text} from '../common/Text';
 import {SvgProps} from 'react-native-svg';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 interface MenuItem {
   name: string;
@@ -22,6 +28,9 @@ interface MenuItem {
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function SidebarMenus(): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = useMemo(() => getStyles(width), [width]);
+
   const menuItems: MenuItem[] = [
     {name: '홈', screen: 'HomeScreen', icon: HomeIcon},
     {name: '알림', screen: 'NotificationScreen', icon: NotificationIcon},
@@ -53,7 +62,7 @@ function SidebarMenus(): React.JSX.Element {
     Animated.timing(opacityAnim, {
       toValue: isExpanded ? 1 : 0,
       duration: 200,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   }, [isExpanded, opacityAnim]);
 
@@ -75,8 +84,8 @@ function SidebarMenus(): React.JSX.Element {
             ]}>
             <View style={styles.icon}>
               <item.icon
-                width={28}
-                height={28}
+                width={width * 0.0175}
+                height={width * 0.0175}
                 color={selected === index ? 'white' : '#2E2559'}
               />
             </View>
@@ -101,31 +110,32 @@ function SidebarMenus(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  icon: {
-    alignItems: 'center',
-  },
-  menuContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    padding: 10,
-  },
-  menu: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    gap: 15,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  textContainer: {
-    overflow: 'hidden',
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      width: '100%',
+    },
+    icon: {
+      alignItems: 'center',
+    },
+    menuContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: width * 0.0075,
+      paddingVertical: width * 0.004,
+    },
+    menu: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      width: '100%',
+      gap: width * 0.01,
+      paddingHorizontal: width * 0.0085,
+      paddingVertical: width * 0.0075,
+      borderRadius: width * 0.0075,
+    },
+    textContainer: {
+      overflow: 'hidden',
+    },
+  });
 
 export default SidebarMenus;
