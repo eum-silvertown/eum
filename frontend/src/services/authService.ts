@@ -53,6 +53,9 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
 
     console.log(response.data.data.tokenResponse.accessToken);
 
+    // 로그인 상태를 true로 설정
+    useAuthStore.getState().setIsLoggedIn(true);
+
     return response.data;
   } catch (error) {
     return Promise.reject(handleApiError(error));
@@ -82,16 +85,6 @@ export const signUp = async (userData: SignupCredentials): Promise<any> => {
 
     console.log('회원가입 성공 메세지', response.data.data);
 
-    const tokenData = response.data.data.tokenResponse;
-    await setToken({
-      accessToken: tokenData.accessToken,
-      refreshToken: tokenData.refreshToken,
-    });
-
-    console.log('회원가입 후 저장된 토큰 확인', getToken());
-
-    // 로그인 상태를 true로 설정
-    useAuthStore.getState().setIsLoggedIn(true);
     return response.data;
   } catch (error) {
     return Promise.reject(handleApiError(error));

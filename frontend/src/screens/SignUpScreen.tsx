@@ -22,6 +22,7 @@ import {useModal} from 'src/hooks/useModal';
 import {getResponsiveSize} from '@utils/responsive';
 import {
   checkUsername,
+  logIn,
   requestEmailVerification,
   signUp,
   verifyEmailCode,
@@ -342,6 +343,9 @@ function SignUpScreen(): React.JSX.Element {
         await signUp(requestData);
         console.log(requestData);
         Alert.alert('회원가입 성공', '회원가입이 완료되었습니다.');
+
+        logIn({id: userId, password});
+
         navigation.reset({
           index: 0,
           routes: [{name: 'HomeScreen'}],
