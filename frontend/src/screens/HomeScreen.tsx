@@ -76,8 +76,7 @@ function HomeScreen(): React.JSX.Element {
         timeProgressAnim={timeProgressAnim}
         transitionHour={TRANSITION_HOUR}
       />
-      <MainHeader isNightTime={isNightTime} />
-      <Widgets />
+      <Widgets isNightTime={isNightTime} />
       <ScrollView
         ref={scrollViewRef}
         horizontal
