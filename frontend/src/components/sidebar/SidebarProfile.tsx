@@ -4,6 +4,7 @@ import {
   View,
   Animated,
   TouchableOpacity,
+  useWindowDimensions,
 } from 'react-native';
 import {Text} from '@components/common/Text';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
@@ -18,6 +19,9 @@ import {colors} from 'src/hooks/useColors';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function SidebarProfile(): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const {isExpanded} = useSidebarStore();
   const authStore = useAuthStore();
   const contentOpacity = useRef(new Animated.Value(1)).current;
@@ -65,33 +69,34 @@ function SidebarProfile(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    height: '12.5%',
-    gap: 10,
-    padding: 16,
-    overflow: 'hidden',
-  },
-  profileImageContainer: {
-    width: 52,
-    aspectRatio: 1,
-    borderWidth: 1,
-    borderColor: colors.light.borderColor.pickerBorder,
-    borderRadius: 9999,
-    overflow: 'hidden',
-  },
-  profileImage: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  username: {
-    width: 'auto',
-    overflow: 'hidden',
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      width: '100%',
+      height: '12.5%',
+      gap: width * 0.01,
+      padding: width * 0.01,
+      overflow: 'hidden',
+    },
+    profileImageContainer: {
+      width: width * 0.03,
+      aspectRatio: 1,
+      borderWidth: width * 0.001,
+      borderColor: colors.light.borderColor.pickerBorder,
+      borderRadius: 9999,
+      overflow: 'hidden',
+    },
+    profileImage: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+    },
+    username: {
+      width: 'auto',
+      overflow: 'hidden',
+    },
+  });
 
 export default SidebarProfile;
