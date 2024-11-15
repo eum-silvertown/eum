@@ -17,4 +17,5 @@ public class ExamCreatedNotificationEvent {
 	private Long examId;
 	private String title;
 	private List<Long> studentIds;
+	private String type;
 }

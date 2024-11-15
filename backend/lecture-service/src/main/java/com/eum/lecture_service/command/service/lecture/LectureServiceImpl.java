@@ -45,7 +45,7 @@ public class LectureServiceImpl implements LectureService{
 	@Transactional
 	public Long createLecture(LectureCreateDto lectureDto, Long teacherId) {
 
-		ClassModel classModel = classReadRepository.findByAndSchoolAndGradeAndAndClassNumber(
+		ClassModel classModel = classReadRepository.findBySchoolAndGradeAndClassNumber(
 			lectureDto.getSchool(), lectureDto.getGrade(), lectureDto.getClassNumber())
 			.orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
 

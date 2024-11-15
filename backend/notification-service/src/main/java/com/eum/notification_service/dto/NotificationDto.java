@@ -11,6 +11,7 @@ public class NotificationDto {
     private String title;
     private String message;
     private boolean isRead;
+    private String type;
     private String createdAt;
     private String updatedAt;
 
@@ -20,6 +21,7 @@ public class NotificationDto {
             .title(notification.getTitle())
             .message(notification.getMessage())
             .isRead(notification.getIsRead())
+            .type(notification.getType())
             .createdAt(notification.getCreatedAt().toString())
             .updatedAt(notification.getUpdatedAt().toString())
             .build();

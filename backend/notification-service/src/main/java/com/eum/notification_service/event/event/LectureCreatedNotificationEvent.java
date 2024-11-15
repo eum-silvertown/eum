@@ -16,4 +16,6 @@ public class LectureCreatedNotificationEvent {
 	private Long lectureId;
 	private String title;
 	private List<Long> studentIds;
+	private String type;
+
 }

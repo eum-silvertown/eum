@@ -14,6 +14,7 @@ import com.eum.lecture_service.common.RoleType;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.config.global.CommonResponse;
+import com.eum.lecture_service.query.document.eventModel.ClassModel;
 import com.eum.lecture_service.query.dto.lecture.LectureDetailResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureListResponse;
 import com.eum.lecture_service.query.dto.lecture.LectureUpdateResponse;
@@ -84,5 +85,11 @@ public class LectureQueryController {
 			e.printStackTrace();
 			throw new EumException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@GetMapping("/classes")
+	public CommonResponse<?> getAvailableClasses(@RequestParam String schoolName) {
+		List<ClassModel> availableClasses = lectureQueryService.getAvailableClasses(schoolName);
+		return CommonResponse.success(availableClasses, "수업 생성 가능한 반 조회");
 	}
 }
