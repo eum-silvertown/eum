@@ -1,5 +1,11 @@
 import {useEffect} from 'react';
-import {Animated, Easing, StyleSheet, View} from 'react-native';
+import {
+  Animated,
+  Easing,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import Check from '@assets/icons/addCircleIcon.svg';
 import {iconSize} from '@theme/iconSize';
 
@@ -14,6 +20,9 @@ function LoadingSuccessIndicator({
   isSuccess,
   onAnimationComplete,
 }: LoadingSuccessIndicatorProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   // 로딩 애니메이션을 위한 Animated 값
   const spinValue = new Animated.Value(0);
   // 체크마크 애니메이션을 위한 Animated 값
@@ -25,7 +34,7 @@ function LoadingSuccessIndicator({
       Animated.loop(
         Animated.timing(spinValue, {
           toValue: 1,
-          duration: 1500,
+          duration: 750,
           easing: Easing.linear,
           useNativeDriver: true,
         }),
@@ -93,33 +102,34 @@ function LoadingSuccessIndicator({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 1)',
-  },
-  loader: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 4,
-    borderColor: '#e0e0e0',
-    borderTopColor: '#2196F3',
-  },
-  checkContainer: {
-    width: 48,
-    height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255, 255, 255, 1)',
+    },
+    loader: {
+      width: width * 0.01,
+      height: width * 0.025,
+      borderRadius: width * 0.02,
+      borderWidth: width * 0.002,
+      borderColor: '#e0e0e0',
+      borderTopColor: '#2196F3',
+    },
+    checkContainer: {
+      width: width * 0.025,
+      height: width * 0.025,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
 
 export default LoadingSuccessIndicator;

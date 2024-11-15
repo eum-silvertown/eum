@@ -7,14 +7,12 @@ import {
   TouchableOpacity,
   TextInput,
   ViewStyle,
+  useWindowDimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '@assets/icons/editIcon.svg';
 import {iconSize} from '@theme/iconSize';
-import {getResponsiveSize} from '@utils/responsive';
 import {colors} from 'src/hooks/useColors';
-import {borderWidth} from '@theme/borderWidth';
-import {borderRadius} from '@theme/borderRadius';
 import {useAuthStore} from '@store/useAuthStore';
 
 interface MainHeaderProps {
@@ -26,6 +24,9 @@ export default function MainHeader({
   style,
   isNightTime = new Animated.Value(0),
 }: MainHeaderProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const [isEditing, setIsEditing] = useState(false);
   const authStore = useAuthStore();
   const defaultMessage = `${authStore.userInfo.name}님, 오늘도 좋은 하루 되세요!`;
@@ -98,33 +99,26 @@ export default function MainHeader({
   );
 }
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    height: '10%',
-    paddingHorizontal: 25,
-  },
-  editContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 5,
-    borderRadius: borderRadius.lg,
-  },
-  displayContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 5,
-    borderRadius: borderRadius.lg,
-  },
-  input: {
-    padding: 10,
-    borderColor: colors.light.text.main,
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.lg,
-    fontSize: getResponsiveSize(25),
-    color: colors.light.text.main,
-    fontWeight: 'bold',
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      padding: width * 0.02,
+    },
+    editContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderRadius: width * 0.01,
+    },
+    input: {
+      padding: width * 0.0075,
+      borderColor: colors.light.text.main,
+      borderWidth: width * 0.00075,
+      borderRadius: width * 0.01,
+      fontSize: width * 0.015,
+      color: colors.light.text.main,
+      fontWeight: 'bold',
+    },
+  });

@@ -1,4 +1,10 @@
-import {Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import UpArrowIcon from '@assets/icons/backArrowIcon.svg';
 import AddFolderIcon from '@assets/icons/addFolderIcon.svg';
@@ -11,6 +17,9 @@ import {colors} from 'src/hooks/useColors';
 import CreateQuestionModal from './CreateQuestionModal';
 
 function FolderHeader(): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const currentHistoryIndex = useQuestionExplorerStore(
     state => state.currentHistoryIndex,
   );
@@ -43,7 +52,7 @@ function FolderHeader(): React.JSX.Element {
             styles.navButton,
             currentHistoryIndex <= 0 && styles.navButtonDisabled,
           ]}>
-          <BackArrowIcon width={30} height={30} />
+          <BackArrowIcon width={width * 0.02} height={width * 0.02} />
         </Pressable>
 
         <Pressable
@@ -53,17 +62,25 @@ function FolderHeader(): React.JSX.Element {
             currentHistoryIndex >= history.length - 1 &&
               styles.navButtonDisabled,
           ]}>
-          <BackArrowIcon width={30} height={30} style={styles.forwardIcon} />
+          <BackArrowIcon
+            width={width * 0.02}
+            height={width * 0.02}
+            style={styles.forwardIcon}
+          />
         </Pressable>
 
         <Pressable
           onPress={navigateUp}
           style={[
             styles.navButton,
-            {marginLeft: 15},
+            {marginLeft: width * 0.005},
             currentPath.length === 0 && styles.navButtonDisabled,
           ]}>
-          <UpArrowIcon width={30} height={30} style={styles.upIcon} />
+          <UpArrowIcon
+            width={width * 0.02}
+            height={width * 0.02}
+            style={styles.upIcon}
+          />
         </Pressable>
       </View>
 
@@ -74,15 +91,15 @@ function FolderHeader(): React.JSX.Element {
           onPress={() => {
             openFolderCreateModal();
           }}>
-          <AddFolderIcon width={30} height={30} />
+          <AddFolderIcon width={width * 0.02} height={width * 0.02} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             openQuestionCreateModal();
           }}>
           <AddQuestionIcon
-            width={30}
-            height={30}
+            width={width * 0.02}
+            height={width * 0.02}
             color={colors.light.background.main}
           />
         </TouchableOpacity>
@@ -93,42 +110,42 @@ function FolderHeader(): React.JSX.Element {
 
 export default FolderHeader;
 
-const styles = StyleSheet.create({
-  folderHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 60,
-    gap: 25,
-    marginBottom: 15,
-    paddingHorizontal: 15,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderTopRightRadius: 15,
-    borderTopLeftRadius: 15,
-    borderColor: `${colors.light.background.main}7f`,
-    elevation: 2,
-  },
-  navigationButtons: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  navButton: {
-    padding: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  navButtonDisabled: {
-    opacity: 0.5,
-  },
-  forwardIcon: {
-    transform: [{rotate: '180deg'}],
-  },
-  upIcon: {
-    transform: [{rotate: '90deg'}],
-  },
-  rightIcons: {
-    flexDirection: 'row',
-    gap: 15,
-    marginLeft: 'auto',
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    folderHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: width * 0.01,
+      marginBottom: width * 0.01,
+      paddingVertical: width * 0.005,
+      paddingHorizontal: width * 0.01,
+      backgroundColor: 'white',
+      borderBottomWidth: 1,
+      borderTopRightRadius: width * 0.01,
+      borderTopLeftRadius: width * 0.01,
+      borderColor: `${colors.light.background.main}7f`,
+      elevation: 2,
+    },
+    navigationButtons: {
+      flexDirection: 'row',
+      gap: width * 0.01,
+    },
+    navButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    navButtonDisabled: {
+      opacity: 0.5,
+    },
+    forwardIcon: {
+      transform: [{rotate: '180deg'}],
+    },
+    upIcon: {
+      transform: [{rotate: '90deg'}],
+    },
+    rightIcons: {
+      flexDirection: 'row',
+      gap: width * 0.01,
+      marginLeft: 'auto',
+    },
+  });

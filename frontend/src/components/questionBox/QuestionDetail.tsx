@@ -1,5 +1,11 @@
 import {useEffect, useRef, useState} from 'react';
-import {Animated, Pressable, StyleSheet, View} from 'react-native';
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import {colors} from 'src/hooks/useColors';
 import {detailQuestion, DetailQuestionType} from '@services/questionBox';
@@ -22,6 +28,9 @@ export default function QuestionDetail({
   selectedFileId,
   setSelectedFileId,
 }: QuestionDetailProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const toggleAnim = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
   const {data: questionDetail, isLoading} = useQuery<DetailQuestionType>({
@@ -48,8 +57,8 @@ export default function QuestionDetail({
   return (
     <Animated.View
       onLayout={event => {
-        const {width} = event.nativeEvent.layout;
-        setContainerWidth(width);
+        const {width: layoutWidth} = event.nativeEvent.layout;
+        setContainerWidth(layoutWidth);
       }}
       style={[
         styles.container,
@@ -64,13 +73,13 @@ export default function QuestionDetail({
             setIsOpened(false);
             setSelectedFileId(0);
           }}>
-          <CancelIcon width={30} height={30} />
+          <CancelIcon width={width * 0.015} height={width * 0.015} />
         </Pressable>
       </View>
       {questionDetail ? (
         <View style={styles.preview}>
           <ProblemExSection
-            fontSize={16}
+            fontSize={width * 0.009}
             problemText={questionDetail.content}
           />
           <View>
@@ -87,47 +96,48 @@ export default function QuestionDetail({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    zIndex: 1,
-    right: '-50%',
-    width: '50%',
-    padding: 25,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderRadius: 15,
-    borderColor: colors.light.borderColor.pickerBorder,
-    elevation: 2,
-  },
-  header: {
-    flexDirection: 'row',
-    width: '100%',
-    marginBottom: 15,
-    justifyContent: 'space-between',
-  },
-  preview: {
-    justifyContent: 'space-between',
-    width: '100%',
-    height: '70%',
-    padding: 15,
-    borderRadius: 10,
-    borderColor: `${colors.light.background.main}7f`,
-    backgroundColor: 'white',
-    elevation: 2,
-    overflow: 'hidden',
-  },
-  detailText: {
-    width: '100%',
-    fontSize: 14,
-    color: colors.light.text.main,
-    marginVertical: 5,
-    fontWeight: 'bold',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 25,
-    color: colors.light.text.main,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      position: 'absolute',
+      zIndex: 1,
+      right: '-50%',
+      width: '50%',
+      padding: width * 0.01,
+      backgroundColor: 'white',
+      borderWidth: 1,
+      borderRadius: width * 0.01,
+      borderColor: colors.light.borderColor.pickerBorder,
+      elevation: 2,
+    },
+    header: {
+      flexDirection: 'row',
+      width: '100%',
+      marginBottom: width * 0.01,
+      justifyContent: 'space-between',
+    },
+    preview: {
+      justifyContent: 'space-between',
+      width: '100%',
+      height: '70%',
+      padding: width * 0.01,
+      borderRadius: width * 0.005,
+      borderColor: `${colors.light.background.main}7f`,
+      backgroundColor: 'white',
+      elevation: 2,
+      overflow: 'hidden',
+    },
+    detailText: {
+      width: '100%',
+      fontSize: width * 0.008,
+      color: colors.light.text.main,
+      marginVertical: width * 0.005,
+      fontWeight: 'bold',
+    },
+    sectionTitle: {
+      fontSize: width * 0.009,
+      fontWeight: 'bold',
+      marginBottom: width * 0.01,
+      color: colors.light.text.main,
+    },
+  });
