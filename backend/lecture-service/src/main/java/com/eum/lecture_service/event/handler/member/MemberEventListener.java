@@ -1,6 +1,7 @@
 package com.eum.lecture_service.event.handler.member;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,14 @@ public class MemberEventListener {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.ClassEvent"
 	})
 	public void createClass(ClassEvent event) {
+		Optional<ClassModel> existingClass = classReadRepository.findBySchoolAndGradeAndClassNumber(
+			event.getSchool(), event.getGrade(), event.getClassNumber()
+		);
+
+		if (existingClass.isPresent()) {
+			return;
+		}
+
 		ClassModel classModel = ClassModel.builder()
 			.classId(event.getClassId())
 			.grade(event.getGrade())
@@ -87,6 +96,7 @@ public class MemberEventListener {
 
 		classReadRepository.save(classModel);
 	}
+
 
 	@KafkaListener(topics = "create_student", groupId = "member-group", properties = {
 		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.StudentInfoEvent"
