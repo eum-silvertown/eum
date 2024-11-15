@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {Skia, useCanvasRef} from '@shopify/react-native-skia';
+import React, { useEffect, useState } from 'react';
+import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from '../common/CanvasDrawingTool';
 import base64 from 'react-native-base64';
 import pako from 'pako';
-import {throttle} from 'lodash';
+import { throttle } from 'lodash';
 import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
 import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
 import * as StompJs from '@stomp/stompjs';
-import {useLectureStore} from '@store/useLessonStore';
-import {Dimensions} from 'react-native';
+import { useLectureStore } from '@store/useLessonStore';
+import { Alert, Dimensions } from 'react-native';
 interface StudentCanvasSectionProps {
   lessonId: number;
   role: string;
@@ -65,7 +65,7 @@ const StudentRealTimeCanvasSection = ({
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
 
   const memberId = useLectureStore(state => state.memberId);
-  const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
+  const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
   const width = parseFloat(deviceWidth.toFixed(8));
   const height = parseFloat(deviceHeight.toFixed(8));
   // 압축 전송
@@ -117,6 +117,9 @@ const StudentRealTimeCanvasSection = ({
   }, [paths, clientRef]);
 
   const togglePenOpacity = () => {
+    if (isErasing) {
+      setIsErasing(false); // 지우개 모드를 비활성화
+    }
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1));
   };
 
@@ -137,7 +140,7 @@ const StudentRealTimeCanvasSection = ({
         const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
         if (isInEraseArea) {
-          addToUndoStack({type: 'erase', pathData});
+          addToUndoStack({ type: 'erase', pathData });
           console.log('지우개로 경로 삭제:', pathData);
         }
         return !isInEraseArea;
@@ -201,9 +204,9 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -213,9 +216,9 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleTouchMove = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -241,7 +244,7 @@ const StudentRealTimeCanvasSection = ({
         opacity: penOpacity,
       };
       addPath(newPathData);
-      addToUndoStack({type: 'draw', pathData: newPathData});
+      addToUndoStack({ type: 'draw', pathData: newPathData });
       setCurrentPath(null);
       setRedoStack([]);
     }
@@ -259,6 +262,29 @@ const StudentRealTimeCanvasSection = ({
       setIsErasing(false); // 지우개 모드를 비활성화
     }
     setPenSize(size);
+  };
+
+  const resetPaths = () => {
+    Alert.alert(
+      '초기화 확인',
+      '정말 초기화하시겠습니까? 초기화하면 모든 필기 정보가 삭제됩니다.',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '초기화',
+          onPress: () => {
+            setPaths([]);
+            setUndoStack([]);
+            setRedoStack([]);
+            console.log('Canvas 초기화 완료');
+          },
+          style: 'destructive',
+        },
+      ],
+    );
   };
 
   return (
@@ -286,6 +312,7 @@ const StudentRealTimeCanvasSection = ({
         toggleEraserMode={toggleEraserMode}
         isErasing={isErasing}
         eraserPosition={eraserPosition}
+        resetPaths={resetPaths}
       />
       <StudentLessoningInteractionTool
         currentPage={currentPage}

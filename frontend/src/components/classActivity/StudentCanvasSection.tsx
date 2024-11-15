@@ -60,6 +60,9 @@ const StudentCanvasSection = ({
   const [isErasing, setIsErasing] = useState(false);
 
   const togglePenOpacity = () => {
+    if (isErasing) {
+      setIsErasing(false); // 지우개 모드를 비활성화
+    }
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1));
   };
 
@@ -248,6 +251,30 @@ const StudentCanvasSection = ({
     setPenSize(size);
   };
 
+  const resetPaths = () => {
+    Alert.alert(
+      '초기화 확인',
+      '정말 초기화하시겠습니까? 초기화하면 모든 필기 정보가 삭제됩니다.',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '초기화',
+          onPress: () => {
+            setPaths([]);
+            setUndoStack([]);
+            setRedoStack([]);
+            console.log('Canvas 초기화 완료');
+          },
+          style: 'destructive',
+        },
+      ],
+    );
+  };
+
+
   return (
     <>
       <CanvasDrawingTool
@@ -270,6 +297,7 @@ const StudentCanvasSection = ({
         toggleEraserMode={toggleEraserMode}
         isErasing={isErasing}
         eraserPosition={eraserPosition}
+        resetPaths={resetPaths}
       />
       <StudentInteractionTool
         solveType={solveType}

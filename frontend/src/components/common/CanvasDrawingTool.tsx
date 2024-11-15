@@ -1,5 +1,5 @@
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
-import {Canvas, Circle, Path, Skia} from '@shopify/react-native-skia';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Canvas, Circle, Path, Skia } from '@shopify/react-native-skia';
 import UndoOffIcon from '@assets/icons/undoOffIcon.svg';
 import UndoOnIcon from '@assets/icons/undoOnIcon.svg';
 import RedoOffIcon from '@assets/icons/redoOffIcon.svg';
@@ -10,14 +10,16 @@ import HighlighterOffIcon from '@assets/icons/highlighterOffIcon.svg';
 import HighlighterOnIcon from '@assets/icons/highlighterOnIcon.svg';
 import ToolBarToLeftIcon from '@assets/icons/toolBarToLeftIcon.svg';
 import ToolBarToRightIcon from '@assets/icons/toolBarToRightIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {getResponsiveSize} from '@utils/responsive';
-import {useEffect, useState} from 'react';
+import ResetPageOffIcon from '@assets/icons/resetPageIcon.svg';
+import ResetPageOnIcon from '@assets/icons/resetPageOnIcon.svg';
+import { iconSize } from '@theme/iconSize';
+import { getResponsiveSize } from '@utils/responsive';
+import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type CanvasComponentProps = {
   canvasRef: React.RefObject<any>;
-  paths: {path: any; color: string; strokeWidth: number; opacity: number}[];
+  paths: { path: any; color: string; strokeWidth: number; opacity: number }[];
   currentPath: any | null;
   penColor: string;
   penSize: number;
@@ -34,7 +36,8 @@ type CanvasComponentProps = {
   redoStack: number | null;
   toggleEraserMode?: () => void;
   isErasing?: boolean;
-  eraserPosition?: {x: number; y: number} | null;
+  eraserPosition?: { x: number; y: number } | null;
+  resetPaths?: () => void;
 };
 
 const COLOR_PALETTE = ['#000000', '#FF5F5F', '#FFCD29', '#14AE5C', '#0D99FF'];
@@ -60,6 +63,7 @@ const CanvasDrawingTool = ({
   toggleEraserMode,
   isErasing,
   eraserPosition,
+  resetPaths,
 }: CanvasComponentProps) => {
   const [isRightHanded, setIsRightHanded] = useState(true);
 
@@ -92,7 +96,7 @@ const CanvasDrawingTool = ({
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}>
-          {paths.map(({path, color, strokeWidth, opacity}, index) => (
+          {paths.map(({ path, color, strokeWidth, opacity }, index) => (
             <Path
               key={index}
               path={path}
@@ -133,7 +137,7 @@ const CanvasDrawingTool = ({
           style={[
             styles.floatingToolbar,
             // eslint-disable-next-line react-native/no-inline-styles
-            isRightHanded ? {left: 8} : {right: 8},
+            isRightHanded ? { left: 8 } : { right: 8 },
           ]}>
           {/* 왼손 잡이, 오른손잡이 toolbar 위치 변경 */}
           <TouchableOpacity onPress={toggleHandedness}>
@@ -150,7 +154,7 @@ const CanvasDrawingTool = ({
                 key={color}
                 style={[
                   styles.colorPalette,
-                  {backgroundColor: color},
+                  { backgroundColor: color },
                   penColor === color && styles.selectedColor,
                 ]}
                 onPress={() => setPenColor(color)}
@@ -214,6 +218,17 @@ const CanvasDrawingTool = ({
               <RedoOffIcon width={iconSize.lg} height={iconSize.lg} />
             )}
           </TouchableOpacity>
+          {/* Reset 아이콘 */}
+          <TouchableOpacity
+            onPress={paths.length > 0 ? resetPaths : undefined}
+            disabled={paths.length === 0} // paths가 비어있으면 버튼 비활성화
+          >
+            {paths.length > 0 ? (
+              <ResetPageOnIcon width={iconSize.lg} height={iconSize.lg} />
+            ) : (
+              <ResetPageOffIcon width={iconSize.lg} height={iconSize.lg} />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -230,10 +245,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-  canvas: {flex: 1},
+  canvas: { flex: 1 },
   floatingToolbar: {
     position: 'absolute',
-    top: '8%',
+    top: '7%',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
@@ -241,7 +256,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: getResponsiveSize(8),
     paddingVertical: getResponsiveSize(16),
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
