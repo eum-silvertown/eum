@@ -51,7 +51,6 @@ function ClassExamListScreen(): React.JSX.Element {
   });
 
   const handleExamPress = (examId: number, questionIds: number[]) => {
-    console.log('examId:', examId, 'questionIds:', questionIds);
     navigation.navigate('SolveExamScreen', {examId, questionIds});
   };
 
