@@ -1,4 +1,9 @@
-import {StyleSheet, Text as RNText, TextProps} from 'react-native';
+import {
+  StyleSheet,
+  Text as RNText,
+  TextProps,
+  useWindowDimensions,
+} from 'react-native';
 import {typography, SizeVarient, WeightVarient} from '@theme/typography';
 import {TextColorVariant, useColors} from 'src/hooks/useColors';
 
@@ -19,13 +24,14 @@ export function Text({
   children,
   ...props
 }: CustomTextProps) {
+  const {width} = useWindowDimensions();
   const themeColors = useColors();
 
   return (
     <RNText
       style={[
         {
-          fontSize: typography.size[variant],
+          fontSize: width * typography.size[variant],
           color: themeColors.text[color],
           textAlign: align,
         },

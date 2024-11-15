@@ -1,5 +1,11 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {Animated, StyleSheet, TextInput, View} from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import DocumentPicker, {types} from 'react-native-document-picker';
 import PagerView from 'react-native-pager-view';
 import Button from '@components/common/Button';
@@ -22,24 +28,32 @@ interface FileSelectionPageProps {
 const FileSelectionPage = ({
   pdfFileName,
   onPickFile,
-}: FileSelectionPageProps) => (
-  <View style={styles.pageContent}>
-    <Text variant="subtitle">PDF 파일</Text>
-    <View style={[styles.input, styles.questionSelector]}>
-      <View style={styles.fileName}>
-        <Text>{pdfFileName || '선택된 파일 없음'}</Text>
+}: FileSelectionPageProps) => {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
+  return (
+    <View style={styles.pageContent}>
+      <Text variant="subtitle">PDF 파일</Text>
+      <View style={[styles.input, styles.questionSelector]}>
+        <View style={styles.fileName}>
+          <Text>{pdfFileName || '선택된 파일 없음'}</Text>
+        </View>
+        <Button
+          content="파일 선택"
+          size="sm"
+          variant="pressable"
+          onPress={onPickFile}
+        />
       </View>
-      <Button
-        content="파일 선택"
-        size="sm"
-        variant="pressable"
-        onPress={onPickFile}
-      />
     </View>
-  </View>
-);
+  );
+};
 
 function CreateQuestionModal(): React.JSX.Element {
+  const {width, height} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const {close} = useModalContext();
   const getCurrentFolderId = useQuestionExplorerStore(
     state => state.getCurrentFolderId,
@@ -55,7 +69,7 @@ function CreateQuestionModal(): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(0);
   const mainPagerRef = useRef<PagerView>(null);
   const questionsPagerRef = useRef<PagerView>(null);
-  const heightAnim = useRef(new Animated.Value(200)).current;
+  const heightAnim = useRef(new Animated.Value(height * 0.15)).current;
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
 
   const animateHeight = (toHeight: number) => {
@@ -74,16 +88,16 @@ function CreateQuestionModal(): React.JSX.Element {
     // 현재 페이지에 따라 높이 애니메이션 적용
     switch (currentPage) {
       case 0:
-        animateHeight(200);
+        animateHeight(height * 0.15);
         break;
       case 1:
-        animateHeight(200);
+        animateHeight(height * 0.15);
         break;
       case 2:
-        animateHeight(350);
+        animateHeight(height * 0.5);
         break;
       case 3:
-        animateHeight(225);
+        animateHeight(height * 0.2);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
@@ -187,7 +201,7 @@ function CreateQuestionModal(): React.JSX.Element {
             onSelectedDone={onSelectedDone}
           />
           <View key="3" style={styles.inputContainer}>
-            <View style={{gap: 15}}>
+            <View style={{gap: width * 0.005}}>
               <Text variant="subtitle">제목</Text>
               <TextInput
                 onChangeText={onChangeText}
@@ -211,45 +225,44 @@ function CreateQuestionModal(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  mainPagerContainer: {
-    width: '100%',
-  },
-  mainPager: {
-    flex: 1,
-  },
-  pageContent: {
-    flex: 1,
-    padding: 25,
-    gap: 10,
-  },
-  inputContainer: {
-    flex: 1,
-    padding: 15,
-    gap: 25,
-  },
-  input: {
-    alignItems: 'center',
-    height: 75,
-    paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderWidth: 1,
-    borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: 10,
-    fontSize: 15,
-  },
-  questionSelector: {
-    flexDirection: 'row',
-  },
-  fileName: {
-    flex: 1,
-  },
-  pagerView: {
-    flex: 1,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      width: '100%',
+    },
+    mainPagerContainer: {
+      width: '100%',
+    },
+    mainPager: {
+      flex: 1,
+    },
+    pageContent: {
+      flex: 1,
+      padding: width * 0.01,
+      gap: width * 0.0075,
+    },
+    inputContainer: {
+      flex: 1,
+      padding: width * 0.0075,
+    },
+    input: {
+      alignItems: 'center',
+      paddingVertical: width * 0.01,
+      paddingHorizontal: width * 0.015,
+      borderWidth: 1,
+      borderColor: colors.light.borderColor.cardBorder,
+      borderRadius: width * 0.0075,
+      fontSize: width * 0.009,
+    },
+    questionSelector: {
+      flexDirection: 'row',
+    },
+    fileName: {
+      flex: 1,
+    },
+    pagerView: {
+      flex: 1,
+    },
+  });
 
 export default CreateQuestionModal;

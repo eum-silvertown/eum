@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, useWindowDimensions, View} from 'react-native';
 import Sidebar from '../sidebar/Sidebar';
 import {useAuthStore} from '@store/useAuthStore';
 import Modals from './Modals';
@@ -9,6 +9,9 @@ interface MainLayoutProps {
 }
 
 function MainLayout({children}: MainLayoutProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const isLoggedIn = useAuthStore(state => state.isLoggedIn); // 로그인 상태 확인
 
   // 현재 스크린
@@ -37,19 +40,20 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
 
 export default MainLayout;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: 15,
-    padding: 15,
-    backgroundColor: '#555588',
-  },
-  contentWrapper: {
-    flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    overflow: 'hidden',
-    elevation: 5,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      flexDirection: 'row',
+      gap: width * 0.0075,
+      padding: width * 0.0075,
+      backgroundColor: '#555588',
+    },
+    contentWrapper: {
+      flex: 1,
+      backgroundColor: 'white',
+      borderRadius: width * 0.01,
+      overflow: 'hidden',
+      elevation: 5,
+    },
+  });

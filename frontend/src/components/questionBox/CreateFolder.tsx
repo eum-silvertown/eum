@@ -1,12 +1,21 @@
 import Button from '@components/common/Button';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
 import {useState} from 'react';
-import {Pressable, StyleSheet, TextInput, View} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {colors} from 'src/hooks/useColors';
 import {createFolder} from 'src/services/questionBox';
 
 function CreateFolder(): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const [folderName, setFolderName] = useState('');
   const {createItem, getCurrentFolderId} = useQuestionExplorerStore();
   const {close} = useModalContext();
@@ -51,16 +60,16 @@ function CreateFolder(): React.JSX.Element {
 
 export default CreateFolder;
 
-const styles = StyleSheet.create({
-  container: {
-    gap: 25,
-    paddingTop: 25,
-  },
-  input: {
-    padding: 15,
-    borderWidth: 1,
-    borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: 10,
-    fontSize: 15,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      gap: width * 0.01,
+      paddingTop: width * 0.01,
+    },
+    input: {
+      padding: width * 0.01,
+      borderWidth: width * 0.001,
+      borderColor: colors.light.borderColor.cardBorder,
+      borderRadius: width * 0.005,
+    },
+  });
