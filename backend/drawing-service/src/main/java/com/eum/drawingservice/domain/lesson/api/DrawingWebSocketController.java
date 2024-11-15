@@ -1,6 +1,7 @@
 package com.eum.drawingservice.domain.lesson.api;
 
 import com.eum.drawingservice.domain.lesson.dto.DrawingRequestDTO;
+import com.eum.drawingservice.domain.lesson.dto.StudentInfoDTO;
 import com.eum.drawingservice.domain.lesson.entity.Role;
 import com.eum.drawingservice.global.subscribe.ChannelName;
 import com.eum.drawingservice.domain.lesson.service.DrawingService;
@@ -8,6 +9,7 @@ import com.eum.drawingservice.global.subscribe.SubscriptionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -42,6 +44,15 @@ public class DrawingWebSocketController {
                                     sessionId, teacherDestination, requestDTO, createHeaders(sessionId))
                     );
         }
+    }
+
+    @MessageMapping("/lesson/{lessonId}/{type}")
+    public void handleLessonEvent(
+            @Payload StudentInfoDTO infoDTO,
+            @DestinationVariable String lessonId,
+            @DestinationVariable String type) {
+        infoDTO.setType(type);
+        messagingTemplate.convertAndSend("/topic/lesson/" + lessonId, infoDTO);
     }
 
     private MessageHeaders createHeaders(String sessionId) {
