@@ -1,7 +1,7 @@
-import {useEffect, useState} from 'react';
-import {Canvas, Path, Skia, useCanvasRef} from '@shopify/react-native-skia';
+import { useEffect, useState } from 'react';
+import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
 import pako from 'pako';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import base64 from 'react-native-base64';
 
 interface StudentCanvasSectionProps {
@@ -20,7 +20,7 @@ function TeacherRealTimeCanvasRefSection({
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
-  const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
+  const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 
   // 보정치를 위한 상태 변수
   const [widthRatio, setWidthRatio] = useState(1);
@@ -57,14 +57,14 @@ function TeacherRealTimeCanvasRefSection({
         binaryString.split('').map(char => char.charCodeAt(0)),
       );
       const decompressedData = JSON.parse(
-        pako.inflate(compressedData, {to: 'string'}),
+        pako.inflate(compressedData, { to: 'string' }),
       );
 
       const parsedPaths = decompressedData
         .map((pathData: any) => {
           const pathString = pathData.path;
           const path = Skia.Path.MakeFromSVGString(pathString);
-          return path ? {...pathData, path} : null;
+          return path ? { ...pathData, path } : null;
         })
         .filter(Boolean);
 
@@ -81,7 +81,7 @@ function TeacherRealTimeCanvasRefSection({
         binaryString.split('').map(char => char.charCodeAt(0)),
       );
       const newPathData = JSON.parse(
-        pako.inflate(compressedData, {to: 'string'}),
+        pako.inflate(compressedData, { to: 'string' }),
       );
 
       const adjustedPathString = adjustPathToCurrentResolution(
@@ -93,7 +93,7 @@ function TeacherRealTimeCanvasRefSection({
 
       if (newPath) {
         setPaths(prevPaths =>
-          mergeSimilarPaths([...prevPaths, {...newPathData, path: newPath}]),
+          mergeSimilarPaths([...prevPaths, { ...newPathData, path: newPath }]),
         );
       }
     } catch (error) {
@@ -157,15 +157,15 @@ function TeacherRealTimeCanvasRefSection({
           styles.canvas,
           {
             transform: [
-              {translateX: (deviceWidth * (1 - 1 / widthRatio)) / 2},
-              {translateY: (deviceHeight * (1 - 1 / heightRatio)) / 2},
-              {scaleX: widthRatio / 1},
-              {scaleY: heightRatio / 1},
+              { translateX: (deviceWidth * (1 - 1 / widthRatio)) / 2 },
+              { translateY: (deviceHeight * (1 - 1 / heightRatio)) / 2 },
+              { scaleX: widthRatio / 1 },
+              { scaleY: heightRatio / 1 },
             ],
           },
         ]}
         ref={canvasRef}>
-        {paths.map(({path, color, strokeWidth, opacity}, index) => (
+        {paths.map(({ path, color, strokeWidth, opacity }, index) => (
           <Path
             key={index}
             path={path}
@@ -178,14 +178,6 @@ function TeacherRealTimeCanvasRefSection({
           />
         ))}
       </Canvas>
-      <View style={styles.debugContainer}>
-        <Text style={styles.debugText}>
-          Width Ratio: {widthRatio.toFixed(8)}
-        </Text>
-        <Text style={styles.debugText}>
-          Height Ratio: {heightRatio.toFixed(8)}
-        </Text>
-      </View>
     </View>
   );
 }
@@ -201,17 +193,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-  canvas: {flex: 1},
-  debugContainer: {
-    position: 'absolute',
-    bottom: 10,
-    left: 10,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: 10,
-    borderRadius: 5,
-  },
-  debugText: {
-    color: 'white',
-    fontSize: 12,
-  },
+  canvas: { flex: 1 },
 });

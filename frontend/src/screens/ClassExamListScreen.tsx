@@ -150,8 +150,8 @@ function ClassExamListScreen(): React.JSX.Element {
     .sort((a, b) => {
       if (selectedFilter === '전체') {
         // 전체 필터의 경우 진행 중인 시험을 우선적으로 정렬
-        if (a.isOngoing && !b.isOngoing) return -1;
-        if (!a.isOngoing && b.isOngoing) return 1;
+        if (a.isOngoing && !b.isOngoing) { return -1; }
+        if (!a.isOngoing && b.isOngoing) { return 1; }
       }
       // 기본 정렬 기준은 시작 시간 순서
       return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
