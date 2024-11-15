@@ -43,6 +43,7 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
