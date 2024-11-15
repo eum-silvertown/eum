@@ -214,7 +214,7 @@ function ClassHomeworkListScreen(): React.JSX.Element {
               height={iconSize.xxl * 7}
               style={styles.emptyIcon}
             />
-            <Text style={styles.emptyText}>현재 등록된 숙제가 없습니다.</Text>
+            <Text style={styles.emptyText}>숙제가 없습니다.</Text>
           </View>
         }
       />
