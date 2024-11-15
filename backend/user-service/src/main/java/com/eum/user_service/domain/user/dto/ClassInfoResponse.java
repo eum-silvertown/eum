@@ -6,12 +6,14 @@ import lombok.Builder;
 
 @Builder
 public record ClassInfoResponse(
+        Long classId,
         String school,
         Long grade,
         Long classNumber
 ) {
     public static ClassInfoResponse from(ClassInfo classInfo, School school) {
         return ClassInfoResponse.builder()
+                .classId(classInfo.getId())
                 .school(school.getName())
                 .grade(classInfo.getGrade())
                 .classNumber(classInfo.getClassNumber())
