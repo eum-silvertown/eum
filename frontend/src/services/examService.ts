@@ -1,4 +1,4 @@
-import { authApiClient } from '@services/apiClient';
+import {authApiClient} from '@services/apiClient';
 
 // 시험 생성
 export type CreateExamRequest = {
@@ -19,7 +19,7 @@ export const createExam = async (
   try {
     console.log('시험 생성 요청 데이터:', examData);
 
-    const { data } = await authApiClient.post<{
+    const {data} = await authApiClient.post<{
       code: string;
       data: CreateExamResponse;
       message: string;
@@ -56,46 +56,19 @@ type ExamSubmissionRequest = {
 
 export const submitExamProblems = async (
   examId: number,
-  submissionData: ExamSubmissionRequest
+  submissionData: ExamSubmissionRequest,
 ): Promise<void> => {
   try {
     console.log('시험 문제 제출 요청 데이터:', submissionData);
 
     await authApiClient.post<void>(
       `/exam/${examId}/submission`,
-      submissionData
+      submissionData,
     );
 
     console.log('시험 문제 제출 성공');
   } catch (error) {
     console.error('시험 문제 제출 실패:', error);
-    throw error;
-  }
-};
-
-// 시험 상세 조회
-type ExamDetailResponse = {
-  questionIds: number[];
-  questionAnswers: string[];
-  studentAnswers: string[];
-  drawingPaths: string;
-};
-
-export const getExamDetail = async (
-  lectureId: number,
-  examId: number,
-): Promise<ExamDetailResponse> => {
-  try {
-    console.log(`시험 상세 조회 요청: lectureId = ${lectureId}, examId = ${examId}`);
-
-    const { data } = await authApiClient.get<ExamDetailResponse>(
-      `/lecture/${lectureId}/exam/${examId}`
-    );
-
-    console.log('시험 상세 조회 응답:', data);
-    return data;
-  } catch (error) {
-    console.error('시험 상세 조회 실패:', error);
     throw error;
   }
 };
