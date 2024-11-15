@@ -163,20 +163,13 @@ export type LectureDetailType = {
 export const getLectureDetail = async (
   lectureId: number,
 ): Promise<LectureDetailType> => {
-  console.log(`수업 상세 조회 요청: lectureId = ${lectureId}`);
-
   try {
-    // 변경된 API 호출을 통해 데이터를 받아옴
     const {data} = await authApiClient.get<{
       status: string;
       data: LectureDetailType;
       message: string;
     }>(`/lecture/${lectureId}`);
 
-    // 응답 데이터를 콘솔에 출력하여 확인
-    console.log('수업 상세 조회 응답:', data);
-
-    // 응답 데이터의 data 필드를 반환
     return data.data; // data 필드에 필요한 수업 상세 데이터가 포함되어 있음
   } catch (error) {
     console.error('수업 상세 조회 오류 :', error);
