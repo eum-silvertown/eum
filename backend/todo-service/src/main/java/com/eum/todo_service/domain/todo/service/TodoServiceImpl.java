@@ -66,7 +66,7 @@ public class TodoServiceImpl implements TodoService {
     private Todo validateTodo(Long memberId, Long todoId) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new EumException(ErrorCode.TODO_NOT_FOUND));
-        if(todo.getMemberId() != memberId){
+        if(!todo.getMemberId().equals(memberId)){
             throw new EumException(ErrorCode.USER_NOT_AUTHORIZED);
         }
         return todo;

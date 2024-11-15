@@ -7,6 +7,7 @@ import com.eum.user_service.domain.user.dto.*;
 import com.eum.user_service.domain.user.entity.Role;
 import com.eum.user_service.domain.user.service.UserService;
 import com.eum.user_service.global.common.CommonResponse;
+import io.micrometer.core.annotation.Counted;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,30 +21,35 @@ public class UserController implements UserApiDocumentation{
     private final UserService userService;
 
     @PostMapping("/sign-up")
+    @Counted("user.singup")
     public CommonResponse<?> signUp(@RequestBody SignUpRequest signUpRequest) {
         SimpleMemberInfoResponse simpleMemberInfoResponse = userService.signUp(signUpRequest);
         return CommonResponse.success(simpleMemberInfoResponse, "회원가입에 성공했습니다.");
     }
 
     @PostMapping("/sign-in")
+    @Counted("user.singin")
     public CommonResponse<?> signIn(@RequestBody SignInRequest signInRequest) {
         SimpleMemberInfoResponse simpleMemberInfoResponse = userService.signIn(signInRequest);
         return CommonResponse.success(simpleMemberInfoResponse,"로그인에 성공했습니다.");
     }
 
     @PostMapping("/check/id")
+    @Counted("user.checkid")
     public CommonResponse<?> checkId(@RequestBody UserIdRequest userIdRequest) {
         userService.checkId(userIdRequest);
         return CommonResponse.success("사용가능한 id입니다.");
     }
 
     @PostMapping("/access")
+    @Counted("user.access")
     public CommonResponse<?> getToken(@RequestBody TokenRequest tokenRequest) {
         TokenResponse token = userService.generateAccessToken(tokenRequest);
         return CommonResponse.success(token,"토큰 발급에 성공했습니다.");
     }
 
     @GetMapping("/logout")
+    @Counted("user.logout")
     public CommonResponse<?> logout(@RequestHeader(value = "X-MEMBER-ID", required = false) String memberId,
                                     @RequestHeader(value = "Authorization", required = false) String token) {
         userService.logout(Long.valueOf(memberId), token);
@@ -51,6 +57,7 @@ public class UserController implements UserApiDocumentation{
     }
 
     @PatchMapping("/info/password")
+    @Counted("user.updatepassword")
     public CommonResponse<?> updateMemberPassword(@RequestHeader(value = "X-MEMBER-ID", required = false) String memberId,
                                                   @RequestBody PasswordUpdateRequest passwordUpdateRequest) {
         userService.updateMemberPassword(Long.valueOf(memberId), passwordUpdateRequest);
@@ -64,6 +71,7 @@ public class UserController implements UserApiDocumentation{
     }
 
     @GetMapping("/info")
+    @Counted("user.info")
     public CommonResponse<?> getUserInfo(@RequestHeader(value = "X-MEMBER-ID", required = false) String memberId,
                                          @RequestHeader(value = "X-MEMBER-ROLE", required = false) Role role) {
         MemberInfoResponse userInfoResponse = userService.getMemberInfo(Long.valueOf(memberId), role);
