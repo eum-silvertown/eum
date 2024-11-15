@@ -104,12 +104,12 @@ const getStyles = (width: number) =>
     header: {
       flexDirection: 'row',
       justifyContent: 'flex-start',
-      alignItems: 'center',
-      padding: width * 0.02,
+      paddingTop: width * 0.02,
+      paddingLeft: width * 0.02,
+      paddingBottom: width * 0.01,
     },
     editContainer: {
       flexDirection: 'row',
-      alignItems: 'center',
       borderRadius: width * 0.01,
     },
     input: {
