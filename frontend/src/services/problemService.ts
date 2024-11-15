@@ -4,7 +4,7 @@ import {authApiClient} from './apiClient';
 export type ProblemDetailResponse = {
   code: string;
   data: {
-    problemId: number;
+    fileId: number;
     parentId: number;
     title: string;
     content: string;
@@ -19,13 +19,13 @@ export type FileDetailErrorResponse = {
 };
 
 export const getFileDetail = async (
-  problemId: number,
+  fileId: number,
 ): Promise<ProblemDetailResponse['data']> => {
   try {
-    console.log(`파일 상세 조회 요청: problemId = ${problemId}`);
+    console.log(`파일 상세 조회 요청: fileId = ${fileId}`);
 
     const {data} = await authApiClient.get<ProblemDetailResponse>(
-      `/file/${problemId}`,
+      `/file/${fileId}`,
     );
 
     console.log('파일 상세 조회 응답:', data);

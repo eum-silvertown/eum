@@ -1,7 +1,10 @@
-import React, {useState} from 'react';
-import {Skia, useCanvasRef} from '@shopify/react-native-skia';
+import React, { useState } from 'react';
+import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from '@components/common/CanvasDrawingTool';
 import StudentInteractionTool from './StudentInteractionTool';
+import pako from 'pako';
+import base64 from 'react-native-base64';
+import { Alert } from 'react-native';
 
 interface StudentCanvasSectionProps {
   lessonId: number;
@@ -9,6 +12,9 @@ interface StudentCanvasSectionProps {
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
+  savePaths: (pathData: string) => void;
+  saveAnswer: (answer: string) => void;
+  onSubmit: () => void;
 }
 
 // Path 데이터 구조
@@ -34,6 +40,9 @@ const StudentCanvasSection = ({
   totalPages,
   onNextPage,
   onPrevPage,
+  savePaths,
+  saveAnswer,
+  onSubmit,
 }: StudentCanvasSectionProps): React.JSX.Element => {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -70,8 +79,7 @@ const StudentCanvasSection = ({
         const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
         if (isInEraseArea) {
-          addToUndoStack({type: 'erase', pathData});
-          console.log('지우개로 경로 삭제:', pathData);
+          addToUndoStack({ type: 'erase', pathData });
         }
         return !isInEraseArea;
       }),
@@ -103,7 +111,6 @@ const StudentCanvasSection = ({
       setPaths([...paths, lastAction.pathData]);
     }
     addToRedoStack(lastAction);
-    console.log('Undo 수행:', lastAction);
   };
 
   const redo = () => {
@@ -120,7 +127,6 @@ const StudentCanvasSection = ({
       setPaths(paths.filter(pathData => pathData !== lastRedoAction.pathData));
     }
     addToUndoStack(lastRedoAction);
-    console.log('Redo 수행:', lastRedoAction);
   };
 
   const addToRedoStack = (action: ActionData) => {
@@ -134,9 +140,9 @@ const StudentCanvasSection = ({
   };
 
   const handleTouchStart = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -146,9 +152,9 @@ const StudentCanvasSection = ({
   };
 
   const handleTouchMove = (event: any) => {
-    const {locationX, locationY} = event.nativeEvent;
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
       currentPath.lineTo(locationX, locationY);
@@ -167,22 +173,76 @@ const StudentCanvasSection = ({
         opacity: penOpacity,
       };
       addPath(newPathData);
-      addToUndoStack({type: 'draw', pathData: newPathData});
+      addToUndoStack({ type: 'draw', pathData: newPathData });
       setCurrentPath(null);
       setRedoStack([]);
     }
   };
 
+  const handleSavePaths = () => {
+    const mergeSimilarPaths = (newPaths: PathData[]): PathData[] => {
+      const mergedPaths: PathData[] = [];
+      newPaths.forEach(saveCurrentPath => {
+        const lastMergedPath = mergedPaths[mergedPaths.length - 1];
+        if (
+          lastMergedPath &&
+          lastMergedPath.color === saveCurrentPath.color &&
+          lastMergedPath.strokeWidth === saveCurrentPath.strokeWidth &&
+          lastMergedPath.opacity === saveCurrentPath.opacity
+        ) {
+          const mergedPathString =
+            lastMergedPath.path.toSVGString() +
+            ' ' +
+            saveCurrentPath.path.toSVGString();
+          const mergedPath = Skia.Path.MakeFromSVGString(mergedPathString);
+          if (mergedPath) {
+            lastMergedPath.path = mergedPath;
+          }
+        } else {
+          mergedPaths.push(saveCurrentPath);
+        }
+      });
+      return mergedPaths;
+    };
+
+    const encodePathsToSolution = (pathData: PathData[]): string => {
+      const mergedPaths = mergeSimilarPaths(pathData);
+      const svgPaths = mergedPaths.map(({ path, color, strokeWidth, opacity }) => ({
+        path: path.toSVGString(),
+        color,
+        strokeWidth,
+        opacity,
+      }));
+      const compressedData = pako.deflate(JSON.stringify(svgPaths));
+      return base64.encode(String.fromCharCode(...compressedData));
+    };
+
+    const encodedPaths = encodePathsToSolution(paths);
+    savePaths(encodedPaths); // 병합된 paths를 상위로 전달
+  };
+
+  const confirmSavePaths = () => {
+    Alert.alert(
+      '필기 저장',
+      '현재 필기를 저장하시겠습니까?',
+      [
+        { text: '취소', style: 'cancel' },
+        { text: '저장', onPress: handleSavePaths },
+      ],
+      { cancelable: true }
+    );
+  };
+
   const handleSetPenColor = (color: string) => {
     if (isErasing) {
-      setIsErasing(false); // 지우개 모드를 비활성화
+      setIsErasing(false);
     }
     setPenColor(color);
   };
 
   const handleSetPenSize = (size: number) => {
     if (isErasing) {
-      setIsErasing(false); // 지우개 모드를 비활성화
+      setIsErasing(false);
     }
     setPenSize(size);
   };
@@ -215,6 +275,9 @@ const StudentCanvasSection = ({
         totalPages={totalPages}
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
+        setAnswer={saveAnswer}
+        savePaths={confirmSavePaths}
+        onSubmit={onSubmit}
       />
     </>
   );
