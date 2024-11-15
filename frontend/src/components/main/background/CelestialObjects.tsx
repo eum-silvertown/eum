@@ -1,5 +1,7 @@
 import {useCallback, useEffect, useRef} from 'react';
-import {Animated, StyleSheet, View} from 'react-native';
+import {Animated, Image, StyleSheet, View} from 'react-native';
+import sunImage from '@assets/images/sun.png';
+import moonImage from '@assets/images/moon.png';
 
 interface CelestialObjectsProps {
   startingHour: number;
@@ -124,7 +126,10 @@ function CelestialObjects({
           },
         ]}>
         <View style={[styles.sun]}>
-          <View style={styles.sunRays} />
+          <Image
+            source={sunImage}
+            style={{width: '100%', height: '100%', objectFit: 'contain'}}
+          />
         </View>
       </Animated.View>
 
@@ -139,7 +144,12 @@ function CelestialObjects({
             opacity: moonOpacity,
           },
         ]}>
-        <View style={styles.moon} />
+        <View style={styles.moon}>
+          <Image
+            source={moonImage}
+            style={{width: '100%', height: '100%', objectFit: 'contain'}}
+          />
+        </View>
       </Animated.View>
     </>
   );
@@ -155,35 +165,12 @@ const getStyles = (width: number) =>
       alignItems: 'center',
     },
     sun: {
-      width: width * 0.06,
-      height: width * 0.06,
-      borderRadius: 9999,
-      backgroundColor: '#FFD700',
-      shadowColor: '#FFD700',
-      shadowOffset: {width: 0, height: 0},
-      shadowOpacity: 0.8,
-      shadowRadius: 15,
-    },
-    sunRays: {
-      width: width * 0.075,
-      height: width * 0.075,
-      position: 'absolute',
-      top: -width * 0.0075,
-      left: -width * 0.0075,
-      borderRadius: 9999,
-      borderWidth: width * 0.002,
-      borderColor: '#FFD700',
-      opacity: 0.5,
+      width: width * 0.1,
+      height: width * 0.1,
     },
     moon: {
-      width: width * 0.075,
-      height: width * 0.075,
-      borderRadius: 9999,
-      backgroundColor: '#F4F6F0',
-      shadowColor: '#FFFFFF',
-      shadowOffset: {width: 0, height: 0},
-      shadowOpacity: 0.8,
-      shadowRadius: 15,
+      width: width * 0.1,
+      height: width * 0.1,
     },
   });
 
