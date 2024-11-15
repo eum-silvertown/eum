@@ -69,7 +69,7 @@ export const submitHomework = async (
   try {
     console.log('숙제 문제 제출 요청 데이터:', submissionData);
 
-    const { data } = await authApiClient.post<HomeworkSubmissionResponse>(
+    const {data} = await authApiClient.post<HomeworkSubmissionResponse>(
       `/homework/${homeworkId}/submission`,
       submissionData,
     );
@@ -124,3 +124,14 @@ export const getHomeworkSubmissionList = async (
     throw error;
   }
 };
+
+export async function getAllAboutHomework(userId: number) {
+  try {
+    console.log('userId: ', userId);
+    const data = authApiClient.get(`homework/${userId}`);
+    console.log(data);
+  } catch (error) {
+    console.error('Failed to get All About Homework: ', error);
+    throw error;
+  }
+}
