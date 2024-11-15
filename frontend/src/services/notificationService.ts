@@ -19,3 +19,22 @@ export async function removeFCMToken() {
     console.error(error);
   }
 }
+
+export type NotificationType = {
+  id: number;
+  title: string;
+  message: string;
+  isRead: boolean;
+  createAt: string;
+  updatedAt: string;
+};
+
+export async function getUnreadNotifications(): Promise<NotificationType[]> {
+  try {
+    const {data} = await authApiClient.get('notification');
+    return data.data;
+  } catch (error) {
+    console.error('Failed to get UnreadNotifications: ', error);
+    throw error;
+  }
+}

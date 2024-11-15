@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, useWindowDimensions, View} from 'react-native';
 import FolderIcon from '@assets/icons/folderIcon.svg';
 import FilledFolderIcon from '@assets/icons/filledFolderIcon.svg';
 import FileIcon from '@assets/icons/fileIcon.svg';
@@ -11,6 +11,9 @@ interface FileContainerProps {
 }
 
 function FileContainer({file}: FileContainerProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const cutFolderId = useCutStore(state => state.folderId);
   return (
     <View style={styles.container}>
@@ -18,18 +21,18 @@ function FileContainer({file}: FileContainerProps): React.JSX.Element {
         file.childrenCount > 0 ? (
           <FilledFolderIcon
             opacity={cutFolderId === file.id ? 0.5 : 1}
-            width={100}
-            height={100}
+            width={width * 0.05}
+            height={width * 0.05}
           />
         ) : (
           <FolderIcon
             opacity={cutFolderId === file.id ? 0.5 : 1}
-            width={100}
-            height={100}
+            width={width * 0.05}
+            height={width * 0.05}
           />
         )
       ) : (
-        <FileIcon width={100} height={100} />
+        <FileIcon width={width * 0.05} height={width * 0.05} />
       )}
       <Text>{file.title}</Text>
     </View>
@@ -38,9 +41,10 @@ function FileContainer({file}: FileContainerProps): React.JSX.Element {
 
 export default FileContainer;
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    gap: 10,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      gap: width * 0.005,
+    },
+  });

@@ -2,11 +2,14 @@ import Button from '@components/common/Button';
 import {Text} from '@components/common/Text';
 import {useCutStore} from '@store/useCutStore';
 import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, useWindowDimensions, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
 import {moveFolder, moveQuestion} from 'src/services/questionBox';
 
 function MoveMenu(): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const title = useCutStore(state => state.title);
   const cutFolderId = useCutStore(state => state.folderId);
   const fileType = useCutStore(state => state.type);
@@ -49,23 +52,25 @@ function MoveMenu(): React.JSX.Element {
 
 export default MoveMenu;
 
-const styles = StyleSheet.create({
-  area: {
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 25,
-    left: 25,
-    width: '100%',
-  },
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 25,
-    borderWidth: 1,
-    borderColor: colors.light.borderColor.cardBorder,
-    borderRadius: 10,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    area: {
+      alignItems: 'center',
+      position: 'absolute',
+      bottom: width * 0.02,
+      width: '100%',
+    },
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: width * 0.0075,
+      paddingVertical: width * 0.005,
+      paddingHorizontal: width * 0.015,
+      borderWidth: width * 0.00075,
+      borderColor: colors.light.borderColor.cardBorder,
+      borderRadius: width * 0.01,
+      backgroundColor: 'white',
+      elevation: 2,
+    },
+  });

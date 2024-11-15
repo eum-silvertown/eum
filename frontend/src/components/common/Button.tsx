@@ -1,8 +1,12 @@
-import {StyleProp, StyleSheet, TouchableOpacity, ViewStyle} from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  ViewStyle,
+} from 'react-native';
 import {Text} from './Text';
 import {useColors} from 'src/hooks/useColors';
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface ButtonProps {
   style?: StyleProp<ViewStyle>;
@@ -18,29 +22,29 @@ function Button({
   size,
   onPress,
 }: ButtonProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
   const colors = useColors();
   const styles = StyleSheet.create({
     container: {
       justifyContent: 'center',
-      paddingVertical: 10,
-      paddingHorizontal: 15,
+      paddingVertical: width * 0.0075,
+      paddingHorizontal: width * 0.01,
       backgroundColor: colors.background.main,
-      borderRadius: borderRadius.sm,
+      borderRadius: width * 0.005,
     },
   });
   const sizes = StyleSheet.create({
     sm: {
-      width: 125,
+      width: width * 0.08,
     },
     md: {
-      width: getResponsiveSize(128),
+      width: width * 0.1,
     },
     lg: {
-      width: getResponsiveSize(160),
+      width: width * 0.12,
     },
     full: {
       width: '100%',
-      height: 50,
     },
   });
 

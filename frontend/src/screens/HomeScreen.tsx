@@ -1,10 +1,10 @@
 import {
   Animated,
-  Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import {useCallback, useEffect, useRef} from 'react';
@@ -21,7 +21,9 @@ const ENDING_HOUR = 22;
 const TRANSITION_HOUR = 17;
 
 function HomeScreen(): React.JSX.Element {
-  const screenWidth = Dimensions.get('window').width;
+  const {width: screenWidth} = useWindowDimensions();
+  const styles = getStyles(screenWidth);
+
   const bookPosition = useBookModalStore(state => state.bookPosition);
   const scrollViewRef = useRef<ScrollView>(null);
   const timeProgressAnim = useRef(new Animated.Value(0)).current;
@@ -96,28 +98,15 @@ function HomeScreen(): React.JSX.Element {
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  content: {
-    flex: 1,
-    gap: 15,
-    marginVertical: 10,
-  },
-  contentTop: {
-    flexDirection: 'row',
-    flex: 4,
-    gap: 15,
-  },
-  contentBottom: {
-    flex: 5,
-    gap: 10,
-  },
-  scrollView: {
-    position: 'absolute',
-    bottom: 50,
-    height: '50%',
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: 'white',
+    },
+    scrollView: {
+      position: 'absolute',
+      bottom: width * 0.015,
+      height: '50%',
+    },
+  });

@@ -7,12 +7,12 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  useWindowDimensions,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import {borderRadius} from '@theme/borderRadius';
 import {colors} from 'src/hooks/useColors';
 import DatePicker from 'react-native-date-picker';
-import {borderWidth} from '@theme/borderWidth';
 import {DetailQuestionType} from '@services/questionBox';
 import ProblemExSection from './ProblemExSection';
 
@@ -41,6 +41,9 @@ function CreateInput({
   setDuration,
   questionDetail,
 }: CreateInputProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const getCurrentTime = (): Date => {
     const now = new Date();
     now.setSeconds(0, 0);
@@ -301,113 +304,114 @@ function CreateInput({
   );
 }
 
-const styles = StyleSheet.create({
-  layout: {
-    flex: 1,
-    width: '100%',
-    backgroundColor: 'white',
-    borderRadius: borderRadius.lg,
-    marginLeft: 15,
-  },
-  container: {
-    flex: 1,
-  },
-  topSection: {
-    width: '100%',
-    flex: 0.6,
-    backgroundColor: '#E8F0FF',
-    marginBottom: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.md,
-    borderColor: `${colors.light.background.main}7f`,
-    elevation: 2,
-  },
-  exProblemContainer: {
-    backgroundColor: 'white',
-    height: '100%',
-    width: '100%',
-    borderRadius: borderRadius.md,
-    borderColor: `${colors.light.background.main}7f`,
-    elevation: 2,
-    padding: 15,
-    overflow: 'hidden',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 25,
-    color: colors.light.text.main,
-  },
-  formContainer: {
-    flex: 0.6,
-    backgroundColor: 'white',
-    padding: 15,
-    borderWidth: borderWidth.sm,
-    borderRadius: borderRadius.md,
-    borderColor: `${colors.light.background.main}7f`,
-    elevation: 2,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: borderRadius.sm,
-    padding: 10,
-    marginBottom: 15,
-    fontSize: 16,
-  },
-  picker: {
-    marginVertical: 10,
-  },
-  timeText: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 15,
-  },
-  fileItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 5,
-  },
-  fileName: {
-    fontSize: 14,
-    color: '#666',
-  },
-  removeText: {
-    fontSize: 14,
-    color: '#FF0000',
-    marginLeft: 5,
-  },
-  button: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 15,
-    borderRadius: borderRadius.md,
-    alignItems: 'center',
-    marginTop: 15,
-  },
-  buttonDisabled: {
-    backgroundColor: '#999',
-  },
-  buttonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 12,
-  },
-  detailText: {
-    width: '100%',
-    fontSize: 14,
-    color: colors.light.text.main,
-    marginVertical: 5,
-    fontWeight: 'bold',
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    layout: {
+      flex: 1,
+      width: '100%',
+      backgroundColor: 'white',
+      borderRadius: borderRadius.lg,
+      marginLeft: width * 0.01,
+    },
+    container: {
+      flex: 1,
+    },
+    topSection: {
+      width: '100%',
+      flex: 0.6,
+      backgroundColor: '#E8F0FF',
+      marginBottom: width * 0.01,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: width * 0.001,
+      borderRadius: width * 0.005,
+      borderColor: `${colors.light.background.main}7f`,
+      elevation: 2,
+    },
+    exProblemContainer: {
+      backgroundColor: 'white',
+      height: '100%',
+      width: '100%',
+      borderRadius: borderRadius.md,
+      borderColor: `${colors.light.background.main}7f`,
+      elevation: 2,
+      padding: width * 0.01,
+      overflow: 'hidden',
+    },
+    sectionTitle: {
+      fontSize: width * 0.01,
+      fontWeight: 'bold',
+      marginBottom: width * 0.01,
+      color: colors.light.text.main,
+    },
+    formContainer: {
+      flex: 0.6,
+      backgroundColor: 'white',
+      padding: width * 0.01,
+      borderWidth: width * 0.001,
+      borderRadius: width * 0.005,
+      borderColor: `${colors.light.background.main}7f`,
+      elevation: 2,
+    },
+    label: {
+      fontSize: width * 0.008,
+      fontWeight: 'bold',
+      color: '#333',
+      marginBottom: 5,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: '#DDD',
+      borderRadius: borderRadius.sm,
+      padding: width * 0.0075,
+      marginBottom: width * 0.01,
+      fontSize: width * 0.008,
+    },
+    picker: {
+      marginVertical: width * 0.005,
+    },
+    timeText: {
+      fontSize: width * 0.01,
+      color: '#333',
+      marginBottom: width * 0.01,
+    },
+    fileItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 5,
+    },
+    fileName: {
+      fontSize: width * 0.009,
+      color: '#666',
+    },
+    removeText: {
+      fontSize: width * 0.009,
+      color: '#FF0000',
+      marginLeft: 5,
+    },
+    button: {
+      backgroundColor: '#4CAF50',
+      paddingVertical: width * 0.01,
+      borderRadius: borderRadius.md,
+      alignItems: 'center',
+      marginTop: width * 0.01,
+    },
+    buttonDisabled: {
+      backgroundColor: '#999',
+    },
+    buttonText: {
+      color: '#FFF',
+      fontWeight: 'bold',
+      fontSize: width * 0.0075,
+    },
+    detailText: {
+      width: '100%',
+      fontSize: width * 0.01,
+      color: colors.light.text.main,
+      paddingVertical: width * 0.005,
+      fontWeight: 'bold',
+    },
+  });
 
 export default CreateInput;

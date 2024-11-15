@@ -1,5 +1,10 @@
 import {Text} from '@components/common/Text';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import {useModalContext} from 'src/contexts/useModalContext';
 import {colors} from 'src/hooks/useColors';
 import {useModal} from 'src/hooks/useModal';
@@ -16,6 +21,9 @@ interface FileOptionModalProp {
 }
 
 function FileOptionModal({item}: FileOptionModalProp): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const {open} = useModal();
   const {close} = useModalContext();
   const deleteItem = useQuestionExplorerStore(state => state.deleteItem);
@@ -81,14 +89,15 @@ function FileOptionModal({item}: FileOptionModalProp): React.JSX.Element {
 
 export default FileOptionModal;
 
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 25,
-    paddingHorizontal: 10,
-  },
-  option: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderColor: colors.light.borderColor.cardBorder,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      paddingVertical: width * 0.01,
+      paddingHorizontal: width * 0.005,
+    },
+    option: {
+      paddingVertical: width * 0.01,
+      borderBottomWidth: width * 0.0005,
+      borderColor: colors.light.borderColor.cardBorder,
+    },
+  });

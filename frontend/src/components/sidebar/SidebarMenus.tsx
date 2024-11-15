@@ -84,7 +84,7 @@ function SidebarMenus(): React.JSX.Element {
             ]}>
             <View style={styles.icon}>
               <item.icon
-                width={width * 0.0175}
+                width={width * 0.02}
                 height={width * 0.0175}
                 color={selected === index ? 'white' : '#2E2559'}
               />
@@ -129,7 +129,7 @@ const getStyles = (width: number) =>
       alignItems: 'center',
       width: '100%',
       gap: width * 0.01,
-      paddingHorizontal: width * 0.0085,
+      paddingHorizontal: width * 0.0075,
       paddingVertical: width * 0.0075,
       borderRadius: width * 0.0075,
     },

@@ -9,12 +9,15 @@ import {
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
 import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, useWindowDimensions, View} from 'react-native';
 import {colors} from 'src/hooks/useColors';
 import {useModal} from 'src/hooks/useModal';
 import {getFolder, getRootFolder} from 'src/services/questionBox';
 
 function QuestionBoxScreen(): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const {open} = useModal();
   const [isDetailOpened, setIsDetailOpened] = useState(false);
   const [containerHeight, setContainerHeight] = useState(0);
@@ -108,32 +111,32 @@ function QuestionBoxScreen(): React.JSX.Element {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 25,
-  },
-  contentContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderRadius: 15,
-    borderColor: `${colors.light.background.main}7f`,
-    elevation: 2,
-  },
-  fileList: {
-    flex: 1,
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-  },
-  fileItem: {
-    width: '20%',
-    paddingVertical: 25,
-    paddingHorizontal: 10,
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    container: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'white',
+      borderRadius: width * 0.01,
+      padding: width * 0.01,
+    },
+    contentContainer: {
+      flex: 1,
+      backgroundColor: 'white',
+      borderWidth: width * 0.001,
+      borderRadius: width * 0.01,
+      borderColor: `${colors.light.background.main}7f`,
+      elevation: 2,
+    },
+    fileList: {
+      flex: 1,
+      flexWrap: 'wrap',
+      flexDirection: 'row',
+    },
+    fileItem: {
+      width: '20%',
+      paddingVertical: width * 0.015,
+    },
+  });
 
 export default QuestionBoxScreen;

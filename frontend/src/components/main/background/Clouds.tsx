@@ -1,7 +1,10 @@
-import {borderRadius} from '@theme/borderRadius';
-import {getResponsiveSize} from '@utils/responsive';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
-import {Animated, StyleSheet, ViewStyle} from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  useWindowDimensions,
+  ViewStyle,
+} from 'react-native';
 
 interface CloudsProps {
   screenWidth: number;
@@ -12,15 +15,19 @@ export default function Clouds({
   screenWidth,
   screenHeight,
 }: CloudsProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const clouds = useMemo(
     () =>
       Array.from({length: 10}, (_, i) => ({
         id: i,
         x: -100,
         y: Math.random() * (screenHeight / 3),
-        size: getResponsiveSize(32) + Math.random() * getResponsiveSize(24),
+        size: width * 0.03 + Math.random() * width * 0.03,
         delay: Math.random() * 10000,
       })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [screenHeight],
   );
 
@@ -97,19 +104,20 @@ export default function Clouds({
   );
 }
 
-const styles = StyleSheet.create({
-  cloud: {
-    position: 'absolute',
-    zIndex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: borderRadius.lg,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    cloud: {
+      position: 'absolute',
+      zIndex: 1,
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      borderRadius: width * 0.05,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
+      elevation: 3,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
-  },
-});
+  });

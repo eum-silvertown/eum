@@ -5,9 +5,14 @@ import {
 import {useQuery} from '@tanstack/react-query';
 import {getCurrentDateInfo} from '@utils/dateUtils';
 import React from 'react';
-import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import LectureCreateBook from './LectureCreateBook';
-import {getResponsiveSize} from '@utils/responsive';
 
 interface TimeTableProps {
   startingHour: number;
@@ -22,6 +27,9 @@ export default function TimeTable({
   hourWidth,
   isNightTime,
 }: TimeTableProps): React.JSX.Element {
+  const {width} = useWindowDimensions();
+  const styles = getStyles(width);
+
   const totalContentWidth = hourWidth * (endingHour - startingHour + 1);
   const periodTimes = [8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22];
   const {day, year, semester} = getCurrentDateInfo();
@@ -42,12 +50,7 @@ export default function TimeTable({
                   lecture.lecturePeriod &&
                   lecture.lecturePeriod.map(period =>
                     periodTimes[period] === hour ? (
-                      <TouchableOpacity
-                        key={`${lecture.lectureId}-${period}`}
-                        style={{
-                          height: getResponsiveSize(240),
-                          overflow: 'hidden',
-                        }}>
+                      <TouchableOpacity key={`${lecture.lectureId}-${period}`}>
                         <LectureCreateBook
                           key={lecture.lectureId}
                           item={{...lecture, lecturePeriod: period}}
@@ -74,35 +77,36 @@ export default function TimeTable({
   );
 }
 
-const styles = StyleSheet.create({
-  timeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: '100%',
-  },
-  timeBlock: {
-    height: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  timeContent: {
-    alignItems: 'center',
-  },
-  timeIndicator: {
-    width: 2,
-    height: 20,
-    backgroundColor: '#FFFFFF',
-    marginBottom: 5,
-  },
-  timeTextContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 15,
-  },
-  timeText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
+const getStyles = (width: number) =>
+  StyleSheet.create({
+    timeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: '100%',
+    },
+    timeBlock: {
+      height: '100%',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+    },
+    timeContent: {
+      alignItems: 'center',
+    },
+    timeIndicator: {
+      width: width * 0.00075,
+      height: width * 0.01,
+      backgroundColor: '#FFFFFF',
+      marginBottom: width * 0.0025,
+    },
+    timeTextContainer: {
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      paddingHorizontal: width * 0.01,
+      paddingVertical: width * 0.0025,
+      borderRadius: width * 0.01,
+    },
+    timeText: {
+      color: '#FFFFFF',
+      fontSize: width * 0.009,
+      fontWeight: '600',
+    },
+  });

@@ -1,4 +1,3 @@
-import {getResponsiveSize} from '@utils/responsive';
 import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {Animated, StyleSheet} from 'react-native';
 
@@ -18,7 +17,7 @@ export default function Stars({
         id: i,
         x: Math.random() * screenWidth,
         y: Math.random() * (screenHeight * 0.7),
-        size: getResponsiveSize(3) + Math.random() * getResponsiveSize(3),
+        size: screenWidth * 0.0015 + Math.random() * screenWidth * 0.0015,
         delay: Math.random() * 3000,
       })),
     [screenWidth, screenHeight],
@@ -97,6 +96,6 @@ const styles = StyleSheet.create({
   star: {
     position: 'absolute',
     backgroundColor: '#FFFFFF',
-    borderRadius: 50,
+    borderRadius: 9999,
   },
 });
