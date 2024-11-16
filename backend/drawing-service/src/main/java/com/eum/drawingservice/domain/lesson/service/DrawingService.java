@@ -7,5 +7,5 @@ public interface DrawingService {
 
     void saveDrawing(DrawingRequestDTO requestDTO);
 
-    DrawingResponseDTO getTeacherDrawingData(Long teacherId, Long lessonId, Long questionId);
+    DrawingResponseDTO getMemberDrawingData(Long memberId, Long lessonId, Long questionId);
 }

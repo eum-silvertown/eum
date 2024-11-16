@@ -38,9 +38,9 @@ public class DrawingServiceImpl implements DrawingService {
     }
 
     @Override
-    public DrawingResponseDTO getTeacherDrawingData(Long teacherId, Long lessonId, Long questionId) {
+    public DrawingResponseDTO getMemberDrawingData(Long memberId, Long lessonId, Long questionId) {
         Drawing drawing = drawingRepository.findByMemberIdAndLessonIdAndQuestionId(
-            String.valueOf(teacherId),
+            String.valueOf(memberId),
             String.valueOf(lessonId),
             String.valueOf(questionId)).orElse(null);
 
