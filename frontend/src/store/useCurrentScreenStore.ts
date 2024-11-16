@@ -22,7 +22,9 @@ export type ScreenType = {
   };
   ClassLessonListScreen: undefined;
   ClassExamListScreen: undefined;
+  ClassExamListTeacherScreen: undefined;
   ClassHomeworkListScreen: undefined;
+  ClassHomeworkListTeacherScreen: undefined;
   SolveHomeworkScreen: {homeworkId: number; questionIds: number[]};
   SolveExamScreen: {examId: number; questionIds: number[]};
   ConfirmSolvedScreen: {
