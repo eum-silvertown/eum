@@ -3,13 +3,13 @@ import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from '../common/CanvasDrawingTool';
 import base64 from 'react-native-base64';
 import pako from 'pako';
-import { throttle } from 'lodash';
 import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
 import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
 import * as StompJs from '@stomp/stompjs';
 import { useLectureStore } from '@store/useLessonStore';
 import { Alert, Dimensions } from 'react-native';
 interface StudentCanvasSectionProps {
+  problemIds: number[];
   answers: string[];
   titles: string[];
   lessonId: number;
@@ -42,6 +42,7 @@ const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
 const StudentRealTimeCanvasSection = ({
+  problemIds,
   answers,
   titles,
   lessonId,
@@ -68,6 +69,10 @@ const StudentRealTimeCanvasSection = ({
   const [isErasing, setIsErasing] = useState(false);
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
 
+  const roundToTwoDecimals = (value: number): number => {
+    return Math.round(value * 100) / 100;
+  };
+
   const memberId = useLectureStore(state => state.memberId);
   const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
   const width = parseFloat(deviceWidth.toFixed(8));
@@ -86,12 +91,11 @@ const StudentRealTimeCanvasSection = ({
       memberId: memberId,
       role: role,
       lessonId: lessonId,
-      questionId: 22,
+      questionId: problemIds[currentPage - 1],
       drawingData: base64EncodedData,
       width,
       height,
     };
-    // console.log(newPayload);
 
     clientRef.current.publish({
       destination,
@@ -103,11 +107,6 @@ const StudentRealTimeCanvasSection = ({
   const handleToggleScreen = () => {
     setIsTeacherScreenOn(prev => !prev);
   };
-
-  // 실시간 전송 - Move 시
-  const throttledSendData = throttle((pathData: PathData) => {
-    sendCompressedData('/app/move', pathData);
-  }, 400); // 200ms마다 전송
 
   useEffect(() => {
     const dataToSend = paths.map(pathData => ({
@@ -208,7 +207,8 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleTouchStart = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
+    const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
@@ -220,20 +220,18 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleTouchMove = (event: any) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
+    const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
-      currentPath.lineTo(locationX, locationY);
+      // 현재 경로에 새로운 포인트 추가
+      currentPath.lineTo(
+        Math.round(locationX * 100) / 100, // 좌표 정밀도 소수점 두 자리로 제한
+        Math.round(locationY * 100) / 100,
+      );
       canvasRef.current?.redraw();
-      const pathData = {
-        path: currentPath.toSVGString(),
-        color: penColor,
-        strokeWidth: penSize,
-        opacity: penOpacity,
-      };
-      throttledSendData(pathData);
     }
   };
 

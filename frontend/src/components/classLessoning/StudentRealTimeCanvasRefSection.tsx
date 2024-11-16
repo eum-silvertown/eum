@@ -21,6 +21,9 @@ function StudentRealTimeCanvasRefSection({
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
+  console.log(paths);
+
+
   const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 
   // 기기 비율 계산을 위한 상태 변수
@@ -41,11 +44,7 @@ function StudentRealTimeCanvasRefSection({
         setWidthRatio(newWidthRatio);
         setHeightRatio(newHeightRatio);
 
-        console.log('Calculated widthRatio:', newWidthRatio);
-        console.log('Calculated heightRatio:', newHeightRatio);
-
         handleSync(messageObject.drawingData);
-        handleSyncMove(messageObject.drawingData);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,6 +52,7 @@ function StudentRealTimeCanvasRefSection({
 
   const handleSync = (base64EncodedData: string) => {
     try {
+      // Base64 디코딩 및 압축 해제
       const binaryString = base64.decode(base64EncodedData);
       const compressedData = Uint8Array.from(
         binaryString.split('').map(char => char.charCodeAt(0)),
@@ -61,6 +61,7 @@ function StudentRealTimeCanvasRefSection({
         pako.inflate(compressedData, { to: 'string' }),
       );
 
+      // 경로를 Skia Path로 변환
       const parsedPaths = decompressedData
         .map((pathData: any) => {
           const pathString = pathData.path;
@@ -69,57 +70,11 @@ function StudentRealTimeCanvasRefSection({
         })
         .filter(Boolean);
 
-      setPaths(parsedPaths);
+      // 기존 경로와 병합
+      setPaths(prevPaths => mergeSimilarPaths([...prevPaths, ...parsedPaths]));
     } catch (error) {
       console.error('Failed to decompress or parse data:', error);
     }
-  };
-
-  const handleSyncMove = (base64EncodedData: string) => {
-    try {
-      const binaryString = base64.decode(base64EncodedData);
-      const compressedData = Uint8Array.from(
-        binaryString.split('').map(char => char.charCodeAt(0)),
-      );
-      const newPathData = JSON.parse(
-        pako.inflate(compressedData, { to: 'string' }),
-      );
-
-      const adjustedPathString = adjustPathToCurrentResolution(
-        newPathData.path,
-        widthRatio,
-        heightRatio,
-      );
-      const newPath = Skia.Path.MakeFromSVGString(adjustedPathString);
-
-      if (newPath) {
-        setPaths(prevPaths =>
-          mergeSimilarPaths([...prevPaths, { ...newPathData, path: newPath }]),
-        );
-      }
-    } catch (error) {
-      console.error('Failed to decompress or parse data:', error);
-    }
-  };
-
-  const adjustPathToCurrentResolution = (
-    pathString: string,
-    reWidthRatio: number,
-    reHeightRatio: number,
-  ): string => {
-    return pathString
-      .split(' ')
-      .map(segment => {
-        const isCoordinate = !isNaN(parseFloat(segment));
-        if (isCoordinate) {
-          const number = parseFloat(segment);
-          return (
-            number * (segment.includes('y') ? reHeightRatio : reWidthRatio)
-          ).toFixed(8);
-        }
-        return segment;
-      })
-      .join(' ');
   };
 
   const mergeSimilarPaths = (newPaths: PathData[]): PathData[] => {

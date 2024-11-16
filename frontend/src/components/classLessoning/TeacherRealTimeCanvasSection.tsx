@@ -3,14 +3,13 @@ import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from '../common/CanvasDrawingTool';
 import base64 from 'react-native-base64';
 import pako from 'pako';
-import { throttle } from 'lodash';
 import TeacherLessoningInteractionTool from './TeacherLessoningInteractionTool';
 import * as StompJs from '@stomp/stompjs';
-import simplify from 'simplify-js';
 import TeacherRealTimeCanvasRefSection from './TeacherRealTimeCanvasRefSection';
 import { useLectureStore, useLessonStore } from '@store/useLessonStore';
 import { Alert, Dimensions } from 'react-native';
 interface TeacherCanvasSectionProps {
+  problemIds: number[];
   answers: string[];
   titles: string[];
   isTeaching: boolean | null;
@@ -43,6 +42,7 @@ const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
 const TeacherRealTimeCanvasSection = ({
+  problemIds,
   answers,
   titles,
   isTeaching,
@@ -75,8 +75,8 @@ const TeacherRealTimeCanvasSection = ({
   const lessonId = useLessonStore(state => state.lessonId);
   const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 
-  const width = parseFloat(deviceWidth.toFixed(1));
-  const height = parseFloat(deviceHeight.toFixed(1));
+  const width = parseFloat(deviceWidth.toFixed(8));
+  const height = parseFloat(deviceHeight.toFixed(8));
 
   // 압축 전송
   const sendCompressedData = (destination: string, data: any) => {
@@ -93,22 +93,19 @@ const TeacherRealTimeCanvasSection = ({
       memberId: teacherId,
       role: role,
       lessonId: lessonId,
-      questionId: 22,
+      questionId: problemIds[currentPage - 1],
       drawingData: base64EncodedData,
       width,
       height,
     };
+    console.log('newPayload:', newPayload);
+
 
     clientRef.current.publish({
       destination,
       body: JSON.stringify(newPayload),
     });
   };
-
-  // 실시간 전송 - Move 시
-  const throttledSendData = throttle((pathData: PathData) => {
-    sendCompressedData('/app/move', pathData);
-  }, 400); // 200ms마다 전송
 
   useEffect(() => {
     const dataToSend = paths.map(pathData => ({
@@ -245,25 +242,6 @@ const TeacherRealTimeCanvasSection = ({
         Math.round(locationY * 100) / 100,
       );
       canvasRef.current?.redraw();
-
-      // 정밀도가 낮아진 좌표 목록을 PathData로 준비
-      const pathData = {
-        path: currentPath.toSVGString(),
-        color: penColor,
-        strokeWidth: penSize,
-        opacity: penOpacity,
-      };
-
-      // 경로 간소화 알고리즘을 적용하여 불필요한 점을 줄이기
-      const simplifiedPathData = simplify(
-        [{ x: locationX, y: locationY }],
-        0.5, // 간소화 허용 오차
-        true,
-      );
-
-      // 간소화된 좌표 목록을 PathData에 추가하여 전송
-      throttledSendData({ ...pathData, path: simplifiedPathData });
-      // console.log(`[Simplified Path Data]: ${simplifiedPathData}`);
     }
   };
 
