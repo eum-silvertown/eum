@@ -21,8 +21,17 @@ public class DrawingRestController {
 		@PathVariable Long lessonId,
 		@RequestParam("questionId") Long questionId
 	) {
-		DrawingResponseDTO response = drawingService.getTeacherDrawingData(teacherId, lessonId, questionId);
+		DrawingResponseDTO response = drawingService.getMemberDrawingData(teacherId, lessonId, questionId);
 		return CommonResponse.success(response, "선생님 데이터 조회 성공");
 	}
 
+	@GetMapping("/student/{studentId}/lesson/{lessonId}")
+	public CommonResponse<?> getStudentDrawingData(
+		@PathVariable Long studentId,
+		@PathVariable Long lessonId,
+		@RequestParam("questionId") Long questionId
+	) {
+		DrawingResponseDTO response = drawingService.getMemberDrawingData(studentId, lessonId, questionId);
+		return CommonResponse.success(response, "학생 데이터 조회 성공");
+	}
 }
