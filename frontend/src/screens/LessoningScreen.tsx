@@ -14,6 +14,7 @@ import { useLectureStore, useLessonStore } from '@store/useLessonStore';
 import ProblemSection from '@components/common/ProblemSection';
 import { useQuery } from '@tanstack/react-query';
 import { getFileDetail } from '@services/problemService';
+import { useLessoningStore } from '@store/useLessoningStore';
 
 function LessoningScreen(): React.JSX.Element {
   const questionIds = useLessonStore(state => state.questionIds);
@@ -38,20 +39,20 @@ function LessoningScreen(): React.JSX.Element {
   const problems = lessonProblems?.map(problem => problem.content) || [];
   const answers = lessonProblems?.map(problem => problem.answer) || [];
   const titles = lessonProblems?.map(problem => problem.title) || [];
-
+  const [currentPage, setCurrentPage] = useState(1);
   const userInfo = useAuthStore(state => state.userInfo);
   const [isConnected, setIsConnected] = useState(false);
   const [receivedMessage, setReceivedMessage] = useState<string | null>(null);
   const clientRef = useRef<StompJs.Client | null>(null);
   const isTeacher = userInfo.role === 'TEACHER';
 
-  const sendStudentInfo = (action: 'in' | 'now' | 'out') => {
+  const sendStudentInfo = (action: 'in' | 'now' | 'out', page?: number) => {
     if (clientRef.current?.connected) {
       const message = {
         studentId: userInfo.id,
         studentName: userInfo.name,
         studentImage: userInfo.image || '',
-        currentPage: action === 'now' ? currentPage : 1,
+        currentPage: page ?? currentPage, // 명시적으로 전달된 page 사용, 없으면 currentPage 사용
       };
 
       const destination = `/app/lesson/${lessonId}/${action}`;
@@ -59,6 +60,7 @@ function LessoningScreen(): React.JSX.Element {
       console.log(`Message sent to ${destination}:`, message);
     }
   };
+
 
   // STOMP 클라이언트 초기화 및 설정
   useEffect(() => {
@@ -125,44 +127,56 @@ function LessoningScreen(): React.JSX.Element {
       console.log('STOMP client deactivated');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTeacher, isTeaching, lessonId, memberId]);
-
-  const [currentPage, setCurrentPage] = useState(1);
+  }, [isTeacher, isTeaching, lessonId, memberId, currentPage]);
 
   const handleNextPage = () => {
     if (currentPage < problems.length) {
-      setCurrentPage(prev => {
-        const nextPage = prev + 1;
-        // 현재 페이지 정보 전송
-        if (!isTeacher) {
-          sendStudentInfo('now');
-        }
-        return nextPage;
-      });
+      const nextPage = currentPage + 1;
+
+      setCurrentPage(nextPage); // 페이지 상태 업데이트
+      if (!isTeacher) {
+        sendStudentInfo('in', nextPage); // 다음 페이지 정보로 in 호출
+      }
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => {
-        const prevPage = prev - 1;
-        // 학생이면 현재 페이지 정보 전송
-        if (!isTeacher) {
-          sendStudentInfo('now');
-        }
-        return prevPage;
-      });
+      const prevPage = currentPage - 1;
+
+      setCurrentPage(prevPage); // 페이지 상태 업데이트
+      if (!isTeacher) {
+        sendStudentInfo('in', prevPage); // 이전 페이지 정보로 in 호출
+      }
     }
   };
 
-  const handleGoToTeacherScreen = (questionId: number) => {
-    const targetIndex = questionIds!.findIndex(id => id === questionId);
-    if (targetIndex !== -1) {
-      setCurrentPage(targetIndex + 1); // 1-based index
-    } else {
-      console.error('해당 questionId가 questionIds에 없습니다.');
+  const handleGoToTeacherScreen = () => {
+    const currentQuestionId = useLessoningStore.getState().questionId;
+
+    console.log('내 문제 ID', questionIds![currentPage - 1]);
+    console.log('선생님 문제 ID', currentQuestionId);
+
+    if (!problemIds || problemIds.length === 0) {
+      console.error('problemIds 배열이 비어있습니다.');
+      return;
     }
+
+    // 문제 ID 배열에서 선생님이 보고 있는 문제 ID의 인덱스를 찾음
+    const targetIndex = problemIds.findIndex(id => id === currentQuestionId);
+
+    if (targetIndex === -1) {
+      console.error('선생님이 보고 있는 문제 ID가 problemIds에 없습니다.');
+      return;
+    }
+
+    console.log('targetIndex:', targetIndex);
+
+    // 페이지 업데이트 (1-based index)
+    setCurrentPage(targetIndex + 1);
+    console.log('Updated currentPage:', targetIndex + 1);
   };
+
 
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
