@@ -22,7 +22,7 @@ interface StudentCanvasSectionProps {
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
-  handleGoToTeacherScreen: (questionId: number) => void;
+  handleGoToTeacherScreen: () => void;
 }
 
 // Path 데이터 구조
@@ -83,18 +83,18 @@ const StudentRealTimeCanvasSection = ({
 
         const {
           memberId,
-          getLessonId,
+          lessonId,
           questionId,
         } = messageObject;
 
         console.log('파싱된 메시지:', {
           memberId,
-          getLessonId,
+          lessonId,
           questionId,
         });
 
         // Zustand 상태 업데이트
-        setLessoningInfo(memberId, getLessonId, questionId);
+        setLessoningInfo(memberId, lessonId, questionId);
 
       } catch (error) {
         console.error('receivedMessage 파싱 오류:', error);
@@ -146,7 +146,7 @@ const StudentRealTimeCanvasSection = ({
     // STOMP 전송 함수 호출
     sendCompressedData('/app/draw', dataToSend);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paths, clientRef]);
+  }, [paths]);
 
   const togglePenOpacity = () => {
     if (isErasing) {
@@ -346,7 +346,7 @@ const StudentRealTimeCanvasSection = ({
         resetPaths={resetPaths}
       />
       <StudentLessoningInteractionTool
-      problemIds={problemIds}
+        problemIds={problemIds}
         answers={answers}
         titles={titles}
         currentPage={currentPage}
