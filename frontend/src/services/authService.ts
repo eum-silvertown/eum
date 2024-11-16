@@ -64,13 +64,19 @@ export const logIn = async (credentials: LoginCredentials): Promise<any> => {
 
 // 로그아웃
 export const logOut = async (): Promise<any> => {
+  const {resetUserInfo, setIsLoggedIn} = useAuthStore.getState();
+
   try {
     await removeFCMToken();
     await authApiClient.get('/user/logout');
     await clearToken();
 
-    // 로그인 상태를 false로 설정
-    useAuthStore.getState().setIsLoggedIn(false);
+    // 로그인 상태 false
+    setIsLoggedIn(false);
+
+    // 유저정보 초기화
+    resetUserInfo();
+
   } catch (error) {
     return Promise.reject(handleApiError(error));
   }
@@ -126,14 +132,14 @@ export const getUserInfo = async (): Promise<any> => {
   try {
     const response = await authApiClient.get('/user/info');
     const userInfo = response.data.data;
-
+    console.log('유저 정보 조회 성공');
     const authStore = useAuthStore.getState();
 
     // 유저정보 갱신
     await authStore.setUserInfo(userInfo);
-
     return response.data;
   } catch (error) {
+    console.log('유저정보 조회 실패');
     return Promise.reject(handleApiError(error));
   }
 };
