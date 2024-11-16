@@ -19,6 +19,7 @@ import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo
 import com.eum.lecture_service.query.dto.homework.HomeworkInfoResponse;
 import com.eum.lecture_service.query.dto.homework.HomeworkProblemSubmissionInfoResponse;
 import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionsInfoResponse;
 import com.eum.lecture_service.query.dto.homework.StudentHomeworkResponse;
 import com.eum.lecture_service.query.service.homework.HomeworkQueryService;
 import com.eum.lecture_service.query.service.homework.HomeworkSubmissionQueryService;
@@ -56,7 +57,7 @@ public class HomeworkQueryController {
 
 		checkTeacherRole(role);
 
-		List<HomeworkSubmissionInfoResponse> response = homeworkSubmissionQueryService.getHomeworkSubmissions(
+		List<HomeworkSubmissionsInfoResponse> response = homeworkSubmissionQueryService.getHomeworkSubmissions(
 			lectureId, homeworkId);
 		return CommonResponse.success(response, "숙제 제출 내역 조회 성공");
 	}
