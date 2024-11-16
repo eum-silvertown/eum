@@ -15,15 +15,15 @@ interface ParticipantCardProps {
   onPress: () => void;
 }
 
-const ParticipantCard: React.FC<ParticipantCardProps> = ({
+function ParticipantCard({
   participant,
   onPress,
-}) => {
+}: ParticipantCardProps): React.JSX.Element {
   const { studentName, studentImage, status, currentPage } = participant;
 
   // 상태에 따른 스타일 동적 설정
   const borderColor = {
-    in: 'blue', // 대기 상태: 파란색
+    in: 'black', // 대기 상태: 파란색
     now: 'green', // 움직임 상태: 초록색
     out: 'gray', // 나간 상태: 회색
   }[status];
@@ -47,7 +47,9 @@ const ParticipantCard: React.FC<ParticipantCardProps> = ({
       <Text style={styles.pageInfo}>{currentPage}페이지 입니다</Text>
     </TouchableOpacity>
   );
-};
+}
+
+export default ParticipantCard;
 
 const styles = StyleSheet.create({
   card: {
@@ -92,5 +94,3 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 });
-
-export default ParticipantCard;
