@@ -39,6 +39,8 @@ const TeacherLessoningInteractionTool = ({
             onPress={() => navigation.navigate('LessoningStudentListScreen')}>
             <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
           </TouchableOpacity>
+          <Text>{titles[currentPage - 1]}</Text>
+          <Text>정답 : {answers[currentPage - 1]}</Text>
           {/* 문제 페이지 설정 */}
           <View style={styles.pageControlContainer}>
             <TouchableOpacity
@@ -53,8 +55,6 @@ const TeacherLessoningInteractionTool = ({
                 이전
               </Text>
             </TouchableOpacity>
-            <Text>{answers[currentPage - 1]}</Text>
-            <Text>{titles[currentPage - 1]}</Text>
 
             <Text style={styles.pageInfoText}>
               {currentPage} / {totalPages}
