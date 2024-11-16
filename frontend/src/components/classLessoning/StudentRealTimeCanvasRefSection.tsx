@@ -6,6 +6,7 @@ import base64 from 'react-native-base64';
 
 interface StudentCanvasSectionProps {
   receivedMessage: string | null;
+  isTeacherScreenOn: boolean;
 }
 
 type PathData = {
@@ -18,6 +19,7 @@ type PathData = {
 // 학생 캔버스 컴포넌트
 function StudentRealTimeCanvasRefSection({
   receivedMessage,
+  isTeacherScreenOn,
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -68,7 +70,7 @@ function StudentRealTimeCanvasRefSection({
         })
         .filter(Boolean);
 
-      // 기존 경로와 병합
+      // 데이터 교체
       setPaths(mergeSimilarPaths(parsedPaths));
     } catch (error) {
       console.error('Failed to decompress or parse data:', error);
@@ -106,32 +108,34 @@ function StudentRealTimeCanvasRefSection({
 
   return (
     <View style={styles.canvasLayout}>
-      <Canvas
-        style={[
-          styles.canvas,
-          {
-            transform: [
-              { translateX: (deviceWidth * (1 - 1 / widthRatio)) / 2 },
-              { translateY: (deviceHeight * (1 - 1 / heightRatio)) / 2 },
-              { scaleX: widthRatio / 1 },
-              { scaleY: heightRatio / 1 },
-            ],
-          },
-        ]}
-        ref={canvasRef}>
-        {paths.map(({ path, color, strokeWidth, opacity }, index) => (
-          <Path
-            key={index}
-            path={path}
-            color={Skia.Color(color)}
-            style="stroke"
-            strokeWidth={strokeWidth}
-            strokeCap="round"
-            strokeJoin="round"
-            opacity={opacity}
-          />
-        ))}
-      </Canvas>
+      {isTeacherScreenOn &&
+        <Canvas
+          style={[
+            styles.canvas,
+            {
+              transform: [
+                { translateX: (deviceWidth * (1 - 1 / widthRatio)) / 2 },
+                { translateY: (deviceHeight * (1 - 1 / heightRatio)) / 2 },
+                { scaleX: widthRatio / 1 },
+                { scaleY: heightRatio / 1 },
+              ],
+            },
+          ]}
+          ref={canvasRef}>
+          {paths.map(({ path, color, strokeWidth, opacity }, index) => (
+            <Path
+              key={index}
+              path={path}
+              color={Skia.Color(color)}
+              style="stroke"
+              strokeWidth={strokeWidth}
+              strokeCap="round"
+              strokeJoin="round"
+              opacity={opacity}
+            />
+          ))}
+        </Canvas>
+      }
     </View>
   );
 }
@@ -148,4 +152,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   canvas: { flex: 1 },
+  placeholder: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
 });

@@ -320,9 +320,7 @@ const StudentRealTimeCanvasSection = ({
 
   return (
     <>
-      {isTeacherScreenOn && (
-        <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} />
-      )}
+      <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} isTeacherScreenOn={isTeacherScreenOn} />
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}
