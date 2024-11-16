@@ -18,6 +18,7 @@ import com.eum.lecture_service.query.document.lectureInfo.HomeworkInfo;
 import com.eum.lecture_service.query.document.studentInfo.HomeworkSubmissionInfo;
 import com.eum.lecture_service.query.dto.homework.HomeworkProblemSubmissionInfoResponse;
 import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.homework.HomeworkSubmissionsInfoResponse;
 import com.eum.lecture_service.query.dto.homework.StudentHomeworkResponse;
 import com.eum.lecture_service.query.repository.LectureReadRepository;
 import com.eum.lecture_service.query.repository.StudentOverviewRepository;
@@ -35,14 +36,20 @@ public class HomeworkSubmissionQueryServiceImpl implements HomeworkSubmissionQue
 
 	//특정 숙제에 대한 학생들 성적 모두 조회
 	@Override
-	public List<HomeworkSubmissionInfoResponse> getHomeworkSubmissions(Long lectureId, Long homeworkId) {
+	public List<HomeworkSubmissionsInfoResponse> getHomeworkSubmissions(Long lectureId, Long homeworkId) {
 		List<StudentOverviewModel> studentOverviews = studentOverviewRepository.findByLectureId(lectureId);
 
-		return studentOverviews.stream()
-			.flatMap(student -> student.getHomeworkSubmissionInfo().stream())
-			.filter(submission -> submission.getHomeworkId().equals(homeworkId))
-			.map(HomeworkSubmissionInfoResponse::fromHomeworkSubmission)
-			.collect(Collectors.toList());
+		List<HomeworkSubmissionsInfoResponse> homeworkSubmissions = new ArrayList<>();
+		studentOverviews.forEach(studentOverview -> {
+			StudentModel studentModel = studentReadRepository.findById(studentOverview.getStudentId())
+				.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
+			studentOverview.getHomeworkSubmissionInfo().stream()
+				.filter(homeworkSubmissionInfo -> homeworkSubmissionInfo.getHomeworkId().equals(homeworkId))
+				.forEach(homeworkSubmissionInfo ->
+					homeworkSubmissions.add(HomeworkSubmissionsInfoResponse.fromHomeworkSubmission(homeworkSubmissionInfo, studentModel))
+				);
+		});
+		return homeworkSubmissions;
 	}
 
 	// 특정 학생의 숙제 제출 내역 조회

@@ -1,5 +1,6 @@
 package com.eum.lecture_service.query.service.exam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,10 +9,13 @@ import org.springframework.stereotype.Service;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.query.document.StudentOverviewModel;
+import com.eum.lecture_service.query.document.eventModel.StudentModel;
 import com.eum.lecture_service.query.document.studentInfo.ExamSubmissionInfo;
 import com.eum.lecture_service.query.dto.exam.ExamProblemSubmissionInfoResponse;
 import com.eum.lecture_service.query.dto.exam.ExamSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.exam.ExamSubmissionsInfoResponse;
 import com.eum.lecture_service.query.repository.StudentOverviewRepository;
+import com.eum.lecture_service.query.repository.StudentReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,16 +24,24 @@ import lombok.RequiredArgsConstructor;
 public class ExamSubmissionQueryServiceImpl implements ExamSubmissionQueryService {
 
 	private final StudentOverviewRepository studentOverviewRepository;
+	private final StudentReadRepository studentReadRepository;
 
 	@Override
-	public List<ExamSubmissionInfoResponse> getExamSubmissions(Long lectureId, Long examId) {
+	public List<ExamSubmissionsInfoResponse> getExamSubmissions(Long lectureId, Long examId) {
 		List<StudentOverviewModel> studentOverviews = studentOverviewRepository.findByLectureId(lectureId);
 
-		return studentOverviews.stream()
-			.flatMap(student -> student.getExamSubmissionInfo().stream())
-			.filter(submission -> submission.getExamId().equals(examId))
-			.map(ExamSubmissionInfoResponse::fromExamSubmission)
-			.collect(Collectors.toList());
+		List<ExamSubmissionsInfoResponse> examSubmissions = new ArrayList<>();
+		studentOverviews.forEach(studentOverview -> {
+			StudentModel student = studentReadRepository.findById(studentOverview.getStudentId())
+				.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
+			studentOverview.getExamSubmissionInfo().stream()
+				.filter(examSubmissionInfo -> examSubmissionInfo.getExamId().equals(examId))
+				.forEach(examSubmissionInfo ->
+					examSubmissions.add(ExamSubmissionsInfoResponse.fromExamSubmission(examSubmissionInfo, student))
+				);
+		});
+
+		return examSubmissions;
 	}
 
 	@Override
