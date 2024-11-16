@@ -53,24 +53,24 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const COLUMNS = 4;
   const PARTICIPANTS_PER_PAGE = ROWS * COLUMNS;
 
-  const [currentPage, setCurrentPage] = useState(0);
+  const [teacherCurrentPage, setTeacherCurrentPage] = useState(0);
 
   const totalPages = Math.ceil(participants.length / PARTICIPANTS_PER_PAGE);
 
   const currentParticipants = participants.slice(
-    currentPage * PARTICIPANTS_PER_PAGE,
-    (currentPage + 1) * PARTICIPANTS_PER_PAGE
+    teacherCurrentPage * PARTICIPANTS_PER_PAGE,
+    (teacherCurrentPage + 1) * PARTICIPANTS_PER_PAGE
   );
 
   const goToPreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
+    if (teacherCurrentPage > 0) {
+      setTeacherCurrentPage(teacherCurrentPage - 1);
     }
   };
 
   const goToNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
+    if (teacherCurrentPage < totalPages - 1) {
+      setTeacherCurrentPage(teacherCurrentPage + 1);
     }
   };
 
@@ -103,12 +103,12 @@ function LessoningStudentListScreen(): React.JSX.Element {
               studentName,
               studentImage,
               currentPage,
-              status: 'default',
+              status: 'in',
             });
           } else if (type === 'now') {
-            updateParticipant(studentId, { status: 'active', currentPage });
+            updateParticipant(studentId, { status: 'now', currentPage });
           } else if (type === 'out') {
-            updateParticipant(studentId, { status: 'inactive' });
+            updateParticipant(studentId, { status: 'out' });
             setTimeout(() => {
               removeParticipant(studentId);
             }, 3000);
@@ -135,7 +135,6 @@ function LessoningStudentListScreen(): React.JSX.Element {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log(currentParticipants?.length);
 
   return (
     <View style={styles.mainContainer}>
@@ -174,9 +173,9 @@ function LessoningStudentListScreen(): React.JSX.Element {
         {/* 좌측 화살표 */}
         <TouchableOpacity
           onPress={goToPreviousPage}
-          disabled={currentPage === 0}
+          disabled={teacherCurrentPage === 0}
           style={[styles.arrow, styles.leftArrow]}>
-          {currentPage === 0 ? (
+          {teacherCurrentPage === 0 ? (
             <LeftOffIcon width={iconSize.xl} height={iconSize.xl} />
           ) : (
             <LeftIcon width={iconSize.xl} height={iconSize.xl} />
@@ -186,9 +185,9 @@ function LessoningStudentListScreen(): React.JSX.Element {
         {/* 우측 화살표 */}
         <TouchableOpacity
           onPress={goToNextPage}
-          disabled={currentPage === totalPages - 1 || totalPages === 0}
+          disabled={teacherCurrentPage === totalPages - 1 || totalPages === 0}
           style={[styles.arrow, styles.rightArrow]}>
-          {currentPage === totalPages - 1 || totalPages === 0 ? (
+          {teacherCurrentPage === totalPages - 1 || totalPages === 0 ? (
             <RightOffIcon width={iconSize.xl} height={iconSize.xl} />
           ) : (
             <RightIcon width={iconSize.xl} height={iconSize.xl} />
@@ -200,6 +199,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
 }
 
 export default LessoningStudentListScreen;
+
 
 const styles = StyleSheet.create({
   mainContainer: {
