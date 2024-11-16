@@ -143,7 +143,6 @@ function BookModal(): React.JSX.Element {
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.measureInWindow((x, y, width, height) => {
-        console.log('Container coordinates:', x, y, width, height);
         setContainerPosition({
           x,
           y,
