@@ -6,22 +6,22 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import {iconSize} from '@theme/iconSize';
-import {useNavigation} from '@react-navigation/native';
+import { iconSize } from '@theme/iconSize';
+import { useNavigation } from '@react-navigation/native';
 import LessonIcon from '@assets/icons/lessonIcon.svg';
 import EmptyLessonIcon from '@assets/icons/emptyLessonIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
-import {Text as HeaderText} from '@components/common/Text';
-import {useAuthStore} from '@store/useAuthStore';
-import {useLessonStore} from '@store/useLessonStore';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import { Text as HeaderText } from '@components/common/Text';
+import { useAuthStore } from '@store/useAuthStore';
+import { useLessonStore } from '@store/useLessonStore';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getLectureDetail,
   LectureDetailType,
 } from '@services/lectureInformation';
-import {deleteLesson} from '@services/lessonService';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { deleteLesson } from '@services/lessonService';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassLessonListScreen(): React.JSX.Element {
@@ -30,12 +30,12 @@ function ClassLessonListScreen(): React.JSX.Element {
   const lectureId = useLessonStore(state => state.lectureId);
   const role = useAuthStore(state => state.userInfo.role);
 
-  const {data: lectureDetail} = useQuery<LectureDetailType>({
+  const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId!),
   });
 
-  const {mutate: removeLesson} = useMutation({
+  const { mutate: removeLesson } = useMutation({
     mutationFn: (lessonId: number) => deleteLesson(lessonId),
     onSuccess: () => {
       Alert.alert('알림', '삭제되었습니다.');
@@ -84,7 +84,7 @@ function ClassLessonListScreen(): React.JSX.Element {
       <FlatList
         data={lessons}
         keyExtractor={item => item.lessonId.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={styles.cardContent}>
               <TouchableOpacity
@@ -119,7 +119,7 @@ function ClassLessonListScreen(): React.JSX.Element {
               height={iconSize.xxl * 7}
               style={styles.emptyIcon}
             />
-            <Text style={styles.emptyText}>현재 등록된 수업이 없습니다.</Text>
+            <Text style={styles.emptyText}>수업이 없습니다.</Text>
           </View>
         }
       />
@@ -128,8 +128,8 @@ function ClassLessonListScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 15, backgroundColor: '#FFF'},
-  title: {fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: 10},
+  container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: 10 },
   card: {
     marginHorizontal: 40,
     padding: 25,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
   },
@@ -158,8 +158,8 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
-  itemTitle: {fontSize: 18, fontWeight: 'bold', color: '#333'},
-  questionsCount: {fontSize: 14, color: '#666', marginTop: 3},
+  itemTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
+  questionsCount: { fontSize: 14, color: '#666', marginTop: 3 },
   deleteButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,

@@ -69,7 +69,7 @@ export const submitHomework = async (
   try {
     console.log('숙제 문제 제출 요청 데이터:', submissionData);
 
-    const { data } = await authApiClient.post<HomeworkSubmissionResponse>(
+    const {data} = await authApiClient.post<HomeworkSubmissionResponse>(
       `/homework/${homeworkId}/submission`,
       submissionData,
     );
@@ -121,6 +121,58 @@ export const getHomeworkSubmissionList = async (
     return data.data;
   } catch (error) {
     console.error('숙제 제출 리스트 조회 실패:', error);
+    throw error;
+  }
+};
+
+export async function getAllAboutHomework(userId: number) {
+  try {
+    console.log('userId: ', userId);
+    const data = authApiClient.get(`homework/${userId}`);
+    console.log(data);
+  } catch (error) {
+    console.error('Failed to get All About Homework: ', error);
+    throw error;
+  }
+}
+
+// 학생의 특정 숙제 제출 내역 조회
+export type HomeworkProblemSubmission = {
+  homeworkProblemSubmissionId: number;
+  questionId: number;
+  isCorrect: boolean;
+  homeworkSolution: string; // 학생이 문제를 푼 답안
+};
+
+export type HomeworkSubmissionDetail = {
+  homeworkSubmissionId: number;
+  homeworkId: number;
+  score: number;
+  correctCount: number;
+  totalCount: number;
+  problemSubmissions: HomeworkProblemSubmission[];
+};
+
+export const getHomeworkSubmissionDetail = async (
+  lectureId: number,
+  homeworkId: number,
+  studentId: number
+): Promise<HomeworkSubmissionDetail> => {
+  try {
+    console.log(
+      `학생의 특정 숙제 제출 내역 조회 요청 (lectureId: ${lectureId}, homeworkId: ${homeworkId}, studentId: ${studentId})`
+    );
+
+    const { data } = await authApiClient.get<{
+      code: string;
+      data: HomeworkSubmissionDetail;
+      message: string;
+    }>(`/homework/${lectureId}/${homeworkId}/submissions/${studentId}`);
+
+    console.log('학생의 특정 숙제 제출 내역 조회 성공 응답:', data);
+    return data.data;
+  } catch (error) {
+    console.error('학생의 특정 숙제 제출 내역 조회 실패:', error);
     throw error;
   }
 };

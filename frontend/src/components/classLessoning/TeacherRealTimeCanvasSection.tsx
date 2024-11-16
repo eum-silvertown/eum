@@ -1,16 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {Skia, useCanvasRef} from '@shopify/react-native-skia';
+import React, { useEffect, useState } from 'react';
+import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from '../common/CanvasDrawingTool';
 import base64 from 'react-native-base64';
 import pako from 'pako';
-import {throttle} from 'lodash';
 import TeacherLessoningInteractionTool from './TeacherLessoningInteractionTool';
 import * as StompJs from '@stomp/stompjs';
-import simplify from 'simplify-js';
 import TeacherRealTimeCanvasRefSection from './TeacherRealTimeCanvasRefSection';
-import {useLectureStore, useLessonStore} from '@store/useLessonStore';
-import {Dimensions} from 'react-native';
+import { useLectureStore, useLessonStore } from '@store/useLessonStore';
+import { Alert, Dimensions } from 'react-native';
 interface TeacherCanvasSectionProps {
+  problemIds: number[];
+  answers: string[];
+  titles: string[];
   isTeaching: boolean | null;
   role: string;
   clientRef: React.MutableRefObject<StompJs.Client | null>;
@@ -41,6 +42,9 @@ const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
 const TeacherRealTimeCanvasSection = ({
+  problemIds,
+  answers,
+  titles,
   isTeaching,
   role,
   clientRef,
@@ -69,10 +73,10 @@ const TeacherRealTimeCanvasSection = ({
 
   const teacherId = useLectureStore(state => state.teacherId);
   const lessonId = useLessonStore(state => state.lessonId);
-  const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
+  const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 
-  const width = parseFloat(deviceWidth.toFixed(1));
-  const height = parseFloat(deviceHeight.toFixed(1));
+  const width = parseFloat(deviceWidth.toFixed(8));
+  const height = parseFloat(deviceHeight.toFixed(8));
 
   // 압축 전송
   const sendCompressedData = (destination: string, data: any) => {
@@ -89,22 +93,19 @@ const TeacherRealTimeCanvasSection = ({
       memberId: teacherId,
       role: role,
       lessonId: lessonId,
-      questionId: 22,
+      questionId: problemIds[currentPage - 1],
       drawingData: base64EncodedData,
       width,
       height,
     };
+    console.log('newPayload:', newPayload);
+
 
     clientRef.current.publish({
       destination,
       body: JSON.stringify(newPayload),
     });
   };
-
-  // 실시간 전송 - Move 시
-  const throttledSendData = throttle((pathData: PathData) => {
-    sendCompressedData('/app/move', pathData);
-  }, 400); // 200ms마다 전송
 
   useEffect(() => {
     const dataToSend = paths.map(pathData => ({
@@ -118,6 +119,9 @@ const TeacherRealTimeCanvasSection = ({
   }, [paths, clientRef]);
 
   const togglePenOpacity = () => {
+    if (isErasing) {
+      setIsErasing(false); // 지우개 모드를 비활성화
+    }
     setPenOpacity(prevOpacity => (prevOpacity === 1 ? 0.4 : 1));
   };
 
@@ -142,7 +146,7 @@ const TeacherRealTimeCanvasSection = ({
         // 개별 경로로 지우기 작업 수행
         if (isInEraseArea) {
           pathDeleted = true; // 경로 삭제 플래그 설정
-          addToUndoStack({type: 'erase', pathData});
+          addToUndoStack({ type: 'erase', pathData });
           console.log('지우개로 개별 경로 삭제:', pathData); // 디버깅 로그
         }
         return !isInEraseArea; // 삭제 대상이 아닌 경우만 남김
@@ -216,7 +220,7 @@ const TeacherRealTimeCanvasSection = ({
     const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
 
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -229,7 +233,7 @@ const TeacherRealTimeCanvasSection = ({
     const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
     const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
     if (isErasing) {
-      setEraserPosition({x: locationX, y: locationY});
+      setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
       // 현재 경로에 새로운 포인트 추가
@@ -238,25 +242,6 @@ const TeacherRealTimeCanvasSection = ({
         Math.round(locationY * 100) / 100,
       );
       canvasRef.current?.redraw();
-
-      // 정밀도가 낮아진 좌표 목록을 PathData로 준비
-      const pathData = {
-        path: currentPath.toSVGString(),
-        color: penColor,
-        strokeWidth: penSize,
-        opacity: penOpacity,
-      };
-
-      // 경로 간소화 알고리즘을 적용하여 불필요한 점을 줄이기
-      const simplifiedPathData = simplify(
-        [{x: locationX, y: locationY}],
-        0.5, // 간소화 허용 오차
-        true,
-      );
-
-      // 간소화된 좌표 목록을 PathData에 추가하여 전송
-      throttledSendData({...pathData, path: simplifiedPathData});
-      // console.log(`[Simplified Path Data]: ${simplifiedPathData}`);
     }
   };
 
@@ -271,7 +256,7 @@ const TeacherRealTimeCanvasSection = ({
         opacity: penOpacity,
       };
       addPath(newPathData);
-      addToUndoStack({type: 'draw', pathData: newPathData});
+      addToUndoStack({ type: 'draw', pathData: newPathData });
       setCurrentPath(null);
       setRedoStack([]); // redo 스택 초기화
     }
@@ -289,6 +274,29 @@ const TeacherRealTimeCanvasSection = ({
       setIsErasing(false); // 지우개 모드를 비활성화
     }
     setPenSize(size);
+  };
+
+  const resetPaths = () => {
+    Alert.alert(
+      '초기화 확인',
+      '정말 초기화하시겠습니까? 초기화하면 모든 필기 정보가 삭제됩니다.',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '초기화',
+          onPress: () => {
+            setPaths([]);
+            setUndoStack([]);
+            setRedoStack([]);
+            console.log('Canvas 초기화 완료');
+          },
+          style: 'destructive',
+        },
+      ],
+    );
   };
 
   return (
@@ -316,8 +324,11 @@ const TeacherRealTimeCanvasSection = ({
         toggleEraserMode={toggleEraserMode}
         isErasing={isErasing}
         eraserPosition={eraserPosition}
+        resetPaths={resetPaths}
       />
       <TeacherLessoningInteractionTool
+        answers={answers}
+        titles={titles}
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}

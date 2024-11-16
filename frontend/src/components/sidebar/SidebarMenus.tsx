@@ -18,6 +18,7 @@ import NotificationIcon from '@assets/icons/notificationIcon.svg';
 import {Text} from '../common/Text';
 import {SvgProps} from 'react-native-svg';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useNotificationStore} from '@store/useNotificationStore';
 
 interface MenuItem {
   name: string;
@@ -31,6 +32,9 @@ function SidebarMenus(): React.JSX.Element {
   const {width} = useWindowDimensions();
   const styles = useMemo(() => getStyles(width), [width]);
 
+  const unreadNotifications = useNotificationStore(
+    state => state.unreadNotifications,
+  );
   const menuItems: MenuItem[] = [
     {name: '홈', screen: 'HomeScreen', icon: HomeIcon},
     {name: '알림', screen: 'NotificationScreen', icon: NotificationIcon},
@@ -73,6 +77,23 @@ function SidebarMenus(): React.JSX.Element {
           style={[styles.menuContainer]}
           key={index}
           onPress={() => handlePress(index, item.screen)}>
+          {item.name === '알림' && unreadNotifications.length > 0 && (
+            <View
+              style={{
+                position: 'absolute',
+                zIndex: 1000,
+                top: '20%',
+                left: width * 0.01,
+                padding: width * 0.001,
+                backgroundColor: 'red',
+                borderRadius: width * 0.005,
+                elevation: 5,
+              }}>
+              <Text variant="caption" color="white" weight="medium">
+                {unreadNotifications.length}
+              </Text>
+            </View>
+          )}
           <View
             style={[
               styles.menu,

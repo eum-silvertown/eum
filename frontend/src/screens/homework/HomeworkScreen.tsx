@@ -8,6 +8,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import {getAllAboutHomework} from '@services/homeworkService';
+import {useAuthStore} from '@store/useAuthStore';
 
 export type HomeworkType = {
   state: '완료' | '미제출';
@@ -18,6 +20,7 @@ export type HomeworkType = {
 };
 
 function HomeworkScreen(): React.JSX.Element {
+  const userId = useAuthStore(state => state.userInfo.id);
   const flag = [
     {name: '전체', color: '#ffbebe'},
     {name: '국어', color: '#f3ffbe'},
@@ -32,6 +35,18 @@ function HomeworkScreen(): React.JSX.Element {
   const selectedAnimatedStyles = useAnimatedStyle(() => ({
     left: `${left.value}%`,
   }));
+
+  async function fetchHomework() {
+    try {
+      await getAllAboutHomework(userId);
+    } catch (error) {
+      console.error('Failed to fetch Homework: ', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchHomework();
+  }, []);
 
   useEffect(() => {
     left.value = withTiming(selectedFlag * 10, {duration: 300});

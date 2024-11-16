@@ -1,17 +1,25 @@
-import {StyleSheet, useWindowDimensions, View} from 'react-native';
+import {Animated, StyleSheet, useWindowDimensions, View} from 'react-native';
 import TodoList from './widgets/TodoList';
 import Weather from './widgets/Weather';
-import CustomCalendar from './widgets/CustomCalendar';
+import MainHeader from './MainHeader';
 
-export default function Widgets(): React.JSX.Element {
+interface WidgetsProps {
+  isNightTime: Animated.AnimatedInterpolation<string | number>;
+}
+
+export default function Widgets({
+  isNightTime,
+}: WidgetsProps): React.JSX.Element {
   const {width} = useWindowDimensions();
   const styles = getStyles(width);
 
   return (
     <View style={styles.container}>
-      <TodoList />
-      <Weather />
-      <CustomCalendar />
+      <MainHeader isNightTime={isNightTime} />
+      <View style={styles.widgetContainer}>
+        <TodoList />
+        <Weather />
+      </View>
     </View>
   );
 }
@@ -19,9 +27,12 @@ export default function Widgets(): React.JSX.Element {
 const getStyles = (width: number) =>
   StyleSheet.create({
     container: {
-      flexDirection: 'row',
-      width: '100%',
       height: '40%',
+    },
+    widgetContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      width: '66%',
       gap: width * 0.01,
       paddingHorizontal: width * 0.015,
     },

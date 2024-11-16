@@ -1,44 +1,54 @@
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
-import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Alert,
+} from 'react-native';
 import { getResponsiveSize } from '@utils/responsive';
+import { useNavigation } from '@react-navigation/native';
+import PencilIcon from '@assets/icons/pencilIcon.svg';
 
-type NavigationProps = NativeStackNavigationProp<ScreenType>;
-
-type CanvasComponentProps = {
-  answers: string[];
-  titles: string[];
-  startRecording?: () => void;
-  stopRecording?: () => void;
-  isRecording?: boolean;
+interface LessoningInteractionToolForStudentProps {
+  solveType: 'EXAM' | 'HOMEWORK' | 'LESSON';
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
-};
+  togglePreviousSolution: () => void;
+  showPreviousSolution: boolean;
+}
 
-const TeacherLessoningInteractionTool = ({
-  answers,
-  titles,
+const StudentResolveInteractionTool = ({
   currentPage,
   totalPages,
   onNextPage,
   onPrevPage,
-}: CanvasComponentProps) => {
-  const navigation = useNavigation<NavigationProps>();
+  togglePreviousSolution,
+  showPreviousSolution,
+}: LessoningInteractionToolForStudentProps) => {
+  const navigation = useNavigation();
+  const handleExit = () => {
+    Alert.alert(
+      '나가기',
+      '추가로 필기한 데이터는 저장되지 않습니다.',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '나가기',
+          onPress: () => navigation.goBack(),
+        },
+      ],
+    );
+  };
 
   return (
     <View style={styles.InteractionToolBar}>
       <View style={styles.InteractionContainer}>
         <View style={styles.floatingToolbar}>
-          {/* 학생 화면 Grid 보기 */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('LessoningStudentListScreen')}>
-            <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
-          </TouchableOpacity>
           {/* 문제 페이지 설정 */}
           <View style={styles.pageControlContainer}>
             <TouchableOpacity
@@ -53,8 +63,6 @@ const TeacherLessoningInteractionTool = ({
                 이전
               </Text>
             </TouchableOpacity>
-            <Text>{answers[currentPage - 1]}</Text>
-            <Text>{titles[currentPage - 1]}</Text>
 
             <Text style={styles.pageInfoText}>
               {currentPage} / {totalPages}
@@ -73,13 +81,28 @@ const TeacherLessoningInteractionTool = ({
               </Text>
             </TouchableOpacity>
           </View>
+
+          {/* 이전 필기 보기 버튼 */}
+          <TouchableOpacity
+            onPress={togglePreviousSolution}
+            style={styles.iconButton}>
+            <PencilIcon width={24} height={24} />
+            <Text style={styles.iconButtonText}>
+              {showPreviousSolution ? '필기 숨기기' : '이전 필기 보기'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* 나가기 버튼 */}
+          <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
+            <Text style={styles.exitButtonText}>나가기</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
   );
 };
 
-export default TeacherLessoningInteractionTool;
+export default StudentResolveInteractionTool;
 
 const styles = StyleSheet.create({
   InteractionToolBar: {
@@ -90,13 +113,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f9f9f9',
     borderRadius: getResponsiveSize(12),
-    marginTop: getResponsiveSize(4),
+    marginTop: getResponsiveSize(6),
     marginHorizontal: 'auto',
     padding: getResponsiveSize(12),
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: getResponsiveSize(4) },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: getResponsiveSize(4),
     elevation: 4,
   },
   floatingToolbar: {
@@ -110,35 +133,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pageInfoText: {
-    marginHorizontal: getResponsiveSize(18),
-    fontSize: 18,
+    marginHorizontal: getResponsiveSize(12),
+    fontSize: getResponsiveSize(14),
     fontWeight: '600',
     color: '#333',
   },
-  pageButtonText: {
-    fontSize: 12,
-    color: '#007AFF',
-    fontWeight: '600',
-  },
   pageButton: {
-    paddingVertical: getResponsiveSize(4),
-    paddingHorizontal: getResponsiveSize(12),
+    paddingVertical: getResponsiveSize(8),
+    paddingHorizontal: getResponsiveSize(16),
     borderRadius: getResponsiveSize(8),
     backgroundColor: '#E0F7FA',
     alignItems: 'center',
   },
+  pageButtonText: {
+    fontSize: getResponsiveSize(14),
+    color: '#2E2559',
+    fontWeight: '600',
+  },
   disabledText: {
     color: '#999',
   },
+  iconButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  iconButtonText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#2E2559',
+    fontWeight: '600',
+  },
   exitButton: {
-    padding: getResponsiveSize(4),
+    paddingVertical: getResponsiveSize(8),
+    paddingHorizontal: getResponsiveSize(16),
     borderRadius: getResponsiveSize(8),
-    backgroundColor: '#FFCDD2', // 퇴장 버튼 강조 색상
+    backgroundColor: '#FF6F61',
     alignItems: 'center',
   },
   exitButtonText: {
-    fontSize: 12,
-    color: '#D32F2F',
+    fontSize: getResponsiveSize(14),
+    color: '#FFF',
     fontWeight: 'bold',
   },
 });

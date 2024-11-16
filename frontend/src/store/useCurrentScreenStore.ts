@@ -25,6 +25,11 @@ export type ScreenType = {
   ClassHomeworkListScreen: undefined;
   SolveHomeworkScreen: {homeworkId: number; questionIds: number[]};
   SolveExamScreen: {examId: number; questionIds: number[]};
+  ConfirmSolvedScreen: {
+    typeId: number;
+    questionIds: number[];
+    solvedType: 'EXAM' | 'HOMEWORK' | 'LESSON';
+  };
 };
 
 type ScreenName = keyof ScreenType;

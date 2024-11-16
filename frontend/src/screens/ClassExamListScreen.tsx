@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -7,23 +7,26 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {iconSize} from '@theme/iconSize';
+import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
+import { iconSize } from '@theme/iconSize';
 import CalendarIcon from '@assets/icons/calendarIcon.svg';
 import ClockIcon from '@assets/icons/clockIcon.svg';
 import EmptyExamIcon from '@assets/icons/emptyExamIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
-import {Text as HeaderText} from '@components/common/Text';
-import {useAuthStore} from '@store/useAuthStore';
-import {useLessonStore} from '@store/useLessonStore';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import { Text as HeaderText } from '@components/common/Text';
+import { useAuthStore } from '@store/useAuthStore';
+import { useLessonStore } from '@store/useLessonStore';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getLectureDetail,
   LectureDetailType,
 } from '@services/lectureInformation';
-import {deleteExam, getExamSubmissionList} from '@services/examService';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { deleteExam, getExamSubmissionList } from '@services/examService';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useExamStore } from '@store/useExamStore';
+
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassExamListScreen(): React.JSX.Element {
@@ -32,18 +35,23 @@ function ClassExamListScreen(): React.JSX.Element {
   const lectureId = useLessonStore(state => state.lectureId);
   const role = useAuthStore(state => state.userInfo.role);
   const studentId = useAuthStore(state => state.userInfo.id);
-
-  const {data: lectureDetail} = useQuery<LectureDetailType>({
+  const { setExams } = useExamStore();
+  const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId!),
   });
-
-  const {data: examSubmissions} = useQuery({
+  const { data: examSubmissions } = useQuery({
     queryKey: ['examSubmissionList', lectureId, studentId],
     queryFn: () => getExamSubmissionList(lectureId!, studentId!),
   });
 
-  const {mutate: removeExam} = useMutation({
+  useEffect(() => {
+    if (lectureDetail?.exams) {
+      setExams(lectureDetail.exams);
+    }
+  }, [lectureDetail?.exams, setExams]);
+
+  const { mutate: removeExam } = useMutation({
     mutationFn: (examId: number) => deleteExam(examId),
     onSuccess: () => {
       Alert.alert('알림', '시험이 삭제되었습니다.');
@@ -56,9 +64,40 @@ function ClassExamListScreen(): React.JSX.Element {
     },
   });
 
-  const handleExamPress = (examId: number, questionIds: number[]) => {
-    navigation.navigate('SolveExamScreen', {examId, questionIds});
+  const [selectedFilter, setSelectedFilter] = useState<string>('전체');
+  const [currentTime, setCurrentTime] = useState<Date>(new Date()); // 현재 시간 상태
+
+  // 1초마다 현재 시간 업데이트
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleExamPress = (exam: any) => {
+    const endTime = new Date(exam.endTime).getTime();
+    const nowTime = Date.now();
+
+    if (exam.isSubmitted) {
+      // 제출된 시험 -> 결과 화면으로 이동
+      navigation.navigate('ConfirmSolvedScreen', {
+        typeId: exam.examId,
+        questionIds: exam.questions,
+        solvedType: 'EXAM',
+      });
+    } else if (nowTime <= endTime) {
+      // 기한 내 미제출 -> 시험 풀이 화면으로 이동
+      navigation.navigate('SolveExamScreen', {
+        examId: exam.examId,
+        questionIds: exam.questions,
+      });
+    } else {
+      // 기한 지난 미제출 -> 알림
+      Alert.alert('알림', '기한이 지난 시험은 제출할 수 없습니다.');
+    }
   };
+
 
   const handleDeleteExam = (examId: number) => {
     Alert.alert('시험 삭제', '이 시험을 정말로 삭제하시겠습니까?', [
@@ -78,13 +117,16 @@ function ClassExamListScreen(): React.JSX.Element {
     submission => submission.examId,
   );
 
-  const sortedExams = [...(lectureDetail?.exams || [])]
+  const filteredExams = [...(lectureDetail?.exams || [])]
     .map(exam => {
       const isSubmitted = submittedExamIds?.includes(exam.examId) || false;
+      const startTime = new Date(exam.startTime);
       const endTime = new Date(exam.endTime);
-      const currentTime = Date.now();
-      const isPastDeadline = !isSubmitted && endTime.getTime() < currentTime;
-      const remainingTime = Math.max(0, endTime.getTime() - currentTime);
+      const now = currentTime.getTime();
+
+      const isOngoing = now >= startTime.getTime() && now <= endTime.getTime();
+      const isPastDeadline = !isSubmitted && endTime.getTime() < now;
+      const remainingTime = Math.max(0, endTime.getTime() - now);
 
       const remainingHours = Math.floor(
         (remainingTime / (1000 * 60 * 60)) % 24,
@@ -95,19 +137,35 @@ function ClassExamListScreen(): React.JSX.Element {
       return {
         ...exam,
         isSubmitted,
+        isOngoing,
         isPastDeadline,
         remainingHours,
         remainingMinutes,
         remainingSeconds,
       };
     })
-    .sort((a, b) => {
-      if (a.isSubmitted === b.isSubmitted) {
-        return (
-          new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
-        );
+    .filter(exam => {
+      switch (selectedFilter) {
+        case '기한 내 미제출':
+          return !exam.isSubmitted && !exam.isPastDeadline;
+        case '기한 지난 미제출':
+          return !exam.isSubmitted && exam.isPastDeadline;
+        case '기한 내 제출':
+          return exam.isSubmitted && !exam.isPastDeadline;
+        case '기한 지난 제출':
+          return exam.isSubmitted && exam.isPastDeadline;
+        default:
+          return true;
       }
-      return a.isSubmitted ? 1 : -1;
+    })
+    .sort((a, b) => {
+      if (selectedFilter === '전체') {
+        // 전체 필터의 경우 진행 중인 시험을 우선적으로 정렬
+        if (a.isOngoing && !b.isOngoing) { return -1; }
+        if (!a.isOngoing && b.isOngoing) { return 1; }
+      }
+      // 기본 정렬 기준은 시작 시간 순서
+      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
     });
 
   return (
@@ -119,23 +177,35 @@ function ClassExamListScreen(): React.JSX.Element {
         <HeaderText variant="title" style={styles.headerText} weight="bold">
           시험 목록
         </HeaderText>
+        <View style={styles.filterContainer}>
+          <Picker
+            selectedValue={selectedFilter}
+            onValueChange={itemValue => setSelectedFilter(itemValue)}
+            style={styles.filterPicker}>
+            <Picker.Item label="전체" value="전체" />
+            <Picker.Item label="기한 내 미제출" value="기한 내 미제출" />
+            <Picker.Item label="기한 지난 미제출" value="기한 지난 미제출" />
+            <Picker.Item label="기한 내 제출" value="기한 내 제출" />
+            <Picker.Item label="기한 지난 제출" value="기한 지난 제출" />
+          </Picker>
+        </View>
       </View>
       <FlatList
-        data={sortedExams}
+        data={filteredExams}
         keyExtractor={item => item.examId.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View
             style={[
               styles.card,
               item.isPastDeadline
                 ? styles.pastDeadlineCard
                 : item.isSubmitted
-                ? styles.submittedCard
-                : styles.ongoingExamCard,
+                  ? styles.submittedCard
+                  : styles.ongoingExamCard,
             ]}>
             <View style={styles.cardContent}>
               <TouchableOpacity
-                onPress={() => handleExamPress(item.examId, item.questions)}
+                onPress={() => handleExamPress(item)}
                 style={styles.examContent}>
                 <CalendarIcon
                   width={iconSize.md}
@@ -184,7 +254,7 @@ function ClassExamListScreen(): React.JSX.Element {
               height={iconSize.xxl * 7}
               style={styles.emptyIcon}
             />
-            <Text style={styles.emptyText}>현재 등록된 시험이 없습니다.</Text>
+            <Text style={styles.emptyText}>시험이 없습니다.</Text>
           </View>
         }
       />
@@ -193,8 +263,8 @@ function ClassExamListScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 15, backgroundColor: '#FFF'},
-  title: {fontSize: 22, fontWeight: 'bold', marginBottom: 10, color: '#333'},
+  container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
+  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10, color: '#333' },
   card: {
     marginHorizontal: 24,
     padding: 20,
@@ -205,7 +275,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFDDDD', // 시간 오버 + 제출 못한 시험 배경색
   },
   ongoingExamCard: {
-    backgroundColor: '#FFFFFF', // 진행 중인 시험 배경색
+    backgroundColor: '#f1f1f1', // 진행 중인 시험 배경색
   },
   submittedCard: {
     backgroundColor: '#DDFFDD', // 시간 내 제출한 시험 배경색
@@ -234,8 +304,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 3,
   },
-  itemTitle: {fontSize: 18, fontWeight: 'bold', color: '#333', marginLeft: 5},
-  itemText: {fontSize: 14, color: '#666', marginBottom: 3},
+  itemTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginLeft: 5 },
+  itemText: { fontSize: 14, color: '#666', marginBottom: 3 },
   remainingTimeText: {
     color: '#FFA500',
     fontWeight: 'bold',
@@ -273,6 +343,14 @@ const styles = StyleSheet.create({
   },
   headerText: {
     marginLeft: 10,
+  },
+  filterContainer: {
+    marginLeft: 'auto',
+    marginRight: 24,
+    width: 150,
+  },
+  filterPicker: {
+    height: 20,
   },
 });
 
