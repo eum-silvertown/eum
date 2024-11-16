@@ -15,6 +15,7 @@ import com.eum.lecture_service.config.global.CommonResponse;
 import com.eum.lecture_service.query.dto.exam.ExamInfoResponse;
 import com.eum.lecture_service.query.dto.exam.ExamProblemSubmissionInfoResponse;
 import com.eum.lecture_service.query.dto.exam.ExamSubmissionInfoResponse;
+import com.eum.lecture_service.query.dto.exam.ExamSubmissionsInfoResponse;
 import com.eum.lecture_service.query.service.exam.ExamQueryService;
 import com.eum.lecture_service.query.service.exam.ExamSubmissionQueryService;
 
@@ -50,7 +51,7 @@ public class ExamQueryController {
 
 		checkTeacherRole(role);
 
-		List<ExamSubmissionInfoResponse> responses = examSubmissionQueryService.getExamSubmissions(
+		List<ExamSubmissionsInfoResponse> responses = examSubmissionQueryService.getExamSubmissions(
 			lectureId, examId);
 		return CommonResponse.success(responses, "시험 제출 내역 조회 성공");
 	}

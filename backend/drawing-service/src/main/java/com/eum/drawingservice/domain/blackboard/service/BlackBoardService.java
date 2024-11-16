@@ -12,7 +12,7 @@ public interface BlackBoardService {
 
     SnapShotResponseDTO getSnapShot(String classroomId);
 
-//    void requestSnapShot();
+    void requestSnapShot();
 
     void saveSnapShot(SnapShotRequestDTO requestDTO);
 }
