@@ -265,11 +265,8 @@ const UpdateLectureModal = ({
       year: Number(year),
       semester: Number(semester),
     };
-    console.log('lectureData', lectureData);
-
     updateLecture(lectureData); // 업데이트 요청
 
-    console.log('LectureUpdateBook Data:', lectureData); // 콘솔에 JSON 데이터 출력
     close();
   };
 

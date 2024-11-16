@@ -57,12 +57,6 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
       setLectureInfo(userInfo.id, lectureDetail.teacherModel.teacherId);
       setLectureId(lectureId);
       if (lectureDetail.lectureStatus) {
-        console.log(
-          lectureDetail.lessons[lectureDetail.lessons.length - 1].lessonId,
-        );
-        console.log(
-          lectureDetail.lessons[lectureDetail.lessons.length - 1].questions,
-        );
         setLessonInfo(
           lectureDetail.lessons[lectureDetail.lessons.length - 1].lessonId,
           lectureDetail.lessons[lectureDetail.lessons.length - 1].questions,
