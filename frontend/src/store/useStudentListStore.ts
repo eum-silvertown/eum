@@ -18,9 +18,13 @@ interface StudentListState {
 export const useStudentListStore = create<StudentListState>((set) => ({
   participants: [],
   addParticipant: (participant) =>
-    set((state) => ({
-      participants: [...state.participants, participant],
-    })),
+    set((state) => {
+      const exists = state.participants.some((p) => p.studentId === participant.studentId);
+      if (!exists) {
+        return { participants: [...state.participants, participant] };
+      }
+      return state; // 중복인 경우 상태를 변경하지 않음
+    }),
   updateParticipant: (studentId, updates) =>
     set((state) => ({
       participants: state.participants.map((p) =>
@@ -29,8 +33,6 @@ export const useStudentListStore = create<StudentListState>((set) => ({
     })),
   removeParticipant: (studentId) =>
     set((state) => ({
-      participants: state.participants.filter(
-        (p) => p.studentId !== studentId
-      ),
+      participants: state.participants.filter((p) => p.studentId !== studentId),
     })),
 }));

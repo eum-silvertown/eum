@@ -21,8 +21,6 @@ function StudentRealTimeCanvasRefSection({
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
-  console.log(paths);
-
 
   const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
 

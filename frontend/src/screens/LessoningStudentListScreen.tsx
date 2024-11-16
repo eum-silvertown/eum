@@ -17,6 +17,8 @@ import { useLectureStore, useLessonStore } from '@store/useLessonStore';
 import { useStudentListStore } from '@store/useStudentListStore';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
+import EmptyData from '@components/common/EmptyData';
+
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -133,6 +135,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  console.log(currentParticipants?.length);
 
   return (
     <View style={styles.mainContainer}>
@@ -147,18 +150,24 @@ function LessoningStudentListScreen(): React.JSX.Element {
       </View>
 
       {/* 참가자 그리드 */}
-      <FlatList
-        data={currentParticipants}
-        keyExtractor={(item) => String(item.studentId)}
-        numColumns={COLUMNS}
-        contentContainerStyle={styles.grid}
-        renderItem={({ item }) => (
-          <ParticipantCard
-            participant={item}
-            onPress={() => handleParticipantPress(item.studentId)}
-          />
-        )}
-      />
+      {currentParticipants.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <EmptyData message="수업에 참가중인 학생이 없습니다" />
+        </View>
+      ) : (
+        <FlatList
+          data={currentParticipants}
+          keyExtractor={(item) => String(item.studentId)}
+          numColumns={COLUMNS}
+          contentContainerStyle={styles.grid}
+          renderItem={({ item }) => (
+            <ParticipantCard
+              participant={item}
+              onPress={() => handleParticipantPress(item.studentId)}
+            />
+          )}
+        />
+      )}
 
       {/* 페이지 컨트롤 */}
       <View style={styles.pageControls}>
@@ -197,7 +206,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(153, 153, 153, 0.4)',
   },
   interactionToolContainer: {
     zIndex: 2,
@@ -240,4 +249,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: getResponsiveSize(25),
   },
+  emptyContainer: {
+    flex: 1,
+    marginVertical: 'auto',
+  }
 });
