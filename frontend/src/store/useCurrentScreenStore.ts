@@ -30,6 +30,7 @@ export type ScreenType = {
     questionIds: number[];
     solvedType: 'EXAM' | 'HOMEWORK' | 'LESSON';
   };
+  ClassLessonReviewScreen: { lessonId: number };
 };
 
 type ScreenName = keyof ScreenType;

@@ -28,6 +28,7 @@ import { useBookModalStore } from '@store/useBookModalStore';
 import EmptyData from '@components/common/EmptyData';
 import { useAuthStore } from '@store/useAuthStore';
 import { useLectureStore, useLessonStore } from '@store/useLessonStore';
+import { useReviewLectureStore } from '@store/useReviewLectureStore';
 
 type BookLectureProps = {
   lectureId: number;
@@ -71,6 +72,17 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
     setLessonInfo,
     userInfo.id,
   ]);
+
+useEffect(() => {
+  if (lectureDetail) {
+    const { teacherModel, lessons } = lectureDetail;
+
+    useReviewLectureStore.getState().setReviewLectureInfo(
+      teacherModel.teacherId,
+      lessons,
+    );
+  }
+}, [lectureDetail]);
 
   const [selectedStudentScores, setSelectedStudentScores] =
     useState<ClassAverageScoresType | null>(null);

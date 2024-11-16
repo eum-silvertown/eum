@@ -26,6 +26,7 @@ import QuestionCreateScreen from '@screens/QuestionCreateScreen';
 import SolveHomeworkScreen from '@screens/SolveHomeworkScreen';
 import SolveExamScreen from '@screens/SolveExamScreen';
 import ConfirmSolvedScreen from '@screens/ConfirmSolvedScreen';
+import ClassLessonReviewScreen from '@screens/ClassLessonReviewScreen';
 import { Keyboard, TouchableWithoutFeedback, View } from 'react-native';
 import { Platform, UIManager } from 'react-native';
 import React, { useEffect, useState } from 'react';
@@ -95,6 +96,7 @@ function App(): React.JSX.Element {
         { name: 'SolveHomeworkScreen', component: SolveHomeworkScreen },
         { name: 'SolveExamScreen', component: SolveExamScreen },
         { name: 'ConfirmSolvedScreen', component: ConfirmSolvedScreen },
+        { name: 'ClassLessonReviewScreen', component: ClassLessonReviewScreen },
       ];
 
       if (autoLoginEnabled) {
