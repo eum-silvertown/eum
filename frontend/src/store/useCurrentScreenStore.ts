@@ -33,6 +33,8 @@ export type ScreenType = {
     solvedType: 'EXAM' | 'HOMEWORK' | 'LESSON';
   };
   ClassLessonReviewScreen: { lessonId: number };
+  ClassExamStudentSubmitListScreen: { examId: number };
+  ClassHomeworkStudentSubmitListScreen: { homeworkId: number };
 };
 
 type ScreenName = keyof ScreenType;

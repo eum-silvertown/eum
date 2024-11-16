@@ -51,9 +51,8 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
     },
   });
 
-  const handleHomeworkPress = (homework: any) => {
-    console.log(homework);
-
+  const handleHomeworkPress = (homeworkId: number) => {
+    navigation.navigate('ClassHomeworkStudentSubmitListScreen', { homeworkId });
   };
 
   const handleDeleteHomework = (homeworkId: number) => {
@@ -87,7 +86,7 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
           <View style={styles.card}>
             <View style={styles.cardContent}>
               <TouchableOpacity
-                onPress={() => handleHomeworkPress(item)}
+                onPress={() => handleHomeworkPress(item.homeworkId)}
                 style={styles.homeworkContent}
               >
                 <View style={styles.textContainer}>
@@ -160,6 +159,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     backgroundColor: '#EEEEEE',
+    marginVertical: 8,
   },
   cardContent: {
     flexDirection: 'row',
