@@ -16,23 +16,10 @@ import { useQuery } from '@tanstack/react-query';
 import { getFileDetail } from '@services/problemService';
 
 function LessoningScreen(): React.JSX.Element {
-  const lectureId = useLessonStore(state => state.lectureId);
   const questionIds = useLessonStore(state => state.questionIds);
   const lessonId = useLessonStore(state => state.lessonId);
   const memberId = useLectureStore(state => state.memberId);
-  const teacherId = useLectureStore(state => state.teacherId);
   const isTeaching = useLessonStore(state => state.isTeaching);
-
-  console.log(
-    'lectureId:',
-    lectureId,
-    'questionIds:',
-    questionIds,
-    'memberId:',
-    memberId,
-    'teacherId:',
-    teacherId,
-  );
 
   const { data: lessonProblems, isLoading } = useQuery({
     queryKey: ['lessonProblems', questionIds],
@@ -46,7 +33,7 @@ function LessoningScreen(): React.JSX.Element {
       return problemDetails;
     },
   });
-
+  const problemIds = lessonProblems?.map(problem => problem.fileId) || [];
   const problems = lessonProblems?.map(problem => problem.content) || [];
   const answers = lessonProblems?.map(problem => problem.answer) || [];
   const titles = lessonProblems?.map(problem => problem.title) || [];
@@ -56,7 +43,21 @@ function LessoningScreen(): React.JSX.Element {
   const [receivedMessage, setReceivedMessage] = useState<string | null>(null);
   const clientRef = useRef<StompJs.Client | null>(null);
   const isTeacher = userInfo.role === 'TEACHER';
-  const questionId = 1;
+
+  const sendStudentInfo = (action: 'in' | 'now' | 'out') => {
+    if (clientRef.current?.connected) {
+      const message = {
+        studentId: userInfo.id,
+        studentName: userInfo.name,
+        studentImage: userInfo.image || '',
+        currentPage: action === 'now' ? currentPage : 1,
+      };
+
+      const destination = `/app/lesson/${lessonId}/${action}`;
+      clientRef.current.publish({ destination, body: JSON.stringify(message) });
+      console.log(`Message sent to ${destination}:`, message);
+    }
+  };
 
   // STOMP 클라이언트 초기화 및 설정
   useEffect(() => {
@@ -80,7 +81,9 @@ function LessoningScreen(): React.JSX.Element {
           });
           console.log(`Subscribed to teacher topic: ${teacherTopic}`);
         } else if (!isTeacher) {
-          const studentTopic = `/topic/lesson/${lessonId}/question/22`;
+          // 학생 입장 정보 전송
+          sendStudentInfo('in');
+          const studentTopic = `/topic/lesson/${lessonId}/question/${problemIds[currentPage - 1]}`;
           client.subscribe(studentTopic, message => {
             console.log('Received message for student:', message.body);
             setReceivedMessage(message.body);
@@ -114,22 +117,40 @@ function LessoningScreen(): React.JSX.Element {
 
     return () => {
       console.log('Deactivating STOMP client...');
+      if (!isTeacher) {
+        sendStudentInfo('out');
+      }
       client.deactivate(); // 컴포넌트 언마운트 시 연결 해제
       console.log('STOMP client deactivated');
     };
-  }, [isTeacher, isTeaching, lessonId, memberId, questionId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTeacher, isTeaching, lessonId, memberId]);
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleNextPage = () => {
-    if (currentPage < problems.length - 1) {
-      setCurrentPage(currentPage + 1);
+    if (currentPage < problems.length) {
+      setCurrentPage(prev => {
+        const nextPage = prev + 1;
+        // 현재 페이지 정보 전송
+        if (!isTeacher) {
+          sendStudentInfo('now');
+        }
+        return nextPage;
+      });
     }
   };
 
   const handlePrevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
+    if (currentPage > 1) {
+      setCurrentPage(prev => {
+        const prevPage = prev - 1;
+        // 학생이면 현재 페이지 정보 전송
+        if (!isTeacher) {
+          sendStudentInfo('now');
+        }
+        return prevPage;
+      });
     }
   };
 
@@ -152,6 +173,7 @@ function LessoningScreen(): React.JSX.Element {
           <View style={styles.sectionContainer}>
             <ProblemSection problemText={problems[currentPage - 1]} />
             <TeacherRealTimeCanvasSection
+              problemIds={problemIds}
               answers={answers}
               titles={titles}
               isTeaching={isTeaching}
@@ -180,6 +202,7 @@ function LessoningScreen(): React.JSX.Element {
       <View style={styles.sectionContainer}>
         <ProblemSection problemText={problems[currentPage - 1]} />
         <StudentRealTimeCanvasSection
+          problemIds={problemIds}
           answers={answers}
           titles={titles}
           lessonId={lessonId!}
