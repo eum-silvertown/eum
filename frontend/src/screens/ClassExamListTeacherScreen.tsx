@@ -63,9 +63,7 @@ function ClassExamListTeacherScreen(): React.JSX.Element {
   };
 
   const handleExamPress = (examId: number) => {
-    // 원하는 화면으로 이동할 때 examId 전달
-    console.log(examId);
-
+    navigation.navigate('ClassExamStudentSubmitListScreen', { examId });
   };
 
   const exams = lectureDetail?.exams || [];
@@ -148,11 +146,17 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   card: {
-    marginHorizontal: 24,
-    padding: 20,
-    marginBottom: 12,
+    marginHorizontal: 40,
+    padding: 25,
+    marginBottom: 5,
     borderRadius: 10,
-    backgroundColor: '#f1f1f1',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+    backgroundColor: '#EEEEEE',
+    marginVertical: 8,
   },
   cardContent: {
     flexDirection: 'row',

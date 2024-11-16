@@ -29,6 +29,8 @@ import ConfirmSolvedScreen from '@screens/ConfirmSolvedScreen';
 import ClassLessonReviewScreen from '@screens/ClassLessonReviewScreen';
 import ClassHomeworkListTeacherScreen from '@screens/ClassHomeworkListTeacherScreen';
 import ClassExamListTeacherScreen from '@screens/ClassExamListTeacherScreen';
+import ClassExamStudentSubmitListScreen from '@screens/ClassExamStudentSubmitListScreen';
+import ClassHomeworkStudentSubmitListScreen from '@screens/ClassHomeworkStudentSubmitListScreen';
 import { Keyboard, TouchableWithoutFeedback, View } from 'react-native';
 import { Platform, UIManager } from 'react-native';
 import React, { useEffect, useState } from 'react';
@@ -101,6 +103,8 @@ function App(): React.JSX.Element {
         { name: 'ClassLessonReviewScreen', component: ClassLessonReviewScreen },
         { name: 'ClassHomeworkListTeacherScreen', component: ClassHomeworkListTeacherScreen },
         { name: 'ClassExamListTeacherScreen', component: ClassExamListTeacherScreen },
+        { name: 'ClassExamStudentSubmitListScreen', component: ClassExamStudentSubmitListScreen },
+        { name: 'ClassHomeworkStudentSubmitListScreen', component: ClassHomeworkStudentSubmitListScreen },
       ];
 
       if (autoLoginEnabled) {

@@ -39,6 +39,7 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
   const userInfo = useAuthStore(state => state.userInfo);
   const isTeacher = userInfo.role === 'TEACHER';
   const setLectureInfo = useLectureStore(state => state.setLectureInfo);
+  const setStudentsCnt = useLectureStore(state => state.setStudentsCnt);
   const setLectureId = useLessonStore(state => state.setLectureId);
   const setLessonInfo = useLessonStore(state => state.setLessonInfo);
 
@@ -57,6 +58,7 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
     if (lectureDetail) {
       setLectureInfo(userInfo.id, lectureDetail.teacherModel.teacherId);
       setLectureId(lectureId);
+      setStudentsCnt(lectureDetail.teacherOverviewModel!.students.length);
       if (lectureDetail.lectureStatus) {
         setLessonInfo(
           lectureDetail.lessons[lectureDetail.lessons.length - 1].lessonId,
@@ -64,25 +66,18 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
         );
       }
     }
-  }, [
-    lectureDetail,
-    lectureId,
-    setLectureId,
-    setLectureInfo,
-    setLessonInfo,
-    userInfo.id,
-  ]);
+  }, [lectureDetail, lectureId, setLectureId, setLectureInfo, setLessonInfo, setStudentsCnt, userInfo.id]);
 
-useEffect(() => {
-  if (lectureDetail) {
-    const { teacherModel, lessons } = lectureDetail;
+  useEffect(() => {
+    if (lectureDetail) {
+      const { teacherModel, lessons } = lectureDetail;
 
-    useReviewLectureStore.getState().setReviewLectureInfo(
-      teacherModel.teacherId,
-      lessons,
-    );
-  }
-}, [lectureDetail]);
+      useReviewLectureStore.getState().setReviewLectureInfo(
+        teacherModel.teacherId,
+        lessons,
+      );
+    }
+  }, [lectureDetail]);
 
   const [selectedStudentScores, setSelectedStudentScores] =
     useState<ClassAverageScoresType | null>(null);
