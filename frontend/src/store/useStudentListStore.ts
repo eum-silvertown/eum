@@ -5,7 +5,7 @@ export interface Participant {
   studentName: string;
   studentImage: string;
   currentPage: number;
-  status: 'default' | 'active' | 'inactive';
+  status: 'in' | 'now' | 'out'; // in: 입장, now: 움직임 감지, out: 나감
 }
 
 interface StudentListState {
@@ -20,10 +20,18 @@ export const useStudentListStore = create<StudentListState>((set) => ({
   addParticipant: (participant) =>
     set((state) => {
       const exists = state.participants.some((p) => p.studentId === participant.studentId);
-      if (!exists) {
-        return { participants: [...state.participants, participant] };
+      if (exists) {
+        // 이미 존재하는 참가자는 상태를 유지하며 다른 정보를 업데이트
+        return {
+          participants: state.participants.map((p) =>
+            p.studentId === participant.studentId
+              ? { ...p, ...participant, status: p.status } // 기존 상태 유지
+              : p
+          ),
+        };
       }
-      return state; // 중복인 경우 상태를 변경하지 않음
+      // 새 참가자는 추가
+      return { participants: [...state.participants, participant] };
     }),
   updateParticipant: (studentId, updates) =>
     set((state) => ({

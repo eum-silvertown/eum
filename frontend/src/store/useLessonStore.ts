@@ -4,13 +4,17 @@ import {create} from 'zustand';
 interface LectureState {
   memberId: number | null;
   teacherId: number | null;
+  lectureStudents: number | null;
   setLectureInfo: (memberId: number, teacherId: number) => void;
+  setStudentsCnt: (lectureStudents: number) => void;
 }
 
 export const useLectureStore = create<LectureState>(set => ({
   memberId: null,
   teacherId: null,
+  lectureStudents: null,
   setLectureInfo: (memberId, teacherId) => set({memberId, teacherId}),
+  setStudentsCnt: (lectureStudents) => set({lectureStudents}),
 }));
 
 // Lesson 입장 시 업데이트 / Detail에서 필요 시 추가 업데이트

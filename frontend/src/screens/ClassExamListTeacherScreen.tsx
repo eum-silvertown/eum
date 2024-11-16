@@ -6,68 +6,67 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import { iconSize } from '@theme/iconSize';
 import { useNavigation } from '@react-navigation/native';
-import LessonIcon from '@assets/icons/lessonIcon.svg';
-import EmptyLessonIcon from '@assets/icons/emptyLessonIcon.svg';
+import { iconSize } from '@theme/iconSize';
+import CalendarIcon from '@assets/icons/calendarIcon.svg';
+import ClockIcon from '@assets/icons/clockIcon.svg';
+import EmptyExamIcon from '@assets/icons/emptyExamIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import { Text as HeaderText } from '@components/common/Text';
-import { useAuthStore } from '@store/useAuthStore';
 import { useLessonStore } from '@store/useLessonStore';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getLectureDetail,
   LectureDetailType,
 } from '@services/lectureInformation';
-import { deleteLesson } from '@services/lessonService';
+import { deleteExam } from '@services/examService';
 import { ScreenType } from '@store/useCurrentScreenStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
-function ClassLessonListScreen(): React.JSX.Element {
+function ClassExamListTeacherScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
   const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
-  const role = useAuthStore(state => state.userInfo.role);
 
   const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId!),
   });
 
-  const { mutate: removeLesson } = useMutation({
-    mutationFn: (lessonId: number) => deleteLesson(lessonId),
+  const { mutate: removeExam } = useMutation({
+    mutationFn: (examId: number) => deleteExam(examId),
     onSuccess: () => {
-      Alert.alert('알림', '삭제되었습니다.');
+      Alert.alert('알림', '시험이 삭제되었습니다.');
       queryClient.invalidateQueries({
         queryKey: ['lectureDetail', lectureId],
       });
     },
     onError: error => {
-      console.error('레슨 삭제 실패:', error);
+      console.error('시험 삭제 실패:', error);
     },
   });
 
-  const handleLessonPress = (lessonId: number) => {
-    navigation.navigate('ClassLessonReviewScreen',{lessonId});
-  };
-
-  const handleDeleteLesson = (lessonId: number) => {
-    Alert.alert('삭제', '이 수업을 정말로 삭제하시겠습니까?', [
+  const handleDeleteExam = (examId: number) => {
+    Alert.alert('시험 삭제', '이 시험을 정말로 삭제하시겠습니까?', [
       {
         text: '취소',
         style: 'cancel',
       },
       {
         text: '삭제',
-        onPress: () => removeLesson(lessonId),
+        onPress: () => removeExam(examId),
         style: 'destructive',
       },
     ]);
   };
 
-  const lessons = lectureDetail?.lessons || [];
+  const handleExamPress = (examId: number) => {
+    navigation.navigate('ClassExamStudentSubmitListScreen', { examId });
+  };
+
+  const exams = lectureDetail?.exams || [];
 
   return (
     <View style={styles.container}>
@@ -76,48 +75,58 @@ function ClassLessonListScreen(): React.JSX.Element {
           <BackArrowIcon />
         </TouchableOpacity>
         <HeaderText variant="title" style={styles.headerText} weight="bold">
-          수업 목록
+          시험 목록
         </HeaderText>
       </View>
       <FlatList
-        data={lessons}
-        keyExtractor={item => item.lessonId.toString()}
+        data={exams}
+        keyExtractor={item => item.examId.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={styles.cardContent}>
               <TouchableOpacity
-                onPress={() => handleLessonPress(item.lessonId)}
-                style={styles.lessonContent}>
-                <LessonIcon
+                onPress={() => handleExamPress(item.examId)}
+                style={styles.examContent}>
+                <CalendarIcon
                   width={iconSize.md}
                   height={iconSize.md}
                   style={styles.icon}
                 />
                 <View style={styles.textContainer}>
                   <Text style={styles.itemTitle}>{item.title}</Text>
-                  <Text style={styles.questionsCount}>
+                  <View style={styles.iconRow}>
+                    <ClockIcon width={iconSize.sm} height={iconSize.sm} />
+                    <Text style={styles.itemText}>
+                      시작 시간: {new Date(item.startTime).toLocaleString()}
+                    </Text>
+                  </View>
+                  <View style={styles.iconRow}>
+                    <ClockIcon width={iconSize.sm} height={iconSize.sm} />
+                    <Text style={styles.itemText}>
+                      종료 시간: {new Date(item.endTime).toLocaleString()}
+                    </Text>
+                  </View>
+                  <Text style={styles.itemText}>
                     문제 개수: {item.questions.length}
                   </Text>
                 </View>
               </TouchableOpacity>
-              {role === 'TEACHER' && (
-                <TouchableOpacity
-                  onPress={() => handleDeleteLesson(item.lessonId)}
-                  style={styles.deleteButton}>
-                  <Text style={styles.deleteButtonText}>삭제하기</Text>
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                onPress={() => handleDeleteExam(item.examId)}
+                style={styles.deleteButton}>
+                <Text style={styles.deleteButtonText}>삭제하기</Text>
+              </TouchableOpacity>
             </View>
           </View>
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <EmptyLessonIcon
+            <EmptyExamIcon
               width={iconSize.xxl * 7}
               height={iconSize.xxl * 7}
               style={styles.emptyIcon}
             />
-            <Text style={styles.emptyText}>수업이 없습니다.</Text>
+            <Text style={styles.emptyText}>시험이 없습니다.</Text>
           </View>
         }
       />
@@ -127,25 +136,34 @@ function ClassLessonListScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: 10 },
+  header: {
+    marginVertical: 25,
+    marginLeft: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerText: {
+    marginLeft: 10,
+  },
   card: {
     marginHorizontal: 40,
     padding: 25,
-    backgroundColor: '#DAEAEA',
-    marginBottom: 10,
-    borderRadius: 12,
-    elevation: 2,
+    marginBottom: 5,
+    borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowRadius: 4,
+    elevation: 5,
+    backgroundColor: '#EEEEEE',
+    marginVertical: 8,
   },
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  lessonContent: {
+  examContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
@@ -156,12 +174,17 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
-  itemTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  questionsCount: { fontSize: 14, color: '#666', marginTop: 3 },
+  iconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 3,
+  },
+  itemTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginLeft: 5 },
+  itemText: { fontSize: 14, color: '#666', marginBottom: 3 },
   deleteButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
-    backgroundColor: '#ff9393',
+    backgroundColor: '#FF5555',
     borderRadius: 8,
   },
   deleteButtonText: {
@@ -182,15 +205,6 @@ const styles = StyleSheet.create({
     color: '#666',
     fontWeight: 'bold',
   },
-  header: {
-    marginVertical: 25,
-    marginLeft: 25,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerText: {
-    marginLeft: 10,
-  },
 });
 
-export default ClassLessonListScreen;
+export default ClassExamListTeacherScreen;

@@ -31,10 +31,9 @@ interface LessoningInteractionToolForStudentProps {
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
-  handleGoToTeacherScreen: (questionId: number) => void;
+  handleGoToTeacherScreen: () => void;
 }
 const StudentLessoningInteractionTool = ({
-  problemIds,
   answers,
   titles,
   onToggleScreen,
@@ -149,8 +148,7 @@ const StudentLessoningInteractionTool = ({
           {/* 선생님 화면으로 이동 */}
           <TouchableOpacity
             onPress={() => {
-              const teacherQuestionId = problemIds[currentPage - 1]; // 현재 questionId
-              handleGoToTeacherScreen(teacherQuestionId); // 부모 함수 호출
+              handleGoToTeacherScreen(); // 부모 함수 호출
             }}
           >
             <TeacherScreenMoveIcon
