@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
   useSharedValue,
@@ -14,7 +14,7 @@ interface LinkIndicatorProps {
   isConnected: boolean;
 }
 
-const LinkIndicator: React.FC<LinkIndicatorProps> = ({isConnected}) => {
+const LinkIndicator: React.FC<LinkIndicatorProps> = ({ isConnected }) => {
   const scale1 = useSharedValue(1);
   const scale2 = useSharedValue(1);
 
@@ -23,8 +23,8 @@ const LinkIndicator: React.FC<LinkIndicatorProps> = ({isConnected}) => {
       // 첫 번째 원 애니메이션
       scale1.value = withRepeat(
         withSequence(
-          withTiming(1.5, {duration: 600, easing: Easing.inOut(Easing.ease)}),
-          withTiming(1, {duration: 600, easing: Easing.inOut(Easing.ease)}),
+          withTiming(1.5, { duration: 600, easing: Easing.inOut(Easing.ease) }),
+          withTiming(1, { duration: 600, easing: Easing.inOut(Easing.ease) }),
         ),
         -1,
         false,
@@ -35,8 +35,8 @@ const LinkIndicator: React.FC<LinkIndicatorProps> = ({isConnected}) => {
         withDelay(
           300,
           withSequence(
-            withTiming(1.5, {duration: 600, easing: Easing.inOut(Easing.ease)}),
-            withTiming(1, {duration: 600, easing: Easing.inOut(Easing.ease)}),
+            withTiming(1.5, { duration: 600, easing: Easing.inOut(Easing.ease) }),
+            withTiming(1, { duration: 600, easing: Easing.inOut(Easing.ease) }),
           ),
         ),
         -1,
@@ -51,13 +51,13 @@ const LinkIndicator: React.FC<LinkIndicatorProps> = ({isConnected}) => {
   }, [isConnected]);
 
   const animatedStyle1 = useAnimatedStyle(() => ({
-    transform: [{scale: scale1.value}],
-    backgroundColor: isConnected ? '#4CAF50' : '#BDBDBD',
+    transform: [{ scale: scale1.value }],
+    backgroundColor: isConnected ? '#2E2559' : '#BDBDBD',
   }));
 
   const animatedStyle2 = useAnimatedStyle(() => ({
-    transform: [{scale: scale2.value}],
-    backgroundColor: isConnected ? '#4CAF50' : '#BDBDBD',
+    transform: [{ scale: scale2.value }],
+    backgroundColor: isConnected ? '#2E2559' : '#BDBDBD',
   }));
 
   return (
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     marginHorizontal: 5,
-    backgroundColor: '#4CAF50', // 기본 연결된 상태 색상
+    backgroundColor: '#2E2559', // 기본 연결된 상태 색상
   },
   circle2: {
     marginLeft: -10, // 살짝 겹쳐진 느낌으로 배치
