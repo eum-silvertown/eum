@@ -68,31 +68,23 @@ public class BlackBoardServiceImpl implements BlackBoardService {
                 .build();
     }
 
-//    @Override
-////    @Scheduled(fixedRate = 1000 * 60 * 5)
-//    @Scheduled(fixedRate = 1000 * 30)
-//    public void requestSnapShot() {
-//        log.info(">>> requestSnapShot method started");
-//
-//        // 현재 연결되어 있는 사용자 중 한 명에게 스냅샷을 위한 imageData를 요청
-//        Map<String, Set<String>> channelSubscriptions = subscriptionManger.getChannelSubscriptions(ChannelName.BLACKBOARD);
-//        if (channelSubscriptions.isEmpty()) {
-//            log.info(">>> No channel subscriptions found");
-//            return;
-//        }
-//
-//        for (String subscriptionKey : channelSubscriptions.keySet()) {
-//            if (channelSubscriptions.get(subscriptionKey).isEmpty()) {
-//                log.debug(">>> Skipping empty subscription for key: {}", subscriptionKey);
-//                continue;
-//            }
-//
-//            String sessionId = channelSubscriptions.get(subscriptionKey).iterator().next();
-//            log.info(">>> Requesting snapshot from session: {}", sessionId);
-//            messagingTemplate.convertAndSendToUser(sessionId, "/queue/snapshot", "REQUEST", createHeaders(sessionId));
-//        }
-//        log.info(">>> requestSnapShot method completed");
-//    }
+   @Override
+   @Scheduled(fixedRate = 1000 * 60 * 10)
+   public void requestSnapShot() {
+       // 현재 연결되어 있는 사용자 중 한 명에게 스냅샷을 위한 imageData를 요청
+       Map<String, Set<String>> channelSubscriptions = subscriptionManger.getChannelSubscriptions(ChannelName.BLACKBOARD);
+       if (channelSubscriptions.isEmpty()) {
+           return;
+       }
+
+       for (String subscriptionKey : channelSubscriptions.keySet()) {
+           if (channelSubscriptions.get(subscriptionKey).isEmpty()) {
+               continue;
+           }
+           String sessionId = channelSubscriptions.get(subscriptionKey).iterator().next();
+           messagingTemplate.convertAndSendToUser(sessionId, "/queue/snapshot", "REQUEST", createHeaders(sessionId));
+       }
+   }
 
     @Override
     public void saveSnapShot(SnapShotRequestDTO requestDTO) {
