@@ -8,6 +8,7 @@ import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
 import * as StompJs from '@stomp/stompjs';
 import { useLectureStore } from '@store/useLessonStore';
 import { Alert, Dimensions } from 'react-native';
+import { useLessoningStore } from '@store/useLessoningStore';
 interface StudentCanvasSectionProps {
   problemIds: number[];
   answers: string[];
@@ -21,6 +22,7 @@ interface StudentCanvasSectionProps {
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
+  handleGoToTeacherScreen: (questionId: number) => void;
 }
 
 // Path 데이터 구조
@@ -52,6 +54,7 @@ const StudentRealTimeCanvasSection = ({
   totalPages,
   onNextPage,
   onPrevPage,
+  handleGoToTeacherScreen,
   receivedMessage,
 }: StudentCanvasSectionProps): React.JSX.Element => {
   const canvasRef = useCanvasRef();
@@ -72,6 +75,32 @@ const StudentRealTimeCanvasSection = ({
   const roundToTwoDecimals = (value: number): number => {
     return Math.round(value * 100) / 100;
   };
+  const setLessoningInfo = useLessoningStore(state => state.setLessoningInfo);
+  useEffect(() => {
+    if (receivedMessage) {
+      try {
+        const messageObject = JSON.parse(receivedMessage);
+
+        const {
+          memberId,
+          getLessonId,
+          questionId,
+        } = messageObject;
+
+        console.log('파싱된 메시지:', {
+          memberId,
+          getLessonId,
+          questionId,
+        });
+
+        // Zustand 상태 업데이트
+        setLessoningInfo(memberId, getLessonId, questionId);
+
+      } catch (error) {
+        console.error('receivedMessage 파싱 오류:', error);
+      }
+    }
+  }, [receivedMessage, setLessoningInfo]);
 
   const memberId = useLectureStore(state => state.memberId);
   const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
@@ -317,6 +346,7 @@ const StudentRealTimeCanvasSection = ({
         resetPaths={resetPaths}
       />
       <StudentLessoningInteractionTool
+      problemIds={problemIds}
         answers={answers}
         titles={titles}
         currentPage={currentPage}
@@ -324,6 +354,7 @@ const StudentRealTimeCanvasSection = ({
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
         onToggleScreen={handleToggleScreen}
+        handleGoToTeacherScreen={handleGoToTeacherScreen}
       />
     </>
   );

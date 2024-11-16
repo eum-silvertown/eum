@@ -23,6 +23,7 @@ import { useModal } from 'src/hooks/useModal';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 interface LessoningInteractionToolForStudentProps {
+  problemIds: number[];
   answers: string[];
   titles: string[];
   onToggleScreen: () => void;
@@ -30,8 +31,10 @@ interface LessoningInteractionToolForStudentProps {
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
+  handleGoToTeacherScreen: (questionId: number) => void;
 }
 const StudentLessoningInteractionTool = ({
+  problemIds,
   answers,
   titles,
   onToggleScreen,
@@ -39,6 +42,7 @@ const StudentLessoningInteractionTool = ({
   totalPages,
   onNextPage,
   onPrevPage,
+  handleGoToTeacherScreen,
 }: LessoningInteractionToolForStudentProps) => {
   const navigation = useNavigation<NavigationProps>();
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
@@ -143,7 +147,12 @@ const StudentLessoningInteractionTool = ({
             )}
           </TouchableOpacity>
           {/* 선생님 화면으로 이동 */}
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              const teacherQuestionId = problemIds[currentPage - 1]; // 현재 questionId
+              handleGoToTeacherScreen(teacherQuestionId); // 부모 함수 호출
+            }}
+          >
             <TeacherScreenMoveIcon
               width={iconSize.mdPlus}
               height={iconSize.mdPlus}

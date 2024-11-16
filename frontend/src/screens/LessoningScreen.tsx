@@ -33,6 +33,7 @@ function LessoningScreen(): React.JSX.Element {
       return problemDetails;
     },
   });
+
   const problemIds = lessonProblems?.map(problem => problem.fileId) || [];
   const problems = lessonProblems?.map(problem => problem.content) || [];
   const answers = lessonProblems?.map(problem => problem.answer) || [];
@@ -154,6 +155,15 @@ function LessoningScreen(): React.JSX.Element {
     }
   };
 
+  const handleGoToTeacherScreen = (questionId: number) => {
+    const targetIndex = questionIds!.findIndex(id => id === questionId);
+    if (targetIndex !== -1) {
+      setCurrentPage(targetIndex + 1); // 1-based index
+    } else {
+      console.error('해당 questionId가 questionIds에 없습니다.');
+    }
+  };
+
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
   );
@@ -202,6 +212,7 @@ function LessoningScreen(): React.JSX.Element {
       <View style={styles.sectionContainer}>
         <ProblemSection problemText={problems[currentPage - 1]} />
         <StudentRealTimeCanvasSection
+          handleGoToTeacherScreen={handleGoToTeacherScreen}
           problemIds={problemIds}
           answers={answers}
           titles={titles}
