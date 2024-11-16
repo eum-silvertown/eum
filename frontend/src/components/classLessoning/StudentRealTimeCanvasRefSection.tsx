@@ -36,8 +36,8 @@ function StudentRealTimeCanvasRefSection({
         messageObject.width &&
         messageObject.height
       ) {
-        const newWidthRatio = deviceWidth / messageObject.width;
-        const newHeightRatio = deviceHeight / messageObject.height;
+        const newWidthRatio = parseFloat((deviceWidth / messageObject.width).toFixed(6));
+        const newHeightRatio = parseFloat((deviceHeight / messageObject.height).toFixed(6));
 
         setWidthRatio(newWidthRatio);
         setHeightRatio(newHeightRatio);
@@ -69,7 +69,7 @@ function StudentRealTimeCanvasRefSection({
         .filter(Boolean);
 
       // 기존 경로와 병합
-      setPaths(prevPaths => mergeSimilarPaths([...prevPaths, ...parsedPaths]));
+      setPaths(mergeSimilarPaths(parsedPaths));
     } catch (error) {
       console.error('Failed to decompress or parse data:', error);
     }

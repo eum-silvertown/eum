@@ -34,8 +34,8 @@ function TeacherRealTimeCanvasRefSection({
         messageObject.width &&
         messageObject.height
       ) {
-        const newWidthRatio = deviceWidth / messageObject.width;
-        const newHeightRatio = deviceHeight / messageObject.height;
+        const newWidthRatio = parseFloat((deviceWidth / messageObject.width).toFixed(6));
+        const newHeightRatio = parseFloat((deviceHeight / messageObject.height).toFixed(6));
 
         setWidthRatio(newWidthRatio);
         setHeightRatio(newHeightRatio);
