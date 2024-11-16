@@ -125,11 +125,25 @@ export const getHomeworkSubmissionList = async (
   }
 };
 
-export async function getAllAboutHomework(userId: number) {
+type HomeworkDetailType = {
+  correctCount: number;
+  endTime: string;
+  subject: string;
+  title: string;
+  totalCount: number;
+}
+
+export type AllAboutHomeworkType = {
+  averageScore: number;
+  completedHomeworkCount: number;
+  homeworkDetails: HomeworkDetailType[];
+  totalHomeworkCount: number;
+}
+
+export async function getAllAboutHomework(userId: number): Promise<AllAboutHomeworkType> {
   try {
-    console.log('userId: ', userId);
-    const data = authApiClient.get(`homework/${userId}`);
-    console.log(data);
+    const {data} = await authApiClient.get(`homework/${userId}`);
+    return data.data;
   } catch (error) {
     console.error('Failed to get All About Homework: ', error);
     throw error;

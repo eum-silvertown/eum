@@ -45,14 +45,14 @@ const getStyles = (width: number) =>
     container: {
       flex: 1,
       flexDirection: 'row',
-      gap: width * 0.0075,
-      padding: width * 0.0075,
+      gap: width * 0.01,
+      padding: width * 0.01,
       backgroundColor: '#555588',
     },
     contentWrapper: {
       flex: 1,
       backgroundColor: 'white',
-      borderRadius: width * 0.01,
+      borderRadius: width * 0.015,
       overflow: 'hidden',
       elevation: 5,
     },
