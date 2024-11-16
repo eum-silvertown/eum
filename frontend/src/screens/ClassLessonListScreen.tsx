@@ -69,7 +69,6 @@ function ClassLessonListScreen(): React.JSX.Element {
   };
 
   const lessons = lectureDetail?.lessons || [];
-  console.log('lessons:', lessons);
 
   return (
     <View style={styles.container}>
