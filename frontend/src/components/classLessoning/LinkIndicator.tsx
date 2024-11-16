@@ -5,9 +5,9 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withRepeat,
+  withSequence,
   withTiming,
   withDelay,
-  withSequence,
 } from 'react-native-reanimated';
 
 interface LinkIndicatorProps {
@@ -20,28 +20,36 @@ const LinkIndicator: React.FC<LinkIndicatorProps> = ({ isConnected }) => {
 
   useEffect(() => {
     if (isConnected) {
-      // 첫 번째 원 애니메이션
-      scale1.value = withRepeat(
-        withSequence(
-          withTiming(1.5, { duration: 600, easing: Easing.inOut(Easing.ease) }),
-          withTiming(1, { duration: 600, easing: Easing.inOut(Easing.ease) }),
-        ),
-        -1,
-        false,
-      );
+      const animationDuration = 2000; // 한 애니메이션 주기의 총 시간
+      const shrinkDuration = 600; // 다시 작아지는 시간
+      const delayBetween = 400; // 두 원 사이의 딜레이
 
-      // 두 번째 원 애니메이션 (첫 번째 원과 약간의 딜레이)
-      scale2.value = withRepeat(
-        withDelay(
-          300,
+      // 첫 번째 원 초기 상태 설정 후 애니메이션 시작
+      scale1.value = withTiming(1, { duration: 100 }, () => {
+        scale1.value = withRepeat(
           withSequence(
-            withTiming(1.5, { duration: 600, easing: Easing.inOut(Easing.ease) }),
-            withTiming(1, { duration: 600, easing: Easing.inOut(Easing.ease) }),
+            withTiming(1.5, { duration: animationDuration - shrinkDuration, easing: Easing.inOut(Easing.ease) }), // 커지기
+            withTiming(1, { duration: shrinkDuration, easing: Easing.inOut(Easing.ease) }) // 다시 작아짐
           ),
-        ),
-        -1,
-        false,
-      );
+          -1,
+          false
+        );
+      });
+
+      // 두 번째 원 초기 상태 설정 후 애니메이션 시작 (딜레이 적용)
+      scale2.value = withTiming(1, { duration: 100 }, () => {
+        scale2.value = withRepeat(
+          withDelay(
+            delayBetween,
+            withSequence(
+              withTiming(1.5, { duration: animationDuration - shrinkDuration, easing: Easing.inOut(Easing.ease) }),
+              withTiming(1, { duration: shrinkDuration, easing: Easing.inOut(Easing.ease) })
+            )
+          ),
+          -1,
+          false
+        );
+      });
     } else {
       // 연결 끊김 상태에서 정적 유지
       scale1.value = 1;
@@ -62,8 +70,12 @@ const LinkIndicator: React.FC<LinkIndicatorProps> = ({ isConnected }) => {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.circle, animatedStyle1]} />
-      <Animated.View style={[styles.circle, animatedStyle2, styles.circle2]} />
+      <Animated.View style={[styles.circle, animatedStyle1]}>
+        <View style={styles.innerCircle} />
+      </Animated.View>
+      <Animated.View style={[styles.circle, animatedStyle2, styles.circle2]}>
+        <View style={styles.innerCircle} />
+      </Animated.View>
     </View>
   );
 };
@@ -81,9 +93,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 5,
     backgroundColor: '#2E2559', // 기본 연결된 상태 색상
+    alignItems: 'center',
+    justifyContent: 'center', // 내부 원 중앙 정렬
   },
   circle2: {
     marginLeft: -10, // 살짝 겹쳐진 느낌으로 배치
+  },
+  innerCircle: {
+    width: 10, // 외부 원 대비 작은 크기
+    height: 10,
+    borderRadius: 5, // 내부 원도 원형으로
+    backgroundColor: '#FFFFFF', // 흰색 배경
   },
 });
 
