@@ -119,3 +119,44 @@ export const getExamSubmissionList = async (
     throw error;
   }
 };
+
+// 학생의 특정 시험 제출 내역 조회
+export type ExamProblemStudentSubmission = {
+  examProblemSubmissionId: number;
+  questionId: number;
+  isCorrect: boolean;
+  examSolution: string;
+};
+
+export type ExamSubmissionDetail = {
+  examSubmissionId: number;
+  examId: number;
+  score: number;
+  correctCount: number;
+  totalCount: number;
+  problemSubmissions: ExamProblemStudentSubmission[];
+};
+
+export const getExamSubmissionDetail = async (
+  lectureId: number,
+  examId: number,
+  studentId: number
+): Promise<ExamSubmissionDetail> => {
+  try {
+    console.log(
+      `학생의 특정 시험 제출 내역 조회 요청 (lectureId: ${lectureId}, examId: ${examId}, studentId: ${studentId})`
+    );
+
+    const { data } = await authApiClient.get<{
+      code: string;
+      data: ExamSubmissionDetail;
+      message: string;
+    }>(`/exam/${lectureId}/${examId}/submissions/${studentId}`);
+
+    console.log('학생의 특정 시험 제출 내역 조회 성공 응답:', data);
+    return data.data;
+  } catch (error) {
+    console.error('학생의 특정 시험 제출 내역 조회 실패:', error);
+    throw error;
+  }
+};

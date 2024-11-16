@@ -1,11 +1,12 @@
-import {getResponsiveSize} from '@utils/responsive';
+import { getResponsiveSize } from '@utils/responsive';
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 interface Participant {
-  id: string;
-  name: string;
-  isTeacher?: boolean;
+  studentId: number;
+  studentName: string;
+  studentImage?: string;
+  status: 'default' | 'active' | 'inactive';
 }
 
 interface ParticipantCardProps {
@@ -17,10 +18,28 @@ const ParticipantCard: React.FC<ParticipantCardProps> = ({
   participant,
   onPress,
 }) => {
+  const { studentName, studentImage, status } = participant;
+
+  // 상태에 따른 스타일 동적 설정
+  const borderColor = {
+    default: 'transparent',
+    active: 'green',
+    inactive: 'red',
+  }[status];
+
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={styles.card}>
-        <Text style={styles.name}>{participant.name}</Text>
+      <View style={[styles.card, { borderColor }]}>
+        {studentImage ? (
+          <Image
+            source={{ uri: studentImage }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={styles.defaultBackground} />
+        )}
+        <Text style={styles.name}>{studentName}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -36,6 +55,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     position: 'relative',
+    borderWidth: 3, // 테두리 너비
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
+  defaultBackground: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#555', // 기본 배경 색상
+    borderRadius: 8,
   },
   name: {
     position: 'absolute',

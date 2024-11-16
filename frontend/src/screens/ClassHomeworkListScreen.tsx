@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   FlatList,
@@ -7,14 +7,15 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import {iconSize} from '@theme/iconSize';
-import {useNavigation} from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker'; // Picker import
+import { iconSize } from '@theme/iconSize';
+import { useNavigation } from '@react-navigation/native';
 import ClockIcon from '@assets/icons/clockIcon.svg';
 import QuestionsIcon from '@assets/icons/questionsIcon.svg';
 import EmptyHomeworkIcon from '@assets/icons/emptyHomeworkIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
-import {Text as HeaderText} from '@components/common/Text';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import { Text as HeaderText } from '@components/common/Text';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteHomework,
   getHomeworkSubmissionList,
@@ -23,10 +24,10 @@ import {
   getLectureDetail,
   LectureDetailType,
 } from '@services/lectureInformation';
-import {useLessonStore} from '@store/useLessonStore';
-import {useAuthStore} from '@store/useAuthStore';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useLessonStore } from '@store/useLessonStore';
+import { useAuthStore } from '@store/useAuthStore';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassHomeworkListScreen(): React.JSX.Element {
@@ -36,17 +37,17 @@ function ClassHomeworkListScreen(): React.JSX.Element {
   const role = useAuthStore(state => state.userInfo.role);
   const memberId = useAuthStore(state => state.userInfo.id);
 
-  const {data: lectureDetail} = useQuery<LectureDetailType>({
+  const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId!),
   });
 
-  const {data: submitHomeworkList} = useQuery({
+  const { data: submitHomeworkList } = useQuery({
     queryKey: ['homeworkSubmissionList', lectureId, memberId],
     queryFn: () => getHomeworkSubmissionList(lectureId!, memberId!),
   });
 
-  const {mutate: removeHomework} = useMutation({
+  const { mutate: removeHomework } = useMutation({
     mutationFn: (homeworkId: number) => deleteHomework(homeworkId),
     onSuccess: () => {
       Alert.alert('알림', '숙제가 삭제되었습니다.');
@@ -59,8 +60,29 @@ function ClassHomeworkListScreen(): React.JSX.Element {
     },
   });
 
-  const handleHomeworkPress = (homeworkId: number, questionIds: number[]) => {
-    navigation.navigate('SolveHomeworkScreen', {homeworkId, questionIds});
+  const [selectedFilter, setSelectedFilter] = useState<string>('전체'); // 필터 상태 관리
+
+  const handleHomeworkPress = (homework: any) => {
+    const endTime = new Date(homework.endTime).getTime();
+    const currentTime = Date.now();
+
+    if (homework.isSubmitted) {
+      // 제출된 숙제 -> 결과 화면으로 이동
+      navigation.navigate('ConfirmSolvedScreen', {
+        typeId: homework.homeworkId,
+        questionIds: homework.questions,
+        solvedType: 'HOMEWORK',
+      });
+    } else if (currentTime <= endTime) {
+      // 기한 내 미제출 -> 숙제 풀이 화면으로 이동
+      navigation.navigate('SolveHomeworkScreen', {
+        homeworkId: homework.homeworkId,
+        questionIds: homework.questions,
+      });
+    } else {
+      // 기한 지난 미제출 -> 알림
+      Alert.alert('알림', '기한이 지난 숙제는 제출할 수 없습니다.');
+    }
   };
 
   const handleDeleteHomework = (homeworkId: number) => {
@@ -81,19 +103,32 @@ function ClassHomeworkListScreen(): React.JSX.Element {
     submission => submission.homeworkId,
   );
 
-  const sortedHomework = [...(lectureDetail?.homeworks || [])]
+  const filteredHomework = [...(lectureDetail?.homeworks || [])]
     .map(homework => {
       const isSubmitted = submittedHomeworkIds?.includes(homework.homeworkId);
       const endTime = new Date(homework.endTime);
       const currentTime = Date.now();
       const isPastDeadline = !isSubmitted && endTime.getTime() < currentTime;
 
-      // 남은 기간 계산
       const remainingDays = isPastDeadline
         ? 0
         : Math.ceil((endTime.getTime() - currentTime) / (1000 * 60 * 60 * 24));
 
-      return {...homework, isSubmitted, isPastDeadline, remainingDays};
+      return { ...homework, isSubmitted, isPastDeadline, remainingDays };
+    })
+    .filter(homework => {
+      switch (selectedFilter) {
+        case '기한 내 미제출':
+          return !homework.isSubmitted && !homework.isPastDeadline;
+        case '기한 지난 미제출':
+          return !homework.isSubmitted && homework.isPastDeadline;
+        case '기한 내 제출':
+          return homework.isSubmitted && !homework.isPastDeadline;
+        case '기한 지난 제출':
+          return homework.isSubmitted && homework.isPastDeadline;
+        default: // 전체
+          return true;
+      }
     })
     .sort((a, b) => {
       if (a.isSubmitted === b.isSubmitted) {
@@ -114,28 +149,41 @@ function ClassHomeworkListScreen(): React.JSX.Element {
         <HeaderText variant="title" style={styles.headerText} weight="bold">
           숙제 목록
         </HeaderText>
+        {/* 필터 Picker */}
+        <View style={styles.filterContainer}>
+          <Picker
+            selectedValue={selectedFilter}
+            onValueChange={itemValue => setSelectedFilter(itemValue)}
+            style={styles.filterPicker}>
+            <Picker.Item label="전체" value="전체" />
+            <Picker.Item label="기한 내 미제출" value="기한 내 미제출" />
+            <Picker.Item label="기한 지난 미제출" value="기한 지난 미제출" />
+            <Picker.Item label="기한 내 제출" value="기한 내 제출" />
+            <Picker.Item label="기한 지난 제출" value="기한 지난 제출" />
+          </Picker>
+        </View>
       </View>
       <FlatList
-        data={sortedHomework}
-        keyExtractor={item => item.homeworkId.toString()}
-        renderItem={({item}) => (
+        data={filteredHomework}
+        keyExtractor={(item) => item.homeworkId.toString()}
+        renderItem={({ item }) => (
           <View
             style={[
               styles.card,
               item.isPastDeadline
                 ? styles.pastDeadlineCard
                 : item.isSubmitted
-                ? styles.submittedCard
-                : item.remainingDays <= 3
-                ? styles.nearingDeadlineCard
-                : styles.notSubmittedCard,
-            ]}>
+                  ? styles.submittedCard
+                  : item.remainingDays <= 3
+                    ? styles.nearingDeadlineCard
+                    : styles.notSubmittedCard,
+            ]}
+          >
             <View style={styles.cardContent}>
               <TouchableOpacity
-                onPress={() =>
-                  handleHomeworkPress(item.homeworkId, item.questions)
-                }
-                style={styles.homeworkContent}>
+                onPress={() => handleHomeworkPress(item)}
+                style={styles.homeworkContent}
+              >
                 <View style={styles.textContainer}>
                   <Text style={styles.itemTitle}>{item.title}</Text>
                   <View style={styles.iconRow}>
@@ -171,7 +219,8 @@ function ClassHomeworkListScreen(): React.JSX.Element {
               {role === 'TEACHER' && (
                 <TouchableOpacity
                   onPress={() => handleDeleteHomework(item.homeworkId)}
-                  style={styles.deleteButton}>
+                  style={styles.deleteButton}
+                >
                   <Text style={styles.deleteButtonText}>삭제하기</Text>
                 </TouchableOpacity>
               )}
@@ -185,7 +234,7 @@ function ClassHomeworkListScreen(): React.JSX.Element {
               height={iconSize.xxl * 7}
               style={styles.emptyIcon}
             />
-            <Text style={styles.emptyText}>현재 등록된 숙제가 없습니다.</Text>
+            <Text style={styles.emptyText}>숙제가 없습니다.</Text>
           </View>
         }
       />
@@ -194,14 +243,14 @@ function ClassHomeworkListScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 15, backgroundColor: '#FFF'},
+  container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
   card: {
     marginHorizontal: 40,
     padding: 25,
     marginBottom: 5,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
@@ -244,7 +293,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 3,
   },
-  itemText: {fontSize: 14, color: '#666', marginLeft: 5},
+  itemText: { fontSize: 14, color: '#666', marginLeft: 5 },
   deadlineText: {
     color: '#FF5555',
     fontWeight: 'bold',
@@ -287,6 +336,14 @@ const styles = StyleSheet.create({
   },
   headerText: {
     marginLeft: 10,
+  },
+  filterContainer: {
+    marginLeft: 'auto',
+    marginRight: 24,
+    width: 150,
+  },
+  filterPicker: {
+    height: 20,
   },
 });
 
