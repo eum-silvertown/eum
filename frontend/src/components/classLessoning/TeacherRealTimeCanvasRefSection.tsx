@@ -66,8 +66,8 @@ function TeacherRealTimeCanvasRefSection({
         })
         .filter(Boolean);
 
-      // 기존 경로와 병합
-      setPaths(prevPaths => mergeSimilarPaths([...prevPaths, ...parsedPaths]));
+      // 데이터 교체
+      setPaths(mergeSimilarPaths(parsedPaths));
     } catch (error) {
       console.error('Failed to decompress or parse data:', error);
     }
