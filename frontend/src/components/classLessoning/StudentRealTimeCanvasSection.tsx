@@ -10,6 +10,8 @@ import * as StompJs from '@stomp/stompjs';
 import { useLectureStore } from '@store/useLessonStore';
 import { Alert, Dimensions } from 'react-native';
 interface StudentCanvasSectionProps {
+  answers: string[];
+  titles: string[];
   lessonId: number;
   role: string;
   clientRef: React.MutableRefObject<StompJs.Client | null>;
@@ -40,6 +42,8 @@ const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
 const StudentRealTimeCanvasSection = ({
+  answers,
+  titles,
   lessonId,
   role,
   clientRef,
@@ -315,6 +319,8 @@ const StudentRealTimeCanvasSection = ({
         resetPaths={resetPaths}
       />
       <StudentLessoningInteractionTool
+        answers={answers}
+        titles={titles}
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}

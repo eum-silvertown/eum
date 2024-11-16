@@ -11,6 +11,8 @@ import TeacherRealTimeCanvasRefSection from './TeacherRealTimeCanvasRefSection';
 import { useLectureStore, useLessonStore } from '@store/useLessonStore';
 import { Alert, Dimensions } from 'react-native';
 interface TeacherCanvasSectionProps {
+  answers: string[];
+  titles: string[];
   isTeaching: boolean | null;
   role: string;
   clientRef: React.MutableRefObject<StompJs.Client | null>;
@@ -41,6 +43,8 @@ const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
 const TeacherRealTimeCanvasSection = ({
+  answers,
+  titles,
   isTeaching,
   role,
   clientRef,
@@ -345,6 +349,8 @@ const TeacherRealTimeCanvasSection = ({
         resetPaths={resetPaths}
       />
       <TeacherLessoningInteractionTool
+        answers={answers}
+        titles={titles}
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}

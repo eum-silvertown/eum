@@ -5,29 +5,35 @@ import {
   Text,
   Modal,
   TextInput,
+  Alert,
 } from 'react-native';
 import TeacherScreenMoveIcon from '@assets/icons/teacherScreenMoveIcon.svg';
 import TeacherScreenOffIcon from '@assets/icons/teacherScreenOffIcon.svg';
 import TeacherScreenOnIcon from '@assets/icons/teacherScreenOnIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
-import {getResponsiveSize} from '@utils/responsive';
-import {useQueryClient} from '@tanstack/react-query';
-import {useLessonStore} from '@store/useLessonStore';
+import { iconSize } from '@theme/iconSize';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
+import { getResponsiveSize } from '@utils/responsive';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLessonStore } from '@store/useLessonStore';
+import { useModal } from 'src/hooks/useModal';
+
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 interface LessoningInteractionToolForStudentProps {
+  answers: string[];
+  titles: string[];
   onToggleScreen: () => void;
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
 }
-
 const StudentLessoningInteractionTool = ({
+  answers,
+  titles,
   onToggleScreen,
   currentPage,
   totalPages,
@@ -38,12 +44,30 @@ const StudentLessoningInteractionTool = ({
   const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
   const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
+  const { open, closeAll } = useModal();
 
   const handleExit = () => {
-    queryClient.invalidateQueries({
-      queryKey: ['lectureDetail', lectureId],
-    });
-    navigation.goBack();
+    Alert.alert(
+      '수업 퇴장',
+      '정말로 수업에서 퇴장하시겠습니까?',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '확인',
+          onPress: () => {
+            queryClient.invalidateQueries({
+              queryKey: ['lectureDetail', lectureId],
+            });
+            navigation.goBack();
+          },
+          style: 'destructive',
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleToggle = () => {
@@ -53,17 +77,52 @@ const StudentLessoningInteractionTool = ({
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [answerText, setAnswerText] = useState('');
+  const [answerStatus, setAnswerStatus] = useState<'default' | 'correct' | 'incorrect'>('default');
 
   const handleInputAnswer = () => {
     setIsModalVisible(true); // 모달 열기
   };
 
   const handleSubmitAnswer = () => {
-    console.log('Submitted Answer:', answerText);
-    // 답변 제출 로직 추가 가능
-    setAnswerText(''); // 입력 창 초기화
-    setIsModalVisible(false); // 모달 닫기
+    const correctAnswer = answers[currentPage - 1];
+    const isCorrect = answerText.trim() === correctAnswer.trim();
+
+    // 상태 업데이트
+    setAnswerStatus(isCorrect ? 'correct' : 'incorrect');
+
+    // 모달로 결과 표시
+    open(
+      <View style={styles.modalAnswerContainer}>
+        <Text style={styles.modalAnswerTitle}>
+          {isCorrect ? '정답입니다!' : '오답입니다!'}
+        </Text>
+        <Text style={styles.modalContent}>
+          {`입력한 답변: ${answerText}\n정답: ${correctAnswer}`}
+        </Text>
+        <TouchableOpacity
+          style={styles.modalButton}>
+          <Text style={styles.modalButtonText} onPress={closeAll}>확인</Text>
+        </TouchableOpacity>
+      </View>,
+    );
+
+    // 입력 창 초기화
+    setIsModalVisible(false);
+    setAnswerText('');
   };
+
+  // 버튼 스타일과 텍스트 동적 설정
+  const buttonText = {
+    default: '정답 입력하기',
+    correct: `정답: ${answers[currentPage - 1]}`,
+    incorrect: '다시 입력하기',
+  }[answerStatus];
+
+  const buttonStyle = {
+    default: styles.defaultButton,
+    correct: styles.correctButton,
+    incorrect: styles.incorrectButton,
+  }[answerStatus];
 
   return (
     <View style={styles.InteractionToolBar}>
@@ -90,6 +149,7 @@ const StudentLessoningInteractionTool = ({
               height={iconSize.mdPlus}
             />
           </TouchableOpacity>
+          <Text>{titles[currentPage - 1]}</Text>
           {/* 문제 페이지 설정 */}
           <View style={styles.pageControlContainer}>
             <TouchableOpacity
@@ -125,8 +185,8 @@ const StudentLessoningInteractionTool = ({
           {/* 정답 입력 버튼 */}
           <TouchableOpacity
             onPress={handleInputAnswer}
-            style={styles.inputButton}>
-            <Text style={styles.inputButtonText}>정답 입력하기</Text>
+            style={[styles.inputButton, buttonStyle]}>
+            <Text style={styles.inputButtonText}>{buttonText}</Text>
           </TouchableOpacity>
           {/* 퇴장 버튼 */}
           <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
@@ -168,6 +228,7 @@ const StudentLessoningInteractionTool = ({
   );
 };
 
+
 export default StudentLessoningInteractionTool;
 
 const styles = StyleSheet.create({
@@ -183,7 +244,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: getResponsiveSize(12),
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
@@ -241,7 +302,15 @@ const styles = StyleSheet.create({
     color: '#2fd355',
     fontWeight: 'bold',
   },
-
+  defaultButton: {
+    backgroundColor: '#d7ffcd', // 기본
+  },
+  correctButton: {
+    backgroundColor: '#d1e7dd', // 정답
+  },
+  incorrectButton: {
+    backgroundColor: '#f8d7da', // 오답
+  },
   modalBackground: {
     flex: 1,
     justifyContent: 'center',
@@ -295,6 +364,31 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: '#388E3C',
+    fontWeight: 'bold',
+  },
+  modalAnswerContainer: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  modalAnswerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  modalContent: {
+    fontSize: 14,
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  modalButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: '#FFF',
     fontWeight: 'bold',
   },
 });

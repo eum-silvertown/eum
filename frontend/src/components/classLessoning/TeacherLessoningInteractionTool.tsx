@@ -1,14 +1,16 @@
-import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNavigation} from '@react-navigation/native';
-import {getResponsiveSize} from '@utils/responsive';
+import { iconSize } from '@theme/iconSize';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { getResponsiveSize } from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type CanvasComponentProps = {
+  answers: string[];
+  titles: string[];
   startRecording?: () => void;
   stopRecording?: () => void;
   isRecording?: boolean;
@@ -19,6 +21,8 @@ type CanvasComponentProps = {
 };
 
 const TeacherLessoningInteractionTool = ({
+  answers,
+  titles,
   currentPage,
   totalPages,
   onNextPage,
@@ -49,6 +53,8 @@ const TeacherLessoningInteractionTool = ({
                 이전
               </Text>
             </TouchableOpacity>
+            <Text>{answers[currentPage - 1]}</Text>
+            <Text>{titles[currentPage - 1]}</Text>
 
             <Text style={styles.pageInfoText}>
               {currentPage} / {totalPages}
@@ -88,7 +94,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: getResponsiveSize(12),
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
