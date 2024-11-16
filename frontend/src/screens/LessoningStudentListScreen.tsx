@@ -47,6 +47,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const [isConnected, setIsConnected] = useState(false);
   console.log('구독 연결 됨!', isConnected);
 
+
   const clientRef = useRef<StompJs.Client | null>(null);
 
   const ROWS = 4;
@@ -107,6 +108,11 @@ function LessoningStudentListScreen(): React.JSX.Element {
             });
           } else if (type === 'now') {
             updateParticipant(studentId, { status: 'now', currentPage });
+
+            // 3초 후 상태를 'in'으로 변경
+            setTimeout(() => {
+              updateParticipant(studentId, { status: 'in' });
+            }, 3000);
           } else if (type === 'out') {
             updateParticipant(studentId, { status: 'out' });
             setTimeout(() => {
@@ -134,7 +140,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [lessonId]);
 
   return (
     <View style={styles.mainContainer}>

@@ -127,7 +127,7 @@ function LessoningScreen(): React.JSX.Element {
       console.log('STOMP client deactivated');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTeacher, isTeaching, lessonId, memberId, currentPage]);
+  }, [isTeacher, isTeaching, lessonId, memberId]);
 
   const handleNextPage = () => {
     if (currentPage < problems.length) {
@@ -135,7 +135,7 @@ function LessoningScreen(): React.JSX.Element {
 
       setCurrentPage(nextPage); // 페이지 상태 업데이트
       if (!isTeacher) {
-        sendStudentInfo('in', nextPage); // 다음 페이지 정보로 in 호출
+        sendStudentInfo('now', nextPage); // 다음 페이지 정보로 now 호출
       }
     }
   };
@@ -146,7 +146,7 @@ function LessoningScreen(): React.JSX.Element {
 
       setCurrentPage(prevPage); // 페이지 상태 업데이트
       if (!isTeacher) {
-        sendStudentInfo('in', prevPage); // 이전 페이지 정보로 in 호출
+        sendStudentInfo('now', prevPage); // 이전 페이지 정보로 now 호출
       }
     }
   };
