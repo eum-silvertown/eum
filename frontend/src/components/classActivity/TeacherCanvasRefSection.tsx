@@ -12,20 +12,20 @@ type PathData = {
 };
 
 interface StudentCanvasRefSectionProps {
-  studentDrawing: string; // studentDrawing 추가
+  teacherDrawing: string; // teacherDrawing 추가
 }
 
-function StudentCanvasRefSection({
-  studentDrawing,
+function TeacherCanvasRefSection({
+  teacherDrawing,
 }: StudentCanvasRefSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
 
   useEffect(() => {
-    if (studentDrawing) {
-      processCanvasData(studentDrawing); // 전달받은 studentDrawing 처리
+    if (teacherDrawing) {
+      processCanvasData(teacherDrawing); // 전달받은 teacherDrawing 처리
     }
-  }, [studentDrawing]);
+  }, [teacherDrawing]);
 
   const processCanvasData = (base64EncodedData: string) => {
     try {
@@ -71,7 +71,7 @@ function StudentCanvasRefSection({
   );
 }
 
-export default StudentCanvasRefSection;
+export default TeacherCanvasRefSection;
 
 const styles = StyleSheet.create({
   canvasLayout: {
