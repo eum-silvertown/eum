@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import MathJax from 'react-native-mathjax';
-import {StyleSheet, View, Image} from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 
 type ProblemSectionProps = {
   problemText: string;
 };
 
-function ProblemSection({problemText}: ProblemSectionProps): React.JSX.Element {
+function ProblemSection({ problemText = '' }: ProblemSectionProps): React.JSX.Element {
   // 이미지 URL 추출 함수
   const extractImageUrl = (text: string): string | null => {
+    if (!text) { return null; } // text가 null 또는 undefined인 경우 null 반환
     const imageRegex = /!\[.*?\]\((.*?)\)/;
     const match = text.match(imageRegex);
     return match ? match[1] : null;
@@ -16,6 +17,7 @@ function ProblemSection({problemText}: ProblemSectionProps): React.JSX.Element {
 
   // 텍스트에서 이미지 URL 제거 함수
   const removeImageMarkdown = (text: string): string => {
+    if (!text) { return ''; } // text가 null 또는 undefined인 경우 빈 문자열 반환
     return text.replace(/!\[.*?\]\(.*?\)/g, '');
   };
 
@@ -36,7 +38,7 @@ function ProblemSection({problemText}: ProblemSectionProps): React.JSX.Element {
       <MathJax html={mathJaxContent} />
       {imageUrl && (
         <Image
-          source={{uri: imageUrl}}
+          source={{ uri: imageUrl }}
           style={[styles.image, imageLoaded ? null : styles.imageLoading]}
           resizeMode="contain"
           onLoad={() => setImageLoaded(true)}
@@ -46,6 +48,7 @@ function ProblemSection({problemText}: ProblemSectionProps): React.JSX.Element {
     </View>
   );
 }
+
 
 export default ProblemSection;
 

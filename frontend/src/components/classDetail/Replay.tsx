@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
-import {Text} from '@components/common/Text';
+import React, { useState } from 'react';
+import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text } from '@components/common/Text';
 import LeftArrowOffIcon from '@assets/icons/leftArrowOffIcon.svg';
 import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {getResponsiveSize} from '@utils/responsive';
+import { iconSize } from '@theme/iconSize';
+import { getResponsiveSize } from '@utils/responsive';
 import EmptyData from '@components/common/EmptyData';
 
 type LessonType = {
@@ -19,7 +19,7 @@ type ReplayProps = {
   lesson?: LessonType[];
 };
 
-function Replay({lesson = []}: ReplayProps): React.JSX.Element {
+function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -27,7 +27,7 @@ function Replay({lesson = []}: ReplayProps): React.JSX.Element {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = lesson.slice(startIndex, startIndex + itemsPerPage);
 
-  const renderItem = ({item}: {item: LessonType}) => (
+  const renderItem = ({ item }: { item: LessonType }) => (
     <TouchableOpacity style={styles.item} onPress={() => handleItemPress(item)}>
       <View style={[styles.textContainer, styles.idContainer]}>
         <Text variant="caption" weight="bold">
@@ -98,7 +98,7 @@ function Replay({lesson = []}: ReplayProps): React.JSX.Element {
       </View>
 
       {lesson.length === 0 ? (
-        <EmptyData message="등록된 수업이 없습니다" />
+        <EmptyData message="수업이 없습니다" />
       ) : (
         <FlatList
           style={styles.listStyle}
