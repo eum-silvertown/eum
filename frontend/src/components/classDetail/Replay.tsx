@@ -8,6 +8,11 @@ import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import { getResponsiveSize } from '@utils/responsive';
 import EmptyData from '@components/common/EmptyData';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType } from '@store/useCurrentScreenStore';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type LessonType = {
   lessonId: number;
@@ -20,6 +25,7 @@ type ReplayProps = {
 };
 
 function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
+  const navigation = useNavigation<NavigationProps>();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -28,7 +34,9 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
   const paginatedData = lesson.slice(startIndex, startIndex + itemsPerPage);
 
   const renderItem = ({ item }: { item: LessonType }) => (
-    <TouchableOpacity style={styles.item} onPress={() => handleItemPress(item)}>
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => handleItemPress(item)}>
       <View style={[styles.textContainer, styles.idContainer]}>
         <Text variant="caption" weight="bold">
           {item.lessonId}
@@ -48,7 +56,10 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
   );
 
   const handleItemPress = (item: LessonType) => {
-    console.log(`Clicked on ${item.lessonId}`);
+    navigation.navigate('ClassLessonReviewScreen', {
+      lessonId: item.lessonId,
+      questionIds: item.questions,
+    });
   };
 
   const handlePrevPage = () => {
@@ -81,9 +92,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
               )}
             </TouchableOpacity>
             <Text
-              style={
-                styles.pageIndicator
-              }>{`${currentPage} / ${totalPages}`}</Text>
+              style={styles.pageIndicator}>{`${currentPage} / ${totalPages}`}</Text>
             <TouchableOpacity
               onPress={handleNextPage}
               disabled={currentPage === totalPages}>
