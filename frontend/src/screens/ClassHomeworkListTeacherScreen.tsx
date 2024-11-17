@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -38,6 +38,15 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
     queryFn: () => getLectureDetail(lectureId!),
   });
 
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const { mutate: removeHomework } = useMutation({
     mutationFn: (homeworkId: number) => deleteHomework(homeworkId),
     onSuccess: () => {
@@ -69,6 +78,33 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
     ]);
   };
 
+  const homeworks = (lectureDetail?.homeworks || []).map((homework) => {
+    const startTime = new Date(homework.startTime);
+    const endTime = new Date(homework.endTime);
+    const now = currentTime.getTime();
+
+    const isBeforeStart = now < startTime.getTime();
+    const isOngoing = now >= startTime.getTime() && now <= endTime.getTime();
+    const isAfterEnd = now > endTime.getTime();
+
+    const remainingTime = Math.max(0, endTime.getTime() - now);
+    const remainingDays = Math.floor(remainingTime / (1000 * 60 * 60 * 24)); // 남은 일수
+    const remainingHours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24); // 남은 시간
+    const remainingMinutes = Math.floor((remainingTime / (1000 * 60)) % 60); // 남은 분
+    const remainingSeconds = Math.floor((remainingTime / 1000) % 60); // 남은 초
+
+    return {
+      ...homework,
+      isBeforeStart,
+      isOngoing,
+      isAfterEnd,
+      remainingDays,
+      remainingHours,
+      remainingMinutes,
+      remainingSeconds,
+    };
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -80,10 +116,19 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
         </HeaderText>
       </View>
       <FlatList
-        data={lectureDetail?.homeworks || []}
+        data={homeworks}
         keyExtractor={(item) => item.homeworkId.toString()}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <View
+            style={[
+              styles.card,
+              item.isBeforeStart
+                ? styles.beforeStartCard
+                : item.isOngoing
+                  ? styles.ongoingCard
+                  : styles.afterEndCard,
+            ]}
+          >
             <View style={styles.cardContent}>
               <TouchableOpacity
                 onPress={() => handleHomeworkPress(item.homeworkId)}
@@ -109,6 +154,14 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
                       문제 개수: {item.questions.length}
                     </Text>
                   </View>
+                  {item.isOngoing && (
+                    <Text style={styles.remainingTimeText}>
+                      남은 시간:
+                      {item.remainingDays > 0 && `${item.remainingDays}일 `}
+                      {item.remainingHours}시간 {item.remainingMinutes}분
+                      {item.remainingDays === 0 && ` ${item.remainingSeconds}초`}
+                    </Text>
+                  )}
                 </View>
               </TouchableOpacity>
               {role === 'TEACHER' && (
@@ -158,8 +211,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
-    backgroundColor: '#EEEEEE',
-    marginVertical: 8,
+  },
+  beforeStartCard: {
+    backgroundColor: '#FFDDFF', // 시작 전 배경색
+  },
+  ongoingCard: {
+    backgroundColor: '#FFFFDD', // 진행 중 배경색
+  },
+  afterEndCard: {
+    backgroundColor: '#DDFFDD', // 종료 후 배경색
   },
   cardContent: {
     flexDirection: 'row',
@@ -186,6 +246,11 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   itemText: { fontSize: 14, color: '#666', marginLeft: 5 },
+  remainingTimeText: {
+    color: '#FFA500',
+    fontWeight: 'bold',
+    marginTop: 5,
+  },
   deleteButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
