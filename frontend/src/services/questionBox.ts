@@ -1,7 +1,6 @@
 import {QuestionBoxType} from '@store/useQuestionExplorerStore';
 import {authApiClient} from './apiClient';
 import axios from 'axios';
-import RNFS from 'react-native-fs';
 
 // API 응답 타입 정의
 type ApiResponse<T> = {
@@ -344,6 +343,7 @@ export async function detailQuestion(
     const {data} = await authApiClient.get<ApiResponse<DetailQuestionType>>(
       `file/${fileId}`,
     );
+    console.log(data.data);
     return data.data;
   } catch (error) {
     console.error('Failed to detailQuestion: ', error);

@@ -27,6 +27,7 @@ export type NotificationType = {
   isRead: boolean;
   createdAt: string;
   updatedAt: string;
+  type: string;
 };
 
 export async function getUnreadNotifications(): Promise<NotificationType[]> {
