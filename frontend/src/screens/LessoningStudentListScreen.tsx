@@ -1,6 +1,6 @@
 import ParticipantCard from '@components/classLessoning/ParticipantCard';
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import TeacherLessoningGridInteractionTool from '@components/classLessoning/TeacherLessoningGridInteractionTool';
@@ -75,6 +75,10 @@ function LessoningStudentListScreen(): React.JSX.Element {
     setLectureInfo(id, teacherId!);
     setIsTeaching(true);
     navigation.navigate('LessoningScreen');
+  };
+
+  const handleLongPress = (studentId: number) => {
+    Alert.alert('학생 선택', `선택된 학생 ID: ${studentId}`);
   };
 
   // STOMP 클라이언트 초기화 및 설정
@@ -162,6 +166,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
             <ParticipantCard
               participant={item}
               onPress={() => handleParticipantPress(item.studentId)}
+              onLongPress={() => handleLongPress(item.studentId)}
             />
           )}
         />
