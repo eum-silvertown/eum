@@ -5,6 +5,7 @@ import StudentResolveInteractionTool from './StudentResolveInteractionTool';
 import { Alert } from 'react-native';
 import StudentCanvasRefSection from './StudentCanvasRefSection';
 import TeacherCanvasRefSection from './TeacherCanvasRefSection';
+import { useAuthStore } from '@store/useAuthStore';
 
 interface StudentCanvasResolveSectionProps {
   teacherDrawing: string | null;
@@ -54,10 +55,17 @@ const StudentCanvasReviewSection = ({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
+  const role = useAuthStore(state => state.userInfo.role);
+  const [showTeacherSolution, setShowTeacherSolution] = useState(false);
+  const [showStudentSolution, setShowStudentSolution] = useState(false);
 
-  // "이전 필기 보기" 토글 상태
-  const [showPreviousSolution, setShowPreviousSolution] = useState(false);
+  const toggleTeacherSolution = () => {
+    setShowTeacherSolution((prev) => !prev);
+  };
 
+  const toggleStudentSolution = () => {
+    setShowStudentSolution((prev) => !prev);
+  };
   const togglePenOpacity = () => {
     if (isErasing) {
       setIsErasing(false); // 지우개 모드를 비활성화
@@ -221,8 +229,8 @@ const StudentCanvasReviewSection = ({
 
   return (
     <>
-      {showPreviousSolution && <TeacherCanvasRefSection teacherDrawing={teacherDrawing!} />}
-      {showPreviousSolution && <StudentCanvasRefSection studentDrawing={studentDrawing!} />}
+      {showTeacherSolution && <TeacherCanvasRefSection teacherDrawing={teacherDrawing!} />}
+      {showStudentSolution && (role === 'STUDENT') && <StudentCanvasRefSection studentDrawing={studentDrawing!} />}
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}
@@ -250,8 +258,11 @@ const StudentCanvasReviewSection = ({
         totalPages={totalPages}
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
-        togglePreviousSolution={() => setShowPreviousSolution(prev => !prev)}
-        showPreviousSolution={showPreviousSolution}
+        toggleTeacherSolution={toggleTeacherSolution}
+        toggleStudentSolution={toggleStudentSolution}
+        showTeacherSolution={showTeacherSolution}
+        showStudentSolution={showStudentSolution}
+        role={role}
       />
     </>
   );

@@ -1,23 +1,23 @@
-import {View, TouchableOpacity, StyleSheet, Text, Alert} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, Alert } from 'react-native';
 import DrawingTabletIcon from '@assets/icons/drawingTabletIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {ScreenType} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNavigation} from '@react-navigation/native';
-import {getResponsiveSize} from '@utils/responsive';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import { iconSize } from '@theme/iconSize';
+import { ScreenType } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { getResponsiveSize } from '@utils/responsive';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   SwitchLessonStatusResponse,
   switchLessonStatus,
 } from '@services/lessonService';
-import {useLessonStore} from '@store/useLessonStore';
+import { useLessonStore } from '@store/useLessonStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 type LectureInfoProps = {
   lectureId: number;
 };
 
-const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
+const TeacherLessoningGridInteractionTool = ({ lectureId }: LectureInfoProps) => {
   const navigation = useNavigation<NavigationProps>();
   const queryClient = useQueryClient();
   const setIsTeaching = useLessonStore(state => state.setIsTeaching);
@@ -27,7 +27,6 @@ const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
     setIsTeaching(false);
   };
 
-  // 수업 상태 변경
   const switchLectureStatusMutation = useMutation({
     mutationFn: (moveLectureId: number) => switchLessonStatus(moveLectureId),
     onSuccess: (data: SwitchLessonStatusResponse) => {
@@ -50,10 +49,10 @@ const TeacherLessoningGridInteractionTool = ({lectureId}: LectureInfoProps) => {
       '수업 종료 확인',
       '정말로 수업을 종료하시겠습니까?',
       [
-        {text: '취소', style: 'cancel'},
-        {text: '확인', onPress: handleSwitchLectureStatus},
+        { text: '취소', style: 'cancel' },
+        { text: '확인', onPress: handleSwitchLectureStatus },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: getResponsiveSize(12),
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
@@ -112,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '40%',
+    width: '20%',
   },
   pageControlContainer: {
     flexDirection: 'row',

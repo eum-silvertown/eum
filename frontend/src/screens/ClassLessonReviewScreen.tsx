@@ -1,11 +1,10 @@
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useLessonStore } from '@store/useLessonStore';
 import { useReviewLectureStore } from '@store/useReviewLectureStore';
 import { useQuery } from '@tanstack/react-query';
 import { getFileDetail } from '@services/problemService';
 import ProblemSection from '@components/common/ProblemSection';
 import StudentCanvasReviewSection from '@components/classActivity/StudentCanvasReviewSection';
-import { useState, useEffect } from 'react';
 import { useAuthStore } from '@store/useAuthStore';
 import { getStudentDrawingData, getTeacherDrawingData } from '@services/lessonService';
 import { useRoute } from '@react-navigation/native';
@@ -13,12 +12,18 @@ import { useRoute } from '@react-navigation/native';
 function ClassLessonReviewScreen(): React.JSX.Element {
   const route = useRoute();
   const teacherId = useReviewLectureStore((state) => state.teacherId);
-  const { lessonId } = route.params as {
+  const { lessonId, questionIds } = route.params as {
     lessonId: number;
+    questionIds: number[];
   };
-  const questionIds = useLessonStore((state) => state.questionIds);
   const studentId = useAuthStore((state) => state.userInfo.id);
+  const role = useAuthStore((state) => state.userInfo.role);
 
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const currentQuestionId = questionIds?.[currentPage];
+
+  // 문제 데이터 가져오기
   const { data: lessonProblems } = useQuery({
     queryKey: ['lessonProblems', questionIds],
     queryFn: async ({ queryKey }) => {
@@ -30,35 +35,36 @@ function ClassLessonReviewScreen(): React.JSX.Element {
       );
       return problemDetails;
     },
+    enabled: !!questionIds, // questionIds가 존재할 때만 요청
   });
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const [teacherDrawing, setTeacherDrawing] = useState<string | null>(null);
-  const [studentDrawing, setStudentDrawing] = useState<string | null>(null);
+  // 선생님 그림 데이터 가져오기
+  const { data: teacherDrawingData } = useQuery({
+    queryKey: ['teacherDrawing', teacherId, lessonId, currentQuestionId],
+    queryFn: async () => {
+      if (teacherId && lessonId && currentQuestionId) {
+        return getTeacherDrawingData(teacherId, lessonId, currentQuestionId);
+      }
+      return null;
+    },
+    enabled: !!(teacherId && lessonId && currentQuestionId), // 데이터가 존재할 때만 요청
+  });
 
-  const currentQuestionId = questionIds![currentPage];
+  // 학생 그림 데이터 가져오기
+  const { data: studentDrawingData } = useQuery({
+    queryKey: ['studentDrawing', studentId, lessonId, currentQuestionId],
+    queryFn: async () => {
+      if (studentId && lessonId && currentQuestionId) {
+        return getStudentDrawingData(studentId, lessonId, currentQuestionId);
+      }
+      return null;
+    },
+    enabled: !!(studentId && lessonId && currentQuestionId && (role === 'STUDENT')), // 데이터가 존재할 때만 요청
+  });
+
   const problems = lessonProblems || [];
-
-  // 선생님과 학생 그림 데이터 조회
-  useEffect(() => {
-    if (teacherId && lessonId && currentQuestionId) {
-      // 선생님 그림 데이터 요청
-      getTeacherDrawingData(teacherId, lessonId, currentQuestionId)
-        .then((data) => setTeacherDrawing(data.drawingData))
-        .catch((error) => {
-          console.error('Failed to fetch teacher drawing:', error);
-          setTeacherDrawing(null);
-        });
-
-      // 학생 그림 데이터 요청
-      getStudentDrawingData(studentId, lessonId, currentQuestionId)
-        .then((data) => setStudentDrawing(data.drawingData))
-        .catch((error) => {
-          console.error('Failed to fetch student drawing:', error);
-          setStudentDrawing(null);
-        });
-    }
-  }, [teacherId, lessonId, currentQuestionId, studentId]);
+  const teacherDrawing = teacherDrawingData?.drawingData || null;
+  const studentDrawing = studentDrawingData?.drawingData || null;
 
   const handleNextPage = () => {
     if (currentPage < problems.length - 1) {

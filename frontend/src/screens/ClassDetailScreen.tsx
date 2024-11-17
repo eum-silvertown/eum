@@ -58,7 +58,9 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
     if (lectureDetail) {
       setLectureInfo(userInfo.id, lectureDetail.teacherModel.teacherId);
       setLectureId(lectureId);
-      setStudentsCnt(lectureDetail.teacherOverviewModel!.students.length);
+      if (lectureDetail.teacherOverviewModel) {
+        setStudentsCnt(lectureDetail.teacherOverviewModel.students.length);
+      }
       if (lectureDetail.lectureStatus) {
         setLessonInfo(
           lectureDetail.lessons[lectureDetail.lessons.length - 1].lessonId,
@@ -66,7 +68,7 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
         );
       }
     }
-  }, [lectureDetail, lectureId, setLectureId, setLectureInfo, setLessonInfo, setStudentsCnt, userInfo.id]);
+  }, [isTeacher, lectureDetail, lectureId, setLectureId, setLectureInfo, setLessonInfo, setStudentsCnt, userInfo.id]);
 
   useEffect(() => {
     if (lectureDetail) {

@@ -188,6 +188,7 @@ function ClassHomeworkListScreen(): React.JSX.Element {
               </TouchableOpacity>
             </View>
           </View>
+
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -208,8 +209,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
   card: {
     marginHorizontal: 40,
-    padding: 25,
-    marginBottom: 5,
+    padding: 20,
+    marginBottom: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -222,14 +223,18 @@ const styles = StyleSheet.create({
   },
   nearingDeadlineCard: {
     backgroundColor: '#FFF1C1', // 마감이 가까운 숙제 배경색
+    borderLeftWidth: 5,
+    borderLeftColor: '#FFA500',
   },
   submittedCard: {
     backgroundColor: '#D8E1FE', // 제출된 숙제 배경색
+    borderLeftWidth: 5,
+    borderLeftColor: '#4CAF50',
   },
   pastDeadlineCard: {
-    backgroundColor: '#CCCCCC', // 기한이 지난 숙제 배경색
-    borderColor: '#FF5555',
-    borderWidth: 1,
+    backgroundColor: '#F8D7DA', // 기한이 지난 숙제 배경색
+    borderLeftWidth: 5,
+    borderLeftColor: '#FF5555',
   },
   cardContent: {
     flexDirection: 'row',
@@ -248,23 +253,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 5,
+    marginBottom: 8,
   },
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 3,
+    marginBottom: 5,
   },
-  itemText: { fontSize: 14, color: '#666', marginLeft: 5 },
+  itemText: { fontSize: 14, color: '#666', marginLeft: 8 },
   deadlineText: {
     color: '#FF5555',
     fontWeight: 'bold',
-    marginTop: 5,
+    marginTop: 10,
   },
   remainingDaysText: {
     color: '#FFA500',
     fontWeight: 'bold',
-    marginTop: 5,
+    marginTop: 10,
   },
   emptyContainer: {
     flex: 1,
