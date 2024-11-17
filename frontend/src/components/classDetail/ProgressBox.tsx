@@ -8,6 +8,7 @@ import IncompleteHomeworkIcon from '@assets/icons/incompleteHomeworkIcon.svg';
 import HomeworkCheckIcon from '@assets/icons/homeworkCheckIcon.svg';
 import FolderCheckIcon from '@assets/icons/folderCheckIcon.svg';
 import AvarageScoreIcon from '@assets/icons/scoreIcon.svg';
+import ExamIcon from '@assets/icons/examIcon.svg';
 import {
   withTiming,
   useSharedValue,
@@ -30,6 +31,7 @@ interface ProgressBoxProps {
   unit: string;
   icon:
   | 'complete'
+  | 'exam'
   | 'incomplete'
   | 'avarageScore'
   | 'homeworkCheck'
@@ -110,6 +112,7 @@ function ProgressBox({
     avarageScore: AvarageScoreIcon,
     homeworkCheck: HomeworkCheckIcon,
     folderCheck: FolderCheckIcon,
+    exam: ExamIcon,
   } as const;
 
   const Icon = icons[icon];
@@ -121,12 +124,12 @@ function ProgressBox({
         <Text weight="bold">{title}</Text>
         {isLessonDetail && (
           <TouchableOpacity style={styles.intoButton} onPress={handleNavigate}>
-            <IntoIcon width={iconSize.sm} height={iconSize.sm} />
+            <IntoIcon width={iconSize.md} height={iconSize.md} />
           </TouchableOpacity>
         )}
       </View>
       <View style={styles.content}>
-        <Icon width={iconSize.md} height={iconSize.md} />
+        <Icon width={iconSize.lg} height={iconSize.lg} />
         <View style={styles.contentText}>
           <AnimatedNumber value={contentValue} />
           <Text variant="subtitle">{unit}</Text>
