@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text} from '@components/common/Text';
 import {View, StyleSheet} from 'react-native';
-import ProgressBox from '@components/homework/ProgressBox';
+import ProgressBox from '@components/classDetail/ProgressBox';
 import {getResponsiveSize} from '@utils/responsive';
 import {
   HomeworkType,
