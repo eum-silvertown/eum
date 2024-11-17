@@ -137,8 +137,8 @@ function ClassExamListTeacherScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
   header: {
-    marginVertical: 25,
-    marginLeft: 25,
+    marginVertical: 18,
+    marginLeft: 18,
     flexDirection: 'row',
     alignItems: 'center',
   },

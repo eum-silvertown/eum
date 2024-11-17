@@ -88,8 +88,18 @@ function ClassExamStudentSubmitListScreen(): React.JSX.Element {
 
   if (submissions.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>제출 내역이 없습니다.</Text>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <BackArrowIcon />
+          </TouchableOpacity>
+          <HeaderText variant="title" style={styles.headerText} weight="bold">
+            시험 제출 내역
+          </HeaderText>
+        </View>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>제출 내역이 없습니다.</Text>
+        </View>
       </View>
     );
   }
