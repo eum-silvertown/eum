@@ -3,16 +3,18 @@ import { AllAboutHomeworkType, getAllAboutHomework } from '@services/homeworkSer
 import { useAuthStore } from '@store/useAuthStore';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
+
+import HomeworkProgressBox from '@components/homework/HomeworkProgressBox';
+import HomeworkList from '@components/homework/HomeworkList';
 import { colors } from 'src/hooks/useColors';
 
-import HomeworkIcon from '@assets/icons/homeworkIcon.svg';
-
-export default function HomeworkScreen(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+const HomeworkScreen = (): React.JSX.Element => {
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const userId = useAuthStore(state => state.userInfo.id);
   const [allAboutHomework, setAllAboutHomework] = useState<AllAboutHomeworkType>();
+  const [selected, setSelected] = useState<'전체 숙제 수' | '완료한 숙제 수' | '미완료'>('전체 숙제 수');
 
   async function fetchHomework() {
     try {
@@ -25,71 +27,65 @@ export default function HomeworkScreen(): React.JSX.Element {
 
   useEffect(() => {
     fetchHomework();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!allAboutHomework) {
-    return <View><Text>Loading...</Text></View>
+    return <View><Text>Loading...</Text></View>;
   }
+
+  const getFilteredHomeworkList = () => {
+    switch (selected) {
+      case '전체 숙제 수':
+        return allAboutHomework.homeworkDetails;
+      case '완료한 숙제 수':
+        return allAboutHomework.homeworkDetails.filter(homework => homework.isComplete);
+      case '미완료':
+        return allAboutHomework.homeworkDetails.filter(homework => !homework.isComplete);
+      default:
+        return allAboutHomework.homeworkDetails;
+    }
+  };
 
   return <View style={styles.container}>
     <View style={styles.progressView}>
       <Text variant="subtitle" weight="bold">숙제 진행도</Text>
       <View style={styles.progressBoxes}>
-        <View style={styles.progressBox}>
-          <View style={styles.progressContent}>
-            <Text variant="xxl" weight="bold">{allAboutHomework.totalHomeworkCount}</Text>
-            <Text color="secondary">전체 숙제 수</Text>
-          </View>
-          <View style={[styles.progressIcon, {backgroundColor: '#ccccff'}]}>
-          <HomeworkIcon width={width * 0.02} height={width * 0.02} color={'#7777ff'}/>
-          </View>
-        </View>
-        <View style={styles.progressBox}>
-          <View style={styles.progressContent}>
-            <Text variant="xxl" weight="bold">{allAboutHomework.completedHomeworkCount}</Text>
-            <Text color="secondary">완료한 숙제 수</Text>
-          </View>
-          <View style={[styles.progressIcon, {backgroundColor: '#ccffcc'}]}>
-          <HomeworkIcon width={width * 0.02} height={width * 0.02} color={'#77bb77'}/>
-          </View>
-        </View>
-        <View style={styles.progressBox}>
-          <View style={styles.progressContent}>
-            <Text variant="xxl" weight="bold">{allAboutHomework.totalHomeworkCount - allAboutHomework.completedHomeworkCount}</Text>
-            <Text color="secondary">미완료</Text>
-          </View>
-          <View style={[styles.progressIcon, {backgroundColor: '#ffcccc'}]}>
-          <HomeworkIcon width={width * 0.02} height={width * 0.02} color={'#ff7777'}/>
-          </View>
-        </View>
-        <View style={styles.progressBox}>
-          <View style={styles.progressContent}>
-            <Text variant="xxl" weight="bold">{allAboutHomework.averageScore}</Text>
-            <Text color="secondary">평균 점수</Text>
-          </View>
-          <View style={[styles.progressIcon, {backgroundColor: '#ffffcc'}]}>
-          <HomeworkIcon width={width * 0.02} height={width * 0.02} color={'#cccc77'}/>
-          </View>
-        </View>
+        <HomeworkProgressBox
+          value={allAboutHomework.totalHomeworkCount}
+          variant="전체 숙제 수"
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <HomeworkProgressBox
+          value={allAboutHomework.completedHomeworkCount}
+          variant="완료한 숙제 수"
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <HomeworkProgressBox
+          value={allAboutHomework.totalHomeworkCount - allAboutHomework.completedHomeworkCount}
+          variant="미완료"
+          selected={selected}
+          setSelected={setSelected}
+        />
+        <HomeworkProgressBox
+          value={allAboutHomework.averageScore}
+          variant="평균 점수"
+        />
       </View>
     </View>
     <View style={styles.homeworkView}>
-      <View style={{flex: 6, gap: width * 0.01}}>
-        <Text variant="subtitle" weight="bold">숙제 목록</Text>
-        <View style={styles.homeworkList}>
-          {allAboutHomework.homeworkDetails.map(homeworkDetail => <View>
-            <Text>{homeworkDetail.title}</Text>
-            </View>)}
-        </View>
-      </View>
-      <View style={{flex: 4, gap: width * 0.01}}>
+      <HomeworkList homeworkList={getFilteredHomeworkList()}/>
+      <View style={styles.previewView}>
         <Text variant="subtitle" weight="bold">숙제 미리보기</Text>
-        <View style={styles.homeworkList}></View>
+        <View style={styles.preview}></View> 
       </View>
     </View>
-  </View>
-}
+  </View>;
+};
+
+export default HomeworkScreen;
 
 function getStyles(width: number) {
   return StyleSheet.create({
@@ -115,41 +111,23 @@ function getStyles(width: number) {
       flexDirection: 'row',
       gap: width * 0.025,
     },
-    progressBox: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: width * 0.01,
-      padding: width * 0.015,
-      backgroundColor: 'white',
-      borderWidth: width * 0.001,
-      borderRadius: width * 0.01,
-      borderColor: colors.light.borderColor.pickerBorder,
-    },
-    progressContent: {
-      flex: 6,
-    },
-    progressIcon: {
-      flex: 4,
-      justifyContent: 'center',
-      alignItems: 'center',
-      aspectRatio: 1,
-      borderRadius: width * 0.01,
-    },
-    progressBar: {
-      flex: 1,
-    },
     homeworkView: {
       flex: 6.5,
       flexDirection: 'row',
       gap: width * 0.025,
     },
-    homeworkList: {
+    previewView: {
+      flex: 4, gap: width * 0.01,
+    },
+    preview: {
       flex: 1,
+      paddingTop: width * 0.01,
+      paddingBottom: width * 0.005,
+      paddingHorizontal: width * 0.01,
       backgroundColor: 'white',
       borderWidth: width * 0.001,
       borderRadius: width * 0.01,
       borderColor: colors.light.borderColor.pickerBorder,
-    }
-  })
+    },
+  });
 }
