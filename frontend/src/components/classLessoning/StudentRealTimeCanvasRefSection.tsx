@@ -3,10 +3,16 @@ import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
 import pako from 'pako';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import base64 from 'react-native-base64';
+import { useQuery } from '@tanstack/react-query';
+import { getTeacherDrawingData } from '@services/lessonService';
 
 interface StudentCanvasSectionProps {
   receivedMessage: string | null;
   isTeacherScreenOn: boolean;
+  teacherId: number;
+  lessonId: number;
+  problemIds: number[];
+  currentPage: number;
 }
 
 type PathData = {
@@ -20,6 +26,10 @@ type PathData = {
 function StudentRealTimeCanvasRefSection({
   receivedMessage,
   isTeacherScreenOn,
+  teacherId,
+  lessonId,
+  problemIds,
+  currentPage,
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
@@ -104,6 +114,55 @@ function StudentRealTimeCanvasRefSection({
     });
 
     return mergedPaths;
+  };
+
+  // 선생님 그림 데이터 가져오기
+  const { data: teacherDrawingData } = useQuery({
+    queryKey: ['teacherDrawing', teacherId, lessonId, problemIds[currentPage - 1]],
+    queryFn: async () => {
+      if (teacherId && lessonId && problemIds[currentPage - 1]) {
+        return getTeacherDrawingData(teacherId, lessonId, problemIds[currentPage - 1]);
+      }
+      return null;
+    },
+    enabled: !!(teacherId && lessonId && problemIds[currentPage - 1]), // 데이터가 존재할 때만 요청
+  });
+
+  useEffect(() => {
+    if (teacherDrawingData) {
+      processCanvasData(teacherDrawingData.drawingData);
+    }
+  }, [teacherDrawingData]);
+
+  // teacherDrawingData가 변경되었을 때 paths 설정
+  useEffect(() => {
+    if (teacherDrawingData) {
+      processCanvasData(teacherDrawingData.drawingData);
+
+    }
+  }, [teacherDrawingData, currentPage]);
+  const processCanvasData = (base64EncodedData: string) => {
+    try {
+      const binaryString = base64.decode(base64EncodedData);
+      const compressedData = Uint8Array.from(
+        binaryString.split('').map(char => char.charCodeAt(0)),
+      );
+      const decompressedData = JSON.parse(
+        pako.inflate(compressedData, { to: 'string' }),
+      );
+
+      const parsedPaths = decompressedData
+        .map((pathData: any) => {
+          const pathString = pathData.path;
+          const path = Skia.Path.MakeFromSVGString(pathString);
+          return path ? { ...pathData, path } : null;
+        })
+        .filter(Boolean);
+
+      setPaths(parsedPaths);
+    } catch (error) {
+      console.error('Failed to decompress or parse data:', error);
+    }
   };
 
   return (

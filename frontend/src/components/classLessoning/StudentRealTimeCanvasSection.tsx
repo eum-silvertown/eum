@@ -107,6 +107,7 @@ const StudentRealTimeCanvasSection = ({
   }, [receivedMessage, setLessoningInfo]);
 
   const memberId = useLectureStore(state => state.memberId);
+  const teacherId = useLectureStore(state => state.teacherId);
   const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
   const width = parseFloat(deviceWidth.toFixed(8));
   const height = parseFloat(deviceHeight.toFixed(8));
@@ -395,7 +396,7 @@ const StudentRealTimeCanvasSection = ({
 
   return (
     <>
-      <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} isTeacherScreenOn={isTeacherScreenOn} />
+      <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} isTeacherScreenOn={isTeacherScreenOn} teacherId={teacherId!} lessonId={lessonId} problemIds={problemIds} currentPage={currentPage} />
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}

@@ -100,6 +100,7 @@ const TeacherRealTimeCanvasSection = ({
       width,
       height,
     };
+    console.log('newPayload:', newPayload);
 
     clientRef.current.publish({
       destination,
