@@ -17,7 +17,7 @@ interface CustomTextProps extends TextProps {
 
 export function Text({
   variant = 'body',
-  color = 'main',
+  color = 'text01',
   weight = 'regular',
   align = 'left',
   style,

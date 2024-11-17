@@ -33,16 +33,12 @@ interface DrawingState {
   currentLineId: string | null;
 }
 
-interface DrawingCanvasProps {
-  roomId: string;
-  userId: string;
-}
-
 // const SOCKET_URL = 'http://192.168.100.187:8080/ws-gateway/drawing';
 const SOCKET_URL = 'http://k11d101.p.ssafy.io/ws-gateway/drawing';
 const BUFFER_INTERVAL = 1000; // 1초마다 데이터 전송
 
-const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
+export default function DrawingCanvas() {
+  const classId = useAuthStore(state => state.userInfo.classInfo.classId);
   const userId = useAuthStore(state => state.userInfo.id).toString();
   const currentTool = useRef<Tool>('whiteCholk');
   const currentColor = useRef('#ffffff');
@@ -132,7 +128,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
 
       // 초기 캔버스 상태 요청
       stompClient.current?.publish({
-        destination: `/app/canvas/${roomId}/state-request`,
+        destination: `/app/canvas/${classId}/state-request`,
         body: JSON.stringify({userId}),
       });
     };
@@ -148,7 +144,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
         stompClient.current.deactivate();
       }
     };
-  }, [roomId, userId]);
+  }, [classId, userId]);
 
   // 캔버스 상태 처리
   const handleCanvasState = useCallback(
@@ -218,7 +214,7 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({roomId}) => {
       });
       drawingBuffer.current = [];
     }
-  }, [roomId, userId]);
+  }, [classId, userId]);
 
   // 주기적 버퍼 플러시
   useEffect(() => {
@@ -378,5 +374,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-export default DrawingCanvas;
