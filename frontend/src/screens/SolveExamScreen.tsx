@@ -1,36 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Alert } from 'react-native';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { useLessonStore } from '@store/useLessonStore';
 import ProblemSection from '@components/common/ProblemSection';
-import StudentCanvasSection from '@components/classActivity/StudentCanvasSection';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import StudentExamCanvasSection from '@components/classActivity/StudentExamCanvasSection';
+import { useQuery } from '@tanstack/react-query';
 import { getFileDetail } from '@services/problemService';
-import { ExamProblemSubmission, submitExamProblems } from '@services/examService';
-import { useAuthStore } from '@store/useAuthStore';
 import { useExamStore } from '@store/useExamStore';
 
 function SolveExamScreen(): React.JSX.Element {
-  const memberId = useAuthStore(state => state.userInfo.id);
-  const lectureId = useLessonStore(state => state.lectureId);
+  const setCurrentScreen = useCurrentScreenStore(state => state.setCurrentScreen);
   const route = useRoute();
   const { examId, questionIds } = route.params as {
     examId: number;
     questionIds: number[];
   };
-  const queryClient = useQueryClient();
-  const navigation = useNavigation();
-  const [currentPage, setCurrentPage] = useState(0);
-  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
-  const [paths, setPaths] = useState<{ [key: number]: string }>({});
+  const [currentPage, setCurrentPage] = useState(1);
   const [remainingTime, setRemainingTime] = useState<number>(0);
-
-  const setCurrentScreen = useCurrentScreenStore(state => state.setCurrentScreen);
-  const { exams } = useExamStore();
-
   useFocusEffect(() => {
     setCurrentScreen('SolveExamScreen');
+  });
+  const { exams } = useExamStore();
+  const {
+    data: problems,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['examProblems', questionIds],
+    queryFn: async ({ queryKey }) => {
+      const [, responseQuestionIds] = queryKey;
+      const problemDetails = await Promise.all(
+        (responseQuestionIds as number[]).map(questionId =>
+          getFileDetail(questionId),
+        ),
+      );
+      return problemDetails;
+    },
+    enabled: !!questionIds.length,
   });
 
   useEffect(() => {
@@ -67,92 +73,6 @@ function SolveExamScreen(): React.JSX.Element {
     return 'green';
   };
 
-  const {
-    data: problems,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['examProblems', questionIds],
-    queryFn: async ({ queryKey }) => {
-      const [, responseQuestionIds] = queryKey;
-      const problemDetails = await Promise.all(
-        (responseQuestionIds as number[]).map(questionId =>
-          getFileDetail(questionId),
-        ),
-      );
-      return problemDetails;
-    },
-  });
-
-  const { mutate: submitExamMutation } = useMutation({
-    mutationFn: (submissionData: ExamProblemSubmission[]) =>
-      submitExamProblems(examId, submissionData),
-    onSuccess: () => {
-      Alert.alert('제출 완료', '시험이 성공적으로 제출되었습니다.');
-      queryClient.invalidateQueries({
-        queryKey: ['examSubmissionList'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['lectureDetail', lectureId],
-      });
-      navigation.goBack();
-    },
-    onError: () => {
-      Alert.alert('제출 실패', '시험 제출에 실패했습니다.');
-    },
-  });
-
-  const handleNextPage = () => {
-    if (currentPage < (problems?.length || 0) - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleSetAnswer = (questionId: number, answer: string) => {
-    setAnswers(prev => ({ ...prev, [questionId]: answer }));
-  };
-
-  const handleSetPaths = (questionId: number, pathData: string) => {
-    setPaths(prev => ({ ...prev, [questionId]: pathData }));
-  };
-
-  const handleSubmit = () => {
-    if (!problems) {
-      Alert.alert('오류', '문제 정보를 가져오지 못했습니다.');
-      return;
-    }
-
-    const submissionData = problems.map(problem => {
-      const studentAnswer = answers[problem.fileId] || '';
-      const isCorrect = studentAnswer.trim() === problem.answer.trim();
-      const examSolution = paths[problem.fileId] || '';
-
-      return {
-        questionId: problem.fileId,
-        studentId: memberId!,
-        isCorrect,
-        examSolution,
-      };
-    });
-
-    Alert.alert('제출 확인', '정말로 시험을 제출하시겠습니까?', [
-      {
-        text: '취소',
-        style: 'cancel',
-      },
-      {
-        text: '제출',
-        onPress: () => submitExamMutation(submissionData),
-      },
-    ]);
-  };
-
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
@@ -167,20 +87,15 @@ function SolveExamScreen(): React.JSX.Element {
         <Text style={[styles.timerText, { color: getTimeColor() }]}>
           남은 시간: {formatTime(remainingTime)}
         </Text>
-        <ProblemSection problemText={problems[currentPage].content} />
-        <StudentCanvasSection
+        <ProblemSection problemText={problems[currentPage - 1].content} />
+        <StudentExamCanvasSection
           solveType="EXAM"
-          currentPage={currentPage + 1}
-          totalPages={problems.length}
-          onNextPage={handleNextPage}
-          onPrevPage={handlePrevPage}
-          savePaths={(pathData: string) =>
-            handleSetPaths(problems[currentPage].fileId, pathData)
-          }
-          saveAnswer={(answer: string) =>
-            handleSetAnswer(problems[currentPage].fileId, answer)
-          }
-          onSubmit={handleSubmit}
+          examId={examId}
+          questionIds={questionIds}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          problemsCnt={problems.length}
+          problems={problems}
         />
       </View>
     </View>
@@ -199,7 +114,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   timerText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

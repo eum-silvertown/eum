@@ -5,22 +5,22 @@ import StudentInteractionTool from './StudentInteractionTool';
 import pako from 'pako';
 import base64 from 'react-native-base64';
 import { Alert } from 'react-native';
-import { HomeworkSubmissionRequest, submitHomework } from '@services/homeworkService';
 import { useLessonStore } from '@store/useLessonStore';
 import { useAuthStore } from '@store/useAuthStore';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
+import { ExamProblemSubmission, submitExamProblems } from '@services/examService';
 
 interface StudentCanvasSectionProps {
   solveType: 'EXAM' | 'HOMEWORK'
-  homeworkId: number;
+  examId: number;
   questionIds: number[];
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
   problemsCnt: number;
   problems: {
     content: string;
-    answer: string;
+    answer: string; // 정답 데이터 포함
   }[];
 }
 
@@ -43,7 +43,7 @@ type QuestionResponse = {
   questionId: number;
   studentId: number;
   isCorrect: boolean;
-  homeworkSolution: PathData[];
+  examSolution: PathData[];
   answerText?: string;
 };
 
@@ -51,9 +51,9 @@ type QuestionResponse = {
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
-const StudentCanvasSection = ({
+const StudentExamCanvasSection = ({
   solveType,
-  homeworkId,
+  examId,
   questionIds,
   currentPage,
   setCurrentPage,
@@ -87,20 +87,20 @@ const StudentCanvasSection = ({
         questionId: questionIds[index],
         studentId: memberId,
         isCorrect: false,
-        homeworkSolution: [],
+        examSolution: [],
         answerText: '',
       }))
     );
   }, [problemsCnt, questionIds, memberId]);
 
   // 숙제 제출 Mutation
-  const { mutate: submitHomeworkMutation } = useMutation({
-    mutationFn: (submissionData: HomeworkSubmissionRequest) =>
-      submitHomework(homeworkId, submissionData),
+  const { mutate: submitExamMutation } = useMutation({
+    mutationFn: (submissionData: ExamProblemSubmission) =>
+      submitExamProblems(examId, submissionData),
     onSuccess: () => {
       Alert.alert('제출 완료', '숙제가 성공적으로 제출되었습니다.');
       queryClient.invalidateQueries({
-        queryKey: ['homeworkSubmissionList'],
+        queryKey: ['examSubmissionList'],
       });
       queryClient.invalidateQueries({
         queryKey: ['lectureDetail', lectureId],
@@ -116,7 +116,7 @@ const StudentCanvasSection = ({
     // 페이지 변경 시 데이터를 로드
     const currentResponse = questionResponses[currentPage - 1];
     if (currentResponse) {
-      setPaths(currentResponse.homeworkSolution);
+      setPaths(currentResponse.examSolution);
       setAnswerText(currentResponse.answerText || '');
     } else {
       setPaths([]);
@@ -131,7 +131,7 @@ const StudentCanvasSection = ({
       if (updatedResponses[currentPage - 1]) {
         updatedResponses[currentPage - 1] = {
           ...updatedResponses[currentPage - 1],
-          homeworkSolution: paths, // paths 데이터를 homeworkSolution에 반영
+          examSolution: paths,
         };
       }
       return updatedResponses;
@@ -279,16 +279,16 @@ const StudentCanvasSection = ({
   };
 
   const handleSubmit = () => {
-    const encodedResponses: HomeworkSubmissionRequest = questionResponses.map((response, index) => {
+    const encodedResponses: ExamProblemSubmission = questionResponses.map((response, index) => {
       const correctAnswer = problems[index]?.answer || ''; // 정답 기본값 설정
       return {
         questionId: response.questionId,
         studentId: response.studentId,
         isCorrect: (response.answerText?.trim() || '') === correctAnswer.trim(), // 공백 제거 후 비교
-        homeworkSolution: encodePathsToSolution(response.homeworkSolution),
+        examSolution: encodePathsToSolution(response.examSolution),
       };
     });
-    submitHomeworkMutation(encodedResponses);
+    submitExamMutation(encodedResponses);
   };
 
   const onNextPage = () => {
@@ -419,4 +419,4 @@ const StudentCanvasSection = ({
   );
 };
 
-export default StudentCanvasSection;
+export default StudentExamCanvasSection;
