@@ -1,8 +1,8 @@
 import React from 'react';
-import {Text} from '@components/common/Text';
-import {View, StyleSheet} from 'react-native';
-import ProgressBox from '@components/homework/ProgressBox';
-import {getResponsiveSize} from '@utils/responsive';
+import { Text } from '@components/common/Text';
+import { View, StyleSheet } from 'react-native';
+import ProgressBox from '@components/classDetail/ProgressBox';
+import { getResponsiveSize } from '@utils/responsive';
 import {
   HomeworkType,
   ExamType,
@@ -24,7 +24,7 @@ function Overview({
   homeworkCnt = 0,
   examCnt = 0,
   lessonCnt = 0,
-  navigateData = {lessons: [], exams: [], homeworks: []},
+  navigateData = { lessons: [], exams: [], homeworks: [] },
 }: OverviewProps): React.JSX.Element {
   return (
     <View style={styles.overview}>
@@ -46,7 +46,7 @@ function Overview({
           title="시험"
           content={`${examCnt}`}
           unit="번"
-          icon="complete"
+          icon="exam"
           isLessonDetail={true}
           navigateData={navigateData.exams}
         />

@@ -14,6 +14,7 @@ import { useLectureStore, useLessonStore } from '@store/useLessonStore';
 import ProblemSection from '@components/common/ProblemSection';
 import { useQuery } from '@tanstack/react-query';
 import { getFileDetail } from '@services/problemService';
+import { useLessoningStore } from '@store/useLessoningStore';
 
 function LessoningScreen(): React.JSX.Element {
   const questionIds = useLessonStore(state => state.questionIds);
@@ -38,20 +39,20 @@ function LessoningScreen(): React.JSX.Element {
   const problems = lessonProblems?.map(problem => problem.content) || [];
   const answers = lessonProblems?.map(problem => problem.answer) || [];
   const titles = lessonProblems?.map(problem => problem.title) || [];
-
+  const [currentPage, setCurrentPage] = useState(1);
   const userInfo = useAuthStore(state => state.userInfo);
   const [isConnected, setIsConnected] = useState(false);
   const [receivedMessage, setReceivedMessage] = useState<string | null>(null);
   const clientRef = useRef<StompJs.Client | null>(null);
   const isTeacher = userInfo.role === 'TEACHER';
 
-  const sendStudentInfo = (action: 'in' | 'now' | 'out') => {
+  const sendStudentInfo = (action: 'in' | 'now' | 'out', page?: number) => {
     if (clientRef.current?.connected) {
       const message = {
         studentId: userInfo.id,
         studentName: userInfo.name,
         studentImage: userInfo.image || '',
-        currentPage: action === 'now' ? currentPage : 1,
+        currentPage: page ?? currentPage,
       };
 
       const destination = `/app/lesson/${lessonId}/${action}`;
@@ -59,6 +60,7 @@ function LessoningScreen(): React.JSX.Element {
       console.log(`Message sent to ${destination}:`, message);
     }
   };
+
 
   // STOMP 클라이언트 초기화 및 설정
   useEffect(() => {
@@ -72,8 +74,6 @@ function LessoningScreen(): React.JSX.Element {
       onConnect: () => {
         console.log('STOMP client successfully connected');
         setIsConnected(true);
-        // 구독 설정: isTeacher에 따른 분기 처리
-        console.log('입장드가자', isTeacher, isTeaching, memberId);
         if (isTeacher && isTeaching && memberId) {
           const teacherTopic = `/user/topic/teacher/lesson/${lessonId}/member/${memberId}`;
           client.subscribe(teacherTopic, message => {
@@ -127,42 +127,51 @@ function LessoningScreen(): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTeacher, isTeaching, lessonId, memberId]);
 
-  const [currentPage, setCurrentPage] = useState(1);
-
   const handleNextPage = () => {
     if (currentPage < problems.length) {
-      setCurrentPage(prev => {
-        const nextPage = prev + 1;
-        // 현재 페이지 정보 전송
-        if (!isTeacher) {
-          sendStudentInfo('now');
-        }
-        return nextPage;
-      });
+      const nextPage = currentPage + 1;
+
+      setCurrentPage(nextPage); // 페이지 상태 업데이트
+      if (!isTeacher) {
+        sendStudentInfo('now', nextPage); // 다음 페이지 정보로 now 호출
+      }
     }
   };
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => {
-        const prevPage = prev - 1;
-        // 학생이면 현재 페이지 정보 전송
-        if (!isTeacher) {
-          sendStudentInfo('now');
-        }
-        return prevPage;
-      });
+      const prevPage = currentPage - 1;
+
+      setCurrentPage(prevPage); // 페이지 상태 업데이트
+      if (!isTeacher) {
+        sendStudentInfo('now', prevPage); // 이전 페이지 정보로 now 호출
+      }
     }
   };
 
-  const handleGoToTeacherScreen = (questionId: number) => {
-    const targetIndex = questionIds!.findIndex(id => id === questionId);
-    if (targetIndex !== -1) {
-      setCurrentPage(targetIndex + 1); // 1-based index
-    } else {
-      console.error('해당 questionId가 questionIds에 없습니다.');
+  const handleGoToTeacherScreen = () => {
+    const currentQuestionId = useLessoningStore.getState().questionId;
+
+    if (!problemIds || problemIds.length === 0) {
+      console.error('problemIds 배열이 비어있습니다.');
+      return;
     }
+
+    // 문제 ID 배열에서 선생님이 보고 있는 문제 ID의 인덱스를 찾음
+    const targetIndex = problemIds.findIndex(id => id === currentQuestionId);
+
+    if (targetIndex === -1) {
+      console.error('선생님이 보고 있는 문제 ID가 problemIds에 없습니다.');
+      return;
+    }
+
+    console.log('targetIndex:', targetIndex);
+
+    // 페이지 업데이트 (1-based index)
+    setCurrentPage(targetIndex + 1);
+    console.log('Updated currentPage:', targetIndex + 1);
   };
+
 
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
@@ -256,8 +265,8 @@ const styles = StyleSheet.create({
   },
   connectionChip: {
     position: 'absolute',
-    bottom: getResponsiveSize(160),
-    right: getResponsiveSize(32),
+    top: getResponsiveSize(24),
+    right: getResponsiveSize(24),
     paddingVertical: getResponsiveSize(12),
     paddingHorizontal: getResponsiveSize(18),
     borderRadius: getResponsiveSize(32),

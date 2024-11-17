@@ -33,12 +33,10 @@ export const updateLectureDetail = async (
   lectureData: UpdateLectureRequest,
 ): Promise<UpdateLectureResponse> => {
   try {
-    console.log('수업 수정 요청 데이터:', lectureData);
     const {data} = await authApiClient.put<ApiResponse<UpdateLectureResponse>>(
       `lecture/${lectureId}`,
       lectureData,
     );
-    console.log('수업 수정 응답:', data);
     return data.data;
   } catch (error) {
     console.error('수업 수정 실패:', error);
@@ -198,8 +196,6 @@ export const toupdateLectureDetail = async (
       data: ToUpdateLectureResponse;
       message: string;
     }>(`/lecture/update/${lectureId}`);
-
-    console.log('수업 수정용 데이터 조회: ', data);
     return data.data;
   } catch (error) {
     console.error('수업 정보 조회 실패:', error);
@@ -234,8 +230,7 @@ export const getLectureList = async (): Promise<LectureListItemType[]> => {
   try {
     const {data} = await authApiClient.get<LectureListResponse>('/lecture');
 
-    console.log('수업 리스트 조회 응답:', data.data);
-    return data.data; // data 필드에 수업 리스트 배열이 포함되어 있음
+    return data.data;
   } catch (error) {
     console.error('수업 리스트 조회 실패:', error);
     throw error;
@@ -314,14 +309,12 @@ export type CreateLectureResponse = {
 export const postCreateLecture = async (
   createData: CreateLectureRequest,
 ): Promise<CreateLectureResponse> => {
-  console.log('수업 생성 요청:', createData);
   try {
     const {data} = await authApiClient.post<ApiResponse<CreateLectureResponse>>(
       '/lecture',
       createData,
     );
 
-    console.log('수업 생성 응답:', data);
     return data.data;
   } catch (error) {
     console.error('수업 생성 실패:', error);

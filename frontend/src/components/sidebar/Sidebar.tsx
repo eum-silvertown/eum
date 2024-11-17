@@ -65,7 +65,7 @@ const getStyles = (width: number) =>
       alignItems: 'flex-start',
       height: '100%',
       backgroundColor: 'white',
-      borderRadius: 15,
+      borderRadius: width * 0.015,
       overflow: 'hidden',
     },
     sidebarExpandIcon: {

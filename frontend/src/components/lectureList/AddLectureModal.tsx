@@ -210,7 +210,6 @@ const AddLectureModal = (): React.JSX.Element => {
       })),
     };
     createLecture(lectureData);
-    console.log('LectureCreateBook Data:', lectureData); // 콘솔에 JSON 데이터 출력
   };
 
   useEffect(() => {

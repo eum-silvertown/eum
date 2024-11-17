@@ -7,7 +7,7 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Picker import
+import { Picker } from '@react-native-picker/picker';
 import { iconSize } from '@theme/iconSize';
 import { useNavigation } from '@react-navigation/native';
 import ClockIcon from '@assets/icons/clockIcon.svg';
@@ -15,9 +15,8 @@ import QuestionsIcon from '@assets/icons/questionsIcon.svg';
 import EmptyHomeworkIcon from '@assets/icons/emptyHomeworkIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import { Text as HeaderText } from '@components/common/Text';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
-  deleteHomework,
   getHomeworkSubmissionList,
 } from '@services/homeworkService';
 import {
@@ -32,9 +31,7 @@ type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassHomeworkListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
-  const role = useAuthStore(state => state.userInfo.role);
   const memberId = useAuthStore(state => state.userInfo.id);
 
   const { data: lectureDetail } = useQuery<LectureDetailType>({
@@ -47,20 +44,7 @@ function ClassHomeworkListScreen(): React.JSX.Element {
     queryFn: () => getHomeworkSubmissionList(lectureId!, memberId!),
   });
 
-  const { mutate: removeHomework } = useMutation({
-    mutationFn: (homeworkId: number) => deleteHomework(homeworkId),
-    onSuccess: () => {
-      Alert.alert('알림', '숙제가 삭제되었습니다.');
-      queryClient.invalidateQueries({
-        queryKey: ['lectureDetail', lectureId],
-      });
-    },
-    onError: error => {
-      console.error('숙제 삭제 실패:', error);
-    },
-  });
-
-  const [selectedFilter, setSelectedFilter] = useState<string>('전체'); // 필터 상태 관리
+  const [selectedFilter, setSelectedFilter] = useState<string>('전체'); // 필터
 
   const handleHomeworkPress = (homework: any) => {
     const endTime = new Date(homework.endTime).getTime();
@@ -83,20 +67,6 @@ function ClassHomeworkListScreen(): React.JSX.Element {
       // 기한 지난 미제출 -> 알림
       Alert.alert('알림', '기한이 지난 숙제는 제출할 수 없습니다.');
     }
-  };
-
-  const handleDeleteHomework = (homeworkId: number) => {
-    Alert.alert('숙제 삭제', '이 숙제를 정말로 삭제하시겠습니까?', [
-      {
-        text: '취소',
-        style: 'cancel',
-      },
-      {
-        text: '삭제',
-        onPress: () => removeHomework(homeworkId),
-        style: 'destructive',
-      },
-    ]);
   };
 
   const submittedHomeworkIds = submitHomeworkList?.map(
@@ -216,16 +186,9 @@ function ClassHomeworkListScreen(): React.JSX.Element {
                   )}
                 </View>
               </TouchableOpacity>
-              {role === 'TEACHER' && (
-                <TouchableOpacity
-                  onPress={() => handleDeleteHomework(item.homeworkId)}
-                  style={styles.deleteButton}
-                >
-                  <Text style={styles.deleteButtonText}>삭제하기</Text>
-                </TouchableOpacity>
-              )}
             </View>
           </View>
+
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -246,8 +209,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
   card: {
     marginHorizontal: 40,
-    padding: 25,
-    marginBottom: 5,
+    padding: 20,
+    marginBottom: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -260,14 +223,18 @@ const styles = StyleSheet.create({
   },
   nearingDeadlineCard: {
     backgroundColor: '#FFF1C1', // 마감이 가까운 숙제 배경색
+    borderLeftWidth: 5,
+    borderLeftColor: '#FFA500',
   },
   submittedCard: {
     backgroundColor: '#D8E1FE', // 제출된 숙제 배경색
+    borderLeftWidth: 5,
+    borderLeftColor: '#4CAF50',
   },
   pastDeadlineCard: {
-    backgroundColor: '#CCCCCC', // 기한이 지난 숙제 배경색
-    borderColor: '#FF5555',
-    borderWidth: 1,
+    backgroundColor: '#F8D7DA', // 기한이 지난 숙제 배경색
+    borderLeftWidth: 5,
+    borderLeftColor: '#FF5555',
   },
   cardContent: {
     flexDirection: 'row',
@@ -286,33 +253,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 5,
+    marginBottom: 8,
   },
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 3,
+    marginBottom: 5,
   },
-  itemText: { fontSize: 14, color: '#666', marginLeft: 5 },
+  itemText: { fontSize: 14, color: '#666', marginLeft: 8 },
   deadlineText: {
     color: '#FF5555',
     fontWeight: 'bold',
-    marginTop: 5,
+    marginTop: 10,
   },
   remainingDaysText: {
     color: '#FFA500',
     fontWeight: 'bold',
-    marginTop: 5,
-  },
-  deleteButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    backgroundColor: '#FF5555',
-    borderRadius: 8,
-  },
-  deleteButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
+    marginTop: 10,
   },
   emptyContainer: {
     flex: 1,

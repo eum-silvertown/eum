@@ -6,7 +6,6 @@ import { Alert } from 'react-native';
 import StudentCanvasRefSection from './StudentCanvasRefSection';
 
 interface StudentCanvasSectionProps {
-  solveType: 'EXAM' | 'HOMEWORK' | 'LESSON';
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
@@ -37,7 +36,6 @@ const StudentCanvasResolveSection = ({
   totalPages,
   onNextPage,
   onPrevPage,
-  solveType,
   examSolution,
 }: StudentCanvasSectionProps): React.JSX.Element => {
   const canvasRef = useCanvasRef();
@@ -220,7 +218,7 @@ const StudentCanvasResolveSection = ({
 
   return (
     <>
-      {showPreviousSolution && <StudentCanvasRefSection examSolution={examSolution} />}
+      {showPreviousSolution && <StudentCanvasRefSection studentDrawing={examSolution} />}
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}
@@ -244,7 +242,6 @@ const StudentCanvasResolveSection = ({
         resetPaths={resetPaths}
       />
       <StudentResolveInteractionTool
-        solveType={solveType}
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}

@@ -22,13 +22,11 @@ export const getFileDetail = async (
   fileId: number,
 ): Promise<ProblemDetailResponse['data']> => {
   try {
-    console.log(`파일 상세 조회 요청: fileId = ${fileId}`);
 
     const {data} = await authApiClient.get<ProblemDetailResponse>(
       `/file/${fileId}`,
     );
 
-    console.log('파일 상세 조회 응답:', data);
     return data.data;
   } catch (error: any) {
     if (error.response && error.response.data) {

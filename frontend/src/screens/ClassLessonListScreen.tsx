@@ -22,6 +22,7 @@ import {
 import { deleteLesson } from '@services/lessonService';
 import { ScreenType } from '@store/useCurrentScreenStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassLessonListScreen(): React.JSX.Element {
@@ -48,10 +49,8 @@ function ClassLessonListScreen(): React.JSX.Element {
     },
   });
 
-  const handleLessonPress = (lessonId: number) => {
-    console.log(lessonId);
-
-    // navigation.navigate('LessonDetail', { lessonId });
+  const handleLessonPress = (lessonId: number, questionIds: number[]) => {
+    navigation.navigate('ClassLessonReviewScreen',{lessonId, questionIds});
   };
 
   const handleDeleteLesson = (lessonId: number) => {
@@ -69,7 +68,6 @@ function ClassLessonListScreen(): React.JSX.Element {
   };
 
   const lessons = lectureDetail?.lessons || [];
-  console.log('lessons:', lessons);
 
   return (
     <View style={styles.container}>
@@ -88,7 +86,7 @@ function ClassLessonListScreen(): React.JSX.Element {
           <View style={styles.card}>
             <View style={styles.cardContent}>
               <TouchableOpacity
-                onPress={() => handleLessonPress(item.lessonId)}
+                onPress={() => handleLessonPress(item.lessonId, item.questions)}
                 style={styles.lessonContent}>
                 <LessonIcon
                   width={iconSize.md}
