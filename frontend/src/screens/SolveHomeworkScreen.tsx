@@ -2,7 +2,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import ProblemSection from '@components/common/ProblemSection';
-import StudentCanvasSection from '@components/classActivity/StudentCanvasSection';
+import StudentCanvasSection from '@components/classActivity/StudentHomeworkCanvasSection';
 import { useQuery } from '@tanstack/react-query';
 import { getFileDetail } from '@services/problemService';
 import { useState } from 'react';

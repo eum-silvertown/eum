@@ -51,7 +51,7 @@ type QuestionResponse = {
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
-const StudentCanvasSection = ({
+const StudentHomeworkCanvasSection = ({
   solveType,
   homeworkId,
   questionIds,
@@ -419,4 +419,4 @@ const StudentCanvasSection = ({
   );
 };
 
-export default StudentCanvasSection;
+export default StudentHomeworkCanvasSection;

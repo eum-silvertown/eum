@@ -52,8 +52,7 @@ const StudentCanvasResolveSection = ({
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
 
-  // "이전 필기 보기" 토글 상태
-  const [showPreviousSolution, setShowPreviousSolution] = useState(false);
+  const [showPreviousSolution, setShowPreviousSolution] = useState(true);
 
   const togglePenOpacity = () => {
     if (isErasing) {
