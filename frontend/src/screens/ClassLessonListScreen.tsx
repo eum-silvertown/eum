@@ -50,7 +50,7 @@ function ClassLessonListScreen(): React.JSX.Element {
   });
 
   const handleLessonPress = (lessonId: number, questionIds: number[]) => {
-    navigation.navigate('ClassLessonReviewScreen',{lessonId, questionIds});
+    navigation.navigate('ClassLessonReviewScreen', { lessonId, questionIds });
   };
 
   const handleDeleteLesson = (lessonId: number) => {
@@ -67,7 +67,8 @@ function ClassLessonListScreen(): React.JSX.Element {
     ]);
   };
 
-  const lessons = lectureDetail?.lessons || [];
+  const lessons = (lectureDetail?.lessons || []).slice().reverse(); // 역순 정렬
+
 
   return (
     <View style={styles.container}>

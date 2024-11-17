@@ -8,6 +8,11 @@ import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import { getResponsiveSize } from '@utils/responsive';
 import EmptyData from '@components/common/EmptyData';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType } from '@store/useCurrentScreenStore';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type LessonType = {
   lessonId: number;
@@ -19,16 +24,22 @@ type ReplayProps = {
   lesson?: LessonType[];
 };
 
-function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
+const Replay = ({ lesson = [] }: ReplayProps): React.JSX.Element => {
+  const navigation = useNavigation<NavigationProps>();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const totalPages = Math.ceil(lesson.length / itemsPerPage);
+  // 역순 정렬된 lesson 데이터
+  const sortedLessons = [...lesson].reverse();
+
+  const totalPages = Math.ceil(sortedLessons.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = lesson.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = sortedLessons.slice(startIndex, startIndex + itemsPerPage);
 
   const renderItem = ({ item }: { item: LessonType }) => (
-    <TouchableOpacity style={styles.item} onPress={() => handleItemPress(item)}>
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => handleItemPress(item)}>
       <View style={[styles.textContainer, styles.idContainer]}>
         <Text variant="caption" weight="bold">
           {item.lessonId}
@@ -48,7 +59,10 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
   );
 
   const handleItemPress = (item: LessonType) => {
-    console.log(`Clicked on ${item.lessonId}`);
+    navigation.navigate('ClassLessonReviewScreen', {
+      lessonId: item.lessonId,
+      questionIds: item.questions,
+    });
   };
 
   const handlePrevPage = () => {
@@ -69,7 +83,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
         <Text variant="subtitle" weight="bold" style={styles.subtitle}>
           수업 필기 다시보기
         </Text>
-        {lesson.length > 0 && (
+        {sortedLessons.length > 0 && (
           <View style={styles.pagination}>
             <TouchableOpacity
               onPress={handlePrevPage}
@@ -81,9 +95,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
               )}
             </TouchableOpacity>
             <Text
-              style={
-                styles.pageIndicator
-              }>{`${currentPage} / ${totalPages}`}</Text>
+              style={styles.pageIndicator}>{`${currentPage} / ${totalPages}`}</Text>
             <TouchableOpacity
               onPress={handleNextPage}
               disabled={currentPage === totalPages}>
@@ -97,7 +109,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
         )}
       </View>
 
-      {lesson.length === 0 ? (
+      {sortedLessons.length === 0 ? (
         <EmptyData message="수업이 없습니다" />
       ) : (
         <FlatList
@@ -109,7 +121,8 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
       )}
     </View>
   );
-}
+};
+
 
 const styles = StyleSheet.create({
   replay: {

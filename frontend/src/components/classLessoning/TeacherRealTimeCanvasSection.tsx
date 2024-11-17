@@ -8,6 +8,9 @@ import * as StompJs from '@stomp/stompjs';
 import TeacherRealTimeCanvasRefSection from './TeacherRealTimeCanvasRefSection';
 import { useLectureStore, useLessonStore } from '@store/useLessonStore';
 import { Alert, Dimensions } from 'react-native';
+import { useQuery } from '@tanstack/react-query';
+import { getTeacherDrawingData } from '@services/lessonService';
+
 interface TeacherCanvasSectionProps {
   problemIds: number[];
   answers: string[];
@@ -70,7 +73,6 @@ const TeacherRealTimeCanvasSection = ({
   const roundToTwoDecimals = (value: number): number => {
     return Math.round(value * 100) / 100;
   };
-
   const teacherId = useLectureStore(state => state.teacherId);
   const lessonId = useLessonStore(state => state.lessonId);
   const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
@@ -80,7 +82,7 @@ const TeacherRealTimeCanvasSection = ({
 
   // 압축 전송
   const sendCompressedData = (destination: string, data: any) => {
-    if (!clientRef.current || !clientRef.current.active) {
+    if (!clientRef.current || !clientRef.current.active || !clientRef.current.connected) {
       console.log('STOMP client is not connected');
       return;
     }
@@ -98,11 +100,85 @@ const TeacherRealTimeCanvasSection = ({
       width,
       height,
     };
+    console.log('newPayload:', newPayload);
 
     clientRef.current.publish({
       destination,
       body: JSON.stringify(newPayload),
     });
+  };
+  const resetCanvasState = () => {
+    setPaths([]);
+    setUndoStack([]);
+    setRedoStack([]);
+    console.log('Canvas 상태 초기화 완료');
+  };
+
+  // 페이지 이동 핸들러 수정
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      resetCanvasState(); // 상태 초기화
+      onNextPage(); // 부모에서 전달된 페이지 이동 함수 호출
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      resetCanvasState(); // 상태 초기화
+      onPrevPage(); // 부모에서 전달된 페이지 이동 함수 호출
+    }
+  };
+
+  // 선생님 그림 데이터 가져오기
+  const { data: teacherDrawingData } = useQuery({
+    queryKey: ['teacherDrawing', teacherId, lessonId, problemIds[currentPage - 1]],
+    queryFn: async () => {
+      if (teacherId && lessonId && problemIds[currentPage - 1]) {
+        return getTeacherDrawingData(teacherId, lessonId, problemIds[currentPage - 1]);
+      }
+      return null;
+    },
+    enabled: !!(teacherId && lessonId && problemIds[currentPage - 1]), // 데이터가 존재할 때만 요청
+  });
+
+  useEffect(() => {
+    if (teacherDrawingData) {
+      processCanvasData(teacherDrawingData.drawingData);
+    }
+  }, [teacherDrawingData]);
+
+  // teacherDrawingData가 변경되었을 때 paths 설정
+  useEffect(() => {
+    if (teacherDrawingData) {
+      resetCanvasState(); // 상태 초기화
+      processCanvasData(teacherDrawingData.drawingData);
+      console.log('데이터 가져옴');
+
+    }
+  }, [teacherDrawingData, currentPage]);
+
+  const processCanvasData = (base64EncodedData: string) => {
+    try {
+      const binaryString = base64.decode(base64EncodedData);
+      const compressedData = Uint8Array.from(
+        binaryString.split('').map(char => char.charCodeAt(0)),
+      );
+      const decompressedData = JSON.parse(
+        pako.inflate(compressedData, { to: 'string' }),
+      );
+
+      const parsedPaths = decompressedData
+        .map((pathData: any) => {
+          const pathString = pathData.path;
+          const path = Skia.Path.MakeFromSVGString(pathString);
+          return path ? { ...pathData, path } : null;
+        })
+        .filter(Boolean);
+
+      setPaths(parsedPaths);
+    } catch (error) {
+      console.error('Failed to decompress or parse data:', error);
+    }
   };
 
   useEffect(() => {
@@ -256,7 +332,7 @@ const TeacherRealTimeCanvasSection = ({
       addPath(newPathData);
       addToUndoStack({ type: 'draw', pathData: newPathData });
       setCurrentPath(null);
-      setRedoStack([]); // redo 스택 초기화
+      setRedoStack([]);
     }
   };
 
@@ -329,8 +405,8 @@ const TeacherRealTimeCanvasSection = ({
         titles={titles}
         currentPage={currentPage}
         totalPages={totalPages}
-        onNextPage={onNextPage}
-        onPrevPage={onPrevPage}
+        onNextPage={handleNextPage}
+        onPrevPage={handlePrevPage}
       />
     </>
   );

@@ -1,14 +1,19 @@
-import React, {useState} from 'react';
-import {View, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
-import {Text} from '@components/common/Text';
+import React, { useState } from 'react';
+import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text } from '@components/common/Text';
 import LeftArrowOffIcon from '@assets/icons/leftArrowOffIcon.svg';
 import LeftArrowOnIcon from '@assets/icons/leftArrowOnIcon.svg';
 import RightArrowOffIcon from '@assets/icons/rightArrowOffIcon.svg';
 import RightArrowOnIcon from '@assets/icons/rightArrowOnIcon.svg';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 import moment from 'moment';
-import {getResponsiveSize} from '@utils/responsive';
+import { getResponsiveSize } from '@utils/responsive';
 import EmptyData from '@components/common/EmptyData';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType } from '@store/useCurrentScreenStore';
+
+type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 type HomeworkItem = {
   homeworkId: number;
@@ -18,7 +23,7 @@ type HomeworkItem = {
   questions: number[];
 };
 
-type HomeworkWithStatus = HomeworkItem & {status: 'D-Day' | '종료' | '일반'};
+type HomeworkWithStatus = HomeworkItem & { status: 'D-Day' | '종료' | '일반' };
 
 type HomeworkProps = {
   homework?: HomeworkItem[];
@@ -36,7 +41,8 @@ function getHomeworkStatus(endTime: string): 'D-Day' | '종료' | '일반' {
   return '일반';
 }
 
-function Homework({homework = []}: HomeworkProps): React.JSX.Element {
+function Homework({ homework = [] }: HomeworkProps): React.JSX.Element {
+  const navigation = useNavigation<NavigationProps>();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -55,18 +61,18 @@ function Homework({homework = []}: HomeworkProps): React.JSX.Element {
     startIndex + itemsPerPage,
   );
 
-  const renderItem = ({item}: {item: HomeworkWithStatus}) => {
+  const renderItem = ({ item }: { item: HomeworkWithStatus }) => {
     const backgroundColor = item.status === 'D-Day' ? '#ffe6e6' : '#fdfeff';
     const dueDateDisplay =
       item.status === 'D-Day'
         ? `${moment(item.endTime).format('MM-DD')} (D-Day)`
         : `${moment(item.endTime).format('MM-DD')} (D-${moment(
-            item.endTime,
-          ).diff(moment(), 'days')})`;
+          item.endTime,
+        ).diff(moment(), 'days')})`;
 
     return (
       <TouchableOpacity
-        style={[styles.item, {backgroundColor}]}
+        style={[styles.item, { backgroundColor }]}
         onPress={() => handleItemPress(item)}>
         <View style={[styles.textContainer, styles.titleContainer]}>
           <Text variant="caption" weight="bold">
@@ -88,7 +94,10 @@ function Homework({homework = []}: HomeworkProps): React.JSX.Element {
   };
 
   const handleItemPress = (item: HomeworkItem) => {
-    console.log(`Clicked on ${item.title}`);
+    navigation.navigate('SolveHomeworkScreen', {
+      homeworkId: item.homeworkId,
+      questionIds: item.questions,
+    });
   };
 
   const handlePrevPage = () => {

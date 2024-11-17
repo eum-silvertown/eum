@@ -1,14 +1,16 @@
 import { Text } from '@components/common/Text';
 import { HomeworkDetailType } from '@services/homeworkService';
 import { calculateTimeRemaining } from '@utils/calculateTimeRemaining';
-import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { colors } from 'src/hooks/useColors';
 
 interface HomeworkListProps {
   homeworkList: HomeworkDetailType[];
+  selectedHomework: number;
+  setSelectedHomework: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const HomeworkList: React.FC<HomeworkListProps> = ({homeworkList}): React.JSX.Element => {
+const HomeworkList: React.FC<HomeworkListProps> = ({homeworkList, selectedHomework, setSelectedHomework}): React.JSX.Element => {
   const {width} = useWindowDimensions();
   const styles = getStyles(width);
 
@@ -17,16 +19,28 @@ const HomeworkList: React.FC<HomeworkListProps> = ({homeworkList}): React.JSX.El
         <Text variant="subtitle" weight="bold">숙제 목록</Text>
         <ScrollView style={styles.homeworkList}>
           {homeworkList.map((homeworkDetail) => (
-            <View key={homeworkDetail.homeworkId} style={styles.homework}>
-              <Text variant="subtitle" weight="medium" style={styles.subject}>
-                {homeworkDetail.subject}
-              </Text>
+            <Pressable key={homeworkDetail.homeworkId} style={[styles.homework, selectedHomework === homeworkDetail.homeworkId && styles.selectedHomework]} onPress={() => setSelectedHomework(homeworkDetail.homeworkId)}>
+              <View style={styles.subject}>
+                <Text variant="subtitle" weight="medium" style={[styles.subjectText ,{backgroundColor: homeworkDetail.backgroundColor, color: homeworkDetail.fontColor}]}>
+                  {homeworkDetail.subject}
+                </Text>
+              </View>
               <Text style={styles.title}>{homeworkDetail.title}</Text>
-              <Text style={styles.score}>{homeworkDetail.score}점</Text>
-              <Text style={styles.endTime}>
+              <Text style={[
+                styles.score,
+                !homeworkDetail.isComplete && styles.incompleteScore,
+              ]}>
+                {homeworkDetail.isComplete ? `${Math.floor(homeworkDetail.score)}점` : '미제출'}
+              </Text>
+              <Text
+                style={[
+                  styles.endTime,
+                  calculateTimeRemaining(homeworkDetail.endTime) === '기간 만료' && styles.expiredText
+                ]}
+              >
                 {calculateTimeRemaining(homeworkDetail.endTime)}
               </Text>
-            </View>
+            </Pressable>
           )
           )}
         </ScrollView>
@@ -61,8 +75,18 @@ const getStyles = (width: number) => StyleSheet.create({
     borderRadius: width * 0.005,
     borderColor: colors.light.borderColor.pickerBorder,
   },
+  selectedHomework: {
+    borderWidth: width * 0.00075,
+    borderRadius: width * 0.005,
+    borderColor: colors.light.background.main,
+  },
   subject: {
     width: '20%',
+    alignItems: 'flex-start',
+  },
+  subjectText: {
+    paddingHorizontal: width * 0.005,
+    borderRadius: width * 0.005,
   },
   title: {
     width: '50%',
@@ -70,7 +94,13 @@ const getStyles = (width: number) => StyleSheet.create({
   score: {
     width: '20%',
   },
+  incompleteScore: {
+    color: colors.light.text.error,
+  },
   endTime: {
     marginLeft: 'auto',
+  },
+  expiredText: {
+    color: 'red',
   },
 });

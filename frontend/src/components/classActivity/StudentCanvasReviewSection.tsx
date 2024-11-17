@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from '@components/common/CanvasDrawingTool';
-import StudentResolveInteractionTool from './StudentResolveInteractionTool';
+import StudentReviewInteractionTool from './StudentReviewInteractionTool';
 import { Alert } from 'react-native';
 import StudentCanvasRefSection from './StudentCanvasRefSection';
 import TeacherCanvasRefSection from './TeacherCanvasRefSection';
@@ -56,7 +56,7 @@ const StudentCanvasReviewSection = ({
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
   const role = useAuthStore(state => state.userInfo.role);
-  const [showTeacherSolution, setShowTeacherSolution] = useState(false);
+  const [showTeacherSolution, setShowTeacherSolution] = useState(true);
   const [showStudentSolution, setShowStudentSolution] = useState(false);
 
   const toggleTeacherSolution = () => {
@@ -253,7 +253,7 @@ const StudentCanvasReviewSection = ({
         eraserPosition={eraserPosition}
         resetPaths={resetPaths}
       />
-      <StudentResolveInteractionTool
+      <StudentReviewInteractionTool
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}

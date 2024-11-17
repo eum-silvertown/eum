@@ -53,7 +53,7 @@ export type ExamProblemSubmission = {
   studentId: number;
   isCorrect: boolean;
   examSolution: string;
-};
+}[];
 
 export type ExamSubmissionResponse = {
   code: string;
@@ -63,7 +63,7 @@ export type ExamSubmissionResponse = {
 
 export const submitExamProblems = async (
   examId: number,
-  submissionData: ExamProblemSubmission[],
+  submissionData: ExamProblemSubmission,
 ): Promise<number> => {
   try {
     console.log('시험 문제 제출 요청:', submissionData);

@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Text,
 } from 'react-native';
 import Chart from '@components/classDetail/Chart';
 import ClassHeader from '@components/classDetail/ClassHeader';
@@ -106,8 +107,12 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={closeBook} style={styles.bookmarkIcon}>
-        <BookMarkIcon width={iconSize.xl} height={iconSize.xl} />
+        <View style={styles.bookmarkIconContainer}>
+          <BookMarkIcon width={iconSize.xxl} height={iconSize.xxl} />
+          <Text style={styles.closeText}>✖</Text>
+        </View>
       </TouchableOpacity>
+
       <ClassHeader
         isTeacher={isTeacher}
         lectureId={lectureDetail.lectureId}
@@ -254,6 +259,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fafaff',
     borderRadius: 8,
   },
+  bookmarkIconContainer: {
+    position: 'relative',
+    width: iconSize.xl,
+    height: iconSize.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeText: {
+    position: 'absolute',
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
 });
 
 export default ClassDetailScreen;
