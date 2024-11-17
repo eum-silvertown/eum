@@ -78,32 +78,35 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
     ]);
   };
 
-  const homeworks = (lectureDetail?.homeworks || []).map((homework) => {
-    const startTime = new Date(homework.startTime);
-    const endTime = new Date(homework.endTime);
-    const now = currentTime.getTime();
+  const homeworks = (lectureDetail?.homeworks || [])
+    .map((homework) => {
+      const startTime = new Date(homework.startTime);
+      const endTime = new Date(homework.endTime);
+      const now = currentTime.getTime();
 
-    const isBeforeStart = now < startTime.getTime();
-    const isOngoing = now >= startTime.getTime() && now <= endTime.getTime();
-    const isAfterEnd = now > endTime.getTime();
+      const isBeforeStart = now < startTime.getTime();
+      const isOngoing = now >= startTime.getTime() && now <= endTime.getTime();
+      const isAfterEnd = now > endTime.getTime();
 
-    const remainingTime = Math.max(0, endTime.getTime() - now);
-    const remainingDays = Math.floor(remainingTime / (1000 * 60 * 60 * 24)); // 남은 일수
-    const remainingHours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24); // 남은 시간
-    const remainingMinutes = Math.floor((remainingTime / (1000 * 60)) % 60); // 남은 분
-    const remainingSeconds = Math.floor((remainingTime / 1000) % 60); // 남은 초
+      const remainingTime = Math.max(0, endTime.getTime() - now);
+      const remainingDays = Math.floor(remainingTime / (1000 * 60 * 60 * 24)); // 남은 일수
+      const remainingHours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24); // 남은 시간
+      const remainingMinutes = Math.floor((remainingTime / (1000 * 60)) % 60); // 남은 분
+      const remainingSeconds = Math.floor((remainingTime / 1000) % 60); // 남은 초
 
-    return {
-      ...homework,
-      isBeforeStart,
-      isOngoing,
-      isAfterEnd,
-      remainingDays,
-      remainingHours,
-      remainingMinutes,
-      remainingSeconds,
-    };
-  });
+      return {
+        ...homework,
+        isBeforeStart,
+        isOngoing,
+        isAfterEnd,
+        remainingDays,
+        remainingHours,
+        remainingMinutes,
+        remainingSeconds,
+      };
+    })
+    .sort((a, b) => new Date(b.endTime).getTime() - new Date(a.endTime).getTime());
+
 
   return (
     <View style={styles.container}>
@@ -114,6 +117,20 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
         <HeaderText variant="title" style={styles.headerText} weight="bold">
           숙제 목록
         </HeaderText>
+      </View>
+      <View style={styles.legendContainer}>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendColor, { backgroundColor: '#FFDDFF' }]} />
+          <Text style={styles.legendText}>시작 전</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendColor, { backgroundColor: '#FFFFDD' }]} />
+          <Text style={styles.legendText}>진행 중</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendColor, { backgroundColor: '#DDFFDD' }]} />
+          <Text style={styles.legendText}>종료</Text>
+        </View>
       </View>
       <FlatList
         data={homeworks}
@@ -191,9 +208,10 @@ function ClassHomeworkListTeacherScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
+  container: { flex: 1, padding: 10, backgroundColor: '#FFF' },
   header: {
-    marginVertical: 25,
+    marginTop: 25,
+    marginBottom: 10,
     marginLeft: 25,
     flexDirection: 'row',
     alignItems: 'center',
@@ -275,6 +293,28 @@ const styles = StyleSheet.create({
     color: '#666',
     fontWeight: 'bold',
   },
+  legendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 10,
+    marginRight: 60,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  legendColor: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    marginRight: 5,
+  },
+  legendText: {
+    fontSize: 14,
+    color: '#666',
+  },
+
 });
 
 export default ClassHomeworkListTeacherScreen;
