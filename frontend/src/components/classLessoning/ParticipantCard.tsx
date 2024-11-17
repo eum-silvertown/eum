@@ -13,11 +13,13 @@ interface Participant {
 interface ParticipantCardProps {
   participant: Participant;
   onPress: () => void;
+  onLongPress: () => void;
 }
 
 function ParticipantCard({
   participant,
   onPress,
+  onLongPress,
 }: ParticipantCardProps): React.JSX.Element {
   const { studentName, studentImage, status, currentPage } = participant;
 
@@ -31,7 +33,7 @@ function ParticipantCard({
   const opacity = status === 'out' ? 0.5 : 1; // 나간 상태일 경우 불투명도 감소
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} onLongPress={onLongPress}>
       <View style={[styles.card, { borderColor, opacity }]}>
         {studentImage ? (
           <Image

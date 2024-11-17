@@ -1,20 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Skia, useCanvasRef } from '@shopify/react-native-skia';
 import CanvasDrawingTool from '@components/common/CanvasDrawingTool';
 import StudentInteractionTool from './StudentInteractionTool';
 import pako from 'pako';
 import base64 from 'react-native-base64';
 import { Alert } from 'react-native';
+import { HomeworkSubmissionRequest, submitHomework } from '@services/homeworkService';
+import { useLessonStore } from '@store/useLessonStore';
+import { useAuthStore } from '@store/useAuthStore';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigation } from '@react-navigation/native';
 
 interface StudentCanvasSectionProps {
   solveType: 'EXAM' | 'HOMEWORK'
+  homeworkId: number;
+  questionIds: number[];
   currentPage: number;
-  totalPages: number;
-  onNextPage: () => void;
-  onPrevPage: () => void;
-  savePaths: (pathData: string) => void;
-  saveAnswer: (answer: string) => void;
-  onSubmit: () => void;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  problemsCnt: number;
+  problems: {
+    content: string;
+    answer: string;
+  }[];
 }
 
 // Path 데이터 구조
@@ -31,20 +38,31 @@ type ActionData = {
   pathData: PathData;
 };
 
+// 숙제 제출 문제 상태
+type QuestionResponse = {
+  questionId: number;
+  studentId: number;
+  isCorrect: boolean;
+  homeworkSolution: PathData[];
+  answerText?: string;
+};
+
 // 상수
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
-const StudentCanvasSection = ({
-  currentPage,
-  totalPages,
-  onNextPage,
-  onPrevPage,
-  savePaths,
-  saveAnswer,
-  onSubmit,
+const StudentHomeworkCanvasSection = ({
   solveType,
+  homeworkId,
+  questionIds,
+  currentPage,
+  setCurrentPage,
+  problemsCnt,
+  problems,
 }: StudentCanvasSectionProps): React.JSX.Element => {
+  const memberId = useAuthStore(state => state.userInfo.id);
+  const lectureId = useLessonStore(state => state.lectureId);
+  const queryClient = useQueryClient();
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
   const [currentPath, setCurrentPath] = useState<any | null>(null);
@@ -58,6 +76,72 @@ const StudentCanvasSection = ({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
+  const navigate = useNavigation();
+  const [questionResponses, setQuestionResponses] = useState<QuestionResponse[]>([]);
+  const [answerText, setAnswerText] = useState<string>('');
+
+  useEffect(() => {
+    // 초기화: problemsCnt 크기의 기본 배열 생성
+    setQuestionResponses(
+      Array.from({ length: problemsCnt }, (_, index) => ({
+        questionId: questionIds[index],
+        studentId: memberId,
+        isCorrect: false,
+        homeworkSolution: [],
+        answerText: '',
+      }))
+    );
+  }, [problemsCnt, questionIds, memberId]);
+
+  // 숙제 제출 Mutation
+  const { mutate: submitHomeworkMutation } = useMutation({
+    mutationFn: (submissionData: HomeworkSubmissionRequest) =>
+      submitHomework(homeworkId, submissionData),
+    onSuccess: () => {
+      Alert.alert('제출 완료', '숙제가 성공적으로 제출되었습니다.');
+      queryClient.invalidateQueries({
+        queryKey: ['homeworkSubmissionList'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['lectureDetail', lectureId],
+      });
+      navigate.goBack();
+    },
+    onError: () => {
+      Alert.alert('제출 실패', '숙제를 제출하는데 실패했습니다.');
+    },
+  });
+
+  useEffect(() => {
+    // 페이지 변경 시 데이터를 로드
+    const currentResponse = questionResponses[currentPage - 1];
+    if (currentResponse) {
+      setPaths(currentResponse.homeworkSolution);
+      setAnswerText(currentResponse.answerText || '');
+    } else {
+      setPaths([]);
+      setAnswerText('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
+
+  useEffect(() => {
+    setQuestionResponses((prevResponses) => {
+      const updatedResponses = [...prevResponses];
+      if (updatedResponses[currentPage - 1]) {
+        updatedResponses[currentPage - 1] = {
+          ...updatedResponses[currentPage - 1],
+          homeworkSolution: paths, // paths 데이터를 homeworkSolution에 반영
+        };
+      }
+      return updatedResponses;
+    });
+  }, [paths, currentPage]);
+
+  useEffect(() => {
+    const currentResponse = questionResponses[currentPage - 1];
+    setAnswerText(currentResponse?.answerText || ''); // 페이지에 맞는 답변 불러오기
+  }, [currentPage, questionResponses]);
 
   const togglePenOpacity = () => {
     if (isErasing) {
@@ -183,59 +267,81 @@ const StudentCanvasSection = ({
     }
   };
 
-  const handleSavePaths = () => {
-    const mergeSimilarPaths = (newPaths: PathData[]): PathData[] => {
-      const mergedPaths: PathData[] = [];
-      newPaths.forEach(saveCurrentPath => {
-        const lastMergedPath = mergedPaths[mergedPaths.length - 1];
-        if (
-          lastMergedPath &&
-          lastMergedPath.color === saveCurrentPath.color &&
-          lastMergedPath.strokeWidth === saveCurrentPath.strokeWidth &&
-          lastMergedPath.opacity === saveCurrentPath.opacity
-        ) {
-          const mergedPathString =
-            lastMergedPath.path.toSVGString() +
-            ' ' +
-            saveCurrentPath.path.toSVGString();
-          const mergedPath = Skia.Path.MakeFromSVGString(mergedPathString);
-          if (mergedPath) {
-            lastMergedPath.path = mergedPath;
-          }
-        } else {
-          mergedPaths.push(saveCurrentPath);
+  const handleSaveAnswer = (newAnswerText: string) => {
+    setQuestionResponses((prevResponses) => {
+      const updatedResponses = [...prevResponses];
+      updatedResponses[currentPage - 1] = {
+        ...updatedResponses[currentPage - 1],
+        answerText: newAnswerText, // 현재 답변 저장
+      };
+      return updatedResponses;
+    });
+  };
+
+  const handleSubmit = () => {
+    const encodedResponses: HomeworkSubmissionRequest = questionResponses.map((response, index) => {
+      const correctAnswer = problems[index]?.answer || ''; // 정답 기본값 설정
+      return {
+        questionId: response.questionId,
+        studentId: response.studentId,
+        isCorrect: (response.answerText?.trim() || '') === correctAnswer.trim(), // 공백 제거 후 비교
+        homeworkSolution: encodePathsToSolution(response.homeworkSolution),
+      };
+    });
+    submitHomeworkMutation(encodedResponses);
+  };
+
+  const onNextPage = () => {
+    if (currentPage < problemsCnt) {
+      handleSaveAnswer(answerText); // 현재 답변 저장
+      setCurrentPage((prev) => prev + 1); // 다음 페이지로 이동
+    }
+  };
+
+  const onPrevPage = () => {
+    if (currentPage > 1) {
+      handleSaveAnswer(answerText); // 현재 답변 저장
+      setCurrentPage((prev) => prev - 1); // 이전 페이지로 이동
+    }
+  };
+
+  const mergeSimilarPaths = (newPaths: PathData[]): PathData[] => {
+    const mergedPaths: PathData[] = [];
+    newPaths.forEach((saveCurrentPath) => {
+      const lastMergedPath = mergedPaths[mergedPaths.length - 1];
+      if (
+        lastMergedPath &&
+        lastMergedPath.color === saveCurrentPath.color &&
+        lastMergedPath.strokeWidth === saveCurrentPath.strokeWidth &&
+        lastMergedPath.opacity === saveCurrentPath.opacity
+      ) {
+        const mergedPathString =
+          lastMergedPath.path.toSVGString() +
+          ' ' +
+          saveCurrentPath.path.toSVGString();
+        const mergedPath = Skia.Path.MakeFromSVGString(mergedPathString);
+        if (mergedPath) {
+          lastMergedPath.path = mergedPath;
         }
-      });
-      return mergedPaths;
-    };
-
-    const encodePathsToSolution = (pathData: PathData[]): string => {
-      const mergedPaths = mergeSimilarPaths(pathData);
-      const svgPaths = mergedPaths.map(({ path, color, strokeWidth, opacity }) => ({
-        path: path.toSVGString(),
-        color,
-        strokeWidth,
-        opacity,
-      }));
-      const compressedData = pako.deflate(JSON.stringify(svgPaths));
-      return base64.encode(String.fromCharCode(...compressedData));
-    };
-
-    const encodedPaths = encodePathsToSolution(paths);
-    savePaths(encodedPaths); // 병합된 paths를 상위로 전달
+      } else {
+        mergedPaths.push(saveCurrentPath);
+      }
+    });
+    return mergedPaths;
   };
 
-  const confirmSavePaths = () => {
-    Alert.alert(
-      '필기 저장',
-      '현재 필기를 저장하시겠습니까?',
-      [
-        { text: '취소', style: 'cancel' },
-        { text: '저장', onPress: handleSavePaths },
-      ],
-      { cancelable: true }
-    );
+  const encodePathsToSolution = (pathData: PathData[]): string => {
+    const mergedPaths = mergeSimilarPaths(pathData);
+    const svgPaths = mergedPaths.map(({ path, color, strokeWidth, opacity }) => ({
+      path: path.toSVGString(),
+      color,
+      strokeWidth,
+      opacity,
+    }));
+    const compressedData = pako.deflate(JSON.stringify(svgPaths));
+    return base64.encode(String.fromCharCode(...new Uint8Array(compressedData)));
   };
+
 
   const handleSetPenColor = (color: string) => {
     if (isErasing) {
@@ -302,15 +408,15 @@ const StudentCanvasSection = ({
       <StudentInteractionTool
         solveType={solveType}
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={problemsCnt}
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
-        setAnswer={saveAnswer}
-        savePaths={confirmSavePaths}
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
+        setAnswer={handleSaveAnswer}
+        answerText={questionResponses[currentPage - 1]?.answerText || ''}
       />
     </>
   );
 };
 
-export default StudentCanvasSection;
+export default StudentHomeworkCanvasSection;

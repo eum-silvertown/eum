@@ -106,6 +106,20 @@ function ClassExamListTeacherScreen(): React.JSX.Element {
           시험 목록
         </HeaderText>
       </View>
+      <View style={styles.legendContainer}>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendColor, { backgroundColor: '#FFDDFF' }]} />
+          <Text style={styles.legendText}>시작 전</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendColor, { backgroundColor: '#FFFFDD' }]} />
+          <Text style={styles.legendText}>시험 중</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendColor, { backgroundColor: '#DDFFDD' }]} />
+          <Text style={styles.legendText}>종료</Text>
+        </View>
+      </View>
       <FlatList
         data={exams.sort((a, b) => new Date(b.endTime).getTime() - new Date(a.endTime).getTime())}
         keyExtractor={item => item.examId.toString()}
@@ -175,10 +189,11 @@ function ClassExamListTeacherScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 15, backgroundColor: '#FFF' },
+  container: { flex: 1, padding: 10, backgroundColor: '#FFF' },
   header: {
-    marginVertical: 18,
-    marginLeft: 18,
+    marginTop: 25,
+    marginBottom: 10,
+    marginLeft: 25,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -254,6 +269,28 @@ const styles = StyleSheet.create({
     color: '#666',
     fontWeight: 'bold',
   },
+  legendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 10,
+    marginRight: 60,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  legendColor: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    marginRight: 5,
+  },
+  legendText: {
+    fontSize: 14,
+    color: '#666',
+  },
+
 });
 
 export default ClassExamListTeacherScreen;

@@ -14,11 +14,8 @@ interface LessoningInteractionToolForStudentProps {
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
-  toggleTeacherSolution: () => void;
-  toggleStudentSolution: () => void;
-  showTeacherSolution: boolean;
-  showStudentSolution: boolean;
-  role: string;
+  togglePreviousSolution: () => void;
+  showPreviousSolution: boolean;
 }
 
 const StudentResolveInteractionTool = ({
@@ -26,14 +23,10 @@ const StudentResolveInteractionTool = ({
   totalPages,
   onNextPage,
   onPrevPage,
-  toggleTeacherSolution,
-  toggleStudentSolution,
-  showTeacherSolution,
-  showStudentSolution,
-  role,
+  togglePreviousSolution,
+  showPreviousSolution,
 }: LessoningInteractionToolForStudentProps) => {
   const navigation = useNavigation();
-
   const handleExit = () => {
     Alert.alert(
       '나가기',
@@ -88,33 +81,15 @@ const StudentResolveInteractionTool = ({
             </TouchableOpacity>
           </View>
 
-          {/* 선생님 필기 보기 버튼 */}
+          {/* 이전 필기 보기 버튼 */}
           <TouchableOpacity
-            onPress={toggleTeacherSolution}
+            onPress={togglePreviousSolution}
             style={styles.iconButton}>
             <PencilIcon width={24} height={24} />
             <Text style={styles.iconButtonText}>
-              {role === 'TEACHER'
-                ? showTeacherSolution
-                  ? '필기 숨기기'
-                  : '필기 보기'
-                : showTeacherSolution
-                  ? '선생님 필기 숨기기'
-                  : '선생님 필기 보기'}
+              {showPreviousSolution ? '필기 숨기기' : '이전 필기 보기'}
             </Text>
           </TouchableOpacity>
-
-          {/* 학생 필기 보기 버튼 */}
-          {role === 'STUDENT' &&
-            <TouchableOpacity
-              onPress={toggleStudentSolution}
-              style={styles.iconButton}>
-              <PencilIcon width={24} height={24} />
-              <Text style={styles.iconButtonText}>
-                {showStudentSolution ? '학생 필기 숨기기' : '학생 필기 보기'}
-              </Text>
-            </TouchableOpacity>
-          }
 
           {/* 나가기 버튼 */}
           <TouchableOpacity onPress={handleExit} style={styles.exitButton}>

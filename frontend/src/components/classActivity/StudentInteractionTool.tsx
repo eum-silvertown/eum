@@ -11,15 +11,15 @@ import {
 import { getResponsiveSize } from '@utils/responsive';
 import { useNavigation } from '@react-navigation/native';
 
-interface LessoningInteractionToolForStudentProps {
-  solveType: 'EXAM' | 'HOMEWORK'
+interface StudentInteractionToolProps {
+  solveType: 'EXAM' | 'HOMEWORK';
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
+  onSubmit: () => void;
   setAnswer: (answer: string) => void;
-  savePaths: () => void; // 필기 데이터를 저장하는 함수
-  onSubmit: () => void; // 숙제 제출 로직
+  answerText: string;
 }
 
 const StudentInteractionTool = ({
@@ -28,22 +28,21 @@ const StudentInteractionTool = ({
   totalPages,
   onNextPage,
   onPrevPage,
-  setAnswer,
-  savePaths,
   onSubmit,
-}: LessoningInteractionToolForStudentProps) => {
+  setAnswer,
+  answerText,
+}: StudentInteractionToolProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [answerText, setAnswerText] = useState('');
-  const [hasSubmittedAnswer, setHasSubmittedAnswer] = useState(false); // 답변 제출 여부
+  const [localAnswerText, setLocalAnswerText] = useState(answerText);
   const navigation = useNavigation();
 
-  const handleInputAnswer = () => {
-    setIsModalVisible(true); // 모달 열기
+  const handleOpenModal = () => {
+    setLocalAnswerText(answerText);
+    setIsModalVisible(true);
   };
 
   const handleSubmitAnswer = () => {
-    setAnswer(answerText); // 상위 컴포넌트로 정답 전달
-    setHasSubmittedAnswer(true); // 제출 여부 업데이트
+    setAnswer(localAnswerText);
     setIsModalVisible(false);
   };
 
@@ -60,7 +59,7 @@ const StudentInteractionTool = ({
           text: '나가기',
           onPress: () => navigation.goBack(),
         },
-      ],
+      ]
     );
   };
 
@@ -68,7 +67,6 @@ const StudentInteractionTool = ({
     <View style={styles.InteractionToolBar}>
       <View style={styles.InteractionContainer}>
         <View style={styles.floatingToolbar}>
-          {/* 문제 페이지 설정 */}
           <View style={styles.pageControlContainer}>
             <TouchableOpacity
               onPress={onPrevPage}
@@ -101,34 +99,27 @@ const StudentInteractionTool = ({
             </TouchableOpacity>
           </View>
 
-
-          {/* 필기 저장하기 버튼 */}
-          <TouchableOpacity onPress={savePaths} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>필기 저장하기</Text>
-          </TouchableOpacity>
-
-          {/* 현재 제출할 답 표시 */}
+          {/* 답변 입력 */}
           <Text style={styles.currentAnswerText}>
-            답: {hasSubmittedAnswer ? answerText || '입력하지 않음' : '입력하지 않음'}
+            입력한 답: {answerText || '입력하지 않음'}
           </Text>
-          {/* 정답 입력 버튼 */}
-          <TouchableOpacity onPress={handleInputAnswer} style={styles.inputButton}>
+          <TouchableOpacity onPress={handleOpenModal} style={styles.inputButton}>
             <Text style={styles.inputButtonText}>
-              {hasSubmittedAnswer ? '정답 다시 입력하기' : '정답 입력하기'}
+              {answerText ? '정답 수정하기' : '정답 입력하기'}
             </Text>
           </TouchableOpacity>
 
+          {/* 제출 버튼 */}
           <TouchableOpacity
             onPress={onSubmit}
             style={[
               styles.submitButton,
-              solveType === 'EXAM' && styles.examSubmitButton, // solveType이 'EXAM'일 경우 스타일 추가
+              solveType === 'EXAM' && styles.examSubmitButton,
             ]}>
             <Text style={styles.submitButtonText}>
               {solveType === 'EXAM' ? '시험 제출하기' : '숙제 제출하기'}
             </Text>
           </TouchableOpacity>
-
 
           {/* 나가기 버튼 */}
           <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
@@ -139,7 +130,7 @@ const StudentInteractionTool = ({
 
       {/* 답변 입력 모달 */}
       <Modal
-        transparent={true}
+        transparent
         animationType="slide"
         visible={isModalVisible}
         onRequestClose={() => setIsModalVisible(false)}>
@@ -148,8 +139,8 @@ const StudentInteractionTool = ({
             <Text style={styles.modalTitle}>정답을 입력하세요</Text>
             <TextInput
               style={styles.input}
-              value={answerText}
-              onChangeText={setAnswerText}
+              value={localAnswerText}
+              onChangeText={setLocalAnswerText}
               placeholder="답을 입력하세요"
             />
             <View style={styles.modalButtons}>
@@ -221,18 +212,6 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     color: '#999',
-  },
-  saveButton: {
-    paddingVertical: getResponsiveSize(8),
-    paddingHorizontal: getResponsiveSize(16),
-    borderRadius: getResponsiveSize(8),
-    backgroundColor: '#D1C4E9',
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    fontSize: getResponsiveSize(14),
-    color: '#673AB7',
-    fontWeight: '600',
   },
   inputButton: {
     paddingVertical: getResponsiveSize(8),
@@ -334,6 +313,6 @@ const styles = StyleSheet.create({
     fontSize: getResponsiveSize(14),
   },
   examSubmitButton: {
-    backgroundColor: '#2196F3', // 시험 제출하기 버튼 색상
+    backgroundColor: '#2196F3',
   },
 });

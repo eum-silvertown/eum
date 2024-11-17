@@ -9,6 +9,9 @@ import * as StompJs from '@stomp/stompjs';
 import { useLectureStore } from '@store/useLessonStore';
 import { Alert, Dimensions } from 'react-native';
 import { useLessoningStore } from '@store/useLessoningStore';
+import { useQuery } from '@tanstack/react-query';
+import { useAuthStore } from '@store/useAuthStore';
+import { getStudentDrawingData } from '@services/lessonService';
 interface StudentCanvasSectionProps {
   problemIds: number[];
   answers: string[];
@@ -70,7 +73,8 @@ const StudentRealTimeCanvasSection = ({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
-  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
+  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(true);
+  const studentId = useAuthStore(state => state.userInfo.id);
 
   const roundToTwoDecimals = (value: number): number => {
     return Math.round(value * 100) / 100;
@@ -103,12 +107,13 @@ const StudentRealTimeCanvasSection = ({
   }, [receivedMessage, setLessoningInfo]);
 
   const memberId = useLectureStore(state => state.memberId);
+  const teacherId = useLectureStore(state => state.teacherId);
   const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
   const width = parseFloat(deviceWidth.toFixed(8));
   const height = parseFloat(deviceHeight.toFixed(8));
   // 압축 전송
   const sendCompressedData = (destination: string, data: any) => {
-    if (!clientRef.current || !clientRef.current.active) {
+    if (!clientRef.current || !clientRef.current.active || !clientRef.current.connected) {
       console.log('STOMP client is not connected');
       return;
     }
@@ -131,7 +136,38 @@ const StudentRealTimeCanvasSection = ({
       body: JSON.stringify(newPayload),
     });
   };
+  const resetCanvasState = () => {
+    setPaths([]);
+    setUndoStack([]);
+    setRedoStack([]);
+    console.log('Canvas 상태 초기화 완료');
+  };
 
+  // 학생 그림 데이터 가져오기
+  const { data: studentDrawingData } = useQuery({
+    queryKey: ['studentDrawing', studentId, lessonId, problemIds[currentPage - 1]],
+    queryFn: async () => {
+      if (studentId && lessonId && problemIds[currentPage - 1]) {
+        return getStudentDrawingData(studentId, lessonId, problemIds[currentPage - 1]);
+      }
+      return null;
+    },
+    enabled: !!(studentId && lessonId && problemIds[currentPage - 1]), // 데이터가 존재할 때만 요청
+  });
+  // 페이지 이동 핸들러 수정
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      resetCanvasState(); // 상태 초기화
+      onNextPage(); // 부모에서 전달된 페이지 이동 함수 호출
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      resetCanvasState(); // 상태 초기화
+      onPrevPage(); // 부모에서 전달된 페이지 이동 함수 호출
+    }
+  };
   // 화면 전환 토글
   const handleToggleScreen = () => {
     setIsTeacherScreenOn(prev => !prev);
@@ -147,6 +183,46 @@ const StudentRealTimeCanvasSection = ({
     sendCompressedData('/app/draw', dataToSend);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paths]);
+
+  useEffect(() => {
+    if (studentDrawingData) {
+      processCanvasData(studentDrawingData.drawingData);
+    }
+  }, [studentDrawingData]);
+
+  // teacherDrawingData가 변경되었을 때 paths 설정
+  useEffect(() => {
+    if (studentDrawingData) {
+      resetCanvasState(); // 상태 초기화
+      processCanvasData(studentDrawingData.drawingData);
+      console.log('데이터 가져옴');
+
+    }
+  }, [studentDrawingData, currentPage]);
+
+  const processCanvasData = (base64EncodedData: string) => {
+    try {
+      const binaryString = base64.decode(base64EncodedData);
+      const compressedData = Uint8Array.from(
+        binaryString.split('').map(char => char.charCodeAt(0)),
+      );
+      const decompressedData = JSON.parse(
+        pako.inflate(compressedData, { to: 'string' }),
+      );
+
+      const parsedPaths = decompressedData
+        .map((pathData: any) => {
+          const pathString = pathData.path;
+          const path = Skia.Path.MakeFromSVGString(pathString);
+          return path ? { ...pathData, path } : null;
+        })
+        .filter(Boolean);
+
+      setPaths(parsedPaths);
+    } catch (error) {
+      console.error('Failed to decompress or parse data:', error);
+    }
+  };
 
   const togglePenOpacity = () => {
     if (isErasing) {
@@ -320,7 +396,7 @@ const StudentRealTimeCanvasSection = ({
 
   return (
     <>
-      <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} isTeacherScreenOn={isTeacherScreenOn} />
+      <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} isTeacherScreenOn={isTeacherScreenOn} teacherId={teacherId!} lessonId={lessonId} problemIds={problemIds} currentPage={currentPage} />
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}
@@ -349,8 +425,8 @@ const StudentRealTimeCanvasSection = ({
         titles={titles}
         currentPage={currentPage}
         totalPages={totalPages}
-        onNextPage={onNextPage}
-        onPrevPage={onPrevPage}
+        onNextPage={handleNextPage}
+        onPrevPage={handlePrevPage}
         onToggleScreen={handleToggleScreen}
         handleGoToTeacherScreen={handleGoToTeacherScreen}
       />
