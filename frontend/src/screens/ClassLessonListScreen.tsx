@@ -49,8 +49,8 @@ function ClassLessonListScreen(): React.JSX.Element {
     },
   });
 
-  const handleLessonPress = (lessonId: number) => {
-    navigation.navigate('ClassLessonReviewScreen',{lessonId});
+  const handleLessonPress = (lessonId: number, questionIds: number[]) => {
+    navigation.navigate('ClassLessonReviewScreen',{lessonId, questionIds});
   };
 
   const handleDeleteLesson = (lessonId: number) => {
@@ -86,7 +86,7 @@ function ClassLessonListScreen(): React.JSX.Element {
           <View style={styles.card}>
             <View style={styles.cardContent}>
               <TouchableOpacity
-                onPress={() => handleLessonPress(item.lessonId)}
+                onPress={() => handleLessonPress(item.lessonId, item.questions)}
                 style={styles.lessonContent}>
                 <LessonIcon
                   width={iconSize.md}
