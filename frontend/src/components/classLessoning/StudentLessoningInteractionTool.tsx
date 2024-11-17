@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputButton: {
-    padding: 4,
+    padding: getResponsiveSize(6),
     borderRadius: 8,
     backgroundColor: '#d7ffcd',
     alignItems: 'center',

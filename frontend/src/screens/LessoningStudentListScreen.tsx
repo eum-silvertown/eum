@@ -87,8 +87,8 @@ function LessoningStudentListScreen(): React.JSX.Element {
       webSocketFactory: () => new SockJS('http://k11d101.p.ssafy.io/ws-gateway/drawing'),
       debug: (str) => console.log('STOMP Debug:', str),
       reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
+      heartbeatIncoming: 0,
+      heartbeatOutgoing: 0,
       onConnect: () => {
         console.log('STOMP client successfully connected');
         setIsConnected(true);
@@ -140,7 +140,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonId]);
+  }, []);
 
   return (
     <View style={styles.mainContainer}>

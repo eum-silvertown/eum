@@ -56,8 +56,8 @@ const StudentCanvasReviewSection = ({
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
   const role = useAuthStore(state => state.userInfo.role);
-  const [showTeacherSolution, setShowTeacherSolution] = useState(false);
-  const [showStudentSolution, setShowStudentSolution] = useState(true);
+  const [showTeacherSolution, setShowTeacherSolution] = useState(true);
+  const [showStudentSolution, setShowStudentSolution] = useState(false);
 
   const toggleTeacherSolution = () => {
     setShowTeacherSolution((prev) => !prev);
