@@ -20,6 +20,8 @@ public class StudentHomeworkResponse {
 		private Long homeworkId;
 		private String title;
 		private String subject;
+		private String backgroundColor;
+		private String fontColor;
 		private LocalDateTime startTime;
 		private LocalDateTime endTime;
 		private Double score;
