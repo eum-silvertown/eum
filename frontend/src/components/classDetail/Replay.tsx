@@ -24,14 +24,17 @@ type ReplayProps = {
   lesson?: LessonType[];
 };
 
-function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
+const Replay = ({ lesson = [] }: ReplayProps): React.JSX.Element => {
   const navigation = useNavigation<NavigationProps>();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const totalPages = Math.ceil(lesson.length / itemsPerPage);
+  // 역순 정렬된 lesson 데이터
+  const sortedLessons = [...lesson].reverse();
+
+  const totalPages = Math.ceil(sortedLessons.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = lesson.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedData = sortedLessons.slice(startIndex, startIndex + itemsPerPage);
 
   const renderItem = ({ item }: { item: LessonType }) => (
     <TouchableOpacity
@@ -80,7 +83,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
         <Text variant="subtitle" weight="bold" style={styles.subtitle}>
           수업 필기 다시보기
         </Text>
-        {lesson.length > 0 && (
+        {sortedLessons.length > 0 && (
           <View style={styles.pagination}>
             <TouchableOpacity
               onPress={handlePrevPage}
@@ -106,7 +109,7 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
         )}
       </View>
 
-      {lesson.length === 0 ? (
+      {sortedLessons.length === 0 ? (
         <EmptyData message="수업이 없습니다" />
       ) : (
         <FlatList
@@ -118,7 +121,8 @@ function Replay({ lesson = [] }: ReplayProps): React.JSX.Element {
       )}
     </View>
   );
-}
+};
+
 
 const styles = StyleSheet.create({
   replay: {
