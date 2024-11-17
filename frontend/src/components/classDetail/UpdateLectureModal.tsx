@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,28 +6,28 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import {Text} from '@components/common/Text';
+import { Text } from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {colors} from 'src/hooks/useColors';
+import { colors } from 'src/hooks/useColors';
 import ColorPicker from '@components/lectureList/ColorPicker';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
+import { iconSize } from '@theme/iconSize';
+import { borderRadius } from '@theme/borderRadius';
+import { borderWidth } from '@theme/borderWidth';
 import LectureCreateBook from '@components/main/LectureCreateBook';
-import {getResponsiveSize} from '@utils/responsive';
+import { getResponsiveSize } from '@utils/responsive';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import StatusMessage from '@components/account/StatusMessage';
-import {useModalContext} from 'src/contexts/useModalContext';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
+import { useModalContext } from 'src/contexts/useModalContext';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   toupdateLectureDetail,
   ToUpdateLectureResponse,
   updateLectureDetail,
   UpdateLectureRequest,
 } from '@services/lectureInformation';
-import {useBookModalStore} from '@store/useBookModalStore';
+import { useBookModalStore } from '@store/useBookModalStore';
 
 type ClassHeaderProps = {
   lectureId: number;
@@ -63,11 +63,11 @@ const UpdateLectureModal = ({
   const queryClient = useQueryClient();
   const [year, setYear] = useState('');
   const [semester, setSemester] = useState('');
-  const {data: initialData} = useQuery<ToUpdateLectureResponse>({
+  const { data: initialData } = useQuery<ToUpdateLectureResponse>({
     queryKey: ['updateNewLectureDetail', lectureId],
     queryFn: () => toupdateLectureDetail(lectureId),
   });
-  const {setBookInfo} = useBookModalStore();
+  const { setBookInfo } = useBookModalStore();
 
   // 초기 데이터를 상태에 설정하는 useEffect
   useEffect(() => {
@@ -96,7 +96,7 @@ const UpdateLectureModal = ({
     }
   }, [initialData, pastClassNumber, pastGrade, pastTeacherName]);
 
-  const {mutate: updateLecture} = useMutation({
+  const { mutate: updateLecture } = useMutation({
     mutationFn: (lectureData: UpdateLectureRequest) =>
       updateLectureDetail(lectureId, lectureData),
     onSuccess: () => {
@@ -123,7 +123,7 @@ const UpdateLectureModal = ({
     },
   });
 
-  const {close} = useModalContext();
+  const { close } = useModalContext();
   const [title, setTitle] = useState('');
   const [subjects, setSubjects] = useState('');
   const [introduction, setIntroduction] = useState('');
@@ -133,7 +133,7 @@ const UpdateLectureModal = ({
   const [activePicker, setActivePicker] = useState<'cover' | 'font'>('cover');
   const colorPickerRef = useRef(null);
   const [schedules, setSchedules] = useState<Schedule[]>([
-    {day: '', period: 0},
+    { day: '', period: 0 },
   ]);
 
   useEffect(() => {
@@ -184,7 +184,7 @@ const UpdateLectureModal = ({
 
   const addPickerSet = () => {
     if (schedules.length < 3) {
-      setSchedules([...schedules, {day: '', period: 0}]);
+      setSchedules([...schedules, { day: '', period: 0 }]);
     } else {
       Alert.alert('최대 3개까지 시간표를 추가할 수 있습니다.');
     }
@@ -276,7 +276,7 @@ const UpdateLectureModal = ({
         <View style={styles.content}>
           <View style={styles.lectureInfoContainer}>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text variant="subtitle" weight="bold">
                 제목
               </Text>
@@ -286,7 +286,7 @@ const UpdateLectureModal = ({
             </View>
             <InputField
               placeholder="수업 제목을 입력해주세요."
-              value={initialData?.title}
+              value={title} // 상태 변수 사용
               onChangeText={setTitle}
             />
             <View style={styles.errorContainer}>
@@ -301,8 +301,9 @@ const UpdateLectureModal = ({
             <View style={styles.pickerSet}>
               <Picker
                 style={styles.picker}
-                selectedValue={initialData?.subject}
-                onValueChange={itemValue => setSubjects(itemValue)}>
+                selectedValue={subjects} // 상태 변수 사용
+                onValueChange={itemValue => setSubjects(itemValue)}
+              >
                 <Picker.Item key={0} label="과목 선택" value="" />
                 <Picker.Item key={1} label="국어" value="국어" />
                 <Picker.Item key={2} label="영어" value="영어" />
@@ -339,7 +340,7 @@ const UpdateLectureModal = ({
             </View>
 
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text variant="subtitle" weight="bold">
                 수업 시간표
               </Text>
@@ -402,7 +403,7 @@ const UpdateLectureModal = ({
             <Text variant="subtitle" weight="bold">
               생성된 수업 예시
             </Text>
-            <View style={{alignItems: 'center'}}>
+            <View style={{ alignItems: 'center' }}>
               {lecturePreview && <LectureCreateBook item={lecturePreview} />}
             </View>
             <View>
@@ -410,7 +411,7 @@ const UpdateLectureModal = ({
                 색상 선택
               </Text>
 
-              <View style={{height: getResponsiveSize(288)}}>
+              <View style={{ height: getResponsiveSize(288) }}>
                 {!isColorPickerVisible ? (
                   <View style={styles.colorContainer}>
                     <TouchableOpacity
@@ -422,7 +423,7 @@ const UpdateLectureModal = ({
                           <Text
                             style={[
                               styles.currentColorFont,
-                              {color: coverColor},
+                              { color: coverColor },
                             ]}>
                             {coverColor.toUpperCase()}
                           </Text>
@@ -430,7 +431,7 @@ const UpdateLectureModal = ({
                         <View
                           style={[
                             styles.colorBox,
-                            {backgroundColor: coverColor},
+                            { backgroundColor: coverColor },
                           ]}
                         />
                       </View>
@@ -447,7 +448,7 @@ const UpdateLectureModal = ({
                           <Text
                             style={[
                               styles.currentColorFont,
-                              {color: fontColor},
+                              { color: fontColor },
                             ]}>
                             {fontColor.toUpperCase()}
                           </Text>
@@ -455,7 +456,7 @@ const UpdateLectureModal = ({
                         <View
                           style={[
                             styles.colorBox,
-                            {backgroundColor: fontColor},
+                            { backgroundColor: fontColor },
                           ]}
                         />
                       </View>
@@ -536,7 +537,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   colorPickerContainer: {
-    transform: [{scale: 0.8}],
+    transform: [{ scale: 0.8 }],
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
@@ -565,7 +566,7 @@ const styles = StyleSheet.create({
   },
   currentColorFont: {
     textShadowColor: 'gray', // 외곽선 색상 설정
-    textShadowOffset: {width: 1, height: 1},
+    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
   pickerSet: {

@@ -1,6 +1,6 @@
 import ParticipantCard from '@components/classLessoning/ParticipantCard';
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import TeacherLessoningGridInteractionTool from '@components/classLessoning/TeacherLessoningGridInteractionTool';
@@ -44,10 +44,6 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const setLectureInfo = useLectureStore((state) => state.setLectureInfo);
   const setIsTeaching = useLessonStore((state) => state.setIsTeaching);
 
-  const [isConnected, setIsConnected] = useState(false);
-  console.log('구독 연결 됨!', isConnected);
-
-
   const clientRef = useRef<StompJs.Client | null>(null);
 
   const ROWS = 4;
@@ -81,6 +77,10 @@ function LessoningStudentListScreen(): React.JSX.Element {
     navigation.navigate('LessoningScreen');
   };
 
+  const handleLongPress = (studentId: number) => {
+    Alert.alert('학생 선택', `선택된 학생 ID: ${studentId}`);
+  };
+
   // STOMP 클라이언트 초기화 및 설정
   useEffect(() => {
     const client = new StompJs.Client({
@@ -91,7 +91,6 @@ function LessoningStudentListScreen(): React.JSX.Element {
       heartbeatOutgoing: 4000,
       onConnect: () => {
         console.log('STOMP client successfully connected');
-        setIsConnected(true);
 
         const teacherTopic = `/topic/lesson/${lessonId}`;
         client.subscribe(teacherTopic, (message) => {
@@ -123,11 +122,9 @@ function LessoningStudentListScreen(): React.JSX.Element {
       },
       onDisconnect: () => {
         console.log('STOMP client disconnected');
-        setIsConnected(false);
       },
       onWebSocketError: (error) => {
         console.error('WebSocket Error:', error);
-        setIsConnected(false);
       },
     });
 
@@ -140,7 +137,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonId]);
+  }, []);
 
   return (
     <View style={styles.mainContainer}>
@@ -169,6 +166,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
             <ParticipantCard
               participant={item}
               onPress={() => handleParticipantPress(item.studentId)}
+              onLongPress={() => handleLongPress(item.studentId)}
             />
           )}
         />
@@ -258,5 +256,5 @@ const styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
     marginVertical: 'auto',
-  }
+  },
 });

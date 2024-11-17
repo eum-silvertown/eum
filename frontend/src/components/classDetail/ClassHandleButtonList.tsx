@@ -1,9 +1,9 @@
 import React from 'react';
-import {Text} from '@components/common/Text';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType} from '@store/useCurrentScreenStore';
+import { Text } from '@components/common/Text';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType } from '@store/useCurrentScreenStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -19,7 +19,7 @@ function ClassHandleButtonList({
   const navigation = useNavigation<NavigationProps>();
 
   const handleStartLesson = (action: 'lesson' | 'exam' | 'homework') => {
-    navigation.navigate('QuestionCreateScreen', {lectureId, action});
+    navigation.navigate('QuestionCreateScreen', { lectureId, action });
   };
 
   return (
@@ -51,28 +51,28 @@ export default ClassHandleButtonList;
 const styles = StyleSheet.create({
   buttonList: {
     flexDirection: 'column',
-    marginTop: 10,
+    marginTop: 6,
     gap: 15,
-    padding: 10,
+    padding: 8,
   },
   classButton: {
     backgroundColor: '#14AE5C',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: 'center',
   },
   testButton: {
     backgroundColor: '#FF5F5F',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: 'center',
   },
   homeworkButton: {
     backgroundColor: '#5F9FFF',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     borderRadius: 8,
     alignItems: 'center',
   },
