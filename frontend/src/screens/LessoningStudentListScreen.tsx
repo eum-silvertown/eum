@@ -44,10 +44,6 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const setLectureInfo = useLectureStore((state) => state.setLectureInfo);
   const setIsTeaching = useLessonStore((state) => state.setIsTeaching);
 
-  const [isConnected, setIsConnected] = useState(false);
-  console.log('구독 연결 됨!', isConnected);
-
-
   const clientRef = useRef<StompJs.Client | null>(null);
 
   const ROWS = 4;
@@ -87,11 +83,10 @@ function LessoningStudentListScreen(): React.JSX.Element {
       webSocketFactory: () => new SockJS('http://k11d101.p.ssafy.io/ws-gateway/drawing'),
       debug: (str) => console.log('STOMP Debug:', str),
       reconnectDelay: 5000,
-      heartbeatIncoming: 0,
-      heartbeatOutgoing: 0,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
       onConnect: () => {
         console.log('STOMP client successfully connected');
-        setIsConnected(true);
 
         const teacherTopic = `/topic/lesson/${lessonId}`;
         client.subscribe(teacherTopic, (message) => {
@@ -123,11 +118,9 @@ function LessoningStudentListScreen(): React.JSX.Element {
       },
       onDisconnect: () => {
         console.log('STOMP client disconnected');
-        setIsConnected(false);
       },
       onWebSocketError: (error) => {
         console.error('WebSocket Error:', error);
-        setIsConnected(false);
       },
     });
 
@@ -258,5 +251,5 @@ const styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
     marginVertical: 'auto',
-  }
+  },
 });
