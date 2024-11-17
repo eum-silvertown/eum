@@ -126,6 +126,8 @@ export const getHomeworkSubmissionList = async (
 };
 
 export type HomeworkDetailType = {
+  backgroundColor: string;
+  fontColor: string;
   correctCount: number;
   endTime: string;
   subject: string;
