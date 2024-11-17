@@ -19,6 +19,7 @@ import IntoIcon from '@assets/icons/intoIcon.svg';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType} from '@store/useCurrentScreenStore';
+import { useAuthStore } from '@store/useAuthStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -40,14 +41,14 @@ interface ProgressBoxProps {
 const AnimatedNumber = ({value}: {value: number}) => {
   const progress = useSharedValue(0);
   const [displayValue, setDisplayValue] = useState(0);
-
+  
   useEffect(() => {
     progress.value = withTiming(1, {
       duration: 1500,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
-
+  
   useAnimatedReaction(
     () => progress.value * value,
     result => {
@@ -55,7 +56,7 @@ const AnimatedNumber = ({value}: {value: number}) => {
     },
     [value],
   );
-
+  
   return (
     <Text variant="xxl" weight="bold">
       {displayValue}
@@ -72,6 +73,7 @@ function ProgressBox({
   isLessonDetail,
 }: ProgressBoxProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
+  const userRole = useAuthStore(state => state.userInfo.role);
 
   const handleNavigate = () => {
     if (!isLessonDetail) {
@@ -81,14 +83,23 @@ function ProgressBox({
     // 각 title에 맞게 이동할 페이지를 지정
     switch (title) {
       case '수업':
-        navigation.navigate('ClassLessonListScreen');
-
+        if (userRole === 'STUDENT') {
+          navigation.navigate('ClassLessonListScreen');
+        }
         break;
       case '시험':
-        navigation.navigate('ClassExamListScreen');
+        if (userRole === 'STUDENT') {
+          navigation.navigate('ClassExamListScreen');
+        } else {
+          navigation.navigate('ClassExamListTeacherScreen')
+        }
         break;
       case '숙제':
-        navigation.navigate('ClassHomeworkListScreen');
+        if (userRole === 'STUDENT') {
+          navigation.navigate('ClassHomeworkListScreen');
+        } else {
+          navigation.navigate('ClassHomeworkListTeacherScreen');
+        }
         break;
       default:
         console.log('Invalid title');

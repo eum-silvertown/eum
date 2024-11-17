@@ -176,3 +176,51 @@ export const getHomeworkSubmissionDetail = async (
     throw error;
   }
 };
+
+// 특정 숙제 모든 학생들 제출 내역 조회
+export type HomeworkProblemStudentSubmission = {
+  homeworkProblemSubmissionId: number;
+  questionId: number;
+  isCorrect: boolean;
+  homeworkSolution: string;
+};
+
+export type HomeworkStudentSubmission = {
+  homeworkSubmissionId: number;
+  homeworkId: number;
+  studentId: number;
+  studentName: string;
+  studentImage: string;
+  score: number;
+  correctCount: number;
+  totalCount: number;
+  isCompleted: boolean;
+  problemSubmissions: HomeworkProblemStudentSubmission[];
+};
+
+export type GetHomeworkSubmissionsResponse = {
+  code: string;
+  data: HomeworkStudentSubmission[];
+  message: string;
+};
+
+export const getHomeworkSubmissions = async (
+  lectureId: number,
+  homeworkId: number
+): Promise<HomeworkStudentSubmission[]> => {
+  try {
+    console.log(
+      `숙제 제출 내역 조회 요청: lectureId = ${lectureId}, homeworkId = ${homeworkId}`
+    );
+
+    const { data } = await authApiClient.get<GetHomeworkSubmissionsResponse>(
+      `/homework/${lectureId}/${homeworkId}/submissions`
+    );
+
+    console.log('숙제 제출 내역 조회 성공 응답:', data);
+    return data.data;
+  } catch (error) {
+    console.error('숙제 제출 내역 조회 실패:', error);
+    throw error;
+  }
+};

@@ -4,7 +4,7 @@ import {Text} from '@components/common/Text';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {ScreenType} from '@store/useCurrentScreenStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -14,7 +14,6 @@ interface ScreenHeaderProps {
 
 function ScreenHeader({title}: ScreenHeaderProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
 
   return (
     <View style={styles.header}>

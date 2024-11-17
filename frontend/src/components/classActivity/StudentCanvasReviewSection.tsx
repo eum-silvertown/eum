@@ -1,28 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Skia, useCanvasRef } from '@shopify/react-native-skia';
-import CanvasDrawingTool from '../common/CanvasDrawingTool';
-import base64 from 'react-native-base64';
-import pako from 'pako';
-import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
-import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
-import * as StompJs from '@stomp/stompjs';
-import { useLectureStore } from '@store/useLessonStore';
-import { Alert, Dimensions } from 'react-native';
-import { useLessoningStore } from '@store/useLessoningStore';
-interface StudentCanvasSectionProps {
-  problemIds: number[];
-  answers: string[];
-  titles: string[];
-  lessonId: number;
-  role: string;
-  clientRef: React.MutableRefObject<StompJs.Client | null>;
-  isConnected: boolean;
-  receivedMessage: string | null;
+import CanvasDrawingTool from '@components/common/CanvasDrawingTool';
+import StudentResolveInteractionTool from './StudentResolveInteractionTool';
+import { Alert } from 'react-native';
+import StudentCanvasRefSection from './StudentCanvasRefSection';
+import TeacherCanvasRefSection from './TeacherCanvasRefSection';
+
+interface StudentCanvasResolveSectionProps {
+  teacherDrawing: string | null;
+  studentDrawing: string | null;
   currentPage: number;
   totalPages: number;
   onNextPage: () => void;
   onPrevPage: () => void;
-  handleGoToTeacherScreen: () => void;
 }
 
 // Path 데이터 구조
@@ -43,20 +33,14 @@ type ActionData = {
 const ERASER_RADIUS = 10;
 const MAX_STACK_SIZE = 5;
 
-const StudentRealTimeCanvasSection = ({
-  problemIds,
-  answers,
-  titles,
-  lessonId,
-  role,
-  clientRef,
+const StudentCanvasReviewSection = ({
+  teacherDrawing,
+  studentDrawing,
   currentPage,
   totalPages,
   onNextPage,
   onPrevPage,
-  handleGoToTeacherScreen,
-  receivedMessage,
-}: StudentCanvasSectionProps): React.JSX.Element => {
+}: StudentCanvasResolveSectionProps): React.JSX.Element => {
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
   const [currentPath, setCurrentPath] = useState<any | null>(null);
@@ -70,83 +54,9 @@ const StudentRealTimeCanvasSection = ({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
-  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
 
-  const roundToTwoDecimals = (value: number): number => {
-    return Math.round(value * 100) / 100;
-  };
-  const setLessoningInfo = useLessoningStore(state => state.setLessoningInfo);
-  useEffect(() => {
-    if (receivedMessage) {
-      try {
-        const messageObject = JSON.parse(receivedMessage);
-
-        const {
-          memberId,
-          lessonId,
-          questionId,
-        } = messageObject;
-
-        console.log('파싱된 메시지:', {
-          memberId,
-          lessonId,
-          questionId,
-        });
-
-        // Zustand 상태 업데이트
-        setLessoningInfo(memberId, lessonId, questionId);
-
-      } catch (error) {
-        console.error('receivedMessage 파싱 오류:', error);
-      }
-    }
-  }, [receivedMessage, setLessoningInfo]);
-
-  const memberId = useLectureStore(state => state.memberId);
-  const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
-  const width = parseFloat(deviceWidth.toFixed(8));
-  const height = parseFloat(deviceHeight.toFixed(8));
-  // 압축 전송
-  const sendCompressedData = (destination: string, data: any) => {
-    if (!clientRef.current || !clientRef.current.active) {
-      console.log('STOMP client is not connected');
-      return;
-    }
-    const compressedData = pako.deflate(JSON.stringify(data));
-    const base64EncodedData = base64.encode(
-      String.fromCharCode(...compressedData),
-    );
-    const newPayload = {
-      memberId: memberId,
-      role: role,
-      lessonId: lessonId,
-      questionId: problemIds[currentPage - 1],
-      drawingData: base64EncodedData,
-      width,
-      height,
-    };
-
-    clientRef.current.publish({
-      destination,
-      body: JSON.stringify(newPayload),
-    });
-  };
-
-  // 화면 전환 토글
-  const handleToggleScreen = () => {
-    setIsTeacherScreenOn(prev => !prev);
-  };
-
-  useEffect(() => {
-    const dataToSend = paths.map(pathData => ({
-      ...pathData,
-      path: pathData.path.toSVGString(),
-    }));
-
-    // STOMP 전송 함수 호출
-    sendCompressedData('/app/draw', dataToSend);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paths]);
+  // "이전 필기 보기" 토글 상태
+  const [showPreviousSolution, setShowPreviousSolution] = useState(false);
 
   const togglePenOpacity = () => {
     if (isErasing) {
@@ -173,7 +83,6 @@ const StudentRealTimeCanvasSection = ({
 
         if (isInEraseArea) {
           addToUndoStack({ type: 'erase', pathData });
-          console.log('지우개로 경로 삭제:', pathData);
         }
         return !isInEraseArea;
       }),
@@ -205,7 +114,6 @@ const StudentRealTimeCanvasSection = ({
       setPaths([...paths, lastAction.pathData]);
     }
     addToRedoStack(lastAction);
-    console.log('Undo 수행:', lastAction);
   };
 
   const redo = () => {
@@ -222,7 +130,6 @@ const StudentRealTimeCanvasSection = ({
       setPaths(paths.filter(pathData => pathData !== lastRedoAction.pathData));
     }
     addToUndoStack(lastRedoAction);
-    console.log('Redo 수행:', lastRedoAction);
   };
 
   const addToRedoStack = (action: ActionData) => {
@@ -236,8 +143,7 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleTouchStart = (event: any) => {
-    const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
-    const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
@@ -249,17 +155,12 @@ const StudentRealTimeCanvasSection = ({
   };
 
   const handleTouchMove = (event: any) => {
-    const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
-    const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
+    const { locationX, locationY } = event.nativeEvent;
     if (isErasing) {
       setEraserPosition({ x: locationX, y: locationY });
       erasePath(locationX, locationY);
     } else if (currentPath) {
-      // 현재 경로에 새로운 포인트 추가
-      currentPath.lineTo(
-        Math.round(locationX * 100) / 100, // 좌표 정밀도 소수점 두 자리로 제한
-        Math.round(locationY * 100) / 100,
-      );
+      currentPath.lineTo(locationX, locationY);
       canvasRef.current?.redraw();
     }
   };
@@ -283,14 +184,14 @@ const StudentRealTimeCanvasSection = ({
 
   const handleSetPenColor = (color: string) => {
     if (isErasing) {
-      setIsErasing(false); // 지우개 모드를 비활성화
+      setIsErasing(false);
     }
     setPenColor(color);
   };
 
   const handleSetPenSize = (size: number) => {
     if (isErasing) {
-      setIsErasing(false); // 지우개 모드를 비활성화
+      setIsErasing(false);
     }
     setPenSize(size);
   };
@@ -320,7 +221,8 @@ const StudentRealTimeCanvasSection = ({
 
   return (
     <>
-      <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} isTeacherScreenOn={isTeacherScreenOn} />
+      {showPreviousSolution && <TeacherCanvasRefSection teacherDrawing={teacherDrawing!} />}
+      {showPreviousSolution && <StudentCanvasRefSection studentDrawing={studentDrawing!} />}
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}
@@ -343,19 +245,16 @@ const StudentRealTimeCanvasSection = ({
         eraserPosition={eraserPosition}
         resetPaths={resetPaths}
       />
-      <StudentLessoningInteractionTool
-        problemIds={problemIds}
-        answers={answers}
-        titles={titles}
+      <StudentResolveInteractionTool
         currentPage={currentPage}
         totalPages={totalPages}
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
-        onToggleScreen={handleToggleScreen}
-        handleGoToTeacherScreen={handleGoToTeacherScreen}
+        togglePreviousSolution={() => setShowPreviousSolution(prev => !prev)}
+        showPreviousSolution={showPreviousSolution}
       />
     </>
   );
 };
 
-export default StudentRealTimeCanvasSection;
+export default StudentCanvasReviewSection;

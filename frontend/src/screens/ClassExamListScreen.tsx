@@ -17,12 +17,12 @@ import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import { Text as HeaderText } from '@components/common/Text';
 import { useAuthStore } from '@store/useAuthStore';
 import { useLessonStore } from '@store/useLessonStore';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   getLectureDetail,
   LectureDetailType,
 } from '@services/lectureInformation';
-import { deleteExam, getExamSubmissionList } from '@services/examService';
+import { getExamSubmissionList } from '@services/examService';
 import { ScreenType } from '@store/useCurrentScreenStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useExamStore } from '@store/useExamStore';
@@ -31,11 +31,10 @@ type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassExamListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
-  const role = useAuthStore(state => state.userInfo.role);
   const studentId = useAuthStore(state => state.userInfo.id);
   const { setExams } = useExamStore();
+
   const { data: lectureDetail } = useQuery<LectureDetailType>({
     queryKey: ['lectureDetail', lectureId],
     queryFn: () => getLectureDetail(lectureId!),
@@ -50,19 +49,6 @@ function ClassExamListScreen(): React.JSX.Element {
       setExams(lectureDetail.exams);
     }
   }, [lectureDetail?.exams, setExams]);
-
-  const { mutate: removeExam } = useMutation({
-    mutationFn: (examId: number) => deleteExam(examId),
-    onSuccess: () => {
-      Alert.alert('알림', '시험이 삭제되었습니다.');
-      queryClient.invalidateQueries({
-        queryKey: ['lectureDetail', lectureId],
-      });
-    },
-    onError: error => {
-      console.error('시험 삭제 실패:', error);
-    },
-  });
 
   const [selectedFilter, setSelectedFilter] = useState<string>('전체');
   const [currentTime, setCurrentTime] = useState<Date>(new Date()); // 현재 시간 상태
@@ -98,20 +84,6 @@ function ClassExamListScreen(): React.JSX.Element {
     }
   };
 
-
-  const handleDeleteExam = (examId: number) => {
-    Alert.alert('시험 삭제', '이 시험을 정말로 삭제하시겠습니까?', [
-      {
-        text: '취소',
-        style: 'cancel',
-      },
-      {
-        text: '삭제',
-        onPress: () => removeExam(examId),
-        style: 'destructive',
-      },
-    ]);
-  };
 
   const submittedExamIds = examSubmissions?.map(
     submission => submission.examId,
@@ -237,13 +209,6 @@ function ClassExamListScreen(): React.JSX.Element {
                   )}
                 </View>
               </TouchableOpacity>
-              {role === 'TEACHER' && (
-                <TouchableOpacity
-                  onPress={() => handleDeleteExam(item.examId)}
-                  style={styles.deleteButton}>
-                  <Text style={styles.deleteButtonText}>삭제하기</Text>
-                </TouchableOpacity>
-              )}
             </View>
           </View>
         )}

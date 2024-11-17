@@ -160,3 +160,52 @@ export const getExamSubmissionDetail = async (
     throw error;
   }
 };
+
+// 시험 문제 제출 내역 타입 정의
+export type StudentExamProblemSubmission = {
+  examProblemSubmissionId: number;
+  questionId: number;
+  isCorrect: boolean;
+  examSolution: string; // 학생의 풀이 답안
+};
+
+// 시험 제출 내역 타입 정의
+export type StudentExamSubmission = {
+  examSubmissionId: number;
+  examId: number;
+  studentId: number;
+  studentName: string;
+  studentImage: string;
+  score: number;
+  correctCount: number;
+  totalCount: number;
+  isCompleted: boolean;
+  problemSubmissions: StudentExamProblemSubmission[];
+};
+
+// API 응답 데이터 타입 정의
+export type StudentExamSubmissionListResponse = StudentExamSubmission[];
+
+// 시험 제출 내역 조회 함수
+export const getStudentExamSubmissionList = async (
+  lectureId: number,
+  examId: number
+): Promise<StudentExamSubmissionListResponse> => {
+  try {
+    console.log(
+      `시험 제출 내역 조회 요청: lectureId = ${lectureId}, examId = ${examId}`
+    );
+
+    const { data } = await authApiClient.get<{
+      code: string;
+      data: StudentExamSubmissionListResponse;
+      message: string;
+    }>(`/exam/${lectureId}/${examId}/submissions`);
+
+    console.log('시험 제출 내역 조회 응답:', data);
+    return data.data; // 시험 제출 내역 반환
+  } catch (error) {
+    console.error('시험 제출 내역 조회 실패:', error);
+    throw error;
+  }
+};

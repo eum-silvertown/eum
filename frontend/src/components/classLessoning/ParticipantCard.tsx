@@ -6,7 +6,8 @@ interface Participant {
   studentId: number;
   studentName: string;
   studentImage?: string;
-  status: 'default' | 'active' | 'inactive';
+  currentPage: number;
+  status: 'in' | 'now' | 'out'; // 변경된 status 타입
 }
 
 interface ParticipantCardProps {
@@ -14,22 +15,24 @@ interface ParticipantCardProps {
   onPress: () => void;
 }
 
-const ParticipantCard: React.FC<ParticipantCardProps> = ({
+function ParticipantCard({
   participant,
   onPress,
-}) => {
-  const { studentName, studentImage, status } = participant;
+}: ParticipantCardProps): React.JSX.Element {
+  const { studentName, studentImage, status, currentPage } = participant;
 
   // 상태에 따른 스타일 동적 설정
   const borderColor = {
-    default: 'transparent',
-    active: 'green',
-    inactive: 'red',
+    in: 'black', // 대기 상태: 파란색
+    now: 'green', // 움직임 상태: 초록색
+    out: 'gray', // 나간 상태: 회색
   }[status];
+
+  const opacity = status === 'out' ? 0.5 : 1; // 나간 상태일 경우 불투명도 감소
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={[styles.card, { borderColor }]}>
+      <View style={[styles.card, { borderColor, opacity }]}>
         {studentImage ? (
           <Image
             source={{ uri: studentImage }}
@@ -41,9 +44,12 @@ const ParticipantCard: React.FC<ParticipantCardProps> = ({
         )}
         <Text style={styles.name}>{studentName}</Text>
       </View>
+      <Text style={styles.pageInfo}>{currentPage}페이지 입니다</Text>
     </TouchableOpacity>
   );
-};
+}
+
+export default ParticipantCard;
 
 const styles = StyleSheet.create({
   card: {
@@ -80,6 +86,11 @@ const styles = StyleSheet.create({
     paddingVertical: getResponsiveSize(3),
     borderRadius: getResponsiveSize(6),
   },
+  pageInfo: {
+    textAlign: 'center',
+    marginTop: getResponsiveSize(8),
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
+  },
 });
-
-export default ParticipantCard;

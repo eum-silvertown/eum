@@ -7,7 +7,7 @@ import {
   Text,
   Alert,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Picker import
+import { Picker } from '@react-native-picker/picker';
 import { iconSize } from '@theme/iconSize';
 import { useNavigation } from '@react-navigation/native';
 import ClockIcon from '@assets/icons/clockIcon.svg';
@@ -15,9 +15,8 @@ import QuestionsIcon from '@assets/icons/questionsIcon.svg';
 import EmptyHomeworkIcon from '@assets/icons/emptyHomeworkIcon.svg';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 import { Text as HeaderText } from '@components/common/Text';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
-  deleteHomework,
   getHomeworkSubmissionList,
 } from '@services/homeworkService';
 import {
@@ -32,9 +31,7 @@ type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function ClassHomeworkListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
-  const role = useAuthStore(state => state.userInfo.role);
   const memberId = useAuthStore(state => state.userInfo.id);
 
   const { data: lectureDetail } = useQuery<LectureDetailType>({
@@ -47,20 +44,7 @@ function ClassHomeworkListScreen(): React.JSX.Element {
     queryFn: () => getHomeworkSubmissionList(lectureId!, memberId!),
   });
 
-  const { mutate: removeHomework } = useMutation({
-    mutationFn: (homeworkId: number) => deleteHomework(homeworkId),
-    onSuccess: () => {
-      Alert.alert('알림', '숙제가 삭제되었습니다.');
-      queryClient.invalidateQueries({
-        queryKey: ['lectureDetail', lectureId],
-      });
-    },
-    onError: error => {
-      console.error('숙제 삭제 실패:', error);
-    },
-  });
-
-  const [selectedFilter, setSelectedFilter] = useState<string>('전체'); // 필터 상태 관리
+  const [selectedFilter, setSelectedFilter] = useState<string>('전체'); // 필터
 
   const handleHomeworkPress = (homework: any) => {
     const endTime = new Date(homework.endTime).getTime();
@@ -83,20 +67,6 @@ function ClassHomeworkListScreen(): React.JSX.Element {
       // 기한 지난 미제출 -> 알림
       Alert.alert('알림', '기한이 지난 숙제는 제출할 수 없습니다.');
     }
-  };
-
-  const handleDeleteHomework = (homeworkId: number) => {
-    Alert.alert('숙제 삭제', '이 숙제를 정말로 삭제하시겠습니까?', [
-      {
-        text: '취소',
-        style: 'cancel',
-      },
-      {
-        text: '삭제',
-        onPress: () => removeHomework(homeworkId),
-        style: 'destructive',
-      },
-    ]);
   };
 
   const submittedHomeworkIds = submitHomeworkList?.map(
@@ -216,14 +186,6 @@ function ClassHomeworkListScreen(): React.JSX.Element {
                   )}
                 </View>
               </TouchableOpacity>
-              {role === 'TEACHER' && (
-                <TouchableOpacity
-                  onPress={() => handleDeleteHomework(item.homeworkId)}
-                  style={styles.deleteButton}
-                >
-                  <Text style={styles.deleteButtonText}>삭제하기</Text>
-                </TouchableOpacity>
-              )}
             </View>
           </View>
         )}
@@ -303,16 +265,6 @@ const styles = StyleSheet.create({
     color: '#FFA500',
     fontWeight: 'bold',
     marginTop: 5,
-  },
-  deleteButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    backgroundColor: '#FF5555',
-    borderRadius: 8,
-  },
-  deleteButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
   },
   emptyContainer: {
     flex: 1,
