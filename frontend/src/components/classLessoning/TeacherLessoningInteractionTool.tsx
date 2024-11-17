@@ -36,8 +36,10 @@ const TeacherLessoningInteractionTool = ({
         <View style={styles.floatingToolbar}>
           {/* 학생 화면 Grid 보기 */}
           <TouchableOpacity
+            style={styles.iconTouchLayout}
             onPress={() => navigation.navigate('LessoningStudentListScreen')}>
             <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
+            <Text>학생 목록 돌아가기</Text>
           </TouchableOpacity>
           <Text>{titles[currentPage - 1]}</Text>
           <Text>정답 : {answers[currentPage - 1]}</Text>
@@ -140,5 +142,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#D32F2F',
     fontWeight: 'bold',
+  },
+  iconTouchLayout: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

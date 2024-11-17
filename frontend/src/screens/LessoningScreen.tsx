@@ -52,7 +52,7 @@ function LessoningScreen(): React.JSX.Element {
         studentId: userInfo.id,
         studentName: userInfo.name,
         studentImage: userInfo.image || '',
-        currentPage: page ?? currentPage, // 명시적으로 전달된 page 사용, 없으면 currentPage 사용
+        currentPage: page ?? currentPage,
       };
 
       const destination = `/app/lesson/${lessonId}/${action}`;
@@ -74,8 +74,6 @@ function LessoningScreen(): React.JSX.Element {
       onConnect: () => {
         console.log('STOMP client successfully connected');
         setIsConnected(true);
-        // 구독 설정: isTeacher에 따른 분기 처리
-        console.log('입장드가자', isTeacher, isTeaching, memberId);
         if (isTeacher && isTeaching && memberId) {
           const teacherTopic = `/user/topic/teacher/lesson/${lessonId}/member/${memberId}`;
           client.subscribe(teacherTopic, message => {
@@ -153,9 +151,6 @@ function LessoningScreen(): React.JSX.Element {
 
   const handleGoToTeacherScreen = () => {
     const currentQuestionId = useLessoningStore.getState().questionId;
-
-    console.log('내 문제 ID', questionIds![currentPage - 1]);
-    console.log('선생님 문제 ID', currentQuestionId);
 
     if (!problemIds || problemIds.length === 0) {
       console.error('problemIds 배열이 비어있습니다.');
@@ -270,8 +265,8 @@ const styles = StyleSheet.create({
   },
   connectionChip: {
     position: 'absolute',
-    bottom: getResponsiveSize(160),
-    right: getResponsiveSize(32),
+    top: getResponsiveSize(24),
+    right: getResponsiveSize(24),
     paddingVertical: getResponsiveSize(12),
     paddingHorizontal: getResponsiveSize(18),
     borderRadius: getResponsiveSize(32),

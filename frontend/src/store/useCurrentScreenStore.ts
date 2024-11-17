@@ -32,7 +32,7 @@ export type ScreenType = {
     questionIds: number[];
     solvedType: 'EXAM' | 'HOMEWORK' | 'LESSON';
   };
-  ClassLessonReviewScreen: { lessonId: number };
+  ClassLessonReviewScreen: { lessonId: number; questionIds: number[] };
   ClassExamStudentSubmitListScreen: { examId: number };
   ClassHomeworkStudentSubmitListScreen: { homeworkId: number };
 };
