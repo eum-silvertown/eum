@@ -14,10 +14,12 @@ import {
 } from '@services/notificationService';
 import MainCalendar from '@components/main/widgets/MainCalendar';
 import Weather from '@components/main/widgets/Weather';
+import { colors } from 'src/hooks/useColors';
+import { useState } from 'react';
 
 function NotificationScreen(): React.JSX.Element {
   const {width, height} = useWindowDimensions();
-  const styles = getStyles(width);
+  const styles = getStyles(width, height);
 
   const notifications = useNotificationStore(state => state.notifications);
   const unreadNotifications = useNotificationStore(
@@ -32,6 +34,21 @@ function NotificationScreen(): React.JSX.Element {
   const updateDeleteNotification = useNotificationStore(
     state => state.updateDeleteNotification,
   );
+
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  const paginatedUnreadNotifications = unreadNotifications.slice(0, page * ITEMS_PER_PAGE);
+  const paginatedReadNotifications = notifications.slice(0, page * ITEMS_PER_PAGE);
+
+  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }: { layoutMeasurement: any, contentOffset: any, contentSize: any }) => {
+    const paddingToBottom = 20;
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+  };
+
+  const loadMore = () => {
+    setPage(prev => prev + 1);
+  };
 
   const onPressRead = async (notificationId: number) => {
     try {
@@ -66,37 +83,36 @@ function NotificationScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.leftContent}>
-        <View
-          style={{
-            flex: 1,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              height: width * 0.02,
-              paddingRight: width * 0.01,
-            }}>
+        <View style={styles.unreadSection}>
+          <View style={styles.unreadHeader}>
             <Text variant="subtitle" weight="medium">
               안 읽은 알림{' '}
-              {unreadNotifications.length > 0 && unreadNotifications.length}
             </Text>
-            <Pressable onPress={onPressReadAll}>
+            <Text variant="subtitle" weight="medium">
+            {unreadNotifications.length > 0 && unreadNotifications.length}
+            </Text>
+            <Pressable style={styles.readAllButton} onPress={onPressReadAll}>
               <Text>모두 읽음</Text>
             </Pressable>
           </View>
-          <ScrollView style={styles.notifications}>
+          <ScrollView 
+            style={styles.notifications}
+            onScroll={({ nativeEvent }) => {
+              if (isCloseToBottom(nativeEvent)) {
+                loadMore();
+              }
+            }}
+            scrollEventThrottle={400}
+          >
             {unreadNotifications.length === 0 && (
-              <View style={{marginTop: height * 0.2, margin: 'auto'}}>
+              <View style={styles.emptyNotification}>
                 <Text>새로운 알림이 없습니다.</Text>
               </View>
             )}
-            {unreadNotifications.map((notification, index) => (
+            {paginatedUnreadNotifications.map((notification, index) => (
               <View key={index} style={styles.notification}>
-                <View style={styles.icon}></View>
                 <View>
-                  <Text weight="bold">수업 알림</Text>
+                  <Text weight="bold">{notification.type}</Text>
                 </View>
                 <View>
                   <Text>{notification.title}</Text>
@@ -116,23 +132,30 @@ function NotificationScreen(): React.JSX.Element {
             ))}
           </ScrollView>
         </View>
-        <View style={{flex: 1}}>
+        <View style={styles.readSection}>
           <View>
             <Text variant="subtitle" weight="medium">
               지난 알림
             </Text>
           </View>
-          <ScrollView style={styles.notifications}>
+          <ScrollView 
+            style={styles.notifications}
+            onScroll={({ nativeEvent }) => {
+              if (isCloseToBottom(nativeEvent)) {
+                loadMore();
+              }
+            }}
+            scrollEventThrottle={400}
+          >
             {notifications.length === 0 && (
-              <View style={{marginTop: height * 0.2, margin: 'auto'}}>
+              <View style={styles.emptyNotification}>
                 <Text>알림이 없습니다.</Text>
               </View>
             )}
-            {notifications.map((notification, index) => (
+            {[...paginatedReadNotifications].reverse().map((notification, index) => (
               <View key={index} style={styles.notification}>
-                <View style={styles.icon}></View>
                 <View>
-                  <Text weight="bold">수업 알림</Text>
+                  <Text weight="bold">{notification.type}</Text>
                 </View>
                 <View>
                   <Text>{notification.title}</Text>
@@ -166,7 +189,7 @@ function NotificationScreen(): React.JSX.Element {
 
 export default NotificationScreen;
 
-const getStyles = (width: number) =>
+const getStyles = (width: number, height: number) =>
   StyleSheet.create({
     container: {
       flexDirection: 'row',
@@ -176,6 +199,9 @@ const getStyles = (width: number) =>
       gap: width * 0.01,
       padding: width * 0.015,
       backgroundColor: 'white',
+    },
+    readAllButton: {
+      marginLeft: 'auto',
     },
     leftContent: {
       flex: 7,
@@ -205,30 +231,42 @@ const getStyles = (width: number) =>
       marginVertical: width * 0.01,
       paddingHorizontal: width * 0.005,
       backgroundColor: 'white',
+      borderWidth: width * 0.001,
+      borderColor: colors.light.borderColor.pickerBorder,
       borderRadius: width * 0.01,
-      elevation: 3,
     },
     notification: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: width * 0.015,
       marginVertical: width * 0.005,
-      paddingVertical: width * 0.015,
+      paddingVertical: width * 0.02,
       paddingHorizontal: width * 0.02,
       backgroundColor: 'white',
-      elevation: 1,
+      borderWidth: width * 0.001,
+      borderColor: colors.light.borderColor.pickerBorder,
       borderRadius: width * 0.01,
-    },
-    icon: {
-      width: width * 0.02,
-      height: width * 0.02,
-      borderRadius: 9999,
-      backgroundColor: 'gray',
     },
     notificationTail: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: width * 0.015,
       marginLeft: 'auto',
+    },
+    unreadSection: {
+      flex: 1,
+    },
+    readSection: {
+      flex: 1,
+    },
+    unreadHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: width * 0.02,
+      paddingRight: width * 0.01,
+    },
+    emptyNotification: {
+      marginTop: height * 0.2,
+      margin: 'auto',
     },
   });

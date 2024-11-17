@@ -7,6 +7,9 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import HomeworkProgressBox from '@components/homework/HomeworkProgressBox';
 import HomeworkList from '@components/homework/HomeworkList';
 import { colors } from 'src/hooks/useColors';
+import { detailQuestion, DetailQuestionType } from '@services/questionBox';
+import { useQuery } from '@tanstack/react-query';
+import ProblemExSection from '@components/questionBox/ProblemExSection';
 
 const HomeworkScreen = (): React.JSX.Element => {
   const { width } = useWindowDimensions();
@@ -15,6 +18,12 @@ const HomeworkScreen = (): React.JSX.Element => {
   const userId = useAuthStore(state => state.userInfo.id);
   const [allAboutHomework, setAllAboutHomework] = useState<AllAboutHomeworkType>();
   const [selected, setSelected] = useState<'전체 숙제 수' | '완료한 숙제 수' | '미완료'>('전체 숙제 수');
+  const [selectedHomework, setSelectedHomework] = useState<number>(0);
+  const {data: selectedHomeworkDetail} = useQuery<DetailQuestionType>({
+    queryKey: ['selectedHomeworkDetail', selectedHomework],
+    queryFn: () => detailQuestion(selectedHomework),
+    enabled: selectedHomework !== 0,
+  });
 
   async function fetchHomework() {
     try {
@@ -70,16 +79,20 @@ const HomeworkScreen = (): React.JSX.Element => {
           setSelected={setSelected}
         />
         <HomeworkProgressBox
-          value={allAboutHomework.averageScore}
+          value={Math.floor(allAboutHomework.averageScore)}
           variant="평균 점수"
         />
       </View>
     </View>
     <View style={styles.homeworkView}>
-      <HomeworkList homeworkList={getFilteredHomeworkList()}/>
+      <HomeworkList homeworkList={getFilteredHomeworkList()} selectedHomework={selectedHomework} setSelectedHomework={setSelectedHomework}/>
       <View style={styles.previewView}>
         <Text variant="subtitle" weight="bold">숙제 미리보기</Text>
-        <View style={styles.preview}></View> 
+        <View style={[styles.preview, !selectedHomeworkDetail && styles.previewEmpty]}>
+          {selectedHomeworkDetail
+            ? <ProblemExSection fontSize={width * 0.009} problemText={selectedHomeworkDetail.content}/>
+            : <Text>파일을 터치하면 문제를 미리볼 수 있습니다.</Text>}
+        </View>
       </View>
     </View>
   </View>;
@@ -128,6 +141,10 @@ function getStyles(width: number) {
       borderWidth: width * 0.001,
       borderRadius: width * 0.01,
       borderColor: colors.light.borderColor.pickerBorder,
+    },
+    previewEmpty: {
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 }
