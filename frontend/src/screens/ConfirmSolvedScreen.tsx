@@ -121,7 +121,6 @@ function ConfirmSolvedScreen(): React.JSX.Element {
     <View style={styles.container}>
       <ProblemSection problemText={problems[currentPage].content} />
       <StudentCanvasResolveSection
-        solveType={solvedType}
         currentPage={currentPage + 1}
         totalPages={problems.length}
         onNextPage={handleNextPage}
