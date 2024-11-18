@@ -20,6 +20,7 @@ import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
+import com.eum.lecture_service.event.event.lecture.LectureMinusAttitudeEvent;
 import com.eum.lecture_service.event.event.lecture.LectureStatusUpdatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
 import com.eum.lecture_service.event.event.notification.LectureCreatedNotificationEvent;
@@ -145,6 +146,16 @@ public class LectureServiceImpl implements LectureService{
 		if(savedlecture.getLectureStatus()) {
 			publishStartNotificationEvent(savedlecture);
 		}
+	}
+
+	@Override
+	public void minusStudentAttitude(Long lectureId, Long studentId) {
+		if (!lectureRepository.existsById(lectureId)) {
+			throw new EumException(ErrorCode.LECTURE_NOT_FOUND);
+		}
+
+		LectureMinusAttitudeEvent event = new LectureMinusAttitudeEvent(lectureId, studentId);
+		kafkaTemplate.send("lecture-minus-attitude-topic", event);
 	}
 
 	private List<Long> getStudentIds(Long classId) {

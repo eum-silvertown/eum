@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class LectureStartedNotificationEvent  {
     private Long lectureId;
     private String title;
+    private String subject;
     private List<Long> studentIds;
     private String type;
 
@@ -24,6 +25,7 @@ public class LectureStartedNotificationEvent  {
         return LectureStartedNotificationEvent.builder()
             .lectureId(lecture.getLectureId())
             .title(lecture.getTitle())
+            .subject(lecture.getSubject())
             .studentIds(studentIds)
             .type(NotificationType.LECTURE_START.getDescription())
             .build();

@@ -18,6 +18,7 @@ public class LectureCreatedNotificationEvent {
 
 	private Long lectureId;
 	private String title;
+	private String subject;
 	private List<Long> studentIds;
 	private String type;
 
@@ -25,6 +26,7 @@ public class LectureCreatedNotificationEvent {
 		return LectureCreatedNotificationEvent.builder()
 			.lectureId(lecture.getLectureId())
 			.title(lecture.getTitle())
+			.subject(lecture.getSubject())
 			.type(NotificationType.LECTURE_CREATION.getDescription())
 			.studentIds(studentIds)
 			.build();

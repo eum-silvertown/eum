@@ -101,4 +101,21 @@ public class LectureController {
 		}
 	}
 
+	@PostMapping("/{lectureId}/attitude/{studentId}")
+	public CommonResponse<?> minusLectureAttitude(
+		@RequestHeader("X-MEMBER-ID") Long memberId,
+		@RequestHeader("X-MEMBER-ROLE") String role,
+		@PathVariable Long lectureId,
+		@PathVariable Long studentId) {
+		try {
+			RoleType roleType = RoleType.fromString(role);
+			if (roleType == RoleType.STUDENT) {
+				throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+			}
+			lectureService.minusStudentAttitude(lectureId, studentId);
+			return CommonResponse.success("마이너스 동작!");
+		} catch (IllegalArgumentException e) {
+			throw new EumException(ErrorCode.AUTHORITY_PERMISSION_ERROR);
+		}
+	}
 }

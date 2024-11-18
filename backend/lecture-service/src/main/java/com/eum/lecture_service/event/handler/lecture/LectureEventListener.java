@@ -10,6 +10,7 @@ import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.lecture.LectureCreatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureDeletedEvent;
+import com.eum.lecture_service.event.event.lecture.LectureMinusAttitudeEvent;
 import com.eum.lecture_service.event.event.lecture.LectureStatusUpdatedEvent;
 import com.eum.lecture_service.event.event.lecture.LectureUpdatedEvent;
 import com.eum.lecture_service.query.document.LectureModel;
@@ -305,5 +306,91 @@ public class LectureEventListener {
 
 		lecture.setLectureStatus(event.getStatus());
 		lectureReadRepository.save(lecture);
+	}
+
+	@KafkaListener(topics = "lecture-minus-attitude-topic", groupId = "lecture-group" , properties = {
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.lecture.LectureMinusAttitudeEvent" })
+	public void handleLectureMinusAttitude(LectureMinusAttitudeEvent event) {
+
+		StudentOverviewModel studentModel = studentOverviewRepository.findByStudentIdAndLectureId(event.getStudentId(),
+				event.getLectureId())
+			.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
+
+		StudentScores scores = studentModel.getStudentScores();
+		if (scores == null) {
+			scores = new StudentScores();
+			studentModel.setStudentScores(scores);
+		}
+		Double currentAttitudeScore = scores.getAttitudeAvgScore();
+		if (currentAttitudeScore == null) {
+			currentAttitudeScore = 100.0;
+		}
+		scores.setAttitudeAvgScore(currentAttitudeScore - 2);
+
+		studentOverviewRepository.save(studentModel);
+
+		updateTeacherOverviewModel(event.getStudentId(), studentModel.getLectureId());
+	}
+
+	private void updateTeacherOverviewModel(Long studentId, Long lectureId) {
+		String teacherOverviewId = generateTeacherOverviewId(lectureId);
+		TeacherOverviewModel teacherOverview = teacherOverviewRepository.findById(teacherOverviewId)
+			.orElseThrow(() -> new EumException(ErrorCode.TEACHER_NOT_FOUND));
+
+		List<StudentInfo> studentInfos = teacherOverview.getStudents();
+		for (StudentInfo studentInfo : studentInfos) {
+			if (studentInfo.getStudentId().equals(studentId)) {
+				StudentOverviewModel studentOverview = studentOverviewRepository.findByStudentIdAndLectureId(studentId, lectureId)
+					.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
+				studentInfo.setStudentScores(studentOverview.getStudentScores());
+				break;
+			}
+		}
+
+		updateClassAverageScores(teacherOverview);
+
+		teacherOverviewRepository.save(teacherOverview);
+	}
+
+	private void updateClassAverageScores(TeacherOverviewModel teacherOverview) {
+		List<StudentInfo> studentInfos = teacherOverview.getStudents();
+
+		double totalHomework = 0.0;
+		double totalExam = 0.0;
+		double totalAttitude = 0.0;
+
+		int homeworkCount = 0;
+		int examCount = 0;
+		int attitudeCount = 0;
+
+		for (StudentInfo studentInfo : studentInfos) {
+			StudentScores scores = studentInfo.getStudentScores();
+			if (scores != null) {
+				if (scores.getHomeworkAvgScore() != null) {
+					totalHomework += scores.getHomeworkAvgScore();
+					homeworkCount++;
+				}
+				if (scores.getExamAvgScore() != null) {
+					totalExam += scores.getExamAvgScore();
+					examCount++;
+				}
+				if (scores.getAttitudeAvgScore() != null) {
+					totalAttitude += scores.getAttitudeAvgScore();
+					attitudeCount++;
+				}
+			}
+		}
+
+		double averageHomework = homeworkCount > 0 ? totalHomework / homeworkCount : 0.0;
+		double averageExam = examCount > 0 ? totalExam / examCount : 0.0;
+		double averageAttitude = attitudeCount > 0 ? totalAttitude / attitudeCount : 100.0;
+
+		ClassAverageScores classAverageScores = new ClassAverageScores(
+			averageHomework,
+			averageExam,
+			averageAttitude
+		);
+
+		teacherOverview.setClassAverageScores(classAverageScores);
 	}
 }

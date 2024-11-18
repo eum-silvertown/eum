@@ -17,4 +17,6 @@ public interface LectureService {
 	Optional<Lecture> getLecture(Long lectureId);
 
 	void switchLecture(Long lectureId, Long memberId);
+
+	void minusStudentAttitude(Long lectureId, Long studentId);
 }
