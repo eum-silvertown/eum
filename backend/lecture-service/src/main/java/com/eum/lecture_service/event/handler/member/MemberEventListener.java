@@ -64,9 +64,6 @@ public class MemberEventListener {
 	public void updateTeacher(TeacherInfoEvent event) {
 		teacherReadRepository.findById(event.getTeacherId()).ifPresentOrElse(
 			teacher -> {
-				teacher.setName(event.getName());
-				teacher.setEmail(event.getEmail());
-				teacher.setTel(event.getTel());
 				teacher.setImage(event.getImage());
 
 				teacherReadRepository.save(teacher);
@@ -156,11 +153,7 @@ public class MemberEventListener {
 	public void updateStudent(StudentInfoEvent event) {
 		studentReadRepository.findById(event.getStudentId()).ifPresentOrElse(
 			student -> {
-				student.setName(event.getName());
 				student.setImage(event.getImage());
-				student.setClassId(event.getClassId());
-				student.setGrade(event.getGrade());
-				student.setClassNumber(event.getClassNumber());
 
 				studentReadRepository.save(student);
 			},
