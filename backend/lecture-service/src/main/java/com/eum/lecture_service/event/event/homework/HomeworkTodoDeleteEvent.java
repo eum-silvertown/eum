@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class HomeworkTodoDeleteEvent {
 
 	private Long homeworkId;
+	private Long studentId;
 }
