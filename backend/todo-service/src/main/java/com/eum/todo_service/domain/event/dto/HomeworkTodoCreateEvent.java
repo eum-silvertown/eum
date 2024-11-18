@@ -16,6 +16,7 @@ public class HomeworkTodoCreateEvent {
     private String lectureTitle;
     private String subject;
     private String title;
+    private String backgroundColor;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private List<Long> studentIds;

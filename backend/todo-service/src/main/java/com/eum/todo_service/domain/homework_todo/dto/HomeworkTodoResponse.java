@@ -15,17 +15,19 @@ public class HomeworkTodoResponse {
     private String lectureTitle;
     private String subject;
     private String title;
+    private String backgroundColor;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
     @Builder
-    public HomeworkTodoResponse(Long homeworkId, Long lectureId, String lectureTitle,
-                                String subject, String title, LocalDateTime startTime, LocalDateTime endTime) {
+    public HomeworkTodoResponse(Long homeworkId, Long lectureId, String lectureTitle, String subject,
+                                String title, String backgroundColor, LocalDateTime startTime, LocalDateTime endTime) {
         this.homeworkId = homeworkId;
         this.lectureId = lectureId;
         this.lectureTitle = lectureTitle;
         this.subject = subject;
         this.title = title;
+        this.backgroundColor = backgroundColor;
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -37,6 +39,7 @@ public class HomeworkTodoResponse {
                 .lectureTitle(homeworkTodo.getLectureTitle())
                 .subject(homeworkTodo.getSubject())
                 .title(homeworkTodo.getTitle())
+                .backgroundColor(homeworkTodo.getBackgroundColor())
                 .startTime(homeworkTodo.getStartTime())
                 .endTime(homeworkTodo.getEndTime())
                 .build();
