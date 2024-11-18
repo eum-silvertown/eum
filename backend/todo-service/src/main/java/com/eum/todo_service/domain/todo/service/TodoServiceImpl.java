@@ -1,5 +1,8 @@
 package com.eum.todo_service.domain.todo.service;
 
+import com.eum.todo_service.domain.homework_todo.dto.HomeworkTodoResponse;
+import com.eum.todo_service.domain.homework_todo.entity.HomeworkTodo;
+import com.eum.todo_service.domain.homework_todo.repository.HomeworkTodoRepository;
 import com.eum.todo_service.domain.todo.dto.TodoListResponse;
 import com.eum.todo_service.domain.todo.dto.TodoRequest;
 import com.eum.todo_service.domain.todo.dto.TodoResponse;
@@ -15,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository todoRepository;
+    private final HomeworkTodoRepository homeworkTodoRepository;
 
     @Override
     public TodoResponse createNewTodo(Long memberId, TodoRequest todoRequest) {
@@ -51,8 +54,11 @@ public class TodoServiceImpl implements TodoService {
         Map<Boolean, List<TodoResponse>> partitionedResponses = todoList.stream()
                 .map(TodoResponse::from)
                 .collect(Collectors.partitioningBy(TodoResponse::getIsDone));
-
-        return TodoListResponse.from(partitionedResponses.get(true), partitionedResponses.get(false));
+        List<HomeworkTodoResponse> homeworkTodoResponses = homeworkTodoRepository.findByStudentIdOrderByEndTimeAsc(memberId)
+                .stream()
+                .map(HomeworkTodoResponse::from)
+                .collect(Collectors.toList());
+        return TodoListResponse.from(partitionedResponses.get(true), partitionedResponses.get(false),homeworkTodoResponses);
     }
 
     @Override
