@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from '@components/common/Text';
-import { useModalContext } from 'src/contexts/useModalContext';
+import { useModalContext } from '@contexts/useModalContext';
 
 interface ExamOverviewModalProps {
   score: number;

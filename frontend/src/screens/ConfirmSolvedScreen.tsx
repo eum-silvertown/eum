@@ -9,7 +9,7 @@ import { useAuthStore } from '@store/useAuthStore';
 import { useLessonStore } from '@store/useLessonStore';
 import ProblemSection from '@components/common/ProblemSection';
 import StudentCanvasResolveSection from '@components/classActivity/StudentCanvasResolveSection';
-import { useModal } from 'src/hooks/useModal';
+import { useModal } from '@hooks/useModal';
 import OverviewModal from '@components/classActivity/OverviewModal';
 
 function ConfirmSolvedScreen(): React.JSX.Element {

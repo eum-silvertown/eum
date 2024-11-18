@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import ContentLayout from './ContentLayout';
 import IntoIcon from '@assets/icons/intoIcon.svg';
-import {Text} from '@components/common/Text';
-import {iconSize} from '@theme/iconSize';
-import {spacing} from '@theme/spacing';
-import {colors} from 'src/hooks/useColors';
-import {borderRadius} from '@theme/borderRadius';
+import { Text } from '@components/common/Text';
+import { iconSize } from '@theme/iconSize';
+import { spacing } from '@theme/spacing';
+import { colors } from '@hooks/useColors';
+import { borderRadius } from '@theme/borderRadius';
 
 // 특정 달의 날짜 계산 함수
 const getDaysInMonth = (month: number, year: number) => {
@@ -47,7 +47,7 @@ export default function CustomCalendar() {
     setCurrentDate(today);
   };
 
-  const renderDay = ({item}: {item: number | string}) => {
+  const renderDay = ({ item }: { item: number | string }) => {
     const isToday =
       item === today.getDate() &&
       month === today.getMonth() &&
@@ -68,7 +68,7 @@ export default function CustomCalendar() {
             <IntoIcon
               width={iconSize.md}
               height={iconSize.md}
-              style={{transform: [{rotate: '180deg'}]}}
+              style={{ transform: [{ rotate: '180deg' }] }}
             />
           </TouchableOpacity>
 
@@ -87,8 +87,8 @@ export default function CustomCalendar() {
             <Text
               key={day}
               style={[
-                index === 0 && {color: 'red'}, // 일요일
-                index === 6 && {color: 'blue'}, // 토요일
+                index === 0 && { color: 'red' }, // 일요일
+                index === 6 && { color: 'blue' }, // 토요일
               ]}>
               {day}
             </Text>
@@ -100,7 +100,7 @@ export default function CustomCalendar() {
           renderItem={renderDay}
           keyExtractor={(item, index) => index.toString()}
           numColumns={7} // 7일씩 한 줄에 배치
-          contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}
+          contentContainerStyle={{ flex: 1, justifyContent: 'space-between' }}
         />
       </View>
     </ContentLayout>

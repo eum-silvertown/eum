@@ -1,5 +1,5 @@
-import React, {useEffect, useState, useCallback} from 'react';
-import {Text} from '@components/common/Text';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Text } from '@components/common/Text';
 import ContentLayout from './ContentLayout';
 import Geolocation from '@react-native-community/geolocation';
 import {
@@ -13,13 +13,13 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import Config from 'react-native-config';
-import {iconSize} from '@theme/iconSize';
-import {colors} from 'src/hooks/useColors';
+import { iconSize } from '@theme/iconSize';
+import { colors } from '@hooks/useColors';
 import axios from 'axios';
 import RefreshIcon from '@assets/icons/refreshIcon.svg';
 
 export default function Weather(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const API_KEY = Config.OPENWEATHERMAP_API_KEY;
@@ -87,7 +87,7 @@ export default function Weather(): React.JSX.Element {
     console.log('날씨 새로고침');
     Geolocation.getCurrentPosition(
       async position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         await getWeatherData(latitude, longitude);
       },
       error => {
@@ -98,7 +98,7 @@ export default function Weather(): React.JSX.Element {
         });
         setLoading(false); // 에러 발생 시 로딩 종료
       },
-      {enableHighAccuracy: false, timeout: 20000, maximumAge: 1000},
+      { enableHighAccuracy: false, timeout: 20000, maximumAge: 1000 },
     );
   }, [getWeatherData]);
 
@@ -159,7 +159,7 @@ export default function Weather(): React.JSX.Element {
 
               <View style={styles.weatherBox}>
                 {iconUrl && (
-                  <Image source={{uri: iconUrl}} style={styles.weatherIcon} />
+                  <Image source={{ uri: iconUrl }} style={styles.weatherIcon} />
                 )}
                 {weatherDescription && <Text>{weatherDescription}</Text>}
               </View>

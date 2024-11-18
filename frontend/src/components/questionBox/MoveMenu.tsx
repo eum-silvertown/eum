@@ -1,13 +1,13 @@
 import Button from '@components/common/Button';
-import {Text} from '@components/common/Text';
-import {useCutStore} from '@store/useCutStore';
-import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
-import {StyleSheet, useWindowDimensions, View} from 'react-native';
-import {colors} from 'src/hooks/useColors';
-import {moveFolder, moveQuestion} from 'src/services/questionBox';
+import { Text } from '@components/common/Text';
+import { useCutStore } from '@store/useCutStore';
+import { useQuestionExplorerStore } from '@store/useQuestionExplorerStore';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { colors } from '@hooks/useColors';
+import { moveFolder, moveQuestion } from '@services/questionBox';
 
 function MoveMenu(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const title = useCutStore(state => state.title);
@@ -38,7 +38,7 @@ function MoveMenu(): React.JSX.Element {
     <View style={styles.area}>
       <View style={styles.container}>
         <Text weight="bold">{title}</Text>
-        <Text style={{marginRight: 15}}>폴더</Text>
+        <Text style={{ marginRight: 15 }}>폴더</Text>
         <Button
           onPress={pressButtonHandler}
           variant="pressable"

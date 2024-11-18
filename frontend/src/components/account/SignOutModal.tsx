@@ -1,19 +1,19 @@
-import {StyleSheet, View, TouchableOpacity, Alert} from 'react-native';
-import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
-import {colors} from 'src/hooks/useColors';
-import {useModalContext} from 'src/contexts/useModalContext';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {signOut} from '@services/authService';
+import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
+import { Text } from '@components/common/Text';
+import { borderRadius } from '@theme/borderRadius';
+import { colors } from '@hooks/useColors';
+import { useModalContext } from '@contexts/useModalContext';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { signOut } from '@services/authService';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 export default function SignOutModal(): React.JSX.Element {
-  const {close} = useModalContext();
+  const { close } = useModalContext();
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
+  const { setCurrentScreen } = useCurrentScreenStore();
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -33,7 +33,7 @@ export default function SignOutModal(): React.JSX.Element {
       <TouchableOpacity
         style={[
           styles.button,
-          {backgroundColor: colors.light.background.danger},
+          { backgroundColor: colors.light.background.danger },
         ]}
         onPress={handleSignOut}>
         <Text weight="bold" color="white">

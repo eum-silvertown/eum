@@ -1,16 +1,16 @@
-import {useModalStore} from '@store/useModalStore';
-import {useCallback, useEffect, useRef} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import { useModalStore } from '@store/useModalStore';
+import { useCallback, useEffect, useRef } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {Text} from './Text';
+import { Text } from './Text';
 import CloseButtonIcon from '@assets/icons/cancelIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {ModalContext} from 'src/contexts/useModalContext';
+import { iconSize } from '@theme/iconSize';
+import { ModalContext } from '@contexts/useModalContext';
 
 interface ModalProps {
   modal: {
@@ -21,14 +21,14 @@ interface ModalProps {
   };
 }
 
-function Modal({modal}: ModalProps): React.JSX.Element {
-  const {closeModal} = useModalStore();
+function Modal({ modal }: ModalProps): React.JSX.Element {
+  const { closeModal } = useModalStore();
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
   const isClosing = useRef(false);
 
   useEffect(() => {
-    opacity.value = withTiming(1, {duration: 200});
+    opacity.value = withTiming(1, { duration: 200 });
     translateY.value = withTiming(0, {
       duration: 200,
     });
@@ -68,12 +68,12 @@ function Modal({modal}: ModalProps): React.JSX.Element {
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
-      transform: [{translateY: translateY.value}],
+      transform: [{ translateY: translateY.value }],
     };
   });
 
   return (
-    <ModalContext.Provider value={{close: handleClose}}>
+    <ModalContext.Provider value={{ close: handleClose }}>
       <Animated.View
         style={[styles.container, size[modal.size], animatedStyle]}>
         <View style={styles.header}>

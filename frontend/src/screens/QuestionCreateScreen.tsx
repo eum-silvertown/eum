@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, Pressable, StyleSheet, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import {
   useFocusEffect,
   useNavigation,
@@ -12,44 +12,44 @@ import {
   switchLessonStatus,
   SwitchLessonStatusResponse,
 } from '@services/lessonService';
-import {createExam, CreateExamRequest} from '@services/examService';
-import {createHomework, CreateHomeworkRequest} from '@services/homeworkService';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import { createExam, CreateExamRequest } from '@services/examService';
+import { createHomework, CreateHomeworkRequest } from '@services/homeworkService';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import FileContainer from '@components/questionBox/FileContainer';
 import FolderHeader from '@components/questionBox/FolderHeader';
 import MoveMenu from '@components/questionBox/MoveMenu';
-import {useCutStore} from '@store/useCutStore';
+import { useCutStore } from '@store/useCutStore';
 import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {colors} from 'src/hooks/useColors';
+import { borderRadius } from '@theme/borderRadius';
+import { borderWidth } from '@theme/borderWidth';
+import { colors } from '@hooks/useColors';
 import {
   detailQuestion,
   DetailQuestionType,
   getFolder,
   getRootFolder,
-} from 'src/services/questionBox';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useLessonStore} from '@store/useLessonStore';
+} from '@services/questionBox';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useLessonStore } from '@store/useLessonStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function QuestionCreateScreen(): React.JSX.Element {
   const route = useRoute();
   const navigation = useNavigation<NavigationProps>();
-  const {lectureId, action} = route.params as {
+  const { lectureId, action } = route.params as {
     lectureId: number;
     action: 'lesson' | 'exam' | 'homework';
   };
   const queryClient = useQueryClient();
   const [selectedFileId, setSelectedFileId] = useState(0);
 
-  const {data: questionDetail} = useQuery<DetailQuestionType>({
+  const { data: questionDetail } = useQuery<DetailQuestionType>({
     queryKey: ['questionDetail', selectedFileId],
     queryFn: () => detailQuestion(selectedFileId),
     enabled: selectedFileId !== 0,
