@@ -1,4 +1,4 @@
-import {getResponsiveSize} from '@utils/responsive';
+import { getResponsiveSize } from '@utils/responsive';
 import {
   View,
   Text,
@@ -8,12 +8,12 @@ import {
   Image,
 } from 'react-native';
 import PersonIcon from '@assets/icons/personIcon.svg';
-import {StudentOverviewType} from 'src/services/lectureInformation';
+import { StudentOverviewType } from '@services/lectureInformation';
 import First from '@assets/images/first.png';
 import Second from '@assets/images/second.png';
 import Third from '@assets/images/third.png';
-import {SvgUri} from 'react-native-svg';
-import {colors} from 'src/hooks/useColors';
+import { SvgUri } from 'react-native-svg';
+import { colors } from '@hooks/useColors';
 
 interface StudentRankProps {
   studentsInfo?: StudentOverviewType[];
@@ -46,7 +46,7 @@ const StudentRank = ({
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <TouchableOpacity
             onPress={() =>
               onStudentSelect(item.studentScores, item.studentName)
@@ -69,7 +69,7 @@ const StudentRank = ({
                     />
                   ) : (
                     <Image
-                      source={{uri: item.studentImage}}
+                      source={{ uri: item.studentImage }}
                       width={32}
                       height={32}
                       style={styles.studentImage}

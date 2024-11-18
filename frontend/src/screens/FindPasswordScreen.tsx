@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Alert} from 'react-native';
-import {Text} from '@components/common/Text';
+import React, { useState } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
+import { Text } from '@components/common/Text';
 import ScreenHeader from '@components/account/ScreenHeader';
 import InputField from '@components/account/InputField';
-import {colors} from 'src/hooks/useColors';
-import {useRoute} from '@react-navigation/native';
-import {useModal} from 'src/hooks/useModal';
+import { colors } from '@hooks/useColors';
+import { useRoute } from '@react-navigation/native';
+import { useModal } from '@hooks/useModal';
 import {
   requestEmailVerificationPassword,
   resetPasswordByVerificationCode,
@@ -14,9 +14,9 @@ import {
 import SuccessResetPasswordModal from '@components/account/SuccessResetPasswordModal';
 
 function FindPasswordScreen(): React.JSX.Element {
-  const {userId: initialUserId, email: initialEmail} =
-    (useRoute().params as {userId?: string; email?: string} | undefined) || {};
-  const {open} = useModal();
+  const { userId: initialUserId, email: initialEmail } =
+    (useRoute().params as { userId?: string; email?: string } | undefined) || {};
+  const { open } = useModal();
 
   const [email, setEmail] = useState(initialEmail || '');
   const [userId, setUserId] = useState(initialUserId || '');
@@ -107,8 +107,8 @@ function FindPasswordScreen(): React.JSX.Element {
           회원가입에 사용된 이메일과 아이디를 입력해주세요.
         </Text>
 
-        <View style={{gap: 10}}>
-          <View style={{gap: 10}}>
+        <View style={{ gap: 10 }}>
+          <View style={{ gap: 10 }}>
             <InputField
               label="아이디"
               placeholder="아이디를 입력해주세요."

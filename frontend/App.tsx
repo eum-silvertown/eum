@@ -1,9 +1,9 @@
-import {NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import messaging from '@react-native-firebase/messaging';
-import {navigationRef} from './src/services/NavigationService';
+import { navigationRef } from './src/services/NavigationService';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
-import {ScreenType} from './src/store/useCurrentScreenStore';
+import { ScreenType, useCurrentScreenStore } from './src/store/useCurrentScreenStore';
 import MainLayout from './src/components/common/MainLayout';
 import {
   Keyboard,
@@ -12,21 +12,21 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {Platform, UIManager} from 'react-native';
-import React, {useEffect, useMemo, useState} from 'react';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {TextEncoder} from 'text-encoding';
-import {refreshAuthToken} from './src/services/authService';
-import {useAuthStore} from './src/store/useAuthStore';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import { Platform, UIManager } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TextEncoder } from 'text-encoding';
+import { refreshAuthToken } from './src/services/authService';
+import { useAuthStore } from './src/store/useAuthStore';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   saveFCMToken,
   getUnreadNotifications,
   getReadNotifications,
 } from './src/services/notificationService';
-import {useNotificationStore} from './src/store/useNotificationStore';
-import {AppNavigator, getInitialScreens} from './src/AppNavigator';
-import {Text} from './src/components/common/Text';
+import { useNotificationStore } from './src/store/useNotificationStore';
+import { AppNavigator, getInitialScreens } from './src/AppNavigator';
+import { Text } from './src/components/common/Text';
 
 global.TextEncoder = TextEncoder;
 // 안드로이드 기본 Navbar 없애기
@@ -46,7 +46,7 @@ interface ScreenProps {
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
-  const {width, height} = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
   // 로그인 상태 관리
@@ -55,6 +55,7 @@ function App(): React.JSX.Element {
 
   // screen 상태 관리
   const [screens, setScreens] = useState<ScreenProps[]>([]);
+  const setCurrentScreen = useCurrentScreenStore(state => state.setCurrentScreen);
 
   // 로그인 여부에 따라 초기 화면 설정
   useEffect(() => {
@@ -120,53 +121,56 @@ function App(): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);
 
-  const toastConfig = useMemo(
-    () => ({
-      // eslint-disable-next-line react/no-unstable-nested-components
-      info: (props: any) => (
-        <Pressable
-          style={styles.toastContainer}
-          onPress={() => {
-            switch (props.props.type) {
-              case '수업 생성':
-                navigationRef.navigate('ClassListScreen');
-                break;
-              case '수업 시작':
-                console.log(props.props);
-                navigationRef.navigate('ClassListScreen', {
-                  autoOpenLectureId: props.props.id,
-                });
-                break;
-              case '시험 생성':
-                navigationRef.navigate('ClassListScreen');
-                break;
-              case '숙제 생성':
-                navigationRef.navigate('HomeworkScreen');
-                break;
-            }
-            props.hide();
+  const toastConfig = useMemo(() => ({
+    // eslint-disable-next-line react/no-unstable-nested-components
+    info: (props: any) => (
+      <Pressable
+        style={styles.toastContainer}
+        onPress={() => {
+          switch (props.props.type) {
+            case '수업 생성':
+              setCurrentScreen('ClassListScreen');
+              navigationRef.navigate('ClassListScreen');
+              break;
+            case '수업 시작':
+              console.log(props.props);
+              setCurrentScreen('ClassListScreen');
+              navigationRef.navigate('ClassListScreen', {
+                autoOpenLectureId: props.props.id,
+              });
+              break;
+            case '시험 생성':
+              setCurrentScreen('ClassListScreen');
+              navigationRef.navigate('ClassListScreen');
+              break;
+            case '숙제 생성':
+              setCurrentScreen('HomeworkScreen');
+              navigationRef.navigate('HomeworkScreen');
+              break;
+          }
+          props.hide();
+        }}>
+        <Text
+          style={{
+            fontSize: width * 0.01,
+            fontWeight: '600',
+            color: '#000000',
           }}>
+          {props.text1}
+        </Text>
+        {props.text2 && (
           <Text
             style={{
-              fontSize: width * 0.01,
-              fontWeight: '600',
-              color: '#000000',
+              fontSize: width * 0.0075,
+              color: '#666666',
+              marginTop: width * 0.005,
             }}>
-            {props.text1}
+            {props.text2}
           </Text>
-          {props.text2 && (
-            <Text
-              style={{
-                fontSize: width * 0.0075,
-                color: '#666666',
-                marginTop: width * 0.005,
-              }}>
-              {props.text2}
-            </Text>
-          )}
-        </Pressable>
-      ),
-    }),
+        )}
+      </Pressable>
+    ),
+  }),
     [styles.toastContainer, width],
   );
 
@@ -193,9 +197,9 @@ function App(): React.JSX.Element {
   }
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           <QueryClientProvider client={queryClient}>
             <NavigationContainer ref={navigationRef}>
               <MainLayout>

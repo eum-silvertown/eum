@@ -6,7 +6,7 @@ import { Ring } from './Ring';
 import { typography } from '@theme/typography';
 import { getResponsiveSize } from '@utils/responsive';
 import EmptyData from '@components/common/EmptyData';
-import { StudentScoreType } from 'src/services/lectureInformation';
+import { StudentScoreType } from '@services/lectureInformation';
 
 const width = 120;
 const height = 120;

@@ -1,7 +1,7 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {borderRadius} from '@theme/borderRadius';
-import {colors} from 'src/hooks/useColors';
+import { StyleSheet, View } from 'react-native';
+import { borderRadius } from '@theme/borderRadius';
+import { colors } from '@hooks/useColors';
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export default function ContentLayout({
   flex = 1,
   padding = 15,
 }: ContentLayoutProps): React.JSX.Element {
-  return <View style={[styles.container, {flex, padding}]}>{children}</View>;
+  return <View style={[styles.container, { flex, padding }]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({

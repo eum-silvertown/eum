@@ -1,31 +1,31 @@
-import {Text} from '@components/common/Text';
+import { Text } from '@components/common/Text';
 import {
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
   View,
 } from 'react-native';
-import {useModalContext} from 'src/contexts/useModalContext';
-import {colors} from 'src/hooks/useColors';
-import {useModal} from 'src/hooks/useModal';
+import { useModalContext } from '@contexts/useModalContext';
+import { colors } from '@hooks/useColors';
+import { useModal } from '@hooks/useModal';
 import RenameFile from './RenameFolder';
 import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {deleteFolder, deleteQuestion} from 'src/services/questionBox';
-import {useCutStore} from '@store/useCutStore';
+import { deleteFolder, deleteQuestion } from '@services/questionBox';
+import { useCutStore } from '@store/useCutStore';
 
 interface FileOptionModalProp {
   item: QuestionBoxType;
 }
 
-function FileOptionModal({item}: FileOptionModalProp): React.JSX.Element {
-  const {width} = useWindowDimensions();
+function FileOptionModal({ item }: FileOptionModalProp): React.JSX.Element {
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
-  const {open} = useModal();
-  const {close} = useModalContext();
+  const { open } = useModal();
+  const { close } = useModalContext();
   const deleteItem = useQuestionExplorerStore(state => state.deleteItem);
   const setFolder = useCutStore(state => state.setFolder);
 

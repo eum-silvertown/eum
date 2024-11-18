@@ -7,11 +7,11 @@ import {
   KeyboardTypeOptions,
   ViewStyle,
 } from 'react-native';
-import {colors} from 'src/hooks/useColors';
-import {borderWidth} from '@theme/borderWidth';
-import {Text} from '@components/common/Text';
+import { colors } from '@hooks/useColors';
+import { borderWidth } from '@theme/borderWidth';
+import { Text } from '@components/common/Text';
 import StatusMessage from '@components/account/StatusMessage';
-import {getResponsiveSize} from '@utils/responsive';
+import { getResponsiveSize } from '@utils/responsive';
 
 interface InputFieldProps {
   label?: string;

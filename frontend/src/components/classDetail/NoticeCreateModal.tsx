@@ -1,22 +1,22 @@
-import React, {useState} from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
-import {Text} from '@components/common/Text';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text } from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {colors} from 'src/hooks/useColors';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {createNotice, LectureNoticeType} from '@services/lectureNotice';
-import {useModal} from 'src/hooks/useModal';
+import { colors } from '@hooks/useColors';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createNotice, LectureNoticeType } from '@services/lectureNotice';
+import { useModal } from '@hooks/useModal';
 
 type LectureIdProps = {
   lectureId?: number;
 };
 
-const NoticeCreateModal = ({lectureId}: LectureIdProps): React.JSX.Element => {
+const NoticeCreateModal = ({ lectureId }: LectureIdProps): React.JSX.Element => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [titleError, setTitleError] = useState('');
   const [contentError, setContentError] = useState('');
-  const {closeAll} = useModal();
+  const { closeAll } = useModal();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({

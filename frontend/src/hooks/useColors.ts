@@ -20,6 +20,7 @@ export const colors = {
     background: {
       content: '#F2F2FF',
       main: '#2E2559',
+      mainPressed: '#001159',
       secondary: '#f5f5f5',
       primary: '#0268ED',
       primaryPress: '#0057B6',
@@ -56,6 +57,7 @@ export const colors = {
     background: {
       content: '#F9F9FB',
       main: '#2E2559',
+      mainPressed: '#0057B6',
       secondary: '#f5f5f5',
       primary: '#0268ED',
       primaryPress: '#0057B6',

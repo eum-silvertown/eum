@@ -9,11 +9,11 @@ import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import { borderRadius } from '@theme/borderRadius';
 import Book from '@components/common/Book';
 import AddLectureModal from '@components/lectureList/AddLectureModal';
-import { useModal } from 'src/hooks/useModal';
+import { useModal } from '@hooks/useModal';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
 import { Picker } from '@react-native-picker/picker';
 import { useState } from 'react';
-import { colors } from 'src/hooks/useColors';
+import { colors } from '@hooks/useColors';
 import { getResponsiveSize } from '@utils/responsive';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -144,7 +144,7 @@ function ClassListScreen(): React.JSX.Element {
           <View style={styles.content}>
             <View style={styles.classList}>
               {filteredLectures.map((data, index) => (
-                <View style={styles.bookContainer}>
+                <View key={index} style={styles.bookContainer}>
                   <Book
                     key={index}
                     rightPosition={index * 25}
