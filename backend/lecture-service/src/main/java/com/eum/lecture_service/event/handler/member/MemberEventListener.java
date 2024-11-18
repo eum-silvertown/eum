@@ -64,9 +64,6 @@ public class MemberEventListener {
 	public void updateTeacher(TeacherInfoEvent event) {
 		teacherReadRepository.findById(event.getTeacherId()).ifPresentOrElse(
 			teacher -> {
-				teacher.setName(event.getName());
-				teacher.setEmail(event.getEmail());
-				teacher.setTel(event.getTel());
 				teacher.setImage(event.getImage());
 
 				teacherReadRepository.save(teacher);
