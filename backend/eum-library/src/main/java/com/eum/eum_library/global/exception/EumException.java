@@ -1,4 +1,4 @@
-package com.eum.todo_service.global.exception;
+package com.eum.eum_library.global.exception;
 
 import lombok.Getter;
 

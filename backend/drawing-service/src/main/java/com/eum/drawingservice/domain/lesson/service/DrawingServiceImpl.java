@@ -34,6 +34,7 @@ public class DrawingServiceImpl implements DrawingService {
                     .questionId(String.valueOf(requestDTO.getQuestionId()))
                     .width(String.valueOf(requestDTO.getWidth()))
                     .height(String.valueOf(requestDTO.getHeight()))
+                    .ratio(String.valueOf(requestDTO.getRatio()))
                     .drawingData(requestDTO.getDrawingData())
                     .build();
         } else {

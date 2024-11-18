@@ -1,4 +1,4 @@
-package com.github.yechanissm.eum_library.global.exception;
+package com.eum.eum_library.global.exception;
 
 import org.springframework.http.HttpStatus;
 

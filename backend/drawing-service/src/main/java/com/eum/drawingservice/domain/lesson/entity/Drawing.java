@@ -22,6 +22,7 @@ public class Drawing {
 
     private String width;
     private String height;
+    private String ratio;
 
     @Setter
     private String drawingData;
