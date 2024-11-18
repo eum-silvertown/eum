@@ -7,21 +7,20 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {useCallback, useEffect, useRef} from 'react';
-import {getUserInfo} from '@services/authService';
+import { useCallback, useEffect, useRef } from 'react';
+import { getUserInfo } from '@services/authService';
 import BookModal from '@components/common/BookModal';
-import {useBookModalStore} from '@store/useBookModalStore';
+import { useBookModalStore } from '@store/useBookModalStore';
 import Background from '@components/main/Background';
 import Widgets from '@components/main/Widgets';
 import Timetable from '@components/main/Timetable';
-import MainHeader from '@components/main/MainHeader';
 
 const STARTING_HOUR = 9;
 const ENDING_HOUR = 22;
 const TRANSITION_HOUR = 17;
 
 function HomeScreen(): React.JSX.Element {
-  const {width: screenWidth} = useWindowDimensions();
+  const { width: screenWidth } = useWindowDimensions();
   const styles = getStyles(screenWidth);
 
   const bookPosition = useBookModalStore(state => state.bookPosition);
@@ -58,7 +57,7 @@ function HomeScreen(): React.JSX.Element {
     const fetchData = async () => {
       try {
         await getUserInfo();
-      } catch (error) {}
+      } catch (error) { }
     };
 
     fetchData(); // 함수 호출

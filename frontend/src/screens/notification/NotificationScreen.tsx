@@ -1,4 +1,4 @@
-import {Text} from '@components/common/Text';
+import { Text } from '@components/common/Text';
 import {
   Pressable,
   ScrollView,
@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {useNotificationStore} from '@store/useNotificationStore';
+import { useNotificationStore } from '@store/useNotificationStore';
 import {
   deleteNotification,
   readNotification,
@@ -17,7 +17,7 @@ import {colors} from 'src/hooks/useColors';
 import {useState} from 'react';
 import CustomCalendar from '@components/main/widgets/CustomCalendar';
 function NotificationScreen(): React.JSX.Element {
-  const {width, height} = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
   const notifications = useNotificationStore(state => state.notifications);
@@ -214,7 +214,7 @@ const getStyles = (width: number, height: number) =>
       height: '100%',
       gap: width * 0.01,
       padding: width * 0.015,
-      backgroundColor: 'white',
+      backgroundColor: '#f0f0f0',
     },
     readAllButton: {
       marginLeft: 'auto',
