@@ -1,14 +1,14 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
-import {Text} from '@components/common/Text';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
+import { Text } from '@components/common/Text';
 import ContentLayout from './ContentLayout';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 import Todo from './Todo';
 import AddTodoModal from './AddTodoModal';
-import {useModal} from 'src/hooks/useModal';
-import {getTodos} from '@services/todoService';
-import {colors} from 'src/hooks/useColors';
+import { useModal } from '@hooks/useModal';
+import { getTodos } from '@services/todoService';
+import { colors } from '@hooks/useColors';
 
 interface TodoType {
   id: number;
@@ -27,7 +27,7 @@ export default function TodoList(): React.JSX.Element {
   const [selectedTab, setSelectedTab] = useState<
     'all' | 'notCompleted' | 'completed'
   >('notCompleted');
-  const {open} = useModal();
+  const { open } = useModal();
 
   const loadTodos = async () => {
     try {

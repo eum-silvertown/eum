@@ -6,27 +6,27 @@ import {
   TouchableOpacity,
   useWindowDimensions,
 } from 'react-native';
-import {Text} from '@components/common/Text';
+import { Text } from '@components/common/Text';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
 import useSidebarStore from '@store/useSidebarStore';
-import {useEffect, useRef} from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {useAuthStore} from '@store/useAuthStore';
-import {colors} from 'src/hooks/useColors';
+import { useEffect, useRef } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { useAuthStore } from '@store/useAuthStore';
+import { colors } from '@hooks/useColors';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function SidebarProfile(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
-  const {isExpanded} = useSidebarStore();
+  const { isExpanded } = useSidebarStore();
   const authStore = useAuthStore();
   const contentOpacity = useRef(new Animated.Value(1)).current;
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
+  const { setCurrentScreen } = useCurrentScreenStore();
 
   useEffect(() => {
     Animated.timing(contentOpacity, {
@@ -48,12 +48,12 @@ function SidebarProfile(): React.JSX.Element {
           style={styles.profileImage}
           source={
             authStore.userInfo.image
-              ? {uri: authStore.userInfo.image.url}
+              ? { uri: authStore.userInfo.image.url }
               : defaultProfileImage
           }
         />
       </View>
-      <Animated.View style={[styles.username, {opacity: contentOpacity}]}>
+      <Animated.View style={[styles.username, { opacity: contentOpacity }]}>
         <Text variant="subtitle" weight="bold" numberOfLines={1}>
           {authStore.userInfo.name}
         </Text>
@@ -61,8 +61,8 @@ function SidebarProfile(): React.JSX.Element {
           {authStore.userInfo.role === 'STUDENT'
             ? '학생'
             : authStore.userInfo.role === 'TEACHER'
-            ? '선생님'
-            : '역할 없음'}
+              ? '선생님'
+              : '역할 없음'}
         </Text>
       </Animated.View>
     </TouchableOpacity>

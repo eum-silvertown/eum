@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import {Text} from '@components/common/Text';
-import {StyleSheet, View, Alert} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text } from '@components/common/Text';
+import { StyleSheet, View, Alert } from 'react-native';
 import ScreenHeader from '@components/account/ScreenHeader';
 import InputField from '@components/account/InputField';
-import {colors} from 'src/hooks/useColors';
-import {useModal} from 'src/hooks/useModal';
+import { colors } from '@hooks/useColors';
+import { useModal } from '@hooks/useModal';
 import FoundIdModal from '@components/account/FoundIdModal';
 
 import {
@@ -13,7 +13,7 @@ import {
 } from '@services/authService';
 
 function FindIdScreen(): React.JSX.Element {
-  const {open} = useModal();
+  const { open } = useModal();
 
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
@@ -94,7 +94,7 @@ function FindIdScreen(): React.JSX.Element {
       <View style={styles.inputContainer}>
         <Text weight="bold">회원가입에 사용된 이메일을 입력해주세요.</Text>
 
-        <View style={{gap: 10}}>
+        <View style={{ gap: 10 }}>
           <InputField
             label="이메일"
             placeholder="이메일을 입력해주세요."

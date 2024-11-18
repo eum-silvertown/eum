@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {Text} from '@components/common/Text';
+import React, { useState, useEffect, useRef } from 'react';
+import { Text } from '@components/common/Text';
 import {
   Animated,
   StyleSheet,
@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EditIcon from '@assets/icons/editIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {colors} from 'src/hooks/useColors';
-import {useAuthStore} from '@store/useAuthStore';
+import { iconSize } from '@theme/iconSize';
+import { colors } from '@hooks/useColors';
+import { useAuthStore } from '@store/useAuthStore';
 
 interface MainHeaderProps {
   style?: ViewStyle;
@@ -24,7 +24,7 @@ export default function MainHeader({
   style,
   isNightTime = new Animated.Value(0),
 }: MainHeaderProps): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -71,7 +71,7 @@ export default function MainHeader({
     <View style={[styles.header, style]}>
       {isEditing ? (
         <Animated.View
-          style={[styles.editContainer, {backgroundColor: backgroundColor}]}>
+          style={[styles.editContainer, { backgroundColor: backgroundColor }]}>
           <TextInput
             ref={inputRef}
             style={styles.input}
@@ -86,7 +86,7 @@ export default function MainHeader({
         </Animated.View>
       ) : (
         <Animated.View
-          style={[styles.editContainer, {backgroundColor: backgroundColor}]}>
+          style={[styles.editContainer, { backgroundColor: backgroundColor }]}>
           <Text variant="title" weight="bold">
             {message || defaultMessage}
           </Text>

@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
-import {Text} from '@components/common/Text';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text } from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {colors} from 'src/hooks/useColors';
+import { colors } from '@hooks/useColors';
 
 const HomeworkCreateModal = (): React.JSX.Element => {
   const createHomework = () => {

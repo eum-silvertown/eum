@@ -1,6 +1,6 @@
 import Button from '@components/common/Button';
-import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
-import {useState} from 'react';
+import { useQuestionExplorerStore } from '@store/useQuestionExplorerStore';
+import { useState } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -8,17 +8,17 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {useModalContext} from 'src/contexts/useModalContext';
-import {colors} from 'src/hooks/useColors';
-import {createFolder} from 'src/services/questionBox';
+import { useModalContext } from '@contexts/useModalContext';
+import { colors } from '@hooks/useColors';
+import { createFolder } from '@services/questionBox';
 
 function CreateFolder(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const [folderName, setFolderName] = useState('');
-  const {createItem, getCurrentFolderId} = useQuestionExplorerStore();
-  const {close} = useModalContext();
+  const { createItem, getCurrentFolderId } = useQuestionExplorerStore();
+  const { close } = useModalContext();
 
   const onChangeText = (inputText: string) => {
     setFolderName(inputText);

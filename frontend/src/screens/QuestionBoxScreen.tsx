@@ -10,9 +10,9 @@ import {
 } from '@store/useQuestionExplorerStore';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { colors } from 'src/hooks/useColors';
-import { useModal } from 'src/hooks/useModal';
-import { getFolder, getRootFolder } from 'src/services/questionBox';
+import { colors } from '@hooks/useColors';
+import { useModal } from '@hooks/useModal';
+import { getFolder, getRootFolder } from '@services/questionBox';
 
 function QuestionBoxScreen(): React.JSX.Element {
   const { width } = useWindowDimensions();

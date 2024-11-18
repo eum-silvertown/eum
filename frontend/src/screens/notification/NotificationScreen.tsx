@@ -13,13 +13,18 @@ import {
   readNotifications,
 } from '@services/notificationService';
 import Weather from '@components/main/widgets/Weather';
-import {colors} from 'src/hooks/useColors';
-import {useState} from 'react';
+import { colors } from '@hooks/useColors';
+import { useState } from 'react';
 import CustomCalendar from '@components/main/widgets/CustomCalendar';
+import { navigationRef } from '@services/NavigationService';
+import { formatDateDiff } from '@utils/dateUtils';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+
 function NotificationScreen(): React.JSX.Element {
   const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
+  const { setCurrentScreen } = useCurrentScreenStore();
   const notifications = useNotificationStore(state => state.notifications);
   const unreadNotifications = useNotificationStore(
     state => state.unreadNotifications,
@@ -113,7 +118,7 @@ function NotificationScreen(): React.JSX.Element {
           </View>
           <ScrollView
             style={styles.notifications}
-            onScroll={({nativeEvent}) => {
+            onScroll={({ nativeEvent }) => {
               if (isCloseToBottom(nativeEvent)) {
                 loadMore();
               }
@@ -125,16 +130,37 @@ function NotificationScreen(): React.JSX.Element {
               </View>
             )}
             {paginatedUnreadNotifications.map((notification, index) => (
-              <View key={index} style={styles.notification}>
+              <Pressable key={index} style={styles.notification} onPress={() => {
+                onPressRead(notification.id);
+                switch (notification.type) {
+                  case '수업 생성':
+                    setCurrentScreen('ClassListScreen');
+                    navigationRef.navigate('ClassListScreen');
+                    break;
+                  case '수업 시작':
+                    setCurrentScreen('ClassListScreen');
+                    navigationRef.navigate('ClassListScreen');
+                    break;
+                  case '시험 생성':
+                    setCurrentScreen('ClassListScreen');
+                    navigationRef.navigate('ClassListScreen');
+                    break;
+                  case '숙제 생성':
+                    setCurrentScreen('HomeworkScreen');
+                    navigationRef.navigate('HomeworkScreen');
+                    break;
+                }
+              }}>
                 <View>
                   <Text weight="bold">{notification.type}</Text>
                 </View>
-                <View>
+                <View style={{ width: '25%' }}>
                   <Text>{notification.title}</Text>
                 </View>
+                <Text color="main" weight="medium">{notification.message}</Text>
                 <View style={styles.notificationTail}>
                   <Text variant="caption" color="secondary">
-                    {notification.createdAt}
+                    {formatDateDiff(notification.createdAt)}
                   </Text>
                   <Pressable onPress={() => onPressRead(notification.id)}>
                     <Text color="main">읽음</Text>
@@ -143,7 +169,7 @@ function NotificationScreen(): React.JSX.Element {
                     <Text color="error">삭제</Text>
                   </Pressable>
                 </View>
-              </View>
+              </Pressable>
             ))}
           </ScrollView>
         </View>
@@ -155,7 +181,7 @@ function NotificationScreen(): React.JSX.Element {
           </View>
           <ScrollView
             style={styles.notifications}
-            onScroll={({nativeEvent}) => {
+            onScroll={({ nativeEvent }) => {
               if (isCloseToBottom(nativeEvent)) {
                 loadMore();
               }
@@ -173,12 +199,12 @@ function NotificationScreen(): React.JSX.Element {
                   <View>
                     <Text weight="bold">{notification.type}</Text>
                   </View>
-                  <View>
+                  <View style={{ width: '25%' }}>
                     <Text>{notification.title}</Text>
                   </View>
                   <View style={styles.notificationTail}>
                     <Text variant="caption" color="secondary">
-                      {notification.createdAt}
+                      {formatDateDiff(notification.createdAt)}
                     </Text>
                     <Pressable onPress={() => onPressDelete(notification.id)}>
                       <Text color="error">삭제</Text>

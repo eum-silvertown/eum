@@ -1,24 +1,23 @@
 import React from 'react';
-import {TouchableOpacity, View, Image, StyleSheet} from 'react-native';
-import {Text} from '@components/common/Text';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { TouchableOpacity, View, Image, StyleSheet } from 'react-native';
+import { Text } from '@components/common/Text';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import signUpStudentImage from '@assets/images/signUpStudentImage.png';
 import signUpTeacherImage from '@assets/images/signUpTeacherImage.png';
-
-import {colors} from 'src/hooks/useColors';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { colors } from '@hooks/useColors';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import ScreenHeader from '@components/account/ScreenHeader';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function SignUpSelectScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
+  const { setCurrentScreen } = useCurrentScreenStore();
 
   const moveSignUpScreen = (userType: 'teacher' | 'student') => {
-    navigation.navigate('SignUpScreen', {userType});
+    navigation.navigate('SignUpScreen', { userType });
     setCurrentScreen('SignUpScreen');
   };
 

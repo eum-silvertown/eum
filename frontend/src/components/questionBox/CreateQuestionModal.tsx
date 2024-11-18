@@ -10,7 +10,7 @@ import DocumentPicker, { types } from 'react-native-document-picker';
 import PagerView from 'react-native-pager-view';
 import Button from '@components/common/Button';
 import { Text } from '@components/common/Text';
-import { colors } from 'src/hooks/useColors';
+import { colors } from '@hooks/useColors';
 import { createQuestion, uploadPdf } from '@services/questionBox';
 import LoadingSuccessIndicator from './LoadingSuccessIndicator';
 import QuestionsPage from './QuestionPage';
@@ -18,7 +18,7 @@ import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import { useModalContext } from 'src/contexts/useModalContext';
+import { useModalContext } from '@contexts/useModalContext';
 
 interface FileSelectionPageProps {
   pdfFileName: string | null;
@@ -153,6 +153,7 @@ function CreateQuestionModal(): React.JSX.Element {
 
   const onCreateQuestions = async () => {
     const folderId = getCurrentFolderId();
+    console.log(selectedQuestions);
     for (const [index, selectedQuestion] of selectedQuestions.entries()) {
       const data = await createQuestion(
         folderId,
@@ -160,6 +161,7 @@ function CreateQuestionModal(): React.JSX.Element {
         selectedQuestion,
         selectedAnswers[index],
       );
+      console.log(data);
       const formedData: QuestionBoxType = {
         id: data.fileId,
         type: 'file',

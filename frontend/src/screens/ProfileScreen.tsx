@@ -7,33 +7,33 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useEffect} from 'react';
-import {launchImageLibrary} from 'react-native-image-picker';
+import React, { useEffect } from 'react';
+import { launchImageLibrary } from 'react-native-image-picker';
 
-import {Text} from '@components/common/Text';
+import { Text } from '@components/common/Text';
 import ScreenInfo from '@components/common/ScreenInfo';
-import {borderRadius} from '@theme/borderRadius';
-import {colors} from 'src/hooks/useColors';
+import { borderRadius } from '@theme/borderRadius';
+import { colors } from '@hooks/useColors';
 import defaultProfileImage from '@assets/images/defaultProfileImage.png';
-import {iconSize} from '@theme/iconSize';
-import {borderWidth} from '@theme/borderWidth';
+import { iconSize } from '@theme/iconSize';
+import { borderWidth } from '@theme/borderWidth';
 import {
   getUserInfo,
   updateProfilePicture,
   logOut,
   deleteProfileImage,
 } from '@services/authService';
-import {useAuthStore} from '@store/useAuthStore';
+import { useAuthStore } from '@store/useAuthStore';
 import axios from 'axios';
 
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
 
-import {useModal} from 'src/hooks/useModal';
+import { useModal } from '@hooks/useModal';
 import PasswordChangeModal from '@components/account/PasswordChangeModal';
 import SignOutModal from '@components/account/SignOutModal';
-import {setAutoLogin} from '@utils/secureStorage';
+import { setAutoLogin } from '@utils/secureStorage';
 import ConfirmationModal from '@components/common/ConfirmationModal';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
@@ -46,15 +46,15 @@ interface UploadResponse {
 
 export default function ProfileScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
-  const {open} = useModal();
+  const { setCurrentScreen } = useCurrentScreenStore();
+  const { open } = useModal();
   const authStore = useAuthStore();
 
   // 유저 정보 호출
   const fetchUserInfo = async () => {
     try {
       await getUserInfo();
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -125,10 +125,11 @@ export default function ProfileScreen(): React.JSX.Element {
             console.log('에러 발생:', response.errorMessage);
           } else if (response.assets && response.assets.length > 0) {
             const selectedAsset = response.assets[0];
-            const {uri, fileName, type} = selectedAsset;
+            const { uri, fileName, type } = selectedAsset;
 
             if (uri && fileName && type) {
-              await uploadImageToS3({uri, fileName, type});
+              console.log('업로드 시작');
+              await uploadImageToS3({ uri, fileName, type });
             } else {
               console.log('이미지 선택 오류', '유효한 이미지를 선택해 주세요.');
             }
@@ -181,7 +182,7 @@ export default function ProfileScreen(): React.JSX.Element {
       // 내비게이션 스택을 초기화하여 로그인 화면으로 이동
       navigation.reset({
         index: 0,
-        routes: [{name: 'LoginScreen'}],
+        routes: [{ name: 'LoginScreen' }],
       });
     } catch (error) {
       console.error('로그아웃 실패:', error); // 로그아웃 실패 시 에러 처리
@@ -190,12 +191,12 @@ export default function ProfileScreen(): React.JSX.Element {
 
   // 비밀번호 변경 버튼
   const handleChangePassword = () => {
-    open(<PasswordChangeModal />, {title: '비밀번호 변경'});
+    open(<PasswordChangeModal />, { title: '비밀번호 변경' });
   };
 
   // 회원탈퇴 버튼
   const handleSignOut = () => {
-    open(<SignOutModal />, {title: '정말 탈퇴하시겠습니까?'});
+    open(<SignOutModal />, { title: '정말 탈퇴하시겠습니까?' });
   };
 
   const handleProfileImageDelete = () => {
@@ -218,7 +219,7 @@ export default function ProfileScreen(): React.JSX.Element {
           console.log('삭제 취소됨');
         }}
       />,
-      {title: '정말 삭제하시겠습니까?'},
+      { title: '정말 삭제하시겠습니까?' },
     );
   };
 
@@ -232,7 +233,7 @@ export default function ProfileScreen(): React.JSX.Element {
               style={styles.profileImage}
               source={
                 authStore.userInfo && authStore.userInfo.image
-                  ? {uri: authStore.userInfo.image.url}
+                  ? { uri: authStore.userInfo.image.url }
                   : defaultProfileImage
               }
             />
@@ -246,7 +247,7 @@ export default function ProfileScreen(): React.JSX.Element {
             <TouchableOpacity
               style={[
                 styles.button,
-                {backgroundColor: colors.light.background.danger},
+                { backgroundColor: colors.light.background.danger },
               ]}
               onPress={handleProfileImageDelete}>
               <Text color="white" weight="bold">
@@ -293,7 +294,7 @@ export default function ProfileScreen(): React.JSX.Element {
           <TouchableOpacity
             style={[
               styles.button,
-              {backgroundColor: colors.light.background.danger},
+              { backgroundColor: colors.light.background.danger },
             ]}>
             <Text color="white" weight="bold" onPress={handleSignOut}>
               회원 탈퇴
