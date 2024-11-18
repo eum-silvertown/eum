@@ -32,23 +32,27 @@ function StudentRealTimeCanvasRefSection({
   currentPage,
 }: StudentCanvasSectionProps): React.JSX.Element {
   const canvasRef = useCanvasRef();
-  const [paths, setPaths] = useState<PathData[]>([]);
+
+  const [paths, setPaths] = useState<PathData[][]>(
+    Array.from({length: problemIds.length}, () => []), // 독립적인 배열 생성
+  );
+  console.log(paths);
 
   const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
-
-  // 기기 비율 계산을 위한 상태 변수
   const [widthRatio, setWidthRatio] = useState(1);
   const [heightRatio, setHeightRatio] = useState(1);
 
+  // 메시지 수신 시 데이터 동기화
   useEffect(() => {
     if (receivedMessage) {
-      console.log('receivedMessage', receivedMessage);
-
       const messageObject = JSON.parse(receivedMessage);
+      console.log('receivedMessag:', receivedMessage);
+
       if (
         messageObject.drawingData &&
         messageObject.width &&
-        messageObject.height
+        messageObject.height &&
+        messageObject.questionId
       ) {
         const newWidthRatio = parseFloat(
           (deviceWidth / messageObject.width).toFixed(6),
@@ -60,15 +64,15 @@ function StudentRealTimeCanvasRefSection({
         setWidthRatio(newWidthRatio);
         setHeightRatio(newHeightRatio);
 
-        handleSync(messageObject.drawingData);
+        handleSync(messageObject.drawingData, messageObject.questionId);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [receivedMessage, deviceWidth, deviceHeight]);
+  }, [receivedMessage]);
 
-  const handleSync = (base64EncodedData: string) => {
+  // 데이터 동기화
+  const handleSync = (base64EncodedData: string, questionId: number) => {
     try {
-      // Base64 디코딩 및 압축 해제
       const binaryString = base64.decode(base64EncodedData);
       const compressedData = Uint8Array.from(
         binaryString.split('').map(char => char.charCodeAt(0)),
@@ -77,7 +81,6 @@ function StudentRealTimeCanvasRefSection({
         pako.inflate(compressedData, {to: 'string'}),
       );
 
-      // 경로를 Skia Path로 변환
       const parsedPaths = decompressedData
         .map((pathData: any) => {
           const pathString = pathData.path;
@@ -86,8 +89,15 @@ function StudentRealTimeCanvasRefSection({
         })
         .filter(Boolean);
 
-      // 데이터 교체
-      setPaths(mergeSimilarPaths(parsedPaths));
+      setPaths(prevPaths => {
+        const updatedPaths = [...prevPaths];
+        // questionId를 기준으로 인덱스를 찾음
+        const questionIndex = problemIds.indexOf(questionId);
+        if (questionIndex !== -1) {
+          updatedPaths[questionIndex] = mergeSimilarPaths(parsedPaths);
+        }
+        return updatedPaths;
+      });
     } catch (error) {
       console.error('Failed to decompress or parse data:', error);
     }
@@ -140,22 +150,20 @@ function StudentRealTimeCanvasRefSection({
       }
       return null;
     },
-    enabled: !!(teacherId && lessonId && problemIds[currentPage - 1]), // 데이터가 존재할 때만 요청
+    enabled: !!(teacherId && lessonId && problemIds[currentPage - 1]),
   });
 
   useEffect(() => {
     if (teacherDrawingData) {
-      processCanvasData(teacherDrawingData.drawingData);
+      processCanvasData(
+        teacherDrawingData.drawingData,
+        teacherDrawingData.questionId,
+      );
     }
-  }, [teacherDrawingData]);
-
-  // teacherDrawingData가 변경되었을 때 paths 설정
-  useEffect(() => {
-    if (teacherDrawingData) {
-      processCanvasData(teacherDrawingData.drawingData);
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [teacherDrawingData, currentPage]);
-  const processCanvasData = (base64EncodedData: string) => {
+
+  const processCanvasData = (base64EncodedData: string, questionId: number) => {
     try {
       const binaryString = base64.decode(base64EncodedData);
       const compressedData = Uint8Array.from(
@@ -173,7 +181,14 @@ function StudentRealTimeCanvasRefSection({
         })
         .filter(Boolean);
 
-      setPaths(parsedPaths);
+      setPaths(prevPaths => {
+        const updatedPaths = [...prevPaths];
+        const questionIndex = problemIds.indexOf(questionId);
+        if (questionIndex !== -1) {
+          updatedPaths[questionIndex] = mergeSimilarPaths(parsedPaths);
+        }
+        return updatedPaths;
+      });
     } catch (error) {
       console.error('Failed to decompress or parse data:', error);
     }
@@ -195,18 +210,20 @@ function StudentRealTimeCanvasRefSection({
             },
           ]}
           ref={canvasRef}>
-          {paths.map(({path, color, strokeWidth, opacity}, index) => (
-            <Path
-              key={index}
-              path={path}
-              color={Skia.Color(color)}
-              style="stroke"
-              strokeWidth={strokeWidth}
-              strokeCap="round"
-              strokeJoin="round"
-              opacity={opacity}
-            />
-          ))}
+          {paths[currentPage - 1]?.map(
+            ({path, color, strokeWidth, opacity}, index) => (
+              <Path
+                key={index}
+                path={path}
+                color={Skia.Color(color)}
+                style="stroke"
+                strokeWidth={strokeWidth}
+                strokeCap="round"
+                strokeJoin="round"
+                opacity={opacity}
+              />
+            ),
+          )}
         </Canvas>
       )}
     </View>
@@ -220,13 +237,5 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     zIndex: 0,
   },
-  canvasContainer: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
   canvas: {flex: 1},
-  placeholder: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
 });

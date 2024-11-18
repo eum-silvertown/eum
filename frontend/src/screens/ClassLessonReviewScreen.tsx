@@ -3,7 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import {useReviewLectureStore} from '@store/useReviewLectureStore';
 import {useQuery} from '@tanstack/react-query';
 import {getFileDetail} from '@services/problemService';
-import ProblemSection from '@components/common/ProblemSection';
+import ProblemExSection from '@components/questionBox/ProblemExSection';
 import StudentCanvasReviewSection from '@components/classActivity/StudentCanvasReviewSection';
 import {useAuthStore} from '@store/useAuthStore';
 import {
@@ -89,7 +89,10 @@ function ClassLessonReviewScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <View style={{marginLeft: '15%', marginTop: '5%'}}>
-        <ProblemSection problemText={problems[currentPage]?.content || ''} />
+        <ProblemExSection
+          problemText={problems[currentPage]?.content || ''}
+          fontSize={16}
+        />
       </View>
       <StudentCanvasReviewSection
         teacherDrawing={teacherDrawing}

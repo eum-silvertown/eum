@@ -1,7 +1,7 @@
 import React from 'react';
 import MathJax from 'react-native-mathjax';
-import { StyleSheet, View, Image, useWindowDimensions } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import {StyleSheet, View, Image, useWindowDimensions} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 
 type ProblemSectionProps = {
   problemText: string;
@@ -10,12 +10,12 @@ type ProblemSectionProps = {
 };
 
 function ProblemExSection({
-  problemText,
+  problemText = '',
   fontSize = 12,
   isVisible = true,
 }: ProblemSectionProps): React.JSX.Element {
-  const { width } = useWindowDimensions();
-  const imageLoadStates = React.useRef<{ [key: string]: boolean }>({}).current;
+  const {width} = useWindowDimensions();
+  const imageLoadStates = React.useRef<{[key: string]: boolean}>({}).current;
 
   const handleImageLoad = React.useCallback((imageUrl: string) => {
     imageLoadStates[imageUrl] = true;
@@ -27,9 +27,11 @@ function ProblemExSection({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const separateQuestionAndChoices = (text: string): {
-    questionParts: Array<{ type: 'text' | 'image', content: string }>,
-    choices: string[]
+  const separateQuestionAndChoices = (
+    text: string,
+  ): {
+    questionParts: Array<{type: 'text' | 'image'; content: string}>;
+    choices: string[];
   } => {
     // 개행 문자 처리
     text.replace(/\\n/g, '\n');
@@ -37,10 +39,12 @@ function ProblemExSection({
     // 선택지 분리
     const lines = text.split('\n');
     const choices = lines.filter(line => /^\s*\([0-9]+\)/.test(line));
-    const questionText = lines.filter(line => !/^\s*\([0-9]+\)/.test(line)).join('\n');
+    const questionText = lines
+      .filter(line => !/^\s*\([0-9]+\)/.test(line))
+      .join('\n');
 
     // 텍스트를 이미지와 일반 텍스트로 분리
-    const parts: Array<{ type: 'text' | 'image', content: string }> = [];
+    const parts: Array<{type: 'text' | 'image'; content: string}> = [];
     let currentText = '';
 
     questionText.split(/(!\[.*?\]\(.*?\))/).forEach(part => {
@@ -49,10 +53,10 @@ function ProblemExSection({
         const match = part.match(/!\[.*?\]\((.*?)\)/);
         if (match && match[1]) {
           if (currentText) {
-            parts.push({ type: 'text', content: currentText.trim() });
+            parts.push({type: 'text', content: currentText.trim()});
             currentText = '';
           }
-          parts.push({ type: 'image', content: match[1] });
+          parts.push({type: 'image', content: match[1]});
         }
       } else {
         currentText += part;
@@ -60,7 +64,7 @@ function ProblemExSection({
     });
 
     if (currentText) {
-      parts.push({ type: 'text', content: currentText.trim() });
+      parts.push({type: 'text', content: currentText.trim()});
     }
 
     return {
@@ -77,10 +81,15 @@ function ProblemExSection({
     });
   };
 
-  const { questionParts, choices } = separateQuestionAndChoices(problemText);
-  const formattedChoices = choices.map(choice => convertToCircledNumber(choice));
+  const {questionParts, choices} = separateQuestionAndChoices(problemText);
+  const formattedChoices = choices.map(choice =>
+    convertToCircledNumber(choice),
+  );
 
-  const renderQuestionPart = (part: { type: 'text' | 'image', content: string }, index: number) => {
+  const renderQuestionPart = (
+    part: {type: 'text' | 'image'; content: string},
+    index: number,
+  ) => {
     if (part.type === 'text') {
       return (
         <MathJax
@@ -90,30 +99,34 @@ function ProblemExSection({
       );
     } else {
       return (
-        part.content && <Image
-          key={`image-${index}`}
-          source={{ uri: part.content }}
-          style={styles.image}
-          resizeMode="contain"
-          onLoad={() => handleImageLoad(part.content)}
-          onError={() => handleImageError(part.content)}
-        />
+        part.content && (
+          <Image
+            key={`image-${index}`}
+            source={{uri: part.content}}
+            style={styles.image}
+            resizeMode="contain"
+            onLoad={() => handleImageLoad(part.content)}
+            onError={() => handleImageError(part.content)}
+          />
+        )
       );
     }
   };
 
   if (!isVisible) {
-    return <View style={{ flex: 1 }} />;
+    return <View style={{flex: 1}} />;
   }
 
   return (
-    <ScrollView style={{ borderRadius: width * 0.005 }}>
+    <ScrollView style={{borderRadius: width * 0.005}}>
       {questionParts.map((part, index) => renderQuestionPart(part, index))}
       <View>
         <MathJax
           html={`
             <div style="font-size: ${fontSize}px;">
-              ${formattedChoices.map(choice => `<p style="margin-left: 20px;">${choice}</p>`).join('')}
+              ${formattedChoices
+                .map(choice => `<p style="margin-left: 20px;">${choice}</p>`)
+                .join('')}
             </div>
           `}
         />

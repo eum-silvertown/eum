@@ -1,7 +1,7 @@
 import {View, StyleSheet, Text} from 'react-native';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import ProblemSection from '@components/common/ProblemSection';
+import ProblemExSection from '@components/questionBox/ProblemExSection';
 import StudentCanvasSection from '@components/classActivity/StudentHomeworkCanvasSection';
 import {useQuery} from '@tanstack/react-query';
 import {getFileDetail} from '@services/problemService';
@@ -51,7 +51,10 @@ function SolveHomeworkScreen(): React.JSX.Element {
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
         <View style={{marginLeft: '15%', marginTop: '5%'}}>
-          <ProblemSection problemText={problems[currentPage - 1].content} />
+          <ProblemExSection
+            problemText={problems[currentPage - 1].content}
+            fontSize={16}
+          />
         </View>
         <StudentCanvasSection
           solveType="HOMEWORK"
