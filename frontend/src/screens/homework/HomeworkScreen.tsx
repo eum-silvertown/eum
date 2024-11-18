@@ -2,7 +2,7 @@ import { Text } from '@components/common/Text';
 import { AllAboutHomeworkType, getAllAboutHomework } from '@services/homeworkService';
 import { useAuthStore } from '@store/useAuthStore';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, useWindowDimensions } from 'react-native';
 
 import HomeworkProgressBox from '@components/homework/HomeworkProgressBox';
 import HomeworkList from '@components/homework/HomeworkList';
@@ -40,7 +40,12 @@ const HomeworkScreen = (): React.JSX.Element => {
   }, []);
 
   if (!allAboutHomework) {
-    return <View><Text>Loading...</Text></View>;
+    return <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
+      <View style={{gap: width * 0.01}}>
+        <ActivityIndicator />
+        <Text>데이터를 불러오고 있습니다...</Text>
+      </View>
+    </View>;
   }
 
   const getFilteredHomeworkList = () => {
