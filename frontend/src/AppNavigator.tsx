@@ -1,5 +1,5 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {ScreenType} from '@store/useCurrentScreenStore';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ScreenType } from '@store/useCurrentScreenStore';
 import LoginScreen from '@screens/LoginScreen';
 import FindIdScreen from '@screens/FindIdScreen';
 import FindPasswordScreen from '@screens/FindPasswordScreen';
@@ -14,7 +14,6 @@ import ClassHomeworkListScreen from '@screens/ClassHomeworkListScreen';
 import ClassLessonListScreen from '@screens/ClassLessonListScreen';
 import HomeworkScreen from '@screens/homework/HomeworkScreen';
 import QuestionBoxScreen from '@screens/QuestionBoxScreen';
-import MyClassScreen from '@screens/myClass/MyClassScreen';
 import NotificationScreen from '@screens/notification/NotificationScreen';
 import LessoningStudentListScreen from '@screens/LessoningStudentListScreen';
 import ProfileScreen from '@screens/ProfileScreen';
@@ -36,34 +35,33 @@ interface ScreenProps {
 }
 
 export const getInitialScreens = (): ScreenProps[] => [
-  {name: 'LoginScreen', component: LoginScreen},
-  {name: 'HomeScreen', component: HomeScreen},
-  {name: 'FindIdScreen', component: FindIdScreen},
-  {name: 'FindPasswordScreen', component: FindPasswordScreen},
-  {name: 'SignUpSelectScreen', component: SignUpSelectScreen},
-  {name: 'SignUpScreen', component: SignUpScreen},
-  {name: 'ClassExamListScreen', component: ClassExamListScreen},
-  {name: 'ClassListScreen', component: ClassListScreen},
-  {name: 'ClassHomeworkListScreen', component: ClassHomeworkListScreen},
-  {name: 'ClassLessonListScreen', component: ClassLessonListScreen},
-  {name: 'HomeworkScreen', component: HomeworkScreen},
-  {name: 'QuestionBoxScreen', component: QuestionBoxScreen},
-  {name: 'QuestionCreateScreen', component: QuestionCreateScreen},
-  {name: 'MyClassScreen', component: MyClassScreen},
-  {name: 'NotificationScreen', component: NotificationScreen},
-  {name: 'LessoningTeacherScreen', component: LessoningTeacherScreen},
-  {name: 'LessoningStudentScreen', component: LessoningStudentScreen},
-  {name: 'LessoningStudentListScreen', component: LessoningStudentListScreen},
-  {name: 'ProfileScreen', component: ProfileScreen},
-  {name: 'SolveHomeworkScreen', component: SolveHomeworkScreen},
-  {name: 'SolveExamScreen', component: SolveExamScreen},
-  {name: 'ConfirmSolvedScreen', component: ConfirmSolvedScreen},
-  {name: 'ClassLessonReviewScreen', component: ClassLessonReviewScreen},
+  { name: 'LoginScreen', component: LoginScreen },
+  { name: 'HomeScreen', component: HomeScreen },
+  { name: 'FindIdScreen', component: FindIdScreen },
+  { name: 'FindPasswordScreen', component: FindPasswordScreen },
+  { name: 'SignUpSelectScreen', component: SignUpSelectScreen },
+  { name: 'SignUpScreen', component: SignUpScreen },
+  { name: 'ClassExamListScreen', component: ClassExamListScreen },
+  { name: 'ClassListScreen', component: ClassListScreen },
+  { name: 'ClassHomeworkListScreen', component: ClassHomeworkListScreen },
+  { name: 'ClassLessonListScreen', component: ClassLessonListScreen },
+  { name: 'HomeworkScreen', component: HomeworkScreen },
+  { name: 'QuestionBoxScreen', component: QuestionBoxScreen },
+  { name: 'QuestionCreateScreen', component: QuestionCreateScreen },
+  { name: 'NotificationScreen', component: NotificationScreen },
+  { name: 'LessoningTeacherScreen', component: LessoningTeacherScreen },
+  { name: 'LessoningStudentScreen', component: LessoningStudentScreen },
+  { name: 'LessoningStudentListScreen', component: LessoningStudentListScreen },
+  { name: 'ProfileScreen', component: ProfileScreen },
+  { name: 'SolveHomeworkScreen', component: SolveHomeworkScreen },
+  { name: 'SolveExamScreen', component: SolveExamScreen },
+  { name: 'ConfirmSolvedScreen', component: ConfirmSolvedScreen },
+  { name: 'ClassLessonReviewScreen', component: ClassLessonReviewScreen },
   {
     name: 'ClassHomeworkListTeacherScreen',
     component: ClassHomeworkListTeacherScreen,
   },
-  {name: 'ClassExamListTeacherScreen', component: ClassExamListTeacherScreen},
+  { name: 'ClassExamListTeacherScreen', component: ClassExamListTeacherScreen },
   {
     name: 'ClassExamStudentSubmitListScreen',
     component: ClassExamStudentSubmitListScreen,
@@ -74,7 +72,7 @@ export const getInitialScreens = (): ScreenProps[] => [
   },
 ];
 
-export function AppNavigator({screens}: {screens: ScreenProps[]}) {
+export function AppNavigator({ screens }: { screens: ScreenProps[] }) {
   return (
     <Stack.Navigator
       screenOptions={{
