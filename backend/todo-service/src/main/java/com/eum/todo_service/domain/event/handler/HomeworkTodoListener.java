@@ -22,9 +22,9 @@ public class HomeworkTodoListener {
             "spring.json.value.default.type=com.eum.todo_service.domain.event.dto.HomeworkTodoCreateEvent"
     })
     public void handleHomeworkTodoCreate(HomeworkTodoCreateEvent event) {
-        for(Long studentId :  event.getStudentIds()) {
-            homeworkTodoRepository.save(HomeworkTodo.from(event, studentId));
-        }
+        event.getStudentIds().forEach(studentId ->
+                homeworkTodoRepository.save(HomeworkTodo.from(event, studentId))
+        );
     }
 
     @KafkaListener(topics = "homework-todo-delete-topic", groupId = "homework-todo-group", properties = {
