@@ -152,9 +152,9 @@ public class UserServiceImpl implements UserService {
                 .getPresignedUrlForUpload(member.getUserId());
         member.updateUserImage(imageResponse.image());
         if(member.getRole() == Role.STUDENT) {
-            eventProducer.sendStudentUpdatedEvent(StudentInfoEvent.from(member));
+            eventProducer.sendStudentUpdatedEvent(StudentInfoEvent.from(member,imageResponse));
         } else {
-            eventProducer.sendTeacherUpdatedEvent(TeacherInfoEvent.from(member));
+            eventProducer.sendTeacherUpdatedEvent(TeacherInfoEvent.from(member,imageResponse));
         }
         return imageResponse;
     }

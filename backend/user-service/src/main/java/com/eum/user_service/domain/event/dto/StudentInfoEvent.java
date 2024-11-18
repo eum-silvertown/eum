@@ -1,5 +1,6 @@
 package com.eum.user_service.domain.event.dto;
 
+import com.eum.user_service.domain.file.dto.ImageResponse;
 import com.eum.user_service.domain.user.entity.ClassInfo;
 import com.eum.user_service.domain.user.entity.Member;
 import lombok.Builder;
@@ -24,10 +25,10 @@ public record StudentInfoEvent(
                 .build();
     }
 
-    public static StudentInfoEvent from(Member student) {
+    public static StudentInfoEvent from(Member student, ImageResponse imageResponse) {
         return StudentInfoEvent.builder()
                 .studentId(student.getId())
-                .image(student.getImage())
+                .image(imageResponse.url())
                 .build();
     }
 }
