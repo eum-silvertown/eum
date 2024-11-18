@@ -19,6 +19,7 @@ import { Text } from '../common/Text';
 import { SvgProps } from 'react-native-svg';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNotificationStore } from '@store/useNotificationStore';
+import { useAuthStore } from '@store/useAuthStore';
 
 interface MenuItem {
   name: string;
@@ -32,17 +33,30 @@ function SidebarMenus(): React.JSX.Element {
   const { width } = useWindowDimensions();
   const styles = useMemo(() => getStyles(width), [width]);
 
+  const role = useAuthStore(state => state.userInfo.role);
+
   const unreadNotifications = useNotificationStore(
     state => state.unreadNotifications,
   );
-  const menuItems: MenuItem[] = [
-    { name: '홈', screen: 'HomeScreen', icon: HomeIcon },
-    { name: '알림', screen: 'NotificationScreen', icon: NotificationIcon },
-    { name: '수업 목록', screen: 'ClassListScreen', icon: ClassIcon },
-    { name: '숙제', screen: 'HomeworkScreen', icon: HomeworkIcon },
-    { name: '문제 보관함', screen: 'QuestionBoxScreen', icon: questionBoxIcon },
-    { name: '우리 반', screen: 'MyClassScreen', icon: myClassIcon },
-  ];
+
+  const menuItems: MenuItem[] = useMemo(() => {
+    const baseMenuItems = [
+      { name: '홈', screen: 'HomeScreen', icon: HomeIcon },
+      { name: '알림', screen: 'NotificationScreen', icon: NotificationIcon },
+      { name: '수업 목록', screen: 'ClassListScreen', icon: ClassIcon },
+    ];
+
+    if (role === 'STUDENT') {
+      return [...baseMenuItems, { name: '숙제', screen: 'HomeworkScreen', icon: HomeworkIcon }];
+    }
+
+    if (role === 'TEACHER') {
+      return [...baseMenuItems, { name: '문제 보관함', screen: 'QuestionBoxScreen', icon: questionBoxIcon }];
+    }
+
+    return baseMenuItems;
+  }, [role]);
+
   const navigation = useNavigation<NavigationProps>();
   const { setCurrentScreen, currentScreen } = useCurrentScreenStore();
   const { isExpanded } = useSidebarStore();
@@ -74,6 +88,8 @@ function SidebarMenus(): React.JSX.Element {
     const currentIndex = menuItems.findIndex(item => item.screen === currentScreen);
     if (currentIndex !== -1) {
       setSelected(currentIndex);
+    } else if (currentScreen === 'ProfileScreen') {
+      setSelected(-1);
     }
   }, [currentScreen, menuItems]);
 
@@ -142,6 +158,7 @@ const getStyles = (width: number) =>
   StyleSheet.create({
     container: {
       width: '100%',
+      gap: width * 0.005,
     },
     icon: {
       alignItems: 'center',
