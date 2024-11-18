@@ -156,11 +156,7 @@ public class MemberEventListener {
 	public void updateStudent(StudentInfoEvent event) {
 		studentReadRepository.findById(event.getStudentId()).ifPresentOrElse(
 			student -> {
-				student.setName(event.getName());
 				student.setImage(event.getImage());
-				student.setClassId(event.getClassId());
-				student.setGrade(event.getGrade());
-				student.setClassNumber(event.getClassNumber());
 
 				studentReadRepository.save(student);
 			},
