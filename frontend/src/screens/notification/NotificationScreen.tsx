@@ -10,6 +10,7 @@ import {
 import { useNotificationStore } from '@store/useNotificationStore';
 import {
   deleteNotification,
+  NotificationType,
   readNotification,
   readNotifications,
 } from '@services/notificationService';
@@ -86,7 +87,7 @@ function NotificationScreen(): React.JSX.Element {
     }
   };
 
-  const renderUnreadItem = ({ item: notification }) => (
+  const renderUnreadItem = ({ item: notification }: { item: NotificationType }) => (
     <Pressable style={styles.notification} onPress={() => {
       onPressRead(notification.id);
       switch (notification.type) {
@@ -123,7 +124,7 @@ function NotificationScreen(): React.JSX.Element {
     </Pressable>
   );
 
-  const renderReadItem = ({ item: notification }) => (
+  const renderReadItem = ({ item: notification }: { item: NotificationType }) => (
     <View style={styles.notification}>
       <View>
         <Text weight="bold">{notification.type}</Text>

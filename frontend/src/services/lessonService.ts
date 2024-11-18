@@ -46,30 +46,6 @@ export const deleteLesson = async (lessonId: number): Promise<void> => {
   }
 };
 
-// 레슨 상세 조회
-export type LessonDetailResponse = {
-  questionIds: number[];
-  questionAnswers: string[];
-  studentAnswers: string[];
-  drawingPaths: string;
-};
-
-export const getLessonDetail = async (
-  lectureId: number,
-  lessonId: number,
-): Promise<LessonDetailResponse> => {
-  try {
-    const {data} = await authApiClient.get<LessonDetailResponse>(
-      `/lecture/${lectureId}/lesson/${lessonId}`,
-    );
-
-    return data;
-  } catch (error) {
-    console.error('레슨 상세 조회 실패:', error);
-    throw error;
-  }
-};
-
 // 수업 상태 변경
 export type SwitchLessonStatusResponse = {
   status: string;

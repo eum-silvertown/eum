@@ -55,12 +55,6 @@ export type ExamProblemSubmission = {
   examSolution: string;
 }[];
 
-export type ExamSubmissionResponse = {
-  code: string;
-  data: number; // 서브미션 ID
-  message: string;
-};
-
 export const submitExamProblems = async (
   examId: number,
   submissionData: ExamProblemSubmission,

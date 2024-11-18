@@ -92,4 +92,3 @@ export function useColors(): ColorPath {
 }
 
 export type TextColorVariant = keyof typeof colors.light.text;
-export type BackgroundColorVariant = keyof typeof colors.light.background;
