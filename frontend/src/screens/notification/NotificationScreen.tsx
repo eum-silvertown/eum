@@ -13,8 +13,8 @@ import {
   readNotifications,
 } from '@services/notificationService';
 import Weather from '@components/main/widgets/Weather';
-import { colors } from 'src/hooks/useColors';
-import { useState } from 'react';
+import {colors} from 'src/hooks/useColors';
+import {useState} from 'react';
 import CustomCalendar from '@components/main/widgets/CustomCalendar';
 function NotificationScreen(): React.JSX.Element {
   const {width, height} = useWindowDimensions();
@@ -37,12 +37,29 @@ function NotificationScreen(): React.JSX.Element {
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
-  const paginatedUnreadNotifications = unreadNotifications.slice(0, page * ITEMS_PER_PAGE);
-  const paginatedReadNotifications = notifications.slice(0, page * ITEMS_PER_PAGE);
+  const paginatedUnreadNotifications = unreadNotifications.slice(
+    0,
+    page * ITEMS_PER_PAGE,
+  );
+  const paginatedReadNotifications = notifications.slice(
+    0,
+    page * ITEMS_PER_PAGE,
+  );
 
-  const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }: { layoutMeasurement: any, contentOffset: any, contentSize: any }) => {
+  const isCloseToBottom = ({
+    layoutMeasurement,
+    contentOffset,
+    contentSize,
+  }: {
+    layoutMeasurement: any;
+    contentOffset: any;
+    contentSize: any;
+  }) => {
     const paddingToBottom = 20;
-    return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
   };
 
   const loadMore = () => {
@@ -88,21 +105,20 @@ function NotificationScreen(): React.JSX.Element {
               안 읽은 알림{' '}
             </Text>
             <Text variant="subtitle" weight="medium">
-            {unreadNotifications.length > 0 && unreadNotifications.length}
+              {unreadNotifications.length > 0 && unreadNotifications.length}
             </Text>
             <Pressable style={styles.readAllButton} onPress={onPressReadAll}>
               <Text>모두 읽음</Text>
             </Pressable>
           </View>
-          <ScrollView 
+          <ScrollView
             style={styles.notifications}
-            onScroll={({ nativeEvent }) => {
+            onScroll={({nativeEvent}) => {
               if (isCloseToBottom(nativeEvent)) {
                 loadMore();
               }
             }}
-            scrollEventThrottle={400}
-          >
+            scrollEventThrottle={400}>
             {unreadNotifications.length === 0 && (
               <View style={styles.emptyNotification}>
                 <Text>새로운 알림이 없습니다.</Text>
@@ -137,38 +153,39 @@ function NotificationScreen(): React.JSX.Element {
               지난 알림
             </Text>
           </View>
-          <ScrollView 
+          <ScrollView
             style={styles.notifications}
-            onScroll={({ nativeEvent }) => {
+            onScroll={({nativeEvent}) => {
               if (isCloseToBottom(nativeEvent)) {
                 loadMore();
               }
             }}
-            scrollEventThrottle={400}
-          >
+            scrollEventThrottle={400}>
             {notifications.length === 0 && (
               <View style={styles.emptyNotification}>
                 <Text>알림이 없습니다.</Text>
               </View>
             )}
-            {[...paginatedReadNotifications].reverse().map((notification, index) => (
-              <View key={index} style={styles.notification}>
-                <View>
-                  <Text weight="bold">{notification.type}</Text>
+            {[...paginatedReadNotifications]
+              .reverse()
+              .map((notification, index) => (
+                <View key={index} style={styles.notification}>
+                  <View>
+                    <Text weight="bold">{notification.type}</Text>
+                  </View>
+                  <View>
+                    <Text>{notification.title}</Text>
+                  </View>
+                  <View style={styles.notificationTail}>
+                    <Text variant="caption" color="secondary">
+                      {notification.createdAt}
+                    </Text>
+                    <Pressable onPress={() => onPressDelete(notification.id)}>
+                      <Text color="error">삭제</Text>
+                    </Pressable>
+                  </View>
                 </View>
-                <View>
-                  <Text>{notification.title}</Text>
-                </View>
-                <View style={styles.notificationTail}>
-                  <Text variant="caption" color="secondary">
-                    {notification.createdAt}
-                  </Text>
-                  <Pressable onPress={() => onPressDelete(notification.id)}>
-                    <Text color="error">삭제</Text>
-                  </Pressable>
-                </View>
-              </View>
-            ))}
+              ))}
           </ScrollView>
         </View>
       </View>
@@ -178,7 +195,7 @@ function NotificationScreen(): React.JSX.Element {
             <Weather />
           </View>
           <View style={styles.widget}>
-            <CustomCalendar/>
+            <CustomCalendar />
           </View>
         </View>
       </View>

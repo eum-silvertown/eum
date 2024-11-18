@@ -93,12 +93,11 @@ const StudentExamCanvasSection = ({
     );
   }, [problemsCnt, questionIds, memberId]);
 
-  // 숙제 제출 Mutation
   const { mutate: submitExamMutation } = useMutation({
     mutationFn: (submissionData: ExamProblemSubmission) =>
       submitExamProblems(examId, submissionData),
     onSuccess: () => {
-      Alert.alert('제출 완료', '숙제가 성공적으로 제출되었습니다.');
+      Alert.alert('제출 완료', '시험이 성공적으로 제출되었습니다.');
       queryClient.invalidateQueries({
         queryKey: ['examSubmissionList'],
       });

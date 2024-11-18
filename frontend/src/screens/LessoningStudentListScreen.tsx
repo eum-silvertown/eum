@@ -78,7 +78,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const handleParticipantPress = (id: number) => {
     setLectureInfo(id, teacherId!);
     setIsTeaching(true);
-    navigation.navigate('LessoningScreen');
+    navigation.navigate('LessoningTeacherScreen');
   };
 
   const mutation = useMutation({
@@ -96,10 +96,10 @@ function LessoningStudentListScreen(): React.JSX.Element {
     },
   });
 
-  const handleLongPress = (studentId: number) => {
+  const handleLongPress = (studentId: number, studentName: string) => {
     Alert.alert(
       '점수 감소',
-      `학생 ID ${studentId}의 점수를 감소시키겠습니까?`,
+      `${studentName} 학생의 점수를 감소시키겠습니까?`,
       [
         {
           text: '취소',
@@ -207,7 +207,9 @@ function LessoningStudentListScreen(): React.JSX.Element {
             <ParticipantCard
               participant={item}
               onPress={() => handleParticipantPress(item.studentId)}
-              onLongPress={() => handleLongPress(item.studentId)}
+              onLongPress={() =>
+                handleLongPress(item.studentId, item.studentName)
+              }
             />
           )}
         />
