@@ -151,6 +151,11 @@ public class UserServiceImpl implements UserService {
         ImageResponse imageResponse = fileService
                 .getPresignedUrlForUpload(member.getUserId());
         member.updateUserImage(imageResponse.image());
+        if(member.getRole() == Role.STUDENT) {
+            eventProducer.sendStudentUpdatedEvent(StudentInfoEvent.from(member));
+        } else {
+            eventProducer.sendTeacherUpdatedEvent(TeacherInfoEvent.from(member));
+        }
         return imageResponse;
     }
 

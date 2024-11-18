@@ -23,4 +23,11 @@ public record StudentInfoEvent(
                 .classNumber(classInfo.getClassNumber())
                 .build();
     }
+
+    public static StudentInfoEvent from(Member student) {
+        return StudentInfoEvent.builder()
+                .studentId(student.getId())
+                .image(student.getImage())
+                .build();
+    }
 }
