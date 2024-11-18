@@ -16,6 +16,7 @@ public class HomeworkCreatedNotificationEvent {
 
 	private Long homeworkId;
 	private String title;
+	private String subject;
 	private List<Long> studentIds;
 	private String type;
 

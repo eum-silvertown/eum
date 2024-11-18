@@ -51,7 +51,7 @@ public class ExamServiceImpl implements ExamService {
 		publishExamCreateEvent(savedExam, examDto.getQuestionIds());
 
 		//알림이벤트
-		publishExamNotificationCreateEvent(savedExam);
+		publishExamNotificationCreateEvent(savedExam, lecture);
 
 		return savedExam.getExamId();
 	}
@@ -160,10 +160,10 @@ public class ExamServiceImpl implements ExamService {
 			.collect(Collectors.toList());
 	}
 
-	private void publishExamNotificationCreateEvent(Exam savedExam) {
+	private void publishExamNotificationCreateEvent(Exam savedExam, Lecture lecture) {
 		List<Long> studentIds = getStudentIds(savedExam.getLecture().getClassId());
 
-		ExamCreatedNotificationEvent event = ExamCreatedNotificationEvent.of(savedExam, studentIds);
+		ExamCreatedNotificationEvent event = ExamCreatedNotificationEvent.of(savedExam, studentIds, lecture.getSubject());
 		kafkaTemplate.send("exam-created-notification-topic", event);
 	}
 }

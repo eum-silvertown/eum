@@ -19,13 +19,15 @@ public class ExamCreatedNotificationEvent {
 
 	private Long examId;
 	private String title;
+	private String subject;
 	private List<Long> studentIds;
 	private String type;
 
-	public static ExamCreatedNotificationEvent of(Exam exam, List<Long> studentIds) {
+	public static ExamCreatedNotificationEvent of(Exam exam, List<Long> studentIds, String subject) {
 		return ExamCreatedNotificationEvent.builder()
 			.examId(exam.getExamId())
 			.title(exam.getTitle())
+			.subject(subject)
 			.studentIds(studentIds)
 			.type(NotificationType.EXAM_CREATION.getDescription())
 			.build();

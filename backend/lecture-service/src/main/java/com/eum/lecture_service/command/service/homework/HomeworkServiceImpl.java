@@ -49,7 +49,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 		publishHomeworkCreateEvent(savedHomework, homeworkDto.getQuestionIds());
 
 		//알림이벤트
-		publishHomeworkNotificationCreateEvent(savedHomework);
+		publishHomeworkNotificationCreateEvent(savedHomework, lecture);
 
 		return savedHomework.getHomeworkId();
 	}
@@ -156,10 +156,10 @@ public class HomeworkServiceImpl implements HomeworkService {
 			.collect(Collectors.toList());
 	}
 
-	private void publishHomeworkNotificationCreateEvent(Homework savedHomework) {
+	private void publishHomeworkNotificationCreateEvent(Homework savedHomework, Lecture lecture) {
 		List<Long> studentIds = getStudentIds(savedHomework.getLecture().getClassId());
 
-		HomeworkCreatedNotificationEvent event = HomeworkCreatedNotificationEvent.of(savedHomework, studentIds);
+		HomeworkCreatedNotificationEvent event = HomeworkCreatedNotificationEvent.of(savedHomework, studentIds, lecture.getSubject());
 		kafkaTemplate.send("homework-created-notification-topic", event);
 	}
 }
