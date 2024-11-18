@@ -11,10 +11,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DrawingServiceImpl implements DrawingService {
 
+    private static final String EMPTY_STRING = "eJyLjgUAARUAuQ==";
+
     private final DrawingRepository drawingRepository;
 
     @Override
     public void saveDrawing(DrawingRequestDTO requestDTO) {
+        if (requestDTO.getDrawingData().equals(EMPTY_STRING)) {
+            return;
+        }
+        
         Drawing existingDrawing = drawingRepository.findByMemberIdAndLessonIdAndQuestionId(
                 String.valueOf(requestDTO.getMemberId()),
                 String.valueOf(requestDTO.getLessonId()),
