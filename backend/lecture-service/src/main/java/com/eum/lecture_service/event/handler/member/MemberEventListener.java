@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.member.ClassEvent;
+import com.eum.lecture_service.event.event.member.StudentImageEvent;
 import com.eum.lecture_service.event.event.member.StudentInfoEvent;
+import com.eum.lecture_service.event.event.member.TeacherImageEvent;
 import com.eum.lecture_service.event.event.member.TeacherInfoEvent;
 import com.eum.lecture_service.query.document.LectureModel;
 import com.eum.lecture_service.query.document.StudentOverviewModel;
@@ -59,9 +61,9 @@ public class MemberEventListener {
 	}
 
 	@KafkaListener(topics = "update_teacher", groupId = "member-group", properties = {
-		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.TeacherInfoEvent"
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.TeacherImageEvent"
 	})
-	public void updateTeacher(TeacherInfoEvent event) {
+	public void updateTeacher(TeacherImageEvent event) {
 		teacherReadRepository.findById(event.getTeacherId()).ifPresentOrElse(
 			teacher -> {
 				teacher.setImage(event.getImage());
@@ -148,9 +150,9 @@ public class MemberEventListener {
 	}
 
 	@KafkaListener(topics = "update_student", groupId = "member-group", properties = {
-		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.StudentInfoEvent"
+		"spring.json.value.default.type=com.eum.lecture_service.event.event.member.StudentImageEvent"
 	})
-	public void updateStudent(StudentInfoEvent event) {
+	public void updateStudent(StudentImageEvent event) {
 		studentReadRepository.findById(event.getStudentId()).ifPresentOrElse(
 			student -> {
 				student.setImage(event.getImage());
