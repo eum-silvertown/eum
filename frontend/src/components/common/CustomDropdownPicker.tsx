@@ -1,15 +1,15 @@
 import React from 'react';
-import {Picker} from '@react-native-picker/picker';
-import {StyleSheet, View, ViewStyle} from 'react-native';
-import {colors} from 'src/hooks/useColors';
-import {borderWidth} from '@theme/borderWidth';
-import {getResponsiveSize} from '@utils/responsive';
-import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
+import { Picker } from '@react-native-picker/picker';
+import { StyleSheet, View, ViewStyle } from 'react-native';
+import { colors } from '@hooks/useColors';
+import { borderWidth } from '@theme/borderWidth';
+import { getResponsiveSize } from '@utils/responsive';
+import { Text } from '@components/common/Text';
+import { borderRadius } from '@theme/borderRadius';
 
 interface CustomDropdownPickerProps {
   label?: string;
-  items: {label: string; value: string}[]; // 드롭다운 항목
+  items: { label: string; value: string }[]; // 드롭다운 항목
   onSelectItem: (value: string) => void; // 선택 항목 변경 시 콜백
   defaultValue?: string; // 초기 선택 값
   containerStyle?: ViewStyle; // 컨테이너 스타일

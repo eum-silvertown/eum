@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { getResponsiveSize } from '@utils/responsive';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLessonStore } from '@store/useLessonStore';
-import { useModal } from 'src/hooks/useModal';
+import { useModal } from '@hooks/useModal';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -44,7 +44,7 @@ const StudentLessoningInteractionTool = ({
   handleGoToTeacherScreen,
 }: LessoningInteractionToolForStudentProps) => {
   const navigation = useNavigation<NavigationProps>();
-  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
+  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(true);
   const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
   const { open, closeAll } = useModal();

@@ -27,7 +27,7 @@ import * as StompJs from '@stomp/stompjs';
 import EmptyData from '@components/common/EmptyData';
 import {useMutation} from '@tanstack/react-query';
 import {adjustStudentAttitudeScore} from '@services/lectureInformation';
-
+import {useLessoningStore} from '@store/useLessoningStore';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function LessoningStudentListScreen(): React.JSX.Element {
@@ -40,9 +40,8 @@ function LessoningStudentListScreen(): React.JSX.Element {
   });
   const {participants, addParticipant, updateParticipant, removeParticipant} =
     useStudentListStore();
-
+  const lessonId = useLessoningStore(state => state.lessonId);
   const lectureId = useLessonStore(state => state.lectureId);
-  const lessonId = useLessonStore(state => state.lessonId);
   const teacherId = useLectureStore(state => state.teacherId);
   const setLectureInfo = useLectureStore(state => state.setLectureInfo);
   const setIsTeaching = useLessonStore(state => state.setIsTeaching);
@@ -56,7 +55,9 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const [teacherCurrentPage, setTeacherCurrentPage] = useState(0);
 
   const totalPages = Math.ceil(participants.length / PARTICIPANTS_PER_PAGE);
-
+  useEffect(() => {
+    console.log('Lesson ID in LessoningStudentListScreen:', lessonId);
+  }, [lessonId]);
   const currentParticipants = participants.slice(
     teacherCurrentPage * PARTICIPANTS_PER_PAGE,
     (teacherCurrentPage + 1) * PARTICIPANTS_PER_PAGE,
@@ -77,7 +78,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
   const handleParticipantPress = (id: number) => {
     setLectureInfo(id, teacherId!);
     setIsTeaching(true);
-    navigation.navigate('LessoningScreen');
+    navigation.navigate('LessoningTeacherScreen');
   };
 
   const mutation = useMutation({
@@ -95,10 +96,10 @@ function LessoningStudentListScreen(): React.JSX.Element {
     },
   });
 
-  const handleLongPress = (studentId: number) => {
+  const handleLongPress = (studentId: number, studentName: string) => {
     Alert.alert(
       '점수 감소',
-      `학생 ID ${studentId}의 점수를 감소시키겠습니까?`,
+      `${studentName} 학생의 점수를 감소시키겠습니까?`,
       [
         {
           text: '취소',
@@ -117,6 +118,10 @@ function LessoningStudentListScreen(): React.JSX.Element {
 
   // STOMP 클라이언트 초기화 및 설정
   useEffect(() => {
+    if (!lessonId) {
+      console.warn('lessonId is undefined. STOMP client activation skipped.');
+      return;
+    }
     const client = new StompJs.Client({
       webSocketFactory: () =>
         new SockJS('http://k11d101.p.ssafy.io/ws-gateway/drawing'),
@@ -164,8 +169,8 @@ function LessoningStudentListScreen(): React.JSX.Element {
       },
     });
 
-    client.activate();
     clientRef.current = client;
+    client.activate();
 
     return () => {
       if (clientRef.current) {
@@ -173,7 +178,7 @@ function LessoningStudentListScreen(): React.JSX.Element {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addParticipant, removeParticipant, updateParticipant, participants]);
+  }, [lessonId]);
 
   return (
     <View style={styles.mainContainer}>
@@ -202,7 +207,9 @@ function LessoningStudentListScreen(): React.JSX.Element {
             <ParticipantCard
               participant={item}
               onPress={() => handleParticipantPress(item.studentId)}
-              onLongPress={() => handleLongPress(item.studentId)}
+              onLongPress={() =>
+                handleLongPress(item.studentId, item.studentName)
+              }
             />
           )}
         />

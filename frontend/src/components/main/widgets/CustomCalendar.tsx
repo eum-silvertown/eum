@@ -64,7 +64,7 @@ export default function CustomCalendar({
     setCurrentDate(today);
   };
 
-  const renderDay = ({item}: {item: number | string}) => {
+  const renderDay = ({ item }: { item: number | string }) => {
     const isToday =
       item === today.getDate() &&
       month === today.getMonth() &&
@@ -122,7 +122,7 @@ export default function CustomCalendar({
             <IntoIcon
               width={iconSize.md}
               height={iconSize.md}
-              style={{transform: [{rotate: '180deg'}]}}
+              style={{ transform: [{ rotate: '180deg' }] }}
             />
           </TouchableOpacity>
 

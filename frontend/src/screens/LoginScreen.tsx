@@ -1,19 +1,19 @@
-import React, {useState} from 'react';
-import {TouchableOpacity, StyleSheet, View, Image} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {Text} from '@components/common/Text';
+import React, { useState } from 'react';
+import { TouchableOpacity, StyleSheet, View, Image } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { Text } from '@components/common/Text';
 import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
 import serviceLogoImage from '@assets/images/serviceLogoImage.png';
-import {iconSize} from '@theme/iconSize';
-import {colors} from 'src/hooks/useColors';
-import {logIn} from '@services/authService';
+import { iconSize } from '@theme/iconSize';
+import { colors } from '@hooks/useColors';
+import { logIn } from '@services/authService';
 import InputField from '@components/account/InputField';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
 
-// import CheckBox from '@react-native-community/checkbox';
+// import CheckBox from '@react-native-community/checrkbox';
 // import {setAutoLogin} from '@utils/secureStorage';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
@@ -22,7 +22,7 @@ function LoginScreen(): React.JSX.Element {
   // const [isChecked, setIsChecked] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
+  const { setCurrentScreen } = useCurrentScreenStore();
 
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
@@ -44,14 +44,14 @@ function LoginScreen(): React.JSX.Element {
     }
 
     try {
-      await logIn({id, password});
+      await logIn({ id, password });
       // 자동 로그인 설정 상태 저장
       // await setAutoLogin(isChecked);
 
       // 내비게이션 스택을 초기화하여 로그인 화면으로 이동
       navigation.reset({
         index: 0,
-        routes: [{name: 'HomeScreen'}],
+        routes: [{ name: 'HomeScreen' }],
       });
       setCurrentScreen('HomeScreen');
     } catch (error: any) {
@@ -88,7 +88,7 @@ function LoginScreen(): React.JSX.Element {
       </View>
 
       <View style={styles.loginfield}>
-        <View style={{gap: 10}}>
+        <View style={{ gap: 10 }}>
           <InputField
             label="아이디"
             value={id}

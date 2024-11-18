@@ -5,7 +5,7 @@ import { Canvas, vec } from '@shopify/react-native-skia';
 import { Ring } from './Ring';
 import { typography } from '@theme/typography';
 import { getResponsiveSize } from '@utils/responsive';
-import { ClassAverageScoresType } from 'src/services/lectureInformation';
+import { ClassAverageScoresType } from '@services/lectureInformation';
 
 const width = 120;
 const height = 120;

@@ -58,7 +58,7 @@ const TeacherLessoningGridInteractionTool = ({ lectureId }: LectureInfoProps) =>
 
   const intoTeacherDrawing = () => {
     setIsTeaching(false);
-    navigation.navigate('LessoningScreen');
+    navigation.navigate('LessoningTeacherScreen');
   };
 
   return (

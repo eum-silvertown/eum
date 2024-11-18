@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
-import {View, TouchableOpacity, StyleSheet, Alert} from 'react-native';
-import {Text} from '@components/common/Text';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { Text } from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {colors} from 'src/hooks/useColors';
-import {useModalContext} from 'src/contexts/useModalContext';
-import {createTodo, updateTodo} from '@services/todoService';
+import { colors } from '@hooks/useColors';
+import { useModalContext } from '@contexts/useModalContext';
+import { createTodo, updateTodo } from '@services/todoService';
 
 interface AddTodoModalProps {
   onTodoListUpdate?: () => void;
@@ -22,8 +22,8 @@ const importanceLevels = ['일반', '평범', '중요', '매우 중요'];
 // 중요도에 따른 색상 반환 함수
 const getCheckBoxColor = (importance: number, isSelected: boolean) => {
   const color = isSelected
-    ? {1: '#4CAF50', 2: '#FF9800', 3: '#F44336'}[importance] || '#2E2559'
-    : {1: '#A5D6A7', 2: '#FFCC80', 3: '#EF9A9A'}[importance] || '#D1C4E9';
+    ? { 1: '#4CAF50', 2: '#FF9800', 3: '#F44336' }[importance] || '#2E2559'
+    : { 1: '#A5D6A7', 2: '#FFCC80', 3: '#EF9A9A' }[importance] || '#D1C4E9';
   return color;
 };
 
@@ -38,7 +38,7 @@ const AddTodoModal = ({
   const [selectedImportance, setSelectedImportance] = useState(
     todo?.priority || 0,
   );
-  const {close} = useModalContext();
+  const { close } = useModalContext();
 
   const [titleStatusText, setTitleStatusText] = useState('');
   const [contentStatusText, setContentStatusText] = useState('');
@@ -65,11 +65,11 @@ const AddTodoModal = ({
     try {
       const response = isEditMode
         ? await updateTodo(todo?.id!, {
-            title,
-            content,
-            priority: selectedImportance,
-          })
-        : await createTodo({title, content, priority: selectedImportance});
+          title,
+          content,
+          priority: selectedImportance,
+        })
+        : await createTodo({ title, content, priority: selectedImportance });
 
       console.log(isEditMode ? '투두 수정 성공' : '투두 생성 성공', response);
 

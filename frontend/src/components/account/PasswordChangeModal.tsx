@@ -1,26 +1,26 @@
-import {StyleSheet, View, TouchableOpacity, Alert} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import { StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import InputField from './InputField';
 import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
-import {colors} from 'src/hooks/useColors';
-import {changePassword, logOut} from '@services/authService';
-import {useModalContext} from 'src/contexts/useModalContext';
+import { iconSize } from '@theme/iconSize';
+import { Text } from '@components/common/Text';
+import { borderRadius } from '@theme/borderRadius';
+import { colors } from '@hooks/useColors';
+import { changePassword, logOut } from '@services/authService';
+import { useModalContext } from '@contexts/useModalContext';
 
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 export default function PasswordChangeModal(): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
+  const { setCurrentScreen } = useCurrentScreenStore();
   const [password, setPassword] = useState('');
-  const {close} = useModalContext();
+  const { close } = useModalContext();
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -72,7 +72,7 @@ export default function PasswordChangeModal(): React.JSX.Element {
       await logOut();
       navigation.reset({
         index: 0,
-        routes: [{name: 'LoginScreen'}],
+        routes: [{ name: 'LoginScreen' }],
       });
       setCurrentScreen('LoginScreen');
 

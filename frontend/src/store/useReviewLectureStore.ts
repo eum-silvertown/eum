@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { LessonType } from 'src/services/lectureInformation';
+import { LessonType } from '@services/lectureInformation';
 
 // 상태 인터페이스 정의
 interface ReviewLectureState {

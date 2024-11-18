@@ -7,7 +7,7 @@ import {
   HomeworkType,
   ExamType,
   LessonType,
-} from 'src/services/lectureInformation';
+} from '@services/lectureInformation';
 
 type OverviewProps = {
   homeworkCnt?: number;

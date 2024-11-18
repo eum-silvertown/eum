@@ -12,7 +12,8 @@ export type ScreenType = {
   SignUpSelectScreen: undefined;
   SignUpScreen: undefined | {userType: 'teacher' | 'student'};
   NotificationScreen: undefined;
-  LessoningScreen: undefined;
+  LessoningTeacherScreen: undefined;
+  LessoningStudentScreen: undefined;
   LessoningStudentListScreen: undefined;
   ProfileScreen: undefined;
   ClassListScreen: undefined;

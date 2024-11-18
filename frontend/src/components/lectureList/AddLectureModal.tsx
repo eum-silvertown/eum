@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,26 +6,26 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import {Text} from '@components/common/Text';
+import { Text } from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import {colors} from 'src/hooks/useColors';
+import { colors } from '@hooks/useColors';
 import ColorPicker from '@components/lectureList/ColorPicker';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
+import { iconSize } from '@theme/iconSize';
+import { borderRadius } from '@theme/borderRadius';
+import { borderWidth } from '@theme/borderWidth';
 import LectureCreateBook from '@components/main/LectureCreateBook';
-import {getResponsiveSize} from '@utils/responsive';
+import { getResponsiveSize } from '@utils/responsive';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import StatusMessage from '@components/account/StatusMessage';
-import {useModalContext} from 'src/contexts/useModalContext';
-import {useAuthStore} from '@store/useAuthStore';
+import { useModalContext } from '@contexts/useModalContext';
+import { useAuthStore } from '@store/useAuthStore';
 import {
   CreateLectureRequest,
   postCreateLecture,
 } from '@services/lectureInformation';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Schedule {
   day: string;
@@ -49,7 +49,7 @@ const AddLectureModal = (): React.JSX.Element => {
   const userInfo = useAuthStore(state => state.userInfo);
   const school = userInfo.classInfo.school;
 
-  const {close} = useModalContext();
+  const { close } = useModalContext();
   const [title, setTitle] = useState('');
   const [subjects, setSubjects] = useState('');
   const [introduction, setIntroduction] = useState('');
@@ -61,7 +61,7 @@ const AddLectureModal = (): React.JSX.Element => {
   const [activePicker, setActivePicker] = useState<'cover' | 'font'>('cover');
   const colorPickerRef = useRef(null);
   const [schedules, setSchedules] = useState<Schedule[]>([
-    {day: '', period: ''},
+    { day: '', period: '' },
   ]);
   const [grade, setGrade] = useState(0);
   const [classNumber, setClassNumber] = useState(0);
@@ -82,7 +82,7 @@ const AddLectureModal = (): React.JSX.Element => {
   const [scheduleError, setScheduleError] = useState('');
   const queryClient = useQueryClient();
 
-  const {mutate: createLecture} = useMutation({
+  const { mutate: createLecture } = useMutation({
     mutationFn: (newLectureData: CreateLectureRequest) =>
       postCreateLecture(newLectureData),
     onSuccess: () => {
@@ -123,7 +123,7 @@ const AddLectureModal = (): React.JSX.Element => {
 
   const addPickerSet = () => {
     if (schedules.length < 3) {
-      setSchedules([...schedules, {day: '', period: ''}]);
+      setSchedules([...schedules, { day: '', period: '' }]);
     } else {
       Alert.alert('최대 3개까지 시간표를 추가할 수 있습니다.');
     }
@@ -229,7 +229,7 @@ const AddLectureModal = (): React.JSX.Element => {
         <View style={styles.content}>
           <View style={styles.lectureInfoContainer}>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text variant="subtitle" weight="bold">
                 제목
               </Text>
@@ -292,7 +292,7 @@ const AddLectureModal = (): React.JSX.Element => {
                 selectedValue={grade}
                 onValueChange={itemValue => setGrade(itemValue)}
                 style={styles.picker}>
-                {Array.from({length: 4}, (_, i) => (
+                {Array.from({ length: 4 }, (_, i) => (
                   <Picker.Item
                     key={i}
                     label={i === 0 ? '학년 선택' : `${i}학년`}
@@ -304,7 +304,7 @@ const AddLectureModal = (): React.JSX.Element => {
                 selectedValue={classNumber}
                 onValueChange={itemValue => setClassNumber(itemValue)}
                 style={styles.picker}>
-                {Array.from({length: 16}, (_, i) => (
+                {Array.from({ length: 16 }, (_, i) => (
                   <Picker.Item
                     key={i}
                     label={i === 0 ? '반 선택' : `${i}반`}
@@ -321,7 +321,7 @@ const AddLectureModal = (): React.JSX.Element => {
             </View>
 
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text variant="subtitle" weight="bold">
                 수업 시간표
               </Text>
@@ -384,7 +384,7 @@ const AddLectureModal = (): React.JSX.Element => {
             <Text variant="subtitle" weight="bold">
               생성된 수업 예시
             </Text>
-            <View style={{alignItems: 'center'}}>
+            <View style={{ alignItems: 'center' }}>
               {lecturePreview && <LectureCreateBook item={lecturePreview} />}
             </View>
             <View>
@@ -392,7 +392,7 @@ const AddLectureModal = (): React.JSX.Element => {
                 색상 선택
               </Text>
 
-              <View style={{height: getResponsiveSize(288)}}>
+              <View style={{ height: getResponsiveSize(288) }}>
                 {!isColorPickerVisible ? (
                   <View style={styles.colorContainer}>
                     <TouchableOpacity
@@ -405,7 +405,7 @@ const AddLectureModal = (): React.JSX.Element => {
                           <Text
                             style={[
                               styles.currentColorFont,
-                              {color: coverColor},
+                              { color: coverColor },
                             ]}>
                             {coverColor.toUpperCase()}
                           </Text>
@@ -413,7 +413,7 @@ const AddLectureModal = (): React.JSX.Element => {
                         <View
                           style={[
                             styles.colorBox,
-                            {backgroundColor: coverColor},
+                            { backgroundColor: coverColor },
                           ]}
                         />
                       </View>
@@ -428,7 +428,7 @@ const AddLectureModal = (): React.JSX.Element => {
                           <Text
                             style={[
                               styles.currentColorFont,
-                              {color: fontColor},
+                              { color: fontColor },
                             ]}>
                             {fontColor.toUpperCase()}
                           </Text>
@@ -436,7 +436,7 @@ const AddLectureModal = (): React.JSX.Element => {
                         <View
                           style={[
                             styles.colorBox,
-                            {backgroundColor: fontColor},
+                            { backgroundColor: fontColor },
                           ]}
                         />
                       </View>
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   colorPickerContainer: {
-    transform: [{scale: 0.8}],
+    transform: [{ scale: 0.8 }],
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',

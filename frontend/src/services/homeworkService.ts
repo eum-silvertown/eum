@@ -136,6 +136,7 @@ export type HomeworkDetailType = {
   isComplete: boolean;
   score: number;
   homeworkId: number;
+  questions: number[];
 }
 
 export type AllAboutHomeworkType = {
@@ -148,7 +149,8 @@ export type AllAboutHomeworkType = {
 export async function getAllAboutHomework(userId: number): Promise<AllAboutHomeworkType> {
   try {
     const {data} = await authApiClient.get(`homework/${userId}`);
-    console.log(data.data.homeworkDetails[0]);
+    console.log("getAllAboutHomework", data.data);
+    console.log("getAllAboutHomework", data.data.homeworkDetails[0]);
     return data.data;
   } catch (error) {
     console.error('Failed to get All About Homework: ', error);

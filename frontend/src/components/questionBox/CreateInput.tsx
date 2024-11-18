@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,11 +9,11 @@ import {
   Alert,
   useWindowDimensions,
 } from 'react-native';
-import {Picker} from '@react-native-picker/picker';
-import {borderRadius} from '@theme/borderRadius';
-import {colors} from 'src/hooks/useColors';
+import { Picker } from '@react-native-picker/picker';
+import { borderRadius } from '@theme/borderRadius';
+import { colors } from '@hooks/useColors';
 import DatePicker from 'react-native-date-picker';
-import {DetailQuestionType} from '@services/questionBox';
+import { DetailQuestionType } from '@services/questionBox';
 import ProblemExSection from './ProblemExSection';
 
 type CreateInputProps = {
@@ -41,7 +41,7 @@ function CreateInput({
   setDuration,
   questionDetail,
 }: CreateInputProps): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const getCurrentTime = (): Date => {
@@ -191,7 +191,7 @@ function CreateInput({
             nestedScrollEnabled
             data={selectedFiles}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <View style={styles.fileItem}>
                 <Text style={styles.fileName}>{item}</Text>
                 <TouchableOpacity onPress={() => removeSelectedFile(item)}>
@@ -276,10 +276,10 @@ function CreateInput({
               {isButtonDisabled
                 ? buttonMessage
                 : selectType === 'exam'
-                ? '시험 생성'
-                : selectType === 'homework'
-                ? '숙제 생성'
-                : '레슨 생성'}
+                  ? '시험 생성'
+                  : selectType === 'homework'
+                    ? '숙제 생성'
+                    : '레슨 생성'}
             </Text>
           </TouchableOpacity>
 

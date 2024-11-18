@@ -3,7 +3,7 @@ import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
 import {Text} from '@components/common/Text';
 import ContentLayout from './ContentLayout';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 import Todo from './Todo';
 import HoemworkTodo from './HomeworkTodo';
 import AddTodoModal from './AddTodoModal';

@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import VerticalMenuIcon from '@assets/icons/verticalMenuIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import UpdateLectureModal from './UpdateLectureModal';
-import { useModal } from 'src/hooks/useModal';
+import { useModal } from '@hooks/useModal';
 import { deleteLecture } from '@services/lectureInformation';
 import { useMutation } from '@tanstack/react-query';
 import { getResponsiveSize } from '@utils/responsive';
@@ -115,7 +115,7 @@ function ClassHeader({
       if (isTeacher) {
         navigation.navigate('LessoningStudentListScreen');
       } else {
-        navigation.navigate('LessoningScreen');
+        navigation.navigate('LessoningStudentScreen');
       }
     } else {
       Alert.alert('수업 종료됨', '이 수업은 종료되었습니다.');

@@ -3,9 +3,15 @@ import Toast from 'react-native-toast-message';
 import messaging from '@react-native-firebase/messaging';
 import { navigationRef } from './src/services/NavigationService';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
-import { ScreenType } from './src/store/useCurrentScreenStore';
+import { ScreenType, useCurrentScreenStore } from './src/store/useCurrentScreenStore';
 import MainLayout from './src/components/common/MainLayout';
-import { Keyboard, Pressable, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native';
+import {
+  Keyboard,
+  Pressable,
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { Platform, UIManager } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -49,6 +55,7 @@ function App(): React.JSX.Element {
 
   // screen 상태 관리
   const [screens, setScreens] = useState<ScreenProps[]>([]);
+  const setCurrentScreen = useCurrentScreenStore(state => state.setCurrentScreen);
 
   // 로그인 여부에 따라 초기 화면 설정
   useEffect(() => {
@@ -119,22 +126,25 @@ function App(): React.JSX.Element {
     info: (props: any) => (
       <Pressable
         style={styles.toastContainer}
-
         onPress={() => {
           switch (props.props.type) {
             case '수업 생성':
+              setCurrentScreen('ClassListScreen');
               navigationRef.navigate('ClassListScreen');
               break;
             case '수업 시작':
               console.log(props.props);
+              setCurrentScreen('ClassListScreen');
               navigationRef.navigate('ClassListScreen', {
                 autoOpenLectureId: props.props.id,
               });
               break;
             case '시험 생성':
+              setCurrentScreen('ClassListScreen');
               navigationRef.navigate('ClassListScreen');
               break;
             case '숙제 생성':
+              setCurrentScreen('HomeworkScreen');
               navigationRef.navigate('HomeworkScreen');
               break;
           }
@@ -160,7 +170,9 @@ function App(): React.JSX.Element {
         )}
       </Pressable>
     ),
-  }), [styles.toastContainer, width]);
+  }),
+    [styles.toastContainer, width],
+  );
 
   // 알림 수신 관리
   useEffect(() => {

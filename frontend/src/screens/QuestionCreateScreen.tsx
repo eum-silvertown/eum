@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, Pressable, StyleSheet, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import {
   useFocusEffect,
   useNavigation,
@@ -9,47 +9,49 @@ import CreateInput from '@components/questionBox/CreateInput';
 import {
   createLesson,
   CreateLessonRequest,
+  CreateLessonResponse,
   switchLessonStatus,
   SwitchLessonStatusResponse,
 } from '@services/lessonService';
-import {createExam, CreateExamRequest} from '@services/examService';
-import {createHomework, CreateHomeworkRequest} from '@services/homeworkService';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import { createExam, CreateExamRequest } from '@services/examService';
+import { createHomework, CreateHomeworkRequest } from '@services/homeworkService';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import FileContainer from '@components/questionBox/FileContainer';
 import FolderHeader from '@components/questionBox/FolderHeader';
 import MoveMenu from '@components/questionBox/MoveMenu';
-import {useCutStore} from '@store/useCutStore';
+import { useCutStore } from '@store/useCutStore';
 import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {borderRadius} from '@theme/borderRadius';
-import {borderWidth} from '@theme/borderWidth';
-import {colors} from 'src/hooks/useColors';
+import { borderRadius } from '@theme/borderRadius';
+import { borderWidth } from '@theme/borderWidth';
+import { colors } from '@hooks/useColors';
 import {
   detailQuestion,
   DetailQuestionType,
   getFolder,
   getRootFolder,
-} from 'src/services/questionBox';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useLessonStore} from '@store/useLessonStore';
+} from '@services/questionBox';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useLessonStore } from '@store/useLessonStore';
+import { useLessoningStore } from '@store/useLessoningStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function QuestionCreateScreen(): React.JSX.Element {
   const route = useRoute();
   const navigation = useNavigation<NavigationProps>();
-  const {lectureId, action} = route.params as {
+  const { lectureId, action } = route.params as {
     lectureId: number;
     action: 'lesson' | 'exam' | 'homework';
   };
   const queryClient = useQueryClient();
   const [selectedFileId, setSelectedFileId] = useState(0);
 
-  const {data: questionDetail} = useQuery<DetailQuestionType>({
+  const { data: questionDetail } = useQuery<DetailQuestionType>({
     queryKey: ['questionDetail', selectedFileId],
     queryFn: () => detailQuestion(selectedFileId),
     enabled: selectedFileId !== 0,
@@ -61,7 +63,6 @@ function QuestionCreateScreen(): React.JSX.Element {
   useFocusEffect(() => {
     setCurrentScreen('QuestionCreateScreen');
   });
-
   const [title, setTitle] = useState(''); // 제목 상태
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [questionIds, setQuestionIds] = useState<number[]>([]);
@@ -98,13 +99,27 @@ function QuestionCreateScreen(): React.JSX.Element {
     switchLectureStatusMutation.mutate(lectureId);
   };
 
-  // Lesson 생성
   const lessonMutation = useMutation({
     mutationFn: (newLessonData: CreateLessonRequest) =>
-      createLesson(newLessonData),
-    onSuccess: () => {
-      console.log('레슨 생성 완료');
+      createLesson(newLessonData), // createLesson 호출
+    onSuccess: (response: CreateLessonResponse) => {
+      console.log('레슨 생성 응답:', response);
+
+      // lessonId를 response.data에서 가져옴
+      const lessonId = response.data;
+
+      if (lessonId) {
+        // lessonId 저장
+        useLessoningStore.getState().setLessonId(lessonId);
+        console.log('Lesson ID 저장 완료:', lessonId);
+      } else {
+        console.error('Lesson ID가 응답에서 존재하지 않습니다.');
+      }
+
+      // 기존 상태 저장 로직
       setLessonInfo(lectureId, questionIds);
+
+      // 수업 상태 변경 트리거
       handleSwitchLectureStatus();
     },
     onError: error => {

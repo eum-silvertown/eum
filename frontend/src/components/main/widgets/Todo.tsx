@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,20 +6,20 @@ import {
   Animated,
   Alert,
 } from 'react-native';
-import {Text} from '@components/common/Text';
-import {borderRadius} from '@theme/borderRadius';
+import { Text } from '@components/common/Text';
+import { borderRadius } from '@theme/borderRadius';
 import CheckBox from '@react-native-community/checkbox';
 
 import ArrowDownIcon from '@assets/icons/arrowDownIcon.svg';
 import EditIcon from '@assets/icons/editIcon.svg';
 import DeleteIcon from '@assets/icons/cancelIcon.svg';
 
-import {colors} from 'src/hooks/useColors';
-import {iconSize} from '@theme/iconSize';
+import { colors } from '@hooks/useColors';
+import { iconSize } from '@theme/iconSize';
 
-import {toggleTodo, deleteTodo} from '@services/todoService';
-import {getResponsiveSize} from '@utils/responsive';
-import {useModal} from 'src/hooks/useModal';
+import { toggleTodo, deleteTodo } from '@services/todoService';
+import { getResponsiveSize } from '@utils/responsive';
+import { useModal } from '@hooks/useModal';
 import AddTodoModal from './AddTodoModal';
 import ConfirmationModal from '@components/common/ConfirmationModal';
 
@@ -44,7 +44,7 @@ export default function Todo({
   onEdit,
   onDelete,
 }: TodoProps): React.JSX.Element {
-  const {open} = useModal();
+  const { open } = useModal();
   const [expanded, setExpanded] = useState(false);
   const [isDone, setIsDone] = useState(item.isDone || false);
   const animatedHeight = useRef(new Animated.Value(0)).current;
@@ -101,7 +101,7 @@ export default function Todo({
     }
     open(
       <AddTodoModal isEditMode={true} todo={item} onTodoListUpdate={onEdit} />,
-      {title: '할 일 수정'},
+      { title: '할 일 수정' },
     );
   };
 
@@ -119,7 +119,7 @@ export default function Todo({
           }
         }}
       />,
-      {title: ' 정말 삭제 하시겠습니까? '},
+      { title: ' 정말 삭제 하시겠습니까? ' },
     );
   };
 
@@ -139,7 +139,7 @@ export default function Todo({
         <View style={styles.titleContainer}>
           <Animated.View
             style={{
-              transform: [{rotate: spin}],
+              transform: [{ rotate: spin }],
             }}>
             <ArrowDownIcon />
           </Animated.View>
@@ -175,8 +175,8 @@ export default function Todo({
       <Animated.View
         style={[
           styles.descriptionContainer,
-          {height: animatedHeight},
-          {marginVertical: animatedMargin},
+          { height: animatedHeight },
+          { marginVertical: animatedMargin },
         ]}>
         <Text variant="caption">{item.content}</Text>
       </Animated.View>

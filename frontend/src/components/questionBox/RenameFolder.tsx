@@ -3,7 +3,7 @@ import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -11,19 +11,19 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {useModalContext} from 'src/contexts/useModalContext';
-import {colors} from 'src/hooks/useColors';
-import {renameFolder, renameQuestion} from 'src/services/questionBox';
+import { useModalContext } from '@contexts/useModalContext';
+import { colors } from '@hooks/useColors';
+import { renameFolder, renameQuestion } from '@services/questionBox';
 
 interface RenameFolderProp {
   item: QuestionBoxType;
 }
 
-function RenameFile({item}: RenameFolderProp): React.JSX.Element {
-  const {width} = useWindowDimensions();
+function RenameFile({ item }: RenameFolderProp): React.JSX.Element {
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
-  const {close} = useModalContext();
+  const { close } = useModalContext();
   const renameItem = useQuestionExplorerStore(state => state.renameItem);
   const [fileName, setFileName] = useState(item.title);
 
