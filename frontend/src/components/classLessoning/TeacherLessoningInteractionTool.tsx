@@ -1,10 +1,10 @@
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import StudentGridIcon from '@assets/icons/studentGridIcon.svg';
-import { iconSize } from '@theme/iconSize';
-import { ScreenType } from '@store/useCurrentScreenStore';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
-import { getResponsiveSize } from '@utils/responsive';
+import {iconSize} from '@theme/iconSize';
+import {ScreenType} from '@store/useCurrentScreenStore';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import {getResponsiveSize} from '@utils/responsive';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -37,7 +37,7 @@ const TeacherLessoningInteractionTool = ({
           {/* 학생 화면 Grid 보기 */}
           <TouchableOpacity
             style={styles.iconTouchLayout}
-            onPress={() => navigation.navigate('LessoningStudentListScreen')}>
+            onPress={() => navigation.goBack()}>
             <StudentGridIcon width={iconSize.mdPlus} height={iconSize.mdPlus} />
             <Text>학생 목록 돌아가기</Text>
           </TouchableOpacity>
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     padding: getResponsiveSize(12),
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
