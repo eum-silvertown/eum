@@ -198,7 +198,6 @@ const StudentRealTimeCanvasSection = ({
     }
   }, [studentDrawingData]);
 
-  // teacherDrawingData가 변경되었을 때 paths 설정
   useEffect(() => {
     if (studentDrawingData) {
       resetCanvasState(); // 상태 초기화

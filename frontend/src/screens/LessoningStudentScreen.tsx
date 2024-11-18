@@ -10,7 +10,7 @@ import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
 import LinkIndicator from '@components/classLessoning/LinkIndicator';
 import {useLessonStore} from '@store/useLessonStore';
-import ProblemSection from '@components/common/ProblemSection';
+import ProblemExSection from '@components/questionBox/ProblemExSection';
 import {useQuery} from '@tanstack/react-query';
 import {getFileDetail} from '@services/problemService';
 import {useLessoningStore} from '@store/useLessoningStore';
@@ -188,7 +188,10 @@ function LessoningStudentScreen(): React.JSX.Element {
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
         <View style={{marginLeft: '15%', marginTop: '5%'}}>
-          <ProblemSection problemText={problems[currentPage - 1]} />
+          <ProblemExSection
+            problemText={problems[currentPage - 1]}
+            fontSize={16}
+          />
         </View>
         <StudentRealTimeCanvasSection
           handleGoToTeacherScreen={handleGoToTeacherScreen}
