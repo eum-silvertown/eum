@@ -164,6 +164,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 			.lectureId(lecture.getLectureId())
 			.lectureTitle(lecture.getTitle())
 			.subject(lecture.getSubject())
+			.backgroundColor(lecture.getBackgroundColor())
 			.title(savedHomework.getTitle())
 			.startTime(savedHomework.getStartTime())
 			.endTime(savedHomework.getEndTime())
