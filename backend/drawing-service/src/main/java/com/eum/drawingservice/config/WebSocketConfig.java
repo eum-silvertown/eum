@@ -35,7 +35,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/drawing")
                 .setAllowedOriginPatterns("*")
-                .withSockJS();
+                .withSockJS()
+                .setDisconnectDelay(30 * 1000)
+                .setHeartbeatTime(25 * 1000);
 
         registry.addEndpoint("/drawing")
                 .setAllowedOriginPatterns("*");
