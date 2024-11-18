@@ -1,7 +1,8 @@
 import { Text } from '@components/common/Text';
 import {
+  FlatList,
+  Image,
   Pressable,
-  ScrollView,
   StyleSheet,
   useWindowDimensions,
   View,
@@ -15,10 +16,10 @@ import {
 import Weather from '@components/main/widgets/Weather';
 import { colors } from '@hooks/useColors';
 import { useState } from 'react';
-import CustomCalendar from '@components/main/widgets/CustomCalendar';
 import { navigationRef } from '@services/NavigationService';
 import { formatDateDiff } from '@utils/dateUtils';
 import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import sidebarLogo from '@assets/images/sidebarLogo.png';
 
 function NotificationScreen(): React.JSX.Element {
   const { width, height } = useWindowDimensions();
@@ -50,22 +51,6 @@ function NotificationScreen(): React.JSX.Element {
     0,
     page * ITEMS_PER_PAGE,
   );
-
-  const isCloseToBottom = ({
-    layoutMeasurement,
-    contentOffset,
-    contentSize,
-  }: {
-    layoutMeasurement: any;
-    contentOffset: any;
-    contentSize: any;
-  }) => {
-    const paddingToBottom = 20;
-    return (
-      layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom
-    );
-  };
 
   const loadMore = () => {
     setPage(prev => prev + 1);
@@ -101,8 +86,65 @@ function NotificationScreen(): React.JSX.Element {
     }
   };
 
+  const renderUnreadItem = ({ item: notification }) => (
+    <Pressable style={styles.notification} onPress={() => {
+      onPressRead(notification.id);
+      switch (notification.type) {
+        case '수업 생성':
+        case '수업 시작':
+        case '시험 생성':
+          setCurrentScreen('ClassListScreen');
+          navigationRef.navigate('ClassListScreen');
+          break;
+        case '숙제 생성':
+          setCurrentScreen('HomeworkScreen');
+          navigationRef.navigate('HomeworkScreen');
+          break;
+      }
+    }}>
+      <View>
+        <Text weight="bold">{notification.type}</Text>
+      </View>
+      <View style={{ width: '25%' }}>
+        <Text>{notification.title}</Text>
+      </View>
+      <Text color="main" weight="medium">{notification.message}</Text>
+      <View style={styles.notificationTail}>
+        <Text variant="caption" color="secondary">
+          {formatDateDiff(notification.createdAt)}
+        </Text>
+        <Pressable onPress={() => onPressRead(notification.id)}>
+          <Text color="main">읽음</Text>
+        </Pressable>
+        <Pressable onPress={() => onPressDelete(notification.id)}>
+          <Text color="error">삭제</Text>
+        </Pressable>
+      </View>
+    </Pressable>
+  );
+
+  const renderReadItem = ({ item: notification }) => (
+    <View style={styles.notification}>
+      <View>
+        <Text weight="bold">{notification.type}</Text>
+      </View>
+      <View style={{ width: '25%' }}>
+        <Text>{notification.title}</Text>
+      </View>
+      <View style={styles.notificationTail}>
+        <Text variant="caption" color="secondary">
+          {formatDateDiff(notification.createdAt)}
+        </Text>
+        <Pressable onPress={() => onPressDelete(notification.id)}>
+          <Text color="error">삭제</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
+      <Image source={sidebarLogo} style={{ position: 'absolute', right: '-30%', bottom: '-25%', width: '100%', height: '100%', objectFit: 'contain' }} />
       <View style={styles.leftContent}>
         <View style={styles.unreadSection}>
           <View style={styles.unreadHeader}>
@@ -116,62 +158,26 @@ function NotificationScreen(): React.JSX.Element {
               <Text>모두 읽음</Text>
             </Pressable>
           </View>
-          <ScrollView
+          <FlatList
+            data={paginatedUnreadNotifications}
+            renderItem={renderUnreadItem}
+            keyExtractor={(item) => item.id.toString()}
             style={styles.notifications}
-            onScroll={({ nativeEvent }) => {
-              if (isCloseToBottom(nativeEvent)) {
-                loadMore();
-              }
-            }}
-            scrollEventThrottle={400}>
-            {unreadNotifications.length === 0 && (
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+            initialNumToRender={10}
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={true}
+            bounces={false}
+            ListEmptyComponent={
               <View style={styles.emptyNotification}>
                 <Text>새로운 알림이 없습니다.</Text>
               </View>
-            )}
-            {paginatedUnreadNotifications.map((notification, index) => (
-              <Pressable key={index} style={styles.notification} onPress={() => {
-                onPressRead(notification.id);
-                switch (notification.type) {
-                  case '수업 생성':
-                    setCurrentScreen('ClassListScreen');
-                    navigationRef.navigate('ClassListScreen');
-                    break;
-                  case '수업 시작':
-                    setCurrentScreen('ClassListScreen');
-                    navigationRef.navigate('ClassListScreen');
-                    break;
-                  case '시험 생성':
-                    setCurrentScreen('ClassListScreen');
-                    navigationRef.navigate('ClassListScreen');
-                    break;
-                  case '숙제 생성':
-                    setCurrentScreen('HomeworkScreen');
-                    navigationRef.navigate('HomeworkScreen');
-                    break;
-                }
-              }}>
-                <View>
-                  <Text weight="bold">{notification.type}</Text>
-                </View>
-                <View style={{ width: '25%' }}>
-                  <Text>{notification.title}</Text>
-                </View>
-                <Text color="main" weight="medium">{notification.message}</Text>
-                <View style={styles.notificationTail}>
-                  <Text variant="caption" color="secondary">
-                    {formatDateDiff(notification.createdAt)}
-                  </Text>
-                  <Pressable onPress={() => onPressRead(notification.id)}>
-                    <Text color="main">읽음</Text>
-                  </Pressable>
-                  <Pressable onPress={() => onPressDelete(notification.id)}>
-                    <Text color="error">삭제</Text>
-                  </Pressable>
-                </View>
-              </Pressable>
-            ))}
-          </ScrollView>
+            }
+          />
         </View>
         <View style={styles.readSection}>
           <View>
@@ -179,40 +185,19 @@ function NotificationScreen(): React.JSX.Element {
               지난 알림
             </Text>
           </View>
-          <ScrollView
+          <FlatList
+            data={[...paginatedReadNotifications].reverse()}
+            renderItem={renderReadItem}
+            keyExtractor={(item) => item.id.toString()}
             style={styles.notifications}
-            onScroll={({ nativeEvent }) => {
-              if (isCloseToBottom(nativeEvent)) {
-                loadMore();
-              }
-            }}
-            scrollEventThrottle={400}>
-            {notifications.length === 0 && (
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            ListEmptyComponent={
               <View style={styles.emptyNotification}>
                 <Text>알림이 없습니다.</Text>
               </View>
-            )}
-            {[...paginatedReadNotifications]
-              .reverse()
-              .map((notification, index) => (
-                <View key={index} style={styles.notification}>
-                  <View>
-                    <Text weight="bold">{notification.type}</Text>
-                  </View>
-                  <View style={{ width: '25%' }}>
-                    <Text>{notification.title}</Text>
-                  </View>
-                  <View style={styles.notificationTail}>
-                    <Text variant="caption" color="secondary">
-                      {formatDateDiff(notification.createdAt)}
-                    </Text>
-                    <Pressable onPress={() => onPressDelete(notification.id)}>
-                      <Text color="error">삭제</Text>
-                    </Pressable>
-                  </View>
-                </View>
-              ))}
-          </ScrollView>
+            }
+          />
         </View>
       </View>
       <View style={styles.rightContent}>
@@ -220,11 +205,12 @@ function NotificationScreen(): React.JSX.Element {
           <View style={styles.widget}>
             <Weather />
           </View>
-          <View style={styles.widget}>
-            <CustomCalendar />
+          <View style={styles.sidebarLogo}>
+
           </View>
         </View>
       </View>
+
     </View>
   );
 }
@@ -310,5 +296,11 @@ const getStyles = (width: number, height: number) =>
     emptyNotification: {
       marginTop: height * 0.2,
       margin: 'auto',
+    },
+    sidebarLogo: {
+      flex: 1,
+      zIndex: -1,
+      left: -width * 0.15,
+      top: -height * 0.2,
     },
   });

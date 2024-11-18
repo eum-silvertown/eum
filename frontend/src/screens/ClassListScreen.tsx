@@ -106,13 +106,13 @@ function ClassListScreen(): React.JSX.Element {
           )}
         </View>
 
+        <View style={{ marginBottom: width * 0.01 }}>
+          <Text variant="title" weight="bold">
+            수업 목록
+          </Text>
+        </View>
         <View style={styles.classListContainer}>
           <View style={styles.header}>
-            <View>
-              <Text variant="title" weight="bold">
-                수업 목록
-              </Text>
-            </View>
             <View style={styles.filter}>
               <Picker
                 selectedValue={selectedYear}
@@ -175,8 +175,8 @@ const getStyles = (width: number) =>
     container: {
       flex: 1,
       width: '100%',
-      padding: 25,
-      backgroundColor: 'white',
+      padding: width * 0.01,
+      backgroundColor: '#f0f0f0',
     },
     content: {
       position: 'relative',
@@ -226,6 +226,5 @@ const getStyles = (width: number) =>
       backgroundColor: colors.light.background.white,
       borderRadius: borderRadius.xl,
       elevation: 2,
-      padding: 10,
     },
   });
