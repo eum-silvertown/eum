@@ -8,20 +8,19 @@ export type CreateLessonRequest = {
 };
 
 export type CreateLessonResponse = {
-  lessonId: number;
+  data: number;
 };
 
 export const createLesson = async (
   lessonData: CreateLessonRequest,
 ): Promise<CreateLessonResponse> => {
   try {
-    const {data} = await authApiClient.post<{
-      code: string;
-      data: CreateLessonResponse;
-      message: string;
-    }>('/lesson', lessonData);
+    const {data} = await authApiClient.post<CreateLessonResponse>(
+      '/lesson',
+      lessonData,
+    );
 
-    return data.data;
+    return data;
   } catch (error) {
     throw error;
   }

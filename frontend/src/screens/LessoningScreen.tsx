@@ -82,10 +82,10 @@ function LessoningScreen(): React.JSX.Element {
         } else if (!isTeacher) {
           // 학생 입장 정보 전송
           sendStudentInfo('in');
-          console.log('problemIds:', problemIds);
-          console.log('현재 문제 ID:', problemIds[currentPage - 1]);
+          console.log('questionIds:', questionIds);
+          console.log('현재 문제 ID:', questionIds![currentPage - 1]);
           const studentTopic = `/topic/lesson/${lessonId}/question/${
-            problemIds[currentPage - 1]
+            questionIds![currentPage - 1]
           }`;
           client.subscribe(studentTopic, message => {
             console.log('Received message for student:', message.body);
@@ -115,8 +115,8 @@ function LessoningScreen(): React.JSX.Element {
     });
 
     // STOMP 클라이언트 활성화
-    client.activate();
     clientRef.current = client; // 클라이언트 인스턴스를 useRef에 저장
+    client.activate();
 
     return () => {
       console.log('Deactivating STOMP client...');
@@ -127,7 +127,7 @@ function LessoningScreen(): React.JSX.Element {
       console.log('STOMP client deactivated');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTeacher, isTeaching, lessonId, memberId]);
+  }, [isTeaching, lessonId, memberId]);
 
   const handleNextPage = () => {
     if (currentPage < problems.length) {
