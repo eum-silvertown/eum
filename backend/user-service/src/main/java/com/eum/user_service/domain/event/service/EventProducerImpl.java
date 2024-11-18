@@ -1,8 +1,6 @@
 package com.eum.user_service.domain.event.service;
 
-import com.eum.user_service.domain.event.dto.ClassEvent;
-import com.eum.user_service.domain.event.dto.StudentInfoEvent;
-import com.eum.user_service.domain.event.dto.TeacherInfoEvent;
+import com.eum.user_service.domain.event.dto.*;
 import com.eum.user_service.domain.event.entity.KafkaTopics;
 import com.eum.user_service.domain.user.entity.Member;
 import com.eum.user_service.global.exception.ErrorCode;
@@ -32,7 +30,7 @@ public class EventProducerImpl implements EventProducer {
     }
 
     @Override
-    public void sendTeacherUpdatedEvent(TeacherInfoEvent event) {
+    public void sendTeacherUpdatedEvent(TeacherImageEvent event) {
         try {
             kafkaTemplate.send(KafkaTopics.UPDATE_TEACHER.getTopicName(), event);
         } catch (Exception e) {
@@ -59,7 +57,7 @@ public class EventProducerImpl implements EventProducer {
     }
 
     @Override
-    public void sendStudentUpdatedEvent(StudentInfoEvent event) {
+    public void sendStudentUpdatedEvent(StudentImageEvent event) {
         try {
             kafkaTemplate.send(KafkaTopics.UPDATE_STUDENT.getTopicName(), event);
         } catch (Exception e) {
