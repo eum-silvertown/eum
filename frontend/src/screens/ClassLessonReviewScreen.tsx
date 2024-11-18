@@ -1,37 +1,40 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useReviewLectureStore } from '@store/useReviewLectureStore';
-import { useQuery } from '@tanstack/react-query';
-import { getFileDetail } from '@services/problemService';
+import React, {useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {useReviewLectureStore} from '@store/useReviewLectureStore';
+import {useQuery} from '@tanstack/react-query';
+import {getFileDetail} from '@services/problemService';
 import ProblemSection from '@components/common/ProblemSection';
 import StudentCanvasReviewSection from '@components/classActivity/StudentCanvasReviewSection';
-import { useAuthStore } from '@store/useAuthStore';
-import { getStudentDrawingData, getTeacherDrawingData } from '@services/lessonService';
-import { useRoute } from '@react-navigation/native';
+import {useAuthStore} from '@store/useAuthStore';
+import {
+  getStudentDrawingData,
+  getTeacherDrawingData,
+} from '@services/lessonService';
+import {useRoute} from '@react-navigation/native';
 
 function ClassLessonReviewScreen(): React.JSX.Element {
   const route = useRoute();
-  const teacherId = useReviewLectureStore((state) => state.teacherId);
-  const { lessonId, questionIds } = route.params as {
+  const teacherId = useReviewLectureStore(state => state.teacherId);
+  const {lessonId, questionIds} = route.params as {
     lessonId: number;
     questionIds: number[];
   };
-  const studentId = useAuthStore((state) => state.userInfo.id);
-  const role = useAuthStore((state) => state.userInfo.role);
+  const studentId = useAuthStore(state => state.userInfo.id);
+  const role = useAuthStore(state => state.userInfo.role);
 
   const [currentPage, setCurrentPage] = useState(0);
 
   const currentQuestionId = questionIds?.[currentPage];
 
   // 문제 데이터 가져오기
-  const { data: lessonProblems } = useQuery({
+  const {data: lessonProblems} = useQuery({
     queryKey: ['lessonProblems', questionIds],
-    queryFn: async ({ queryKey }) => {
+    queryFn: async ({queryKey}) => {
       const [, responseQuestionIds] = queryKey;
       const problemDetails = await Promise.all(
-        (responseQuestionIds as number[]).map((questionId) =>
-          getFileDetail(questionId)
-        )
+        (responseQuestionIds as number[]).map(questionId =>
+          getFileDetail(questionId),
+        ),
       );
       return problemDetails;
     },
@@ -39,7 +42,7 @@ function ClassLessonReviewScreen(): React.JSX.Element {
   });
 
   // 선생님 그림 데이터 가져오기
-  const { data: teacherDrawingData } = useQuery({
+  const {data: teacherDrawingData} = useQuery({
     queryKey: ['teacherDrawing', teacherId, lessonId, currentQuestionId],
     queryFn: async () => {
       if (teacherId && lessonId && currentQuestionId) {
@@ -51,7 +54,7 @@ function ClassLessonReviewScreen(): React.JSX.Element {
   });
 
   // 학생 그림 데이터 가져오기
-  const { data: studentDrawingData } = useQuery({
+  const {data: studentDrawingData} = useQuery({
     queryKey: ['studentDrawing', studentId, lessonId, currentQuestionId],
     queryFn: async () => {
       if (studentId && lessonId && currentQuestionId) {
@@ -59,7 +62,12 @@ function ClassLessonReviewScreen(): React.JSX.Element {
       }
       return null;
     },
-    enabled: !!(studentId && lessonId && currentQuestionId && (role === 'STUDENT')), // 데이터가 존재할 때만 요청
+    enabled: !!(
+      studentId &&
+      lessonId &&
+      currentQuestionId &&
+      role === 'STUDENT'
+    ), // 데이터가 존재할 때만 요청
   });
 
   const problems = lessonProblems || [];
@@ -80,7 +88,9 @@ function ClassLessonReviewScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <ProblemSection problemText={problems[currentPage]?.content || ''} />
+      <View style={{marginLeft: '15%', marginTop: '5%'}}>
+        <ProblemSection problemText={problems[currentPage]?.content || ''} />
+      </View>
       <StudentCanvasReviewSection
         teacherDrawing={teacherDrawing}
         studentDrawing={studentDrawing}

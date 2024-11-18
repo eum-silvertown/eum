@@ -5,7 +5,13 @@ import { navigationRef } from './src/services/NavigationService';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import { ScreenType, useCurrentScreenStore } from './src/store/useCurrentScreenStore';
 import MainLayout from './src/components/common/MainLayout';
-import { Keyboard, Pressable, TouchableWithoutFeedback, useWindowDimensions, View } from 'react-native';
+import {
+  Keyboard,
+  Pressable,
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { Platform, UIManager } from 'react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -120,7 +126,6 @@ function App(): React.JSX.Element {
     info: (props: any) => (
       <Pressable
         style={styles.toastContainer}
-
         onPress={() => {
           switch (props.props.type) {
             case '수업 생성':
@@ -165,7 +170,9 @@ function App(): React.JSX.Element {
         )}
       </Pressable>
     ),
-  }), [styles.toastContainer, width]);
+  }),
+    [styles.toastContainer, width],
+  );
 
   // 알림 수신 관리
   useEffect(() => {

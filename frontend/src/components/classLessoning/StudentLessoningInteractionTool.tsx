@@ -44,7 +44,7 @@ const StudentLessoningInteractionTool = ({
   handleGoToTeacherScreen,
 }: LessoningInteractionToolForStudentProps) => {
   const navigation = useNavigation<NavigationProps>();
-  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
+  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(true);
   const queryClient = useQueryClient();
   const lectureId = useLessonStore(state => state.lectureId);
   const { open, closeAll } = useModal();

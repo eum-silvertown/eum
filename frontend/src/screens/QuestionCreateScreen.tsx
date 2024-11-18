@@ -9,6 +9,7 @@ import CreateInput from '@components/questionBox/CreateInput';
 import {
   createLesson,
   CreateLessonRequest,
+  CreateLessonResponse,
   switchLessonStatus,
   SwitchLessonStatusResponse,
 } from '@services/lessonService';
@@ -36,6 +37,7 @@ import {
 import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useLessonStore } from '@store/useLessonStore';
+import { useLessoningStore } from '@store/useLessoningStore';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
@@ -61,7 +63,6 @@ function QuestionCreateScreen(): React.JSX.Element {
   useFocusEffect(() => {
     setCurrentScreen('QuestionCreateScreen');
   });
-
   const [title, setTitle] = useState(''); // 제목 상태
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [questionIds, setQuestionIds] = useState<number[]>([]);
@@ -98,13 +99,27 @@ function QuestionCreateScreen(): React.JSX.Element {
     switchLectureStatusMutation.mutate(lectureId);
   };
 
-  // Lesson 생성
   const lessonMutation = useMutation({
     mutationFn: (newLessonData: CreateLessonRequest) =>
-      createLesson(newLessonData),
-    onSuccess: () => {
-      console.log('레슨 생성 완료');
+      createLesson(newLessonData), // createLesson 호출
+    onSuccess: (response: CreateLessonResponse) => {
+      console.log('레슨 생성 응답:', response);
+
+      // lessonId를 response.data에서 가져옴
+      const lessonId = response.data;
+
+      if (lessonId) {
+        // lessonId 저장
+        useLessoningStore.getState().setLessonId(lessonId);
+        console.log('Lesson ID 저장 완료:', lessonId);
+      } else {
+        console.error('Lesson ID가 응답에서 존재하지 않습니다.');
+      }
+
+      // 기존 상태 저장 로직
       setLessonInfo(lectureId, questionIds);
+
+      // 수업 상태 변경 트리거
       handleSwitchLectureStatus();
     },
     onError: error => {

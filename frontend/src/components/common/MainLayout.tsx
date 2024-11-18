@@ -20,7 +20,8 @@ function MainLayout({children}: MainLayoutProps): React.JSX.Element {
 
   // Sidebar가 보이지 않아야 하는 스크린 설정
   const screensWithoutSidebar = [
-    'LessoningScreen',
+    'LessoningTeacherScreen',
+    'LessoningStudentScreen',
     'LessoningStudentListScreen',
     'QuestionCreateScreen',
   ];

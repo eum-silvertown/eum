@@ -96,10 +96,8 @@ function ConfirmSolvedScreen(): React.JSX.Element {
     }
   }, [examDetail, homeworkDetail, open, solvedType]);
 
-  const problems =
-    solvedType === 'EXAM' ? examProblems : homeworkProblems;
-  const detail =
-    solvedType === 'EXAM' ? examDetail : homeworkDetail;
+  const problems = solvedType === 'EXAM' ? examProblems : homeworkProblems;
+  const detail = solvedType === 'EXAM' ? examDetail : homeworkDetail;
 
   if (!detail || !problems) {
     return <Text>Loading...</Text>;
@@ -116,10 +114,11 @@ function ConfirmSolvedScreen(): React.JSX.Element {
         submission => submission.questionId === currentQuestionId,
       )?.homeworkSolution; // HOMEWORK의 solution
 
-
   return (
     <View style={styles.container}>
-      <ProblemSection problemText={problems[currentPage].content} />
+      <View style={{ marginLeft: '15%', marginTop: '5%' }}>
+        <ProblemSection problemText={problems[currentPage].content} />
+      </View>
       <StudentCanvasResolveSection
         currentPage={currentPage + 1}
         totalPages={problems.length}
