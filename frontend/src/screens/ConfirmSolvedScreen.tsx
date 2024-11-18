@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
-import { getExamSubmissionDetail } from '@services/examService';
-import { getHomeworkSubmissionDetail } from '@services/homeworkService';
-import { getFileDetail } from '@services/problemService';
-import { useAuthStore } from '@store/useAuthStore';
-import { useLessonStore } from '@store/useLessonStore';
-import ProblemSection from '@components/common/ProblemSection';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
+import {useRoute} from '@react-navigation/native';
+import {useQuery} from '@tanstack/react-query';
+import {getExamSubmissionDetail} from '@services/examService';
+import {getHomeworkSubmissionDetail} from '@services/homeworkService';
+import {getFileDetail} from '@services/problemService';
+import {useAuthStore} from '@store/useAuthStore';
+import {useLessonStore} from '@store/useLessonStore';
+import ProblemExSection from '@components/questionBox/ProblemExSection';
 import StudentCanvasResolveSection from '@components/classActivity/StudentCanvasResolveSection';
 import { useModal } from '@hooks/useModal';
 import OverviewModal from '@components/classActivity/OverviewModal';
@@ -116,8 +116,11 @@ function ConfirmSolvedScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <View style={{ marginLeft: '15%', marginTop: '5%' }}>
-        <ProblemSection problemText={problems[currentPage].content} />
+      <View style={{marginLeft: '15%', marginTop: '5%'}}>
+        <ProblemExSection
+          problemText={problems[currentPage].content}
+          fontSize={16}
+        />
       </View>
       <StudentCanvasResolveSection
         currentPage={currentPage + 1}
