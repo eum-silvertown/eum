@@ -43,7 +43,7 @@ public class HomeworkProblemSubmission {
 	private Boolean isCorrect;
 
 	@Setter
-	@Column(name = "homework_solution")
+	@Column(name = "homework_solution", columnDefinition = "TEXT")
 	private String homeworkSolution;
 }
 
