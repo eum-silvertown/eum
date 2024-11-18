@@ -14,5 +14,6 @@ public class DrawingRequestDTO {
     private Long questionId;
     private double width;
     private double height;
+    private double ratio;
     private String drawingData;
 }
