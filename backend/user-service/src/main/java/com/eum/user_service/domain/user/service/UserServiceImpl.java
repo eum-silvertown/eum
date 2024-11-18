@@ -1,8 +1,6 @@
 package com.eum.user_service.domain.user.service;
 
-import com.eum.user_service.domain.event.dto.ClassEvent;
-import com.eum.user_service.domain.event.dto.StudentInfoEvent;
-import com.eum.user_service.domain.event.dto.TeacherInfoEvent;
+import com.eum.user_service.domain.event.dto.*;
 import com.eum.user_service.domain.event.service.EventProducer;
 import com.eum.user_service.domain.file.dto.ImageResponse;
 import com.eum.user_service.domain.file.service.FileService;
@@ -152,9 +150,9 @@ public class UserServiceImpl implements UserService {
                 .getPresignedUrlForUpload(member.getUserId());
         member.updateUserImage(imageResponse.image());
         if(member.getRole() == Role.STUDENT) {
-            eventProducer.sendStudentUpdatedEvent(StudentInfoEvent.from(member,imageResponse));
+            eventProducer.sendStudentUpdatedEvent(StudentImageEvent.from(member,imageResponse));
         } else {
-            eventProducer.sendTeacherUpdatedEvent(TeacherInfoEvent.from(member,imageResponse));
+            eventProducer.sendTeacherUpdatedEvent(TeacherImageEvent.from(member,imageResponse));
         }
         return imageResponse;
     }
