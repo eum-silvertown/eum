@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {useFocusEffect, useRoute} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import ProblemSection from '@components/common/ProblemSection';
+import ProblemExSection from '@components/questionBox/ProblemExSection';
 import StudentExamCanvasSection from '@components/classActivity/StudentExamCanvasSection';
 import {useQuery} from '@tanstack/react-query';
 import {getFileDetail} from '@services/problemService';
@@ -94,7 +94,10 @@ function SolveExamScreen(): React.JSX.Element {
           남은 시간: {formatTime(remainingTime)}
         </Text>
         <View style={{marginLeft: '15%', marginTop: '5%'}}>
-          <ProblemSection problemText={problems[currentPage - 1].content} />
+          <ProblemExSection
+            problemText={problems[currentPage - 1].content}
+            fontSize={16}
+          />
         </View>
         <StudentExamCanvasSection
           solveType="EXAM"

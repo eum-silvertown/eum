@@ -7,7 +7,7 @@ import {getHomeworkSubmissionDetail} from '@services/homeworkService';
 import {getFileDetail} from '@services/problemService';
 import {useAuthStore} from '@store/useAuthStore';
 import {useLessonStore} from '@store/useLessonStore';
-import ProblemSection from '@components/common/ProblemSection';
+import ProblemExSection from '@components/questionBox/ProblemExSection';
 import StudentCanvasResolveSection from '@components/classActivity/StudentCanvasResolveSection';
 import {useModal} from 'src/hooks/useModal';
 import OverviewModal from '@components/classActivity/OverviewModal';
@@ -117,7 +117,10 @@ function ConfirmSolvedScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <View style={{marginLeft: '15%', marginTop: '5%'}}>
-        <ProblemSection problemText={problems[currentPage].content} />
+        <ProblemExSection
+          problemText={problems[currentPage].content}
+          fontSize={16}
+        />
       </View>
       <StudentCanvasResolveSection
         currentPage={currentPage + 1}
