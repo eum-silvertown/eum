@@ -53,7 +53,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		event.getStudentIds().forEach(studentId -> {
 
-			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject(), event.getType());
+			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject(), event.getType(), event.getLectureId());
 
 			Notifications notification = Notifications.builder()
 				.memberId(studentId)
@@ -74,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		event.getStudentIds().forEach(studentId -> {
 
-			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject(), event.getType());
+			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject(), event.getType(), event.getLectureId());
 
 			Notifications notification = Notifications.builder()
 				.memberId(studentId)
@@ -95,7 +95,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		event.getStudentIds().forEach(studentId -> {
 
-			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject(), event.getType());
+			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject(), event.getType(), event.getExamId());
 
 			Notifications notification = Notifications.builder()
 				.memberId(studentId)
@@ -116,7 +116,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		event.getStudentIds().forEach(studentId -> {
 
-			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject(), event.getType());
+			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject(), event.getType(), event.getHomeworkId());
 
 			Notifications notification = Notifications.builder()
 				.memberId(studentId)
@@ -187,7 +187,7 @@ public class NotificationServiceImpl implements NotificationService {
 		}
 	}
 
-	private void sendFcmNotification(Long memberId, String title, String body, String eventTitle, String subject, String type) {
+	private void sendFcmNotification(Long memberId, String title, String body, String eventTitle, String subject, String type, Long id) {
 		String fcmToken = getFcmTokenByMemberId(memberId);
 		if (fcmToken == null || fcmToken.isEmpty()) {
 			log.warn("FCM 토큰이 존재하지 않습니다. memberId: " + memberId);
@@ -203,6 +203,7 @@ public class NotificationServiceImpl implements NotificationService {
 			.putData("title", eventTitle)
 			.putData("subject", subject)
 			.putData("type", type)
+			.putData("id", String.valueOf(id))
 			.build();
 
 		try {
