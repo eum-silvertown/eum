@@ -73,7 +73,7 @@ const StudentRealTimeCanvasSection = ({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
-  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
+  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(true);
   const studentId = useAuthStore(state => state.userInfo.id);
 
   const roundToTwoDecimals = (value: number): number => {

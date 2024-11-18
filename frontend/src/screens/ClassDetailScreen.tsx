@@ -30,6 +30,7 @@ import EmptyData from '@components/common/EmptyData';
 import {useAuthStore} from '@store/useAuthStore';
 import {useLectureStore, useLessonStore} from '@store/useLessonStore';
 import {useReviewLectureStore} from '@store/useReviewLectureStore';
+import {useLessoningStore} from '@store/useLessoningStore';
 
 type BookLectureProps = {
   lectureId: number;
@@ -66,6 +67,15 @@ function ClassDetailScreen({lectureId}: BookLectureProps): React.JSX.Element {
         setLessonInfo(
           lectureDetail.lessons[lectureDetail.lessons.length - 1].lessonId,
           lectureDetail.lessons[lectureDetail.lessons.length - 1].questions,
+        );
+        useLessoningStore
+          .getState()
+          .setLessonId(
+            lectureDetail.lessons[lectureDetail.lessons.length - 1].lessonId,
+          );
+        console.log(
+          'Lesson ID 저장 완료:',
+          lectureDetail.lessons[lectureDetail.lessons.length - 1].lessonId,
         );
       }
     }

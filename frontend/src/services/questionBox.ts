@@ -343,7 +343,6 @@ export async function detailQuestion(
     const {data} = await authApiClient.get<ApiResponse<DetailQuestionType>>(
       `file/${fileId}`,
     );
-    console.log(data.data);
     return data.data;
   } catch (error) {
     console.error('Failed to detailQuestion: ', error);
