@@ -26,7 +26,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic", "/queue");
+        registry.enableSimpleBroker("/topic", "/queue")
+                .setHeartbeatValue(new long[]{10000, 10000});
         registry.setApplicationDestinationPrefixes("/app");
         registry.setUserDestinationPrefix("/user");
     }
@@ -36,7 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/drawing")
                 .setAllowedOriginPatterns("*")
                 .withSockJS()
-                .setDisconnectDelay(30 * 1000)
+                .setDisconnectDelay(60 * 1000)
                 .setHeartbeatTime(25 * 1000);
 
         registry.addEndpoint("/drawing")
