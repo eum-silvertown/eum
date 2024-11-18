@@ -35,7 +35,10 @@ public enum ErrorCode {
     REFRESH_TOKEN_NOT_FOUND("A007", "Refresh Token을 찾을 수 없습니다.", HttpStatus.UNAUTHORIZED),
 
     //todo
-    TODO_NOT_FOUND("T001","등록되지 않은 todo 정보 입니다.", HttpStatus.BAD_REQUEST);
+    TODO_NOT_FOUND("T001","등록되지 않은 todo 정보 입니다.", HttpStatus.BAD_REQUEST),
+
+    //todoHomework
+    TODO_HOMEWORK_NOT_FOUND("TH001","등록되지 않은 todo homework 정보 입니다.", HttpStatus.BAD_REQUEST);
 
 
     private final String code;
