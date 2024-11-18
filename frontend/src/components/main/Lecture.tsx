@@ -89,10 +89,8 @@ const getStyles = (width: number) =>
     lectureContainer: {
       flex: 1,
       alignItems: 'center',
-      paddingTop: width * 0.01,
-      marginTop: width * 0.01,
-      paddingRight: width * 0.01,
-      marginRight: width * 0.01,
+      paddingTop: width * 0.005,
+      paddingRight: width * 0.005,
     },
     pagesContainer: {
       width: '100%',
@@ -129,7 +127,6 @@ const getStyles = (width: number) =>
       position: 'absolute',
       width: '100%',
       height: '100%',
-      backgroundColor: 'white',
       borderColor: '#7a7a7a',
       borderRadius: width * 0.005,
       borderWidth: width * 0.0005,
