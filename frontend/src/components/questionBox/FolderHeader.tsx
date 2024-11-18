@@ -39,7 +39,7 @@ function FolderHeader(): React.JSX.Element {
   const openQuestionCreateModal = () => {
     open(<CreateQuestionModal />, {
       title: '문제 생성',
-      size: 'md',
+      size: 'sm',
     });
   };
 
