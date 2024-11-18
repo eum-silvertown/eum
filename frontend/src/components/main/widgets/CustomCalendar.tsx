@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import React, {useState} from 'react';
+import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import ContentLayout from './ContentLayout';
 import IntoIcon from '@assets/icons/intoIcon.svg';
-import { Text } from '@components/common/Text';
-import { iconSize } from '@theme/iconSize';
-import { spacing } from '@theme/spacing';
-import { colors } from '@hooks/useColors';
-import { borderRadius } from '@theme/borderRadius';
+import {Text} from '@components/common/Text';
+import {iconSize} from '@theme/iconSize';
+import {spacing} from '@theme/spacing';
+import {colors} from '@hooks/useColors';
+import {borderRadius} from '@theme/borderRadius';
+import CalendarModal from './CalendarModal';
+import {useModal} from '@hooks/useModal';
+
+type CustomCalendarProps = {
+  homeworkTodoResponseList: {
+    id: number;
+    backgroundColor: string;
+    lectureId: number;
+    lectureTitle: string;
+    subject: string;
+    title: string;
+    startTime: string;
+    endTime: string;
+  }[];
+};
 
 // 특정 달의 날짜 계산 함수
 const getDaysInMonth = (month: number, year: number) => {
@@ -27,9 +42,11 @@ const getDaysInMonth = (month: number, year: number) => {
   return days;
 };
 
-export default function CustomCalendar() {
+export default function CustomCalendar({
+  homeworkTodoResponseList,
+}: CustomCalendarProps): React.JSX.Element {
+  const {open} = useModal();
   const [currentDate, setCurrentDate] = useState(new Date());
-
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const today = new Date();
@@ -53,9 +70,45 @@ export default function CustomCalendar() {
       month === today.getMonth() &&
       year === today.getFullYear();
 
+    // 오늘 날짜 객체 생성
+    const currentDay = new Date(
+      year,
+      month,
+      typeof item === 'number' ? item : 0,
+    );
+
+    // 해당 날짜에 마감일이 있는 일정 필터링
+    const eventsOnDay = homeworkTodoResponseList.filter(event => {
+      const eventEndDate = new Date(event.endTime); // 문자열을 Date 객체로 변환
+      return (
+        eventEndDate.getDate() === currentDay.getDate() &&
+        eventEndDate.getMonth() === currentDay.getMonth() &&
+        eventEndDate.getFullYear() === currentDay.getFullYear()
+      );
+    });
+
     return (
-      <TouchableOpacity style={[styles.day, isToday && styles.todayDay]}>
-        <Text style={isToday && styles.todayText}>{item}</Text>
+      <TouchableOpacity
+        style={[
+          styles.day,
+          isToday && styles.todayDay,
+          eventsOnDay.length > 0 && styles.eventDay,
+        ]}
+        onPress={() => {
+          if (eventsOnDay.length > 0) {
+            open(<CalendarModal events={eventsOnDay} />, {
+              title: `${year}-${month + 1}-${currentDay.getDate()} 일정`,
+              size: 'xs',
+            });
+          }
+        }}>
+        <Text
+          style={[
+            isToday && styles.todayText,
+            eventsOnDay.length > 0 && styles.eventText,
+          ]}>
+          {item}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -63,6 +116,7 @@ export default function CustomCalendar() {
   return (
     <ContentLayout>
       <View style={styles.container}>
+        {/* 헤더 */}
         <View style={styles.header}>
           <TouchableOpacity onPress={goToPreviousMonth}>
             <IntoIcon
@@ -72,7 +126,6 @@ export default function CustomCalendar() {
             />
           </TouchableOpacity>
 
-          {/* 현재 년/월 표시, 클릭 시 오늘 날짜로 이동 */}
           <TouchableOpacity onPress={goToToday}>
             <Text weight="bold">{`${year}년 ${month + 1}월`}</Text>
           </TouchableOpacity>
@@ -82,25 +135,27 @@ export default function CustomCalendar() {
           </TouchableOpacity>
         </View>
 
+        {/* 요일 */}
         <View style={styles.weekdays}>
           {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
             <Text
               key={day}
               style={[
-                index === 0 && { color: 'red' }, // 일요일
-                index === 6 && { color: 'blue' }, // 토요일
+                index === 0 && {color: 'red'},
+                index === 6 && {color: 'blue'},
               ]}>
               {day}
             </Text>
           ))}
         </View>
 
+        {/* 날짜 */}
         <FlatList
           data={days}
           renderItem={renderDay}
           keyExtractor={(item, index) => index.toString()}
-          numColumns={7} // 7일씩 한 줄에 배치
-          contentContainerStyle={{ flex: 1, justifyContent: 'space-between' }}
+          numColumns={7}
+          contentContainerStyle={{flex: 1, justifyContent: 'space-between'}}
         />
       </View>
     </ContentLayout>
@@ -130,13 +185,19 @@ const styles = StyleSheet.create({
     marginVertical: spacing.sm,
   },
   todayDay: {
-    borderColor: colors.light.background.main,
     backgroundColor: colors.light.background.main,
-    borderWidth: borderRadius.sm,
     borderRadius: borderRadius.xl,
   },
   todayText: {
-    color: '#FFFFFF', // 오늘 날짜 텍스트 색상
+    color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  eventDay: {
+    borderColor: 'blue',
+    borderWidth: 2,
+    borderRadius: borderRadius.xl,
+  },
+  eventText: {
+    // color: 'blue',
   },
 });

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
-import { Text } from '@components/common/Text';
+import React, {useState} from 'react';
+import {StyleSheet, View, TouchableOpacity, ScrollView} from 'react-native';
+import {Text} from '@components/common/Text';
 import ContentLayout from './ContentLayout';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
 import { iconSize } from '@theme/iconSize';
 import Todo from './Todo';
+import HoemworkTodo from './HomeworkTodo';
 import AddTodoModal from './AddTodoModal';
-import { useModal } from '@hooks/useModal';
-import { getTodos } from '@services/todoService';
-import { colors } from '@hooks/useColors';
+import {useModal} from '@hooks/useModal';
+import {colors} from '@hooks/useColors';
 
 interface TodoType {
   id: number;
@@ -20,37 +20,34 @@ interface TodoType {
   isDone: boolean;
 }
 
-export default function TodoList(): React.JSX.Element {
-  const [completedTodos, setCompletedTodos] = useState<TodoType[]>([]);
-  const [notCompletedTodos, setNotCompletedTodos] = useState<TodoType[]>([]);
-  const [allTodos, setAllTodos] = useState<TodoType[]>([]);
+interface HomeworkType {
+  id: number;
+  backgroundColor: string;
+  lectureId: number;
+  lectureTitle: string;
+  subject: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+}
+
+type TodoListProps = {
+  completedTodos: TodoType[];
+  notCompletedTodos: TodoType[];
+  homeworkTodoResponseList: HomeworkType[];
+  onReload: () => void; // 갱신 함수
+};
+
+export default function TodoList({
+  completedTodos,
+  notCompletedTodos,
+  homeworkTodoResponseList,
+  onReload,
+}: TodoListProps): React.JSX.Element {
   const [selectedTab, setSelectedTab] = useState<
-    'all' | 'notCompleted' | 'completed'
+    'homework' | 'notCompleted' | 'completed'
   >('notCompleted');
-  const { open } = useModal();
-
-  const loadTodos = async () => {
-    try {
-      const response = await getTodos();
-      const completed = response.data.completedTodoResponseList;
-      const notCompleted = response.data.notCompletedTodoResponseList;
-      setCompletedTodos(completed);
-      setNotCompletedTodos(notCompleted);
-
-      // 전체 목록을 updateAt 기준으로 정렬
-      const combinedTodos = [...completed, ...notCompleted].sort(
-        (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      );
-      setAllTodos(combinedTodos);
-    } catch (error) {
-      console.error('투두 리스트를 가져오는 중 오류 발생:', error);
-    }
-  };
-
-  useEffect(() => {
-    loadTodos();
-  }, []);
+  const {open} = useModal();
 
   return (
     <ContentLayout flex={2}>
@@ -60,7 +57,7 @@ export default function TodoList(): React.JSX.Element {
         </Text>
         <TouchableOpacity
           onPress={() => {
-            open(<AddTodoModal onTodoListUpdate={loadTodos} />, {
+            open(<AddTodoModal onTodoListUpdate={onReload} />, {
               title: '할 일 생성',
               onClose: () => {
                 console.log('할 일 생성 Closed!');
@@ -94,30 +91,33 @@ export default function TodoList(): React.JSX.Element {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'all' && styles.activeTab]}
-          onPress={() => setSelectedTab('all')}>
+          style={[
+            styles.tabButton,
+            selectedTab === 'homework' && styles.activeTab,
+          ]}
+          onPress={() => setSelectedTab('homework')}>
           <Text variant="body" weight="medium">
-            전체
+            숙제
           </Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {selectedTab === 'all' ? (
-          allTodos.length === 0 ? (
+        {selectedTab === 'homework' ? (
+          homeworkTodoResponseList.length === 0 ? (
             <View style={styles.emptyMessageContainer}>
               <Text variant="body" weight="medium">
                 할 일이 없습니다.
               </Text>
             </View>
           ) : (
-            allTodos.map(item => (
-              <Todo
+            homeworkTodoResponseList.map(item => (
+              <HoemworkTodo
                 key={item.id}
                 item={item}
-                onEdit={loadTodos}
-                onToggleComplete={loadTodos}
-                onDelete={loadTodos}
+                onEdit={onReload}
+                onToggleComplete={onReload}
+                onDelete={onReload}
               />
             ))
           )
@@ -133,9 +133,9 @@ export default function TodoList(): React.JSX.Element {
               <Todo
                 key={item.id}
                 item={item}
-                onEdit={loadTodos}
-                onToggleComplete={loadTodos}
-                onDelete={loadTodos}
+                onEdit={onReload}
+                onToggleComplete={onReload}
+                onDelete={onReload}
               />
             ))
           )
@@ -146,15 +146,22 @@ export default function TodoList(): React.JSX.Element {
             </Text>
           </View>
         ) : (
-          completedTodos.map(item => (
-            <Todo
-              key={item.id}
-              item={item}
-              onEdit={loadTodos}
-              onToggleComplete={loadTodos}
-              onDelete={loadTodos}
-            />
-          ))
+          <View>
+            <View>
+              <Text align="center" color="error">
+                ※ 완료된 항목은 하루 뒤에 자동으로 삭제됩니다.
+              </Text>
+            </View>
+            {completedTodos.map(item => (
+              <Todo
+                key={item.id}
+                item={item}
+                onEdit={onReload}
+                onToggleComplete={onReload}
+                onDelete={onReload}
+              />
+            ))}
+          </View>
         )}
       </ScrollView>
     </ContentLayout>
