@@ -18,9 +18,12 @@ import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.event.homework.HomeworkCreateEvent;
 import com.eum.lecture_service.event.event.homework.HomeworkDeleteEvent;
+import com.eum.lecture_service.event.event.homework.HomeworkTodoCreateEvent;
 import com.eum.lecture_service.event.event.homework.HomeworkUpdateEvent;
 import com.eum.lecture_service.event.event.notification.HomeworkCreatedNotificationEvent;
+import com.eum.lecture_service.query.document.eventModel.ClassModel;
 import com.eum.lecture_service.query.document.eventModel.StudentModel;
+import com.eum.lecture_service.query.repository.ClassReadRepository;
 import com.eum.lecture_service.query.repository.StudentReadRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HomeworkServiceImpl implements HomeworkService {
 
+	private final ClassReadRepository classReadRepository;
 	private final HomeworkRepository homeworkRepository;
 	private final LectureRepository lectureRepository;
 	private final StudentReadRepository studentReadRepository;
@@ -41,6 +45,9 @@ public class HomeworkServiceImpl implements HomeworkService {
 			.orElseThrow(() -> new EumException(ErrorCode.LECTURE_NOT_FOUND));
 		checkDuplicateTitle(lecture.getHomeworks(), homeworkDto.getTitle());
 
+		ClassModel classmodel = classReadRepository.findById(lecture.getClassId())
+			.orElseThrow(() -> new EumException(ErrorCode.CLASS_NOT_FOUND));
+
 		Homework homework = homeworkDto.toHomeworkEntity(lecture);
 		homework.setHomeworkQuestions(createHomeworkQuestions(homeworkDto.getQuestionIds(), homework));
 
@@ -50,6 +57,9 @@ public class HomeworkServiceImpl implements HomeworkService {
 
 		//알림이벤트
 		publishHomeworkNotificationCreateEvent(savedHomework, lecture);
+
+		//투두이벤트
+		publishHomeworkTodoCreateEvent(lecture, savedHomework, classmodel);
 
 		return savedHomework.getHomeworkId();
 	}
@@ -71,6 +81,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 
 		return savedHomework.getHomeworkId();
 	}
+
 
 	@Override
 	@Transactional
@@ -138,6 +149,23 @@ public class HomeworkServiceImpl implements HomeworkService {
 			questionIds
 		);
 		kafkaTemplate.send("homework-update-topic", event);
+	}
+
+	private void publishHomeworkTodoCreateEvent(Lecture lecture, Homework savedHomework, ClassModel classmodel) {
+		HomeworkTodoCreateEvent event = HomeworkTodoCreateEvent.builder()
+			.homeworkId(savedHomework.getHomeworkId())
+			.lectureId(lecture.getLectureId())
+			.lectureTitle(lecture.getTitle())
+			.subject(lecture.getSubject())
+			.title(savedHomework.getTitle())
+			.startTime(savedHomework.getStartTime())
+			.endTime(savedHomework.getEndTime())
+			.grade(classmodel.getGrade())
+			.school(classmodel.getSchool())
+			.classNumber(classmodel.getClassNumber())
+			.build();
+
+		kafkaTemplate.send("homework-todo-create-topic", event);
 	}
 
 	private void publishHomeworkDeleteEvent(Homework homework) {
