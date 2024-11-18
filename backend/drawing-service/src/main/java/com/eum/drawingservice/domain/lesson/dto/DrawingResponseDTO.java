@@ -11,6 +11,7 @@ public class DrawingResponseDTO {
 	private String drawingData;
 	private double width;
 	private double height;
+	private double ratio;
 	private Long lessonId;
 	private Long memberId;
 	private Long questionId;
@@ -20,6 +21,7 @@ public class DrawingResponseDTO {
 				.drawingData(drawing.getDrawingData())
 				.width(Double.parseDouble(drawing.getWidth()))
 				.height(Double.parseDouble(drawing.getHeight()))
+				.ratio(Double.parseDouble(drawing.getRatio()))
 				.lessonId(Long.valueOf(drawing.getLessonId()))
 				.memberId(Long.valueOf(drawing.getMemberId()))
 				.questionId(Long.valueOf(drawing.getQuestionId()))
