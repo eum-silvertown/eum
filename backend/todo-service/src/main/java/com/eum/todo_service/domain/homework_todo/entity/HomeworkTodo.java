@@ -20,18 +20,20 @@ public class HomeworkTodo {
     private String lectureTitle;
     private String subject;
     private String title;
+    private String backgroundColor;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
     @Builder
-    public HomeworkTodo(Long studentId, Long homeworkId, Long lectureId, String lectureTitle,
-                        String subject, String title, LocalDateTime startTime, LocalDateTime endTime) {
+    public HomeworkTodo(Long studentId, Long homeworkId, Long lectureId, String lectureTitle, String subject,
+                        String title, String backgroundColor, LocalDateTime startTime, LocalDateTime endTime) {
         this.studentId = studentId;
         this.homeworkId = homeworkId;
         this.lectureId = lectureId;
         this.lectureTitle = lectureTitle;
         this.subject = subject;
         this.title = title;
+        this.backgroundColor = backgroundColor;
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -44,6 +46,7 @@ public class HomeworkTodo {
                 .lectureTitle(homeworkTodoCreateEvent.getLectureTitle())
                 .subject(homeworkTodoCreateEvent.getSubject())
                 .title(homeworkTodoCreateEvent.getTitle())
+                .backgroundColor(homeworkTodoCreateEvent.getBackgroundColor())
                 .startTime(homeworkTodoCreateEvent.getStartTime())
                 .endTime(homeworkTodoCreateEvent.getEndTime())
                 .build();
