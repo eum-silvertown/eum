@@ -7,8 +7,8 @@ import { iconSize } from '@theme/iconSize';
 import Todo from './Todo';
 import HoemworkTodo from './HomeworkTodo';
 import AddTodoModal from './AddTodoModal';
-import {useModal} from 'src/hooks/useModal';
-import {colors} from 'src/hooks/useColors';
+import {useModal} from '@hooks/useModal';
+import {colors} from '@hooks/useColors';
 
 interface TodoType {
   id: number;

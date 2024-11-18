@@ -3,7 +3,7 @@ import {StyleSheet, View, TouchableOpacity, Animated} from 'react-native';
 import {Text} from '@components/common/Text';
 import {borderRadius} from '@theme/borderRadius';
 import ArrowDownIcon from '@assets/icons/arrowDownIcon.svg';
-import {colors} from 'src/hooks/useColors';
+import {colors} from '@hooks/useColors';
 import {getResponsiveSize} from '@utils/responsive';
 
 interface HomeworkProps {

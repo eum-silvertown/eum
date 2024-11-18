@@ -5,10 +5,10 @@ import IntoIcon from '@assets/icons/intoIcon.svg';
 import {Text} from '@components/common/Text';
 import {iconSize} from '@theme/iconSize';
 import {spacing} from '@theme/spacing';
-import {colors} from 'src/hooks/useColors';
+import {colors} from '@hooks/useColors';
 import {borderRadius} from '@theme/borderRadius';
 import CalendarModal from './CalendarModal';
-import {useModal} from 'src/hooks/useModal';
+import {useModal} from '@hooks/useModal';
 
 type CustomCalendarProps = {
   homeworkTodoResponseList: {
