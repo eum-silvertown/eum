@@ -87,7 +87,9 @@ function SolveExamScreen(): React.JSX.Element {
         <Text style={[styles.timerText, { color: getTimeColor() }]}>
           남은 시간: {formatTime(remainingTime)}
         </Text>
-        <ProblemSection problemText={problems[currentPage - 1].content} />
+        <View style={{marginLeft: '30%', marginTop: '5%'}}>
+          <ProblemSection problemText={problems[currentPage - 1].content} />
+        </View>
         <StudentExamCanvasSection
           solveType="EXAM"
           examId={examId}
