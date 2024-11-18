@@ -1,17 +1,19 @@
-import { useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import {useEffect, useState} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
+import {useFocusEffect, useRoute} from '@react-navigation/native';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
 import ProblemSection from '@components/common/ProblemSection';
 import StudentExamCanvasSection from '@components/classActivity/StudentExamCanvasSection';
-import { useQuery } from '@tanstack/react-query';
-import { getFileDetail } from '@services/problemService';
-import { useExamStore } from '@store/useExamStore';
+import {useQuery} from '@tanstack/react-query';
+import {getFileDetail} from '@services/problemService';
+import {useExamStore} from '@store/useExamStore';
 
 function SolveExamScreen(): React.JSX.Element {
-  const setCurrentScreen = useCurrentScreenStore(state => state.setCurrentScreen);
+  const setCurrentScreen = useCurrentScreenStore(
+    state => state.setCurrentScreen,
+  );
   const route = useRoute();
-  const { examId, questionIds } = route.params as {
+  const {examId, questionIds} = route.params as {
     examId: number;
     questionIds: number[];
   };
@@ -20,14 +22,14 @@ function SolveExamScreen(): React.JSX.Element {
   useFocusEffect(() => {
     setCurrentScreen('SolveExamScreen');
   });
-  const { exams } = useExamStore();
+  const {exams} = useExamStore();
   const {
     data: problems,
     isLoading,
     isError,
   } = useQuery({
     queryKey: ['examProblems', questionIds],
-    queryFn: async ({ queryKey }) => {
+    queryFn: async ({queryKey}) => {
       const [, responseQuestionIds] = queryKey;
       const problemDetails = await Promise.all(
         (responseQuestionIds as number[]).map(questionId =>
@@ -68,8 +70,12 @@ function SolveExamScreen(): React.JSX.Element {
 
   const getTimeColor = () => {
     const minutesLeft = remainingTime / (1000 * 60);
-    if (minutesLeft <= 5) { return 'red'; }
-    if (minutesLeft <= 10) { return 'orange'; }
+    if (minutesLeft <= 5) {
+      return 'red';
+    }
+    if (minutesLeft <= 10) {
+      return 'orange';
+    }
     return 'green';
   };
 
@@ -84,10 +90,12 @@ function SolveExamScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
-        <Text style={[styles.timerText, { color: getTimeColor() }]}>
+        <Text style={[styles.timerText, {color: getTimeColor()}]}>
           남은 시간: {formatTime(remainingTime)}
         </Text>
-        <ProblemSection problemText={problems[currentPage - 1].content} />
+        <View style={{marginLeft: '15%', marginTop: '5%'}}>
+          <ProblemSection problemText={problems[currentPage - 1].content} />
+        </View>
         <StudentExamCanvasSection
           solveType="EXAM"
           examId={examId}

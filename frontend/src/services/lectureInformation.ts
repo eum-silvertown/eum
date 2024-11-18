@@ -321,3 +321,20 @@ export const postCreateLecture = async (
     throw error;
   }
 };
+
+// 학생 태도 점수 조정 함수
+export const adjustStudentAttitudeScore = async (
+  lectureId: number,
+  studentId: number,
+): Promise<void> => {
+  try {
+    const {data} = await authApiClient.post<ApiResponse<null>>(
+      `/lecture/${lectureId}/attitude/${studentId}`,
+    );
+
+    console.log('학생 점수 조정 성공:', data.message);
+  } catch (error) {
+    console.error('학생 점수 조정 실패:', error);
+    throw error; // 에러 발생 시 호출 측으로 전달
+  }
+};

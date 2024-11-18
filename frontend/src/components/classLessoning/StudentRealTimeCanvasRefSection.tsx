@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Canvas, Path, Skia, useCanvasRef } from '@shopify/react-native-skia';
+import {useEffect, useState} from 'react';
+import {Canvas, Path, Skia, useCanvasRef} from '@shopify/react-native-skia';
 import pako from 'pako';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
 import base64 from 'react-native-base64';
-import { useQuery } from '@tanstack/react-query';
-import { getTeacherDrawingData } from '@services/lessonService';
+import {useQuery} from '@tanstack/react-query';
+import {getTeacherDrawingData} from '@services/lessonService';
 
 interface StudentCanvasSectionProps {
   receivedMessage: string | null;
@@ -34,7 +34,7 @@ function StudentRealTimeCanvasRefSection({
   const canvasRef = useCanvasRef();
   const [paths, setPaths] = useState<PathData[]>([]);
 
-  const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
+  const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
 
   // 기기 비율 계산을 위한 상태 변수
   const [widthRatio, setWidthRatio] = useState(1);
@@ -42,14 +42,20 @@ function StudentRealTimeCanvasRefSection({
 
   useEffect(() => {
     if (receivedMessage) {
+      console.log('receivedMessage', receivedMessage);
+
       const messageObject = JSON.parse(receivedMessage);
       if (
         messageObject.drawingData &&
         messageObject.width &&
         messageObject.height
       ) {
-        const newWidthRatio = parseFloat((deviceWidth / messageObject.width).toFixed(6));
-        const newHeightRatio = parseFloat((deviceHeight / messageObject.height).toFixed(6));
+        const newWidthRatio = parseFloat(
+          (deviceWidth / messageObject.width).toFixed(6),
+        );
+        const newHeightRatio = parseFloat(
+          (deviceHeight / messageObject.height).toFixed(6),
+        );
 
         setWidthRatio(newWidthRatio);
         setHeightRatio(newHeightRatio);
@@ -68,7 +74,7 @@ function StudentRealTimeCanvasRefSection({
         binaryString.split('').map(char => char.charCodeAt(0)),
       );
       const decompressedData = JSON.parse(
-        pako.inflate(compressedData, { to: 'string' }),
+        pako.inflate(compressedData, {to: 'string'}),
       );
 
       // 경로를 Skia Path로 변환
@@ -76,7 +82,7 @@ function StudentRealTimeCanvasRefSection({
         .map((pathData: any) => {
           const pathString = pathData.path;
           const path = Skia.Path.MakeFromSVGString(pathString);
-          return path ? { ...pathData, path } : null;
+          return path ? {...pathData, path} : null;
         })
         .filter(Boolean);
 
@@ -117,11 +123,20 @@ function StudentRealTimeCanvasRefSection({
   };
 
   // 선생님 그림 데이터 가져오기
-  const { data: teacherDrawingData } = useQuery({
-    queryKey: ['teacherDrawing', teacherId, lessonId, problemIds[currentPage - 1]],
+  const {data: teacherDrawingData} = useQuery({
+    queryKey: [
+      'teacherDrawing',
+      teacherId,
+      lessonId,
+      problemIds[currentPage - 1],
+    ],
     queryFn: async () => {
       if (teacherId && lessonId && problemIds[currentPage - 1]) {
-        return getTeacherDrawingData(teacherId, lessonId, problemIds[currentPage - 1]);
+        return getTeacherDrawingData(
+          teacherId,
+          lessonId,
+          problemIds[currentPage - 1],
+        );
       }
       return null;
     },
@@ -138,7 +153,6 @@ function StudentRealTimeCanvasRefSection({
   useEffect(() => {
     if (teacherDrawingData) {
       processCanvasData(teacherDrawingData.drawingData);
-
     }
   }, [teacherDrawingData, currentPage]);
   const processCanvasData = (base64EncodedData: string) => {
@@ -148,14 +162,14 @@ function StudentRealTimeCanvasRefSection({
         binaryString.split('').map(char => char.charCodeAt(0)),
       );
       const decompressedData = JSON.parse(
-        pako.inflate(compressedData, { to: 'string' }),
+        pako.inflate(compressedData, {to: 'string'}),
       );
 
       const parsedPaths = decompressedData
         .map((pathData: any) => {
           const pathString = pathData.path;
           const path = Skia.Path.MakeFromSVGString(pathString);
-          return path ? { ...pathData, path } : null;
+          return path ? {...pathData, path} : null;
         })
         .filter(Boolean);
 
@@ -167,21 +181,21 @@ function StudentRealTimeCanvasRefSection({
 
   return (
     <View style={styles.canvasLayout}>
-      {isTeacherScreenOn &&
+      {isTeacherScreenOn && (
         <Canvas
           style={[
             styles.canvas,
             {
               transform: [
-                { translateX: (deviceWidth * (1 - 1 / widthRatio)) / 2 },
-                { translateY: (deviceHeight * (1 - 1 / heightRatio)) / 2 },
-                { scaleX: widthRatio / 1 },
-                { scaleY: heightRatio / 1 },
+                {translateX: (deviceWidth * (1 - 1 / widthRatio)) / 2},
+                {translateY: (deviceHeight * (1 - 1 / heightRatio)) / 2},
+                {scaleX: widthRatio / 1},
+                {scaleY: heightRatio / 1},
               ],
             },
           ]}
           ref={canvasRef}>
-          {paths.map(({ path, color, strokeWidth, opacity }, index) => (
+          {paths.map(({path, color, strokeWidth, opacity}, index) => (
             <Path
               key={index}
               path={path}
@@ -194,7 +208,7 @@ function StudentRealTimeCanvasRefSection({
             />
           ))}
         </Canvas>
-      }
+      )}
     </View>
   );
 }
@@ -210,7 +224,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
   },
-  canvas: { flex: 1 },
+  canvas: {flex: 1},
   placeholder: {
     flex: 1,
     backgroundColor: 'transparent',

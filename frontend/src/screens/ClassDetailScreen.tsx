@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -16,26 +16,26 @@ import Teacher from '@components/classDetail/Teacher';
 import StudentRank from '@components/classDetail/StudentRank';
 import StudentsChart from '@components/classDetail/StudentsChart';
 import ClassHandleButtonList from '@components/classDetail/ClassHandleButtonList';
-import { iconSize } from '@theme/iconSize';
+import {iconSize} from '@theme/iconSize';
 import BookMarkIcon from '@assets/icons/bookMarkIcon.svg';
 import {
   getLectureDetail,
   LectureDetailType,
   ClassAverageScoresType,
 } from 'src/services/lectureInformation';
-import { useQuery } from '@tanstack/react-query';
-import { getResponsiveSize } from '@utils/responsive';
-import { useBookModalStore } from '@store/useBookModalStore';
+import {useQuery} from '@tanstack/react-query';
+import {getResponsiveSize} from '@utils/responsive';
+import {useBookModalStore} from '@store/useBookModalStore';
 import EmptyData from '@components/common/EmptyData';
-import { useAuthStore } from '@store/useAuthStore';
-import { useLectureStore, useLessonStore } from '@store/useLessonStore';
-import { useReviewLectureStore } from '@store/useReviewLectureStore';
+import {useAuthStore} from '@store/useAuthStore';
+import {useLectureStore, useLessonStore} from '@store/useLessonStore';
+import {useReviewLectureStore} from '@store/useReviewLectureStore';
 
 type BookLectureProps = {
   lectureId: number;
 };
 
-function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
+function ClassDetailScreen({lectureId}: BookLectureProps): React.JSX.Element {
   const closeBook = useBookModalStore(state => state.closeBook);
   const userInfo = useAuthStore(state => state.userInfo);
   const isTeacher = userInfo.role === 'TEACHER';
@@ -69,16 +69,24 @@ function ClassDetailScreen({ lectureId }: BookLectureProps): React.JSX.Element {
         );
       }
     }
-  }, [isTeacher, lectureDetail, lectureId, setLectureId, setLectureInfo, setLessonInfo, setStudentsCnt, userInfo.id]);
+  }, [
+    isTeacher,
+    lectureDetail,
+    lectureId,
+    setLectureId,
+    setLectureInfo,
+    setLessonInfo,
+    setStudentsCnt,
+    userInfo.id,
+  ]);
 
   useEffect(() => {
     if (lectureDetail) {
-      const { teacherModel, lessons } = lectureDetail;
+      const {teacherModel, lessons} = lectureDetail;
 
-      useReviewLectureStore.getState().setReviewLectureInfo(
-        teacherModel.teacherId,
-        lessons,
-      );
+      useReviewLectureStore
+        .getState()
+        .setReviewLectureInfo(teacherModel.teacherId, lessons);
     }
   }, [lectureDetail]);
 
@@ -272,7 +280,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-
 });
 
 export default ClassDetailScreen;

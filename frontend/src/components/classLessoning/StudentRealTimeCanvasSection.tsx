@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Skia, useCanvasRef } from '@shopify/react-native-skia';
+import React, {useEffect, useState} from 'react';
+import {Skia, useCanvasRef} from '@shopify/react-native-skia';
 import CanvasDrawingTool from '../common/CanvasDrawingTool';
 import base64 from 'react-native-base64';
 import pako from 'pako';
 import StudentLessoningInteractionTool from './StudentLessoningInteractionTool';
 import StudentRealTimeCanvasRefSection from './StudentRealTimeCanvasRefSection';
 import * as StompJs from '@stomp/stompjs';
-import { useLectureStore } from '@store/useLessonStore';
-import { Alert, Dimensions } from 'react-native';
-import { useLessoningStore } from '@store/useLessoningStore';
-import { useQuery } from '@tanstack/react-query';
-import { useAuthStore } from '@store/useAuthStore';
-import { getStudentDrawingData } from '@services/lessonService';
+import {useLectureStore} from '@store/useLessonStore';
+import {Alert, Dimensions} from 'react-native';
+import {useLessoningStore} from '@store/useLessoningStore';
+import {useQuery} from '@tanstack/react-query';
+import {useAuthStore} from '@store/useAuthStore';
+import {getStudentDrawingData} from '@services/lessonService';
 interface StudentCanvasSectionProps {
   problemIds: number[];
   answers: string[];
@@ -73,7 +73,7 @@ const StudentRealTimeCanvasSection = ({
     y: number;
   } | null>(null);
   const [isErasing, setIsErasing] = useState(false);
-  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(true);
+  const [isTeacherScreenOn, setIsTeacherScreenOn] = useState(false);
   const studentId = useAuthStore(state => state.userInfo.id);
 
   const roundToTwoDecimals = (value: number): number => {
@@ -85,11 +85,7 @@ const StudentRealTimeCanvasSection = ({
       try {
         const messageObject = JSON.parse(receivedMessage);
 
-        const {
-          memberId,
-          lessonId,
-          questionId,
-        } = messageObject;
+        const {memberId, lessonId, questionId} = messageObject;
 
         console.log('파싱된 메시지:', {
           memberId,
@@ -99,7 +95,6 @@ const StudentRealTimeCanvasSection = ({
 
         // Zustand 상태 업데이트
         setLessoningInfo(memberId, lessonId, questionId);
-
       } catch (error) {
         console.error('receivedMessage 파싱 오류:', error);
       }
@@ -108,12 +103,16 @@ const StudentRealTimeCanvasSection = ({
 
   const memberId = useLectureStore(state => state.memberId);
   const teacherId = useLectureStore(state => state.teacherId);
-  const { width: deviceWidth, height: deviceHeight } = Dimensions.get('window');
+  const {width: deviceWidth, height: deviceHeight} = Dimensions.get('window');
   const width = parseFloat(deviceWidth.toFixed(8));
   const height = parseFloat(deviceHeight.toFixed(8));
   // 압축 전송
   const sendCompressedData = (destination: string, data: any) => {
-    if (!clientRef.current || !clientRef.current.active || !clientRef.current.connected) {
+    if (
+      !clientRef.current ||
+      !clientRef.current.active ||
+      !clientRef.current.connected
+    ) {
       console.log('STOMP client is not connected');
       return;
     }
@@ -144,11 +143,20 @@ const StudentRealTimeCanvasSection = ({
   };
 
   // 학생 그림 데이터 가져오기
-  const { data: studentDrawingData } = useQuery({
-    queryKey: ['studentDrawing', studentId, lessonId, problemIds[currentPage - 1]],
+  const {data: studentDrawingData} = useQuery({
+    queryKey: [
+      'studentDrawing',
+      studentId,
+      lessonId,
+      problemIds[currentPage - 1],
+    ],
     queryFn: async () => {
       if (studentId && lessonId && problemIds[currentPage - 1]) {
-        return getStudentDrawingData(studentId, lessonId, problemIds[currentPage - 1]);
+        return getStudentDrawingData(
+          studentId,
+          lessonId,
+          problemIds[currentPage - 1],
+        );
       }
       return null;
     },
@@ -196,7 +204,6 @@ const StudentRealTimeCanvasSection = ({
       resetCanvasState(); // 상태 초기화
       processCanvasData(studentDrawingData.drawingData);
       console.log('데이터 가져옴');
-
     }
   }, [studentDrawingData, currentPage]);
 
@@ -207,14 +214,14 @@ const StudentRealTimeCanvasSection = ({
         binaryString.split('').map(char => char.charCodeAt(0)),
       );
       const decompressedData = JSON.parse(
-        pako.inflate(compressedData, { to: 'string' }),
+        pako.inflate(compressedData, {to: 'string'}),
       );
 
       const parsedPaths = decompressedData
         .map((pathData: any) => {
           const pathString = pathData.path;
           const path = Skia.Path.MakeFromSVGString(pathString);
-          return path ? { ...pathData, path } : null;
+          return path ? {...pathData, path} : null;
         })
         .filter(Boolean);
 
@@ -248,7 +255,7 @@ const StudentRealTimeCanvasSection = ({
         const isInEraseArea = dx * dx + dy * dy < ERASER_RADIUS * ERASER_RADIUS;
 
         if (isInEraseArea) {
-          addToUndoStack({ type: 'erase', pathData });
+          addToUndoStack({type: 'erase', pathData});
           console.log('지우개로 경로 삭제:', pathData);
         }
         return !isInEraseArea;
@@ -315,7 +322,7 @@ const StudentRealTimeCanvasSection = ({
     const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
     const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else {
       const newPath = Skia.Path.Make();
@@ -328,7 +335,7 @@ const StudentRealTimeCanvasSection = ({
     const locationX = roundToTwoDecimals(event.nativeEvent.locationX);
     const locationY = roundToTwoDecimals(event.nativeEvent.locationY);
     if (isErasing) {
-      setEraserPosition({ x: locationX, y: locationY });
+      setEraserPosition({x: locationX, y: locationY});
       erasePath(locationX, locationY);
     } else if (currentPath) {
       // 현재 경로에 새로운 포인트 추가
@@ -351,7 +358,7 @@ const StudentRealTimeCanvasSection = ({
         opacity: penOpacity,
       };
       addPath(newPathData);
-      addToUndoStack({ type: 'draw', pathData: newPathData });
+      addToUndoStack({type: 'draw', pathData: newPathData});
       setCurrentPath(null);
       setRedoStack([]);
     }
@@ -396,7 +403,14 @@ const StudentRealTimeCanvasSection = ({
 
   return (
     <>
-      <StudentRealTimeCanvasRefSection receivedMessage={receivedMessage} isTeacherScreenOn={isTeacherScreenOn} teacherId={teacherId!} lessonId={lessonId} problemIds={problemIds} currentPage={currentPage} />
+      <StudentRealTimeCanvasRefSection
+        receivedMessage={receivedMessage}
+        isTeacherScreenOn={isTeacherScreenOn}
+        teacherId={teacherId!}
+        lessonId={lessonId}
+        problemIds={problemIds}
+        currentPage={currentPage}
+      />
       <CanvasDrawingTool
         canvasRef={canvasRef}
         paths={paths}

@@ -1,20 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
 import StudentRealTimeCanvasSection from '@components/classLessoning/StudentRealTimeCanvasSection';
-import { useAuthStore } from '@store/useAuthStore';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
-import { getResponsiveSize } from '@utils/responsive';
+import {useAuthStore} from '@store/useAuthStore';
+import {useFocusEffect} from '@react-navigation/native';
+import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import {getResponsiveSize} from '@utils/responsive';
 import SockJS from 'sockjs-client';
 import * as StompJs from '@stomp/stompjs';
 import LinkIndicator from '@components/classLessoning/LinkIndicator';
-import { useLectureStore, useLessonStore } from '@store/useLessonStore';
+import {useLectureStore, useLessonStore} from '@store/useLessonStore';
 import ProblemSection from '@components/common/ProblemSection';
-import { useQuery } from '@tanstack/react-query';
-import { getFileDetail } from '@services/problemService';
-import { useLessoningStore } from '@store/useLessoningStore';
+import {useQuery} from '@tanstack/react-query';
+import {getFileDetail} from '@services/problemService';
+import {useLessoningStore} from '@store/useLessoningStore';
 
 function LessoningScreen(): React.JSX.Element {
   const questionIds = useLessonStore(state => state.questionIds);
@@ -22,9 +22,9 @@ function LessoningScreen(): React.JSX.Element {
   const memberId = useLectureStore(state => state.memberId);
   const isTeaching = useLessonStore(state => state.isTeaching);
 
-  const { data: lessonProblems, isLoading } = useQuery({
+  const {data: lessonProblems, isLoading} = useQuery({
     queryKey: ['lessonProblems', questionIds],
-    queryFn: async ({ queryKey }) => {
+    queryFn: async ({queryKey}) => {
       const [, responseQuestionIds] = queryKey;
       const problemDetails = await Promise.all(
         (responseQuestionIds as number[]).map(questionId =>
@@ -45,22 +45,20 @@ function LessoningScreen(): React.JSX.Element {
   const [receivedMessage, setReceivedMessage] = useState<string | null>(null);
   const clientRef = useRef<StompJs.Client | null>(null);
   const isTeacher = userInfo.role === 'TEACHER';
-
   const sendStudentInfo = (action: 'in' | 'now' | 'out', page?: number) => {
     if (clientRef.current?.connected) {
       const message = {
         studentId: userInfo.id,
         studentName: userInfo.name,
-        studentImage: userInfo.image || '',
+        studentImage: userInfo.image?.url || '',
         currentPage: page ?? currentPage,
       };
 
       const destination = `/app/lesson/${lessonId}/${action}`;
-      clientRef.current.publish({ destination, body: JSON.stringify(message) });
+      clientRef.current.publish({destination, body: JSON.stringify(message)});
       console.log(`Message sent to ${destination}:`, message);
     }
   };
-
 
   // STOMP 클라이언트 초기화 및 설정
   useEffect(() => {
@@ -84,7 +82,11 @@ function LessoningScreen(): React.JSX.Element {
         } else if (!isTeacher) {
           // 학생 입장 정보 전송
           sendStudentInfo('in');
-          const studentTopic = `/topic/lesson/${lessonId}/question/${problemIds[currentPage - 1]}`;
+          console.log('problemIds:', problemIds);
+          console.log('현재 문제 ID:', problemIds[currentPage - 1]);
+          const studentTopic = `/topic/lesson/${lessonId}/question/${
+            problemIds[currentPage - 1]
+          }`;
           client.subscribe(studentTopic, message => {
             console.log('Received message for student:', message.body);
             setReceivedMessage(message.body);
@@ -172,7 +174,6 @@ function LessoningScreen(): React.JSX.Element {
     console.log('Updated currentPage:', targetIndex + 1);
   };
 
-
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
   );
@@ -190,7 +191,9 @@ function LessoningScreen(): React.JSX.Element {
       <>
         <View style={styles.container}>
           <View style={styles.sectionContainer}>
-            <ProblemSection problemText={problems[currentPage - 1]} />
+            <View style={{marginLeft: '15%', marginTop: '5%'}}>
+              <ProblemSection problemText={problems[currentPage - 1]} />
+            </View>
             <TeacherRealTimeCanvasSection
               problemIds={problemIds}
               answers={answers}
@@ -219,7 +222,9 @@ function LessoningScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
-        <ProblemSection problemText={problems[currentPage - 1]} />
+        <View style={{marginLeft: '15%', marginTop: '5%'}}>
+          <ProblemSection problemText={problems[currentPage - 1]} />
+        </View>
         <StudentRealTimeCanvasSection
           handleGoToTeacherScreen={handleGoToTeacherScreen}
           problemIds={problemIds}
