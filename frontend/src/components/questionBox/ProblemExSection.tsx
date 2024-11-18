@@ -1,42 +1,41 @@
 import React from 'react';
 import MathJax from 'react-native-mathjax';
-import {StyleSheet, View, Image} from 'react-native';
+import { StyleSheet, View, Image, useWindowDimensions } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 type ProblemSectionProps = {
   problemText: string;
   fontSize?: number;
+  isVisible?: boolean;
 };
 
 function ProblemExSection({
   problemText,
   fontSize = 12,
+  isVisible = true,
 }: ProblemSectionProps): React.JSX.Element {
-  const imageLoadStates = React.useRef<{[key: string]: boolean}>({}).current;
+  const { width } = useWindowDimensions();
+  const imageLoadStates = React.useRef<{ [key: string]: boolean }>({}).current;
 
   const handleImageLoad = React.useCallback((imageUrl: string) => {
     imageLoadStates[imageUrl] = true;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleImageError = React.useCallback((imageUrl: string) => {
     imageLoadStates[imageUrl] = false;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const separateQuestionAndChoices = (text: string): {
     questionParts: Array<{ type: 'text' | 'image', content: string }>,
     choices: string[]
   } => {
-    //
-    const processedText = text.replace(/\$(.*?)\$/g, (match) => {
-      return match.replace(/sqrt/g, '\\sqrt');
-    })
     // 개행 문자 처리
-    .replace(/\\n/g, '\n');
+    text.replace(/\\n/g, '\n');
 
     // 선택지 분리
-    const lines = processedText.split('\n');
+    const lines = text.split('\n');
     const choices = lines.filter(line => /^\s*\([0-9]+\)/.test(line));
     const questionText = lines.filter(line => !/^\s*\([0-9]+\)/.test(line)).join('\n');
 
@@ -103,8 +102,12 @@ function ProblemExSection({
     }
   };
 
+  if (!isVisible) {
+    return <View style={{ flex: 1 }} />;
+  }
+
   return (
-    <ScrollView>
+    <ScrollView style={{ borderRadius: width * 0.005 }}>
       {questionParts.map((part, index) => renderQuestionPart(part, index))}
       <View>
         <MathJax

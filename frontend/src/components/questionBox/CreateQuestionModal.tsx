@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Animated,
   StyleSheet,
@@ -6,19 +6,19 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import DocumentPicker, {types} from 'react-native-document-picker';
+import DocumentPicker, { types } from 'react-native-document-picker';
 import PagerView from 'react-native-pager-view';
 import Button from '@components/common/Button';
-import {Text} from '@components/common/Text';
-import {colors} from 'src/hooks/useColors';
-import {createQuestion, uploadPdf} from '@services/questionBox';
+import { Text } from '@components/common/Text';
+import { colors } from 'src/hooks/useColors';
+import { createQuestion, uploadPdf } from '@services/questionBox';
 import LoadingSuccessIndicator from './LoadingSuccessIndicator';
 import QuestionsPage from './QuestionPage';
 import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import {useModalContext} from 'src/contexts/useModalContext';
+import { useModalContext } from 'src/contexts/useModalContext';
 
 interface FileSelectionPageProps {
   pdfFileName: string | null;
@@ -29,7 +29,7 @@ const FileSelectionPage = ({
   pdfFileName,
   onPickFile,
 }: FileSelectionPageProps) => {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   return (
@@ -51,10 +51,10 @@ const FileSelectionPage = ({
 };
 
 function CreateQuestionModal(): React.JSX.Element {
-  const {width, height} = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width);
 
-  const {close} = useModalContext();
+  const { close } = useModalContext();
   const getCurrentFolderId = useQuestionExplorerStore(
     state => state.getCurrentFolderId,
   );
@@ -71,6 +71,7 @@ function CreateQuestionModal(): React.JSX.Element {
   const questionsPagerRef = useRef<PagerView>(null);
   const heightAnim = useRef(new Animated.Value(height * 0.15)).current;
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
+  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
 
   const animateHeight = (toHeight: number) => {
     Animated.timing(heightAnim, {
@@ -134,6 +135,7 @@ function CreateQuestionModal(): React.JSX.Element {
         console.log('파일 선택이 취소되었습니다.');
       } else {
         console.error('파일 선택 오류:', err);
+        close();
       }
     }
   };
@@ -142,8 +144,9 @@ function CreateQuestionModal(): React.JSX.Element {
     setQuestionNumber(e.nativeEvent.position);
   };
 
-  const onSelectedDone = (selections: number[]) => {
+  const onSelectedDone = (selections: number[], answers: string[]) => {
     setSelectedQuestions(selections.map(selection => questions[selection]));
+    setSelectedAnswers(answers);
     setCurrentPage(3);
     mainPagerRef.current?.setPage(3);
   };
@@ -155,7 +158,7 @@ function CreateQuestionModal(): React.JSX.Element {
         folderId,
         `${questionName}_${index}`,
         selectedQuestion,
-        '1',
+        selectedAnswers[index],
       );
       const formedData: QuestionBoxType = {
         id: data.fileId,
@@ -172,7 +175,7 @@ function CreateQuestionModal(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.mainPagerContainer, {height: heightAnim}]}>
+      <Animated.View style={[styles.mainPagerContainer, { height: heightAnim }]}>
         <PagerView
           style={styles.mainPager}
           initialPage={0}
@@ -201,7 +204,7 @@ function CreateQuestionModal(): React.JSX.Element {
             onSelectedDone={onSelectedDone}
           />
           <View key="3" style={styles.inputContainer}>
-            <View style={{gap: width * 0.005}}>
+            <View style={{ gap: width * 0.005 }}>
               <Text variant="subtitle">제목</Text>
               <TextInput
                 onChangeText={onChangeText}
@@ -212,7 +215,7 @@ function CreateQuestionModal(): React.JSX.Element {
               />
             </View>
             <Button
-              style={{marginTop: 'auto'}}
+              style={{ marginTop: 'auto' }}
               content="생성"
               size="full"
               variant="pressable"
