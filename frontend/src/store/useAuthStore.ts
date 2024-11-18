@@ -31,6 +31,8 @@ interface AuthState {
   // 사이드바 온오프 여부
   sideBarVisible: boolean;
   setSideBarVisible: (status: boolean) => void;
+
+  resetUserInfo: () => void; // 유저 정보 초기화 메서드 추가
 }
 
 // 초기값으로 사용할 빈 객체
@@ -54,5 +56,6 @@ export const useAuthStore = create<AuthState>(set => ({
   userInfo: initialUserInfo,
   setUserInfo: info => set({userInfo: info}),
   sideBarVisible: false,
+  resetUserInfo: () => set({ userInfo: initialUserInfo }), // 초기화 메서드
   setSideBarVisible: status => set({sideBarVisible: status}),
 }));

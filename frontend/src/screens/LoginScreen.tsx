@@ -12,14 +12,13 @@ import InputField from '@components/account/InputField';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {useAuthStore} from '@store/useAuthStore';
+
 // import CheckBox from '@react-native-community/checkbox';
 // import {setAutoLogin} from '@utils/secureStorage';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function LoginScreen(): React.JSX.Element {
-  const authStore = useAuthStore();
   // const [isChecked, setIsChecked] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigation = useNavigation<NavigationProps>();
@@ -55,7 +54,6 @@ function LoginScreen(): React.JSX.Element {
         routes: [{name: 'HomeScreen'}],
       });
       setCurrentScreen('HomeScreen');
-      authStore.setIsLoggedIn(true);
     } catch (error: any) {
       // 에러 메시지를 string으로 변환하여 상태에 설정
       if (error?.message) {
