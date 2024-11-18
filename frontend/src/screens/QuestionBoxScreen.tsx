@@ -3,22 +3,22 @@ import FileOptionModal from '@components/questionBox/FileOptionModal';
 import FolderHeader from '@components/questionBox/FolderHeader';
 import MoveMenu from '@components/questionBox/MoveMenu';
 import QuestionDetail from '@components/questionBox/QuestionDetail';
-import {useCutStore} from '@store/useCutStore';
+import { useCutStore } from '@store/useCutStore';
 import {
   QuestionBoxType,
   useQuestionExplorerStore,
 } from '@store/useQuestionExplorerStore';
-import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet, useWindowDimensions, View} from 'react-native';
-import {colors} from 'src/hooks/useColors';
-import {useModal} from 'src/hooks/useModal';
-import {getFolder, getRootFolder} from 'src/services/questionBox';
+import React, { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { colors } from 'src/hooks/useColors';
+import { useModal } from 'src/hooks/useModal';
+import { getFolder, getRootFolder } from 'src/services/questionBox';
 
 function QuestionBoxScreen(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
-  const {open} = useModal();
+  const { open } = useModal();
   const [isDetailOpened, setIsDetailOpened] = useState(false);
   const [containerHeight, setContainerHeight] = useState(0);
   const [selectedFileId, setSelectedFileId] = useState(0);
@@ -71,7 +71,7 @@ function QuestionBoxScreen(): React.JSX.Element {
   return (
     <View
       onLayout={event => {
-        const {height} = event.nativeEvent.layout;
+        const { height } = event.nativeEvent.layout;
         console.log(height);
         setContainerHeight(height);
       }}
@@ -116,7 +116,7 @@ const getStyles = (width: number) =>
     container: {
       width: '100%',
       height: '100%',
-      backgroundColor: 'white',
+      backgroundColor: '#f0f0f0',
       borderRadius: width * 0.01,
       padding: width * 0.01,
     },

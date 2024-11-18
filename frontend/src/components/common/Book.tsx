@@ -1,7 +1,7 @@
 import Lecture from '@components/main/Lecture';
-import {useBookModalStore} from '@store/useBookModalStore';
-import {useRef} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import { useBookModalStore } from '@store/useBookModalStore';
+import { useRef } from 'react';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 
 interface BookProp {
   rightPosition: number;
@@ -13,6 +13,7 @@ interface BookProp {
   classNumber: number;
   teacherName: string;
   lectureId: number;
+  isMain: boolean;
 }
 
 function Book({
@@ -24,7 +25,11 @@ function Book({
   classNumber,
   teacherName,
   lectureId,
+  isMain,
 }: BookProp): React.JSX.Element {
+  const { width } = useWindowDimensions();
+  const styles = getStyles(width);
+
   const lectureItem = {
     title,
     backgroundColor,
@@ -66,7 +71,7 @@ function Book({
   };
 
   return (
-    <Pressable ref={bookRef} onPress={pressBook} style={[styles.container]}>
+    <Pressable ref={bookRef} onPress={pressBook} style={[styles.container, isMain ? { width: '75%' } : { width: '100%' }]}>
       <Lecture item={lectureItem} />
     </Pressable>
   );
@@ -74,12 +79,11 @@ function Book({
 
 export default Book;
 
-const styles = StyleSheet.create({
+const getStyles = (width: number) => StyleSheet.create({
   container: {
     flexDirection: 'row',
-    width: '25%',
-    height: undefined,
     aspectRatio: 0.95,
+    marginBottom: width * 0.025,
     paddingHorizontal: 25,
   },
 });

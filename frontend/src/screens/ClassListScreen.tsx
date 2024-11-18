@@ -4,29 +4,29 @@ import {
   TouchableOpacity,
   useWindowDimensions,
 } from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {borderRadius} from '@theme/borderRadius';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { borderRadius } from '@theme/borderRadius';
 import Book from '@components/common/Book';
 import AddLectureModal from '@components/lectureList/AddLectureModal';
-import {useModal} from 'src/hooks/useModal';
+import { useModal } from 'src/hooks/useModal';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {Picker} from '@react-native-picker/picker';
-import {useState} from 'react';
-import {colors} from 'src/hooks/useColors';
-import {getResponsiveSize} from '@utils/responsive';
-import {useQuery} from '@tanstack/react-query';
+import { Picker } from '@react-native-picker/picker';
+import { useState } from 'react';
+import { colors } from 'src/hooks/useColors';
+import { getResponsiveSize } from '@utils/responsive';
+import { useQuery } from '@tanstack/react-query';
 import {
   LectureListItemType,
   getLectureList,
 } from '@services/lectureInformation';
 import BookModal from '@components/common/BookModal';
-import {useBookModalStore} from '@store/useBookModalStore';
-import {useAuthStore} from '@store/useAuthStore';
-import {Text} from '@components/common/Text';
+import { useBookModalStore } from '@store/useBookModalStore';
+import { useAuthStore } from '@store/useAuthStore';
+import { Text } from '@components/common/Text';
 
 function ClassListScreen(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const userInfo = useAuthStore(state => state.userInfo);
@@ -40,8 +40,8 @@ function ClassListScreen(): React.JSX.Element {
     setCurrentScreen('ClassListScreen');
   });
 
-  const {open} = useModal();
-  const {data: lectures = [], isLoading} = useQuery<LectureListItemType[]>({
+  const { open } = useModal();
+  const { data: lectures = [], isLoading } = useQuery<LectureListItemType[]>({
     queryKey: ['lectureList'],
     queryFn: getLectureList,
   });
@@ -144,18 +144,21 @@ function ClassListScreen(): React.JSX.Element {
           <View style={styles.content}>
             <View style={styles.classList}>
               {filteredLectures.map((data, index) => (
-                <Book
-                  key={index}
-                  rightPosition={index * 25}
-                  title={data.title}
-                  subject={data.subject}
-                  backgroundColor={data.backgroundColor}
-                  fontColor={data.fontColor}
-                  grade={data.grade}
-                  classNumber={data.classNumber}
-                  teacherName={data.teacher.name}
-                  lectureId={data.lectureId}
-                />
+                <View style={styles.bookContainer}>
+                  <Book
+                    key={index}
+                    rightPosition={index * 25}
+                    title={data.title}
+                    subject={data.subject}
+                    backgroundColor={data.backgroundColor}
+                    fontColor={data.fontColor}
+                    grade={data.grade}
+                    classNumber={data.classNumber}
+                    teacherName={data.teacher.name}
+                    lectureId={data.lectureId}
+                    isMain={false}
+                  />
+                </View>
               ))}
             </View>
           </View>
@@ -203,8 +206,12 @@ const getStyles = (width: number) =>
     },
     classList: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       width: '100%',
       height: '100%',
+    },
+    bookContainer: {
+      width: '25%',
     },
     picker: {
       width: 120,

@@ -1,5 +1,5 @@
-import {LayoutChangeEvent, StyleSheet, View} from 'react-native';
-import {useBookModalStore} from '@store/useBookModalStore';
+import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { useBookModalStore } from '@store/useBookModalStore';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -7,7 +7,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lecture from '@components/main/Lecture';
 import ClassDetailScreen from '@screens/ClassDetailScreen';
 
@@ -41,20 +41,20 @@ function BookModal(): React.JSX.Element {
   // 표지 애니메이션 스타일
   const coverAnimatedStyles = useAnimatedStyle(() => ({
     transform: [
-      {perspective: 30000},
-      {translateX: -containerWidth.value / 2},
-      {rotateY: `${rotateY.value}deg`},
-      {translateX: containerWidth.value / 2},
+      { perspective: 30000 },
+      { translateX: -containerWidth.value / 2 },
+      { rotateY: `${rotateY.value}deg` },
+      { translateX: containerWidth.value / 2 },
     ],
   }));
 
   // 표지 뒷면 애니메이션 스타일
   const coverBehindAnimatedStyles = useAnimatedStyle(() => ({
     transform: [
-      {perspective: 30000},
-      {translateX: -containerWidth.value / 2},
-      {rotateY: `${rotateY.value + 180}deg`},
-      {translateX: -containerWidth.value / 2},
+      { perspective: 30000 },
+      { translateX: -containerWidth.value / 2 },
+      { rotateY: `${rotateY.value + 180}deg` },
+      { translateX: -containerWidth.value / 2 },
     ],
   }));
 
@@ -68,7 +68,7 @@ function BookModal(): React.JSX.Element {
   useEffect(() => {
     if (containerPosition) {
       if (isBookOpened) {
-        top.value = withTiming(0, {duration: ANIM_DURATION});
+        top.value = withTiming(0, { duration: ANIM_DURATION });
         left.value = withTiming(containerPosition.width / 2, {
           duration: ANIM_DURATION,
         });
@@ -122,7 +122,7 @@ function BookModal(): React.JSX.Element {
         );
         height.value = withDelay(
           ANIM_DURATION * 2,
-          withTiming(bookPosition.height, {duration: ANIM_DURATION}),
+          withTiming(bookPosition.height, { duration: ANIM_DURATION }),
         );
       }
     }
@@ -169,7 +169,7 @@ function BookModal(): React.JSX.Element {
   }
 
   const onContainerLayout = (event: LayoutChangeEvent) => {
-    const {width} = event.nativeEvent.layout;
+    const { width } = event.nativeEvent.layout;
     containerWidth.value = width;
   };
 
@@ -266,5 +266,6 @@ const styles = StyleSheet.create({
   },
   backContent: {
     backgroundColor: 'white',
+    borderRadius: 20,
   },
 });
