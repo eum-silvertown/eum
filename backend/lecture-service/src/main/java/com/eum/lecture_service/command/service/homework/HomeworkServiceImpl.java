@@ -152,6 +152,13 @@ public class HomeworkServiceImpl implements HomeworkService {
 	}
 
 	private void publishHomeworkTodoCreateEvent(Lecture lecture, Homework savedHomework, ClassModel classmodel) {
+
+		List<StudentModel> studentModels = studentReadRepository.findByClassId(classmodel.getClassId());
+
+		List<Long> students = studentModels.stream()
+			.map(StudentModel::getStudentId)
+			.collect(Collectors.toList());
+
 		HomeworkTodoCreateEvent event = HomeworkTodoCreateEvent.builder()
 			.homeworkId(savedHomework.getHomeworkId())
 			.lectureId(lecture.getLectureId())
@@ -160,9 +167,7 @@ public class HomeworkServiceImpl implements HomeworkService {
 			.title(savedHomework.getTitle())
 			.startTime(savedHomework.getStartTime())
 			.endTime(savedHomework.getEndTime())
-			.grade(classmodel.getGrade())
-			.school(classmodel.getSchool())
-			.classNumber(classmodel.getClassNumber())
+			.studentIds(students)
 			.build();
 
 		kafkaTemplate.send("homework-todo-create-topic", event);

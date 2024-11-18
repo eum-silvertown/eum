@@ -139,6 +139,7 @@ public class HomeworkSubmissionQueryServiceImpl implements HomeworkSubmissionQue
 						.correctCount(submission.getCorrectCount())
 						.totalCount(submission.getTotalCount())
 						.isComplete(true)
+						.questions(homework.getQuestions())
 						.build());
 				} else {
 					homeworkDetails.add(StudentHomeworkResponse.StudentHomeworkInfo.builder()
@@ -149,6 +150,7 @@ public class HomeworkSubmissionQueryServiceImpl implements HomeworkSubmissionQue
 						.fontColor(lecture.getFontColor())
 						.startTime(homework.getStartTime())
 						.endTime(homework.getEndTime())
+						.questions(homework.getQuestions())
 						.score(null)
 						.correctCount(null)
 						.totalCount(null)
