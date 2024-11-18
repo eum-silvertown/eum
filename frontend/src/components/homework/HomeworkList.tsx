@@ -89,7 +89,7 @@ const getStyles = (width: number) => StyleSheet.create({
     borderRadius: width * 0.005,
   },
   title: {
-    width: '50%',
+    width: '40%',
   },
   score: {
     width: '20%',

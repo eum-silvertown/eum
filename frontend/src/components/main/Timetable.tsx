@@ -13,6 +13,8 @@ import {
   View,
 } from 'react-native';
 import Book from '@components/common/Book';
+import { Text } from '@components/common/Text';
+import { colors } from '@hooks/useColors';
 
 interface TimeTableProps {
   startingHour: number;
@@ -38,6 +40,20 @@ export default function TimeTable({
     queryFn: () => getLectureListDay(day, year, semester),
   });
 
+  const lecturesByHour = React.useMemo(() => {
+    const hourMap: Record<number, LectureListDayItemType[]> = {};
+    lectures.forEach(lecture => {
+      lecture.lecturePeriod?.forEach(period => {
+        const hour = periodTimes[period];
+        if (!hourMap[hour]) {
+          hourMap[hour] = [];
+        }
+        hourMap[hour].push(lecture);
+      });
+    });
+    return hourMap;
+  }, [lectures]);
+
   return (
     <View style={[styles.timeContainer, { width: totalContentWidth }]}>
       {Array.from({ length: endingHour - startingHour + 1 }).map((_, index) => {
@@ -45,27 +61,37 @@ export default function TimeTable({
         return (
           <View key={hour} style={[styles.timeBlock, { width: hourWidth }]}>
             <View style={styles.timeContent}>
-              {lectures.map(
-                lecture =>
-                  lecture.lecturePeriod &&
-                  lecture.lecturePeriod.map(period =>
-                    periodTimes[period] === hour ? (
-                      <TouchableOpacity key={`${lecture.lectureId}-${period}`}>
-                        <Book
-                          backgroundColor={lecture.backgroundColor}
-                          classNumber={lecture.classNumber}
-                          grade={lecture.grade}
-                          rightPosition={0}
-                          title={lecture.title}
-                          subject={lecture.subject}
-                          fontColor={lecture.fontColor}
-                          teacherName={lecture.teacher.name}
-                          lectureId={lecture.lectureId}
-                          isMain={true}
-                        />
-                      </TouchableOpacity>
-                    ) : null,
-                  ),
+              {lecturesByHour[hour] ? (
+                lecturesByHour[hour].map(lecture => (
+                  <TouchableOpacity key={`${lecture.lectureId}-${hour}`}>
+                    <Book
+                      backgroundColor={lecture.backgroundColor}
+                      classNumber={lecture.classNumber}
+                      grade={lecture.grade}
+                      rightPosition={0}
+                      title={lecture.title}
+                      subject={lecture.subject}
+                      fontColor={lecture.fontColor}
+                      teacherName={lecture.teacher.name}
+                      lectureId={lecture.lectureId}
+                      isMain={true}
+                    />
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={{
+                  width: '60%',
+                  aspectRatio: 0.85,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom: width * 0.025,
+                  borderWidth: width * 0.001,
+                  borderColor: colors.light.borderColor.pickerBorder,
+                  borderRadius: width * 0.01,
+                }}><Animated.Text style={[
+                  styles.timeText,
+                  { color: isNightTime ? '#FFF' : '#000' },
+                ]}>강의가 없습니다.</Animated.Text></View>
               )}
               <View style={styles.timeIndicator} />
               <View style={styles.timeTextContainer}>

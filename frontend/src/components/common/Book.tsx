@@ -82,8 +82,8 @@ export default Book;
 const getStyles = (width: number) => StyleSheet.create({
   container: {
     flexDirection: 'row',
-    aspectRatio: 0.95,
-    marginBottom: width * 0.025,
-    paddingHorizontal: 25,
+    aspectRatio: 1.05,
+    marginBottom: width * 0.02,
+    paddingHorizontal: width * 0.025,
   },
 });
