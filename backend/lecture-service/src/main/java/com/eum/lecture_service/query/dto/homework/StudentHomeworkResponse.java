@@ -28,5 +28,6 @@ public class StudentHomeworkResponse {
 		private Long correctCount;
 		private Long totalCount;
 		private Boolean isComplete;
+		private List<Long> questions;
 	}
 }
