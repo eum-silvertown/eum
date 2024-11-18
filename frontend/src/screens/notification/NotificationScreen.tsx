@@ -101,6 +101,10 @@ function NotificationScreen(): React.JSX.Element {
           setCurrentScreen('HomeworkScreen');
           navigationRef.navigate('HomeworkScreen');
           break;
+        case '숙제 제출':
+          setCurrentScreen('ClassListScreen');
+          navigationRef.navigate('ClassListScreen');
+          break;
       }
     }}>
       <View>
