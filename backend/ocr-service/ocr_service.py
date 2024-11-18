@@ -126,26 +126,23 @@ class PDFConverterService:
         questions = [q.strip() for q in questions if re.match(r'^\d+\.', q.strip())]
 
         # 2. 최종 결과를 저장할 배열 생성
-        parsed_problems = []
+        parsed_questions = []
 
         # 3. 각 항목에 대해 문제와 선택지를 분리
         for question in questions:
-            # 문제와 선택지를 분리
-            match = re.split(r'(?=\(1\))', question, maxsplit=1)
-            if len(match) == 2:
-                problem_text = match[0].strip()  # 문제 부분
-                choices_text = match[1].strip()  # 선택지 부분
-                parsed_problems.append({"question": problem_text, "choice": choices_text})
+            if "##" in question:
+                # "##"가 포함된 경우, 이를 기준으로 다시 분할하여 하위 항목을 추가
+                sub_questions = re.split(r'(?=##)', question)
+                parsed_questions.extend([sub_q.strip() for sub_q in sub_questions if sub_q.strip()])
             else:
-                parsed_problems.append({"question": question.strip(), "choice": None})
-
-        # 결과 출력 (확인용)
-        for idx, item in enumerate(parsed_problems):
-            print(f"question {idx + 1}: {item['question']}")
-            print(f"choice: {item['choice']}\n")
+                # "##"가 없는 경우는 그대로 추가
+                parsed_questions.append(question)    
+        # 결과 출력
+        for idx, item in enumerate(parsed_questions):
+            print(f"항목 {idx + 1}: {item}\n")
 
         # 결과 반환
-        return parsed_problems
+        return parsed_questions
     
     def get_response_from_claude(self,file):
         result_text = ""
