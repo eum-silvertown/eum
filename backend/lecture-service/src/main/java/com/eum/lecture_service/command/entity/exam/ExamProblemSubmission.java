@@ -41,6 +41,6 @@ public class ExamProblemSubmission {
 	@Column(name = "is_correct")
 	private Boolean isCorrect;
 
-	@Column(name = "exam_solution")
+	@Column(name = "exam_solution", columnDefinition = "TEXT")
 	private String examSolution;
 }
