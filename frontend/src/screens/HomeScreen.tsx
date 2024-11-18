@@ -14,6 +14,8 @@ import { useBookModalStore } from '@store/useBookModalStore';
 import Background from '@components/main/Background';
 import Widgets from '@components/main/Widgets';
 import Timetable from '@components/main/Timetable';
+import { useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { useFocusEffect } from '@react-navigation/native';
 
 const STARTING_HOUR = 9;
 const ENDING_HOUR = 22;
@@ -24,6 +26,7 @@ function HomeScreen(): React.JSX.Element {
   const styles = getStyles(screenWidth);
 
   const bookPosition = useBookModalStore(state => state.bookPosition);
+  const setCurrentScreen = useCurrentScreenStore(state => state.setCurrentScreen);
   const scrollViewRef = useRef<ScrollView>(null);
   const timeProgressAnim = useRef(new Animated.Value(0)).current;
   const currentTimeAnim = useRef(new Animated.Value(STARTING_HOUR)).current;
@@ -62,6 +65,10 @@ function HomeScreen(): React.JSX.Element {
 
     fetchData(); // 함수 호출
   }, []);
+
+  useFocusEffect(() => {
+    setCurrentScreen('HomeScreen');
+  });
 
   return (
     <View style={styles.container}>

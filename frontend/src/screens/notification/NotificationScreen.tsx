@@ -125,7 +125,7 @@ function NotificationScreen(): React.JSX.Element {
   );
 
   const renderReadItem = ({ item: notification }: { item: NotificationType }) => (
-    <View style={styles.notification}>
+    <Pressable style={styles.notification}>
       <View>
         <Text weight="bold">{notification.type}</Text>
       </View>
@@ -140,7 +140,7 @@ function NotificationScreen(): React.JSX.Element {
           <Text color="error">삭제</Text>
         </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (

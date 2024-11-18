@@ -7,6 +7,7 @@ import { getCurrentDateInfo } from '@utils/dateUtils';
 import React from 'react';
 import {
   Animated,
+  Pressable,
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
@@ -55,7 +56,7 @@ export default function TimeTable({
   }, [lectures]);
 
   return (
-    <View style={[styles.timeContainer, { width: totalContentWidth }]}>
+    <Pressable style={[styles.timeContainer, { width: totalContentWidth }]}>
       {Array.from({ length: endingHour - startingHour + 1 }).map((_, index) => {
         const hour = startingHour + index;
         return (
@@ -79,7 +80,7 @@ export default function TimeTable({
                   </TouchableOpacity>
                 ))
               ) : (
-                <View style={{
+                <Pressable style={{
                   width: '60%',
                   aspectRatio: 0.85,
                   justifyContent: 'center',
@@ -91,7 +92,7 @@ export default function TimeTable({
                 }}><Animated.Text style={[
                   styles.timeText,
                   { color: isNightTime ? '#FFF' : '#000' },
-                ]}>강의가 없습니다.</Animated.Text></View>
+                ]}>강의가 없습니다.</Animated.Text></Pressable>
               )}
               <View style={styles.timeIndicator} />
               <View style={styles.timeTextContainer}>
@@ -107,7 +108,7 @@ export default function TimeTable({
           </View>
         );
       })}
-    </View>
+    </Pressable>
   );
 }
 
