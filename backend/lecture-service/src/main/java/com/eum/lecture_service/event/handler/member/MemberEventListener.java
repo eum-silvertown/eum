@@ -155,11 +155,26 @@ public class MemberEventListener {
 	public void updateStudent(StudentImageEvent event) {
 		studentReadRepository.findById(event.getStudentId()).ifPresentOrElse(
 			student -> {
+				// 학생 이미지 업데이트
 				student.setImage(event.getImage());
-
 				studentReadRepository.save(student);
+
+				List<TeacherOverviewModel> teacherOverviews = teacherOverviewRepository.findByStudents_StudentId(student.getStudentId());
+
+				for (TeacherOverviewModel teacherOverview : teacherOverviews) {
+					boolean isUpdated = false;
+					for (StudentInfo studentInfo : teacherOverview.getStudents()) {
+						if (studentInfo.getStudentId().equals(student.getStudentId())) {
+							studentInfo.setStudentImage(student.getImage());
+							isUpdated = true;
+						}
+					}
+					if (isUpdated) {
+						teacherOverviewRepository.save(teacherOverview);
+					}
+				}
 			},
-			() -> log.error("학생 아이디 찾을 수 없어서 업뎃 불가", event.getStudentId())
+			() -> log.error("학생 아이디 찾을 수 없어서 업뎃 불가: {}", event.getStudentId())
 		);
 	}
 
