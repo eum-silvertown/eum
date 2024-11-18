@@ -6,6 +6,9 @@ import com.eum.drawingservice.domain.lesson.entity.Role;
 import com.eum.drawingservice.global.subscribe.ChannelName;
 import com.eum.drawingservice.domain.lesson.service.DrawingService;
 import com.eum.drawingservice.global.subscribe.SubscriptionManager;
+
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.MessageHeaders;
@@ -27,6 +30,8 @@ public class DrawingWebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/draw")
+    @Counted("websocket.drawing.events")
+    @Timed("websocket.drawing.time")
     public void handleDrawingEvent(@Payload DrawingRequestDTO requestDTO, SimpMessageHeaderAccessor headerAccessor) {
         drawingService.saveDrawing(requestDTO);
 
@@ -47,6 +52,8 @@ public class DrawingWebSocketController {
     }
 
     @MessageMapping("/lesson/{lessonId}/{type}")
+    @Counted("websocket.lesson.events")
+    @Timed("websocket.lesson.time")
     public void handleLessonEvent(
             @Payload StudentInfoDTO infoDTO,
             @DestinationVariable String lessonId,
