@@ -50,7 +50,7 @@ function SolveHomeworkScreen(): React.JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.sectionContainer}>
-        <View style={{marginLeft: '30%', marginTop: '5%'}}>
+        <View style={{marginLeft: '15%', marginTop: '5%'}}>
           <ProblemSection problemText={problems[currentPage - 1].content} />
         </View>
         <StudentCanvasSection
