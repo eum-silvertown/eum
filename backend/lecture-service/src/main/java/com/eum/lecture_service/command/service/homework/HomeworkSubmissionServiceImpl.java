@@ -23,6 +23,7 @@ import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.dto.HomeworkProblemSubmissionEventDto;
 import com.eum.lecture_service.event.event.homework.HomeworkSubmissionCreateEvent;
+import com.eum.lecture_service.event.event.homework.HomeworkTodoDeleteEvent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,6 +55,8 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 		Long lectureId = homework.getLecture().getLectureId();
 		publishHomeworkSubmissionCreateEvent(homeworkSubmission, homeworkProblemSubmissionList, lectureId);
+
+		publishHomeworkTodoDeleteEvent(homework.getHomeworkId());
 
 		return homeworkSubmission.getHomeworkSubmissionId();
 	}
@@ -149,5 +152,11 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 			submission.getIsCorrect(),
 			submission.getHomeworkSolution()
 		);
+	}
+
+	private void publishHomeworkTodoDeleteEvent(Long homeworkId) {
+		HomeworkTodoDeleteEvent event = new HomeworkTodoDeleteEvent(homeworkId);
+
+		kafkaTemplate.send("homework-todo-delete-topic", event);
 	}
 }
