@@ -46,14 +46,3 @@ export const setAutoLogin = async (status: boolean) => {
     console.error('Error saving auto-login status:', error);
   }
 };
-
-// 자동 로그인 여부 가져오기
-export const getAutoLoginStatus = async () => {
-  try {
-    const status = await EncryptedStorage.getItem('autoLogin');
-    return status === 'true';
-  } catch (error) {
-    console.error('Error retrieving auto-login status:', error);
-    return false;
-  }
-};

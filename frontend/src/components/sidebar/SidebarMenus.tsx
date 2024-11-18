@@ -13,7 +13,6 @@ import HomeIcon from '@assets/icons/homeIcon.svg';
 import ClassIcon from '@assets/icons/classIcon.svg';
 import HomeworkIcon from '@assets/icons/homeworkIcon.svg';
 import questionBoxIcon from '@assets/icons/questionBoxIcon.svg';
-import myClassIcon from '@assets/icons/myClassIcon.svg';
 import NotificationIcon from '@assets/icons/notificationIcon.svg';
 import { Text } from '../common/Text';
 import { SvgProps } from 'react-native-svg';
@@ -40,7 +39,7 @@ function SidebarMenus(): React.JSX.Element {
   );
 
   const menuItems: MenuItem[] = useMemo(() => {
-    const baseMenuItems = [
+    const baseMenuItems: MenuItem[] = [
       { name: '홈', screen: 'HomeScreen', icon: HomeIcon },
       { name: '알림', screen: 'NotificationScreen', icon: NotificationIcon },
       { name: '수업 목록', screen: 'ClassListScreen', icon: ClassIcon },
