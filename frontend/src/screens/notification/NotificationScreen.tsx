@@ -1,4 +1,4 @@
-import {Text} from '@components/common/Text';
+import { Text } from '@components/common/Text';
 import {
   Pressable,
   ScrollView,
@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {useNotificationStore} from '@store/useNotificationStore';
+import { useNotificationStore } from '@store/useNotificationStore';
 import {
   deleteNotification,
   readNotification,
@@ -17,7 +17,7 @@ import { colors } from 'src/hooks/useColors';
 import { useState } from 'react';
 import CustomCalendar from '@components/main/widgets/CustomCalendar';
 function NotificationScreen(): React.JSX.Element {
-  const {width, height} = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const styles = getStyles(width, height);
 
   const notifications = useNotificationStore(state => state.notifications);
@@ -88,13 +88,13 @@ function NotificationScreen(): React.JSX.Element {
               안 읽은 알림{' '}
             </Text>
             <Text variant="subtitle" weight="medium">
-            {unreadNotifications.length > 0 && unreadNotifications.length}
+              {unreadNotifications.length > 0 && unreadNotifications.length}
             </Text>
             <Pressable style={styles.readAllButton} onPress={onPressReadAll}>
               <Text>모두 읽음</Text>
             </Pressable>
           </View>
-          <ScrollView 
+          <ScrollView
             style={styles.notifications}
             onScroll={({ nativeEvent }) => {
               if (isCloseToBottom(nativeEvent)) {
@@ -137,7 +137,7 @@ function NotificationScreen(): React.JSX.Element {
               지난 알림
             </Text>
           </View>
-          <ScrollView 
+          <ScrollView
             style={styles.notifications}
             onScroll={({ nativeEvent }) => {
               if (isCloseToBottom(nativeEvent)) {
@@ -178,7 +178,7 @@ function NotificationScreen(): React.JSX.Element {
             <Weather />
           </View>
           <View style={styles.widget}>
-            <CustomCalendar/>
+            <CustomCalendar />
           </View>
         </View>
       </View>
@@ -197,7 +197,7 @@ const getStyles = (width: number, height: number) =>
       height: '100%',
       gap: width * 0.01,
       padding: width * 0.015,
-      backgroundColor: 'white',
+      backgroundColor: '#f0f0f0',
     },
     readAllButton: {
       marginLeft: 'auto',
