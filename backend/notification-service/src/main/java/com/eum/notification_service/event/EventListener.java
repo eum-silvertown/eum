@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.eum.notification_service.event.event.ExamCreatedNotificationEvent;
 import com.eum.notification_service.event.event.HomeworkCreatedNotificationEvent;
+import com.eum.notification_service.event.event.HomeworkSubmissionNotificationEvent;
 import com.eum.notification_service.event.event.LectureCreatedNotificationEvent;
 import com.eum.notification_service.event.event.LectureStartedNotificationEvent;
 import com.eum.notification_service.service.NotificationService;
@@ -49,5 +50,12 @@ public class EventListener {
 	public void handleHomeworkCreated(HomeworkCreatedNotificationEvent event) {
 		log.info("숙제 생성 알림 요청 들어옴");
 		notificationService.sendHomeworkCreatedNotifications(event);
+	}
+
+	@KafkaListener(topics = "homework-submission-notification-topic", groupId = "notification-group", properties = {
+		"spring.json.value.default.type=com.eum.notification_service.event.event.HomeworkSubmissionNotificationEvent"
+	})
+	public void handleHomeworkSubmission(HomeworkSubmissionNotificationEvent event) {
+		notificationService.sendHomeworkSubmissionNotifications(event);
 	}
 }

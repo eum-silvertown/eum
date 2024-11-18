@@ -5,6 +5,7 @@ import java.util.List;
 import com.eum.notification_service.dto.NotificationDto;
 import com.eum.notification_service.event.event.ExamCreatedNotificationEvent;
 import com.eum.notification_service.event.event.HomeworkCreatedNotificationEvent;
+import com.eum.notification_service.event.event.HomeworkSubmissionNotificationEvent;
 import com.eum.notification_service.event.event.LectureCreatedNotificationEvent;
 import com.eum.notification_service.event.event.LectureStartedNotificationEvent;
 
@@ -32,4 +33,6 @@ public interface NotificationService {
 	List<NotificationDto> getReadNotifications(Long memberId);
 
 	void deleteNotification(Long notificationId, Long memberId);
+
+	void sendHomeworkSubmissionNotifications(HomeworkSubmissionNotificationEvent event);
 }

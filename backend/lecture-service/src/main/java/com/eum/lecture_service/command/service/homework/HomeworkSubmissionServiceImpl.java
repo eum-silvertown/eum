@@ -16,14 +16,19 @@ import com.eum.lecture_service.command.entity.exam.ExamSubmission;
 import com.eum.lecture_service.command.entity.homework.Homework;
 import com.eum.lecture_service.command.entity.homework.HomeworkProblemSubmission;
 import com.eum.lecture_service.command.entity.homework.HomeworkSubmission;
+import com.eum.lecture_service.command.entity.lecture.Lecture;
 import com.eum.lecture_service.command.repository.homework.HomeworkProblemSubmissionRepository;
 import com.eum.lecture_service.command.repository.homework.HomeworkRepository;
 import com.eum.lecture_service.command.repository.homework.HomeworkSubmissionRepository;
+import com.eum.lecture_service.common.NotificationType;
 import com.eum.lecture_service.config.exception.ErrorCode;
 import com.eum.lecture_service.config.exception.EumException;
 import com.eum.lecture_service.event.dto.HomeworkProblemSubmissionEventDto;
 import com.eum.lecture_service.event.event.homework.HomeworkSubmissionCreateEvent;
 import com.eum.lecture_service.event.event.homework.HomeworkTodoDeleteEvent;
+import com.eum.lecture_service.event.event.notification.HomeworkSubmissionNotificationEvent;
+import com.eum.lecture_service.query.document.eventModel.StudentModel;
+import com.eum.lecture_service.query.repository.StudentReadRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +40,8 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 	private final HomeworkSubmissionRepository homeworkSubmissionRepository;
 	private final HomeworkProblemSubmissionRepository homeworkProblemSubmissionRepository;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
+	private final StudentReadRepository studentReadRepository;
+
 
 	@Override
 	@Transactional
@@ -43,6 +50,9 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new EumException(ErrorCode.HOMEWORK_NOT_FOUND));
+
+		StudentModel student = studentReadRepository.findById(studentId)
+				.orElseThrow(() -> new EumException(ErrorCode.STUDENT_NOT_FOUND));
 
 		validateHomeworkTime(homework);
 
@@ -53,12 +63,32 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 
 		updateHomeworkSubmissionScores(homeworkSubmission, homeworkProblemSubmissionList);
 
-		Long lectureId = homework.getLecture().getLectureId();
+		Lecture lecture = homework.getLecture();
+		Long lectureId = lecture.getLectureId();
 		publishHomeworkSubmissionCreateEvent(homeworkSubmission, homeworkProblemSubmissionList, lectureId);
 
 		publishHomeworkTodoDeleteEvent(homework.getHomeworkId(), studentId);
 
+		//선생님한테 알림
+		publishHomeworkSubmissionNotificationEvent(homework, lecture, student);
+
 		return homeworkSubmission.getHomeworkSubmissionId();
+	}
+
+	private void publishHomeworkSubmissionNotificationEvent(Homework homework, Lecture lecture, StudentModel student) {
+
+		HomeworkSubmissionNotificationEvent event = HomeworkSubmissionNotificationEvent.builder()
+			.homeworkId(homework.getHomeworkId())
+			.homeworkTitle(homework.getTitle())
+			.studentName(student.getName())
+			.teacherId(lecture.getTeacherId())
+			.grade(student.getGrade())
+			.classNumber(student.getClassNumber())
+			.subject(lecture.getSubject())
+			.type(NotificationType.HOMEWORK_SUBMISSION.getDescription())
+			.build();
+
+		kafkaTemplate.send("homework-submission-notification-topic", event);
 	}
 
 	private void validateHomeworkTime(Homework homework) {
