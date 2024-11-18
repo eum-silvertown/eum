@@ -56,7 +56,7 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		Long lectureId = homework.getLecture().getLectureId();
 		publishHomeworkSubmissionCreateEvent(homeworkSubmission, homeworkProblemSubmissionList, lectureId);
 
-		publishHomeworkTodoDeleteEvent(homework.getHomeworkId());
+		publishHomeworkTodoDeleteEvent(homework.getHomeworkId(), studentId);
 
 		return homeworkSubmission.getHomeworkSubmissionId();
 	}
@@ -154,8 +154,8 @@ public class HomeworkSubmissionServiceImpl implements HomeworkSubmissionService 
 		);
 	}
 
-	private void publishHomeworkTodoDeleteEvent(Long homeworkId) {
-		HomeworkTodoDeleteEvent event = new HomeworkTodoDeleteEvent(homeworkId);
+	private void publishHomeworkTodoDeleteEvent(Long homeworkId, Long studentId) {
+		HomeworkTodoDeleteEvent event = new HomeworkTodoDeleteEvent(homeworkId, studentId);
 
 		kafkaTemplate.send("homework-todo-delete-topic", event);
 	}
