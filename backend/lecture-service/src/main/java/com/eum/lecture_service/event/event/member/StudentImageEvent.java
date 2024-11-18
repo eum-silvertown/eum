@@ -11,10 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TeacherInfoUpdatedEvent {
-    private Long teacherId;
-    private String name;
-    private String email;
-    private String tel;
+public class StudentImageEvent {
+    private Long studentId;
     private String image;
+
 }
