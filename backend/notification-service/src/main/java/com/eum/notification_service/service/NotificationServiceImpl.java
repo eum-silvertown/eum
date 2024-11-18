@@ -13,6 +13,7 @@ import com.eum.notification_service.dto.NotificationDto;
 import com.eum.notification_service.entity.Notifications;
 import com.eum.notification_service.event.event.ExamCreatedNotificationEvent;
 import com.eum.notification_service.event.event.HomeworkCreatedNotificationEvent;
+import com.eum.notification_service.event.event.HomeworkSubmissionNotificationEvent;
 import com.eum.notification_service.event.event.LectureCreatedNotificationEvent;
 import com.eum.notification_service.event.event.LectureStartedNotificationEvent;
 import com.eum.notification_service.repository.NotificationRepository;
@@ -127,6 +128,24 @@ public class NotificationServiceImpl implements NotificationService {
 				.build();
 			notificationRepository.save(notification);
 		});
+	}
+
+	@Override
+	public void sendHomeworkSubmissionNotifications(HomeworkSubmissionNotificationEvent event) {
+		String title = event.getGrade()+ "학년 " + event.getClassNumber() + "반 " + event.getStudentName() + "학생의 숙제가 제출되었습니다.";
+		String message = "숙제 제목: " + event.getHomeworkTitle();
+
+		sendFcmNotification(event.getTeacherId(), title, message, event.getHomeworkTitle(), event.getSubject(), event.getType(),
+			event.getHomeworkId());
+
+		Notifications notification = Notifications.builder()
+			.memberId(event.getTeacherId())
+			.title(title)
+			.message(message)
+			.type(event.getType())
+			.isRead(false)
+			.build();
+		notificationRepository.save(notification);
 	}
 
 	@Override
