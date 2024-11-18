@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Document(collection = "homework_todo")
 public class HomeworkTodo {
 
+    @Id
+    private String id;
     private Long studentId;
     private Long homeworkId;
     private Long lectureId;
