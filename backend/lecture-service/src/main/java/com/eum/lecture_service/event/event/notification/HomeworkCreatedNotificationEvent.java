@@ -19,13 +19,15 @@ public class HomeworkCreatedNotificationEvent {
 
 	private Long homeworkId;
 	private String title;
+	private String subject;
 	private List<Long> studentIds;
 	private String type;
 
-	public static HomeworkCreatedNotificationEvent of(Homework homework, List<Long> studentIds) {
+	public static HomeworkCreatedNotificationEvent of(Homework homework, List<Long> studentIds, String subject) {
 		return HomeworkCreatedNotificationEvent.builder()
 			.homeworkId(homework.getHomeworkId())
 			.title(homework.getTitle())
+			.subject(subject)
 			.studentIds(studentIds)
 			.type(NotificationType.HOMEWORK_CREATION.getDescription())
 			.build();

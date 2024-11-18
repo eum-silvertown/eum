@@ -45,6 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
 		redisTemplate.delete(key);
 	}
 
+	@Transactional
 	@Override
 	public void sendLectureCreatedNotifications(LectureCreatedNotificationEvent event) {
 		String title = "새로운 강의가 생성되었습니다.";
@@ -52,7 +53,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		event.getStudentIds().forEach(studentId -> {
 
-			sendFcmNotification(studentId, title, message);
+			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject());
 
 			Notifications notification = Notifications.builder()
 				.memberId(studentId)
@@ -65,6 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
 		});
 	}
 
+	@Transactional
 	@Override
 	public void sendLectureStatusUpdatedNotifications(LectureStartedNotificationEvent event) {
 		String title = "강의가 시작되었습니다";
@@ -72,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		event.getStudentIds().forEach(studentId -> {
 
-			sendFcmNotification(studentId, title, message);
+			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject());
 
 			Notifications notification = Notifications.builder()
 				.memberId(studentId)
@@ -85,6 +87,7 @@ public class NotificationServiceImpl implements NotificationService {
 		});
 	}
 
+	@Transactional
 	@Override
 	public void sendExamCreatedNotifications(ExamCreatedNotificationEvent event) {
 		String title = "새로운 시험이 등록되었습니다";
@@ -92,7 +95,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		event.getStudentIds().forEach(studentId -> {
 
-			sendFcmNotification(studentId, title, message);
+			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject());
 
 			Notifications notification = Notifications.builder()
 				.memberId(studentId)
@@ -105,6 +108,7 @@ public class NotificationServiceImpl implements NotificationService {
 		});
 	}
 
+	@Transactional
 	@Override
 	public void sendHomeworkCreatedNotifications(HomeworkCreatedNotificationEvent event) {
 		String title = "새로운 숙제가 등록되었습니다";
@@ -112,7 +116,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 		event.getStudentIds().forEach(studentId -> {
 
-			sendFcmNotification(studentId, title, message);
+			sendFcmNotification(studentId, title, message, event.getTitle(), event.getSubject());
 
 			Notifications notification = Notifications.builder()
 				.memberId(studentId)
@@ -183,7 +187,7 @@ public class NotificationServiceImpl implements NotificationService {
 		}
 	}
 
-	private void sendFcmNotification(Long memberId, String title, String body) {
+	private void sendFcmNotification(Long memberId, String title, String body, String eventTitle, String subject) {
 		String fcmToken = getFcmTokenByMemberId(memberId);
 		if (fcmToken == null || fcmToken.isEmpty()) {
 			log.warn("FCM 토큰이 존재하지 않습니다. memberId: " + memberId);
@@ -196,6 +200,8 @@ public class NotificationServiceImpl implements NotificationService {
 				.setTitle(title)
 				.setBody(body)
 				.build())
+			.putData("title", eventTitle)
+			.putData("subject", subject)
 			.build();
 
 		try {
