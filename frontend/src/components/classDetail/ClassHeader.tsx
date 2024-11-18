@@ -115,7 +115,7 @@ function ClassHeader({
       if (isTeacher) {
         navigation.navigate('LessoningStudentListScreen');
       } else {
-        navigation.navigate('LessoningScreen');
+        navigation.navigate('LessoningStudentScreen');
       }
     } else {
       Alert.alert('수업 종료됨', '이 수업은 종료되었습니다.');

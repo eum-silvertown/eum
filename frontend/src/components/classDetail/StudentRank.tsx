@@ -26,7 +26,6 @@ const StudentRank = ({
   studentsInfo = [],
   onStudentSelect,
 }: StudentRankProps): React.JSX.Element => {
-  studentsInfo.map(data => console.log(data.studentId, data.studentImage));
   const calculateTotalScore = (scores: {
     homeworkAvgScore: number;
     examAvgScore: number;

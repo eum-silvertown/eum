@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 
 import TeacherRealTimeCanvasSection from '@components/classLessoning/TeacherRealTimeCanvasSection';
-import StudentRealTimeCanvasSection from '@components/classLessoning/StudentRealTimeCanvasSection';
 import {useAuthStore} from '@store/useAuthStore';
 import {useFocusEffect} from '@react-navigation/native';
 import {useCurrentScreenStore} from '@store/useCurrentScreenStore';
@@ -14,9 +13,8 @@ import {useLectureStore, useLessonStore} from '@store/useLessonStore';
 import ProblemSection from '@components/common/ProblemSection';
 import {useQuery} from '@tanstack/react-query';
 import {getFileDetail} from '@services/problemService';
-import {useLessoningStore} from '@store/useLessoningStore';
 
-function LessoningScreen(): React.JSX.Element {
+function LessoningTeacherScreen(): React.JSX.Element {
   const questionIds = useLessonStore(state => state.questionIds);
   const lessonId = useLessonStore(state => state.lessonId);
   const memberId = useLectureStore(state => state.memberId);
@@ -72,25 +70,13 @@ function LessoningScreen(): React.JSX.Element {
       onConnect: () => {
         console.log('STOMP client successfully connected');
         setIsConnected(true);
-        if (isTeacher && isTeaching && memberId) {
+        if (isTeaching && memberId) {
           const teacherTopic = `/user/topic/teacher/lesson/${lessonId}/member/${memberId}`;
           client.subscribe(teacherTopic, message => {
             console.log('Received message for teacher:', message.body);
             setReceivedMessage(message.body);
           });
           console.log(`Subscribed to teacher topic: ${teacherTopic}`);
-        } else if (!isTeacher) {
-          // 학생 입장 정보 전송
-          sendStudentInfo('in');
-          console.log('problemIds:', problemIds);
-          console.log('현재 문제 ID:', problemIds[currentPage - 1]);
-          const studentTopic = `/topic/lesson/${lessonId}/question/${
-            problemIds[currentPage - 1]
-          }`;
-          client.subscribe(studentTopic, message => {
-            console.log('Received message for student:', message.body);
-            setReceivedMessage(message.body);
-          });
         }
       },
       onDisconnect: frame => {
@@ -115,19 +101,15 @@ function LessoningScreen(): React.JSX.Element {
     });
 
     // STOMP 클라이언트 활성화
-    client.activate();
     clientRef.current = client; // 클라이언트 인스턴스를 useRef에 저장
+    client.activate();
 
     return () => {
-      console.log('Deactivating STOMP client...');
-      if (!isTeacher) {
-        sendStudentInfo('out');
-      }
       client.deactivate(); // 컴포넌트 언마운트 시 연결 해제
       console.log('STOMP client deactivated');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTeacher, isTeaching, lessonId, memberId]);
+  }, [lessonId, memberId]);
 
   const handleNextPage = () => {
     if (currentPage < problems.length) {
@@ -151,104 +133,47 @@ function LessoningScreen(): React.JSX.Element {
     }
   };
 
-  const handleGoToTeacherScreen = () => {
-    const currentQuestionId = useLessoningStore.getState().questionId;
-
-    if (!problemIds || problemIds.length === 0) {
-      console.error('problemIds 배열이 비어있습니다.');
-      return;
-    }
-
-    // 문제 ID 배열에서 선생님이 보고 있는 문제 ID의 인덱스를 찾음
-    const targetIndex = problemIds.findIndex(id => id === currentQuestionId);
-
-    if (targetIndex === -1) {
-      console.error('선생님이 보고 있는 문제 ID가 problemIds에 없습니다.');
-      return;
-    }
-
-    console.log('targetIndex:', targetIndex);
-
-    // 페이지 업데이트 (1-based index)
-    setCurrentPage(targetIndex + 1);
-    console.log('Updated currentPage:', targetIndex + 1);
-  };
-
   const setCurrentScreen = useCurrentScreenStore(
     state => state.setCurrentScreen,
   );
 
   useFocusEffect(() => {
-    setCurrentScreen('LessoningScreen');
+    setCurrentScreen('LessoningTeacherScreen');
   });
 
   if (isLoading) {
     <Text>Loading..</Text>;
   }
-  // 선생님일 경우
-  if (isTeacher) {
-    return (
-      <>
-        <View style={styles.container}>
-          <View style={styles.sectionContainer}>
-            <View style={{marginLeft: '15%', marginTop: '5%'}}>
-              <ProblemSection problemText={problems[currentPage - 1]} />
-            </View>
-            <TeacherRealTimeCanvasSection
-              problemIds={problemIds}
-              answers={answers}
-              titles={titles}
-              isTeaching={isTeaching}
-              role={userInfo.role}
-              clientRef={clientRef}
-              isConnected={isConnected}
-              receivedMessage={receivedMessage}
-              currentPage={currentPage}
-              totalPages={problems.length}
-              onNextPage={handleNextPage}
-              onPrevPage={handlePrevPage}
-            />
-          </View>
-          {/* Connection Chip */}
-          <View style={styles.connectionChip}>
-            <LinkIndicator isConnected={isConnected} />
-          </View>
-        </View>
-      </>
-    );
-  }
-
-  // 학생일 경우
   return (
-    <View style={styles.container}>
-      <View style={styles.sectionContainer}>
-        <View style={{marginLeft: '15%', marginTop: '5%'}}>
-          <ProblemSection problemText={problems[currentPage - 1]} />
+    <>
+      <View style={styles.container}>
+        <View style={styles.sectionContainer}>
+          <View style={{marginLeft: '15%', marginTop: '5%'}}>
+            <ProblemSection problemText={problems[currentPage - 1]} />
+          </View>
+          <TeacherRealTimeCanvasSection
+            problemIds={problemIds}
+            answers={answers}
+            titles={titles}
+            isTeaching={isTeaching}
+            role={userInfo.role}
+            clientRef={clientRef}
+            isConnected={isConnected}
+            receivedMessage={receivedMessage}
+            currentPage={currentPage}
+            totalPages={problems.length}
+            onNextPage={handleNextPage}
+            onPrevPage={handlePrevPage}
+          />
         </View>
-        <StudentRealTimeCanvasSection
-          handleGoToTeacherScreen={handleGoToTeacherScreen}
-          problemIds={problemIds}
-          answers={answers}
-          titles={titles}
-          lessonId={lessonId!}
-          role={userInfo.role}
-          clientRef={clientRef}
-          isConnected={isConnected}
-          receivedMessage={receivedMessage}
-          currentPage={currentPage}
-          totalPages={problems.length}
-          onNextPage={handleNextPage}
-          onPrevPage={handlePrevPage}
-        />
+        {/* Connection Chip */}
+        <View style={styles.connectionChip}>
+          <LinkIndicator isConnected={isConnected} />
+        </View>
       </View>
-      {/* Connection Chip */}
-      <View style={styles.connectionChip}>
-        <LinkIndicator isConnected={isConnected} />
-      </View>
-    </View>
+    </>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -304,4 +229,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LessoningScreen;
+export default LessoningTeacherScreen;

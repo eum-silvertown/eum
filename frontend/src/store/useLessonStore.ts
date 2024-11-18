@@ -26,6 +26,7 @@ interface LessonState {
   setLectureId: (lectureId: number) => void;
   setLessonInfo: (lessonId: number, questionIds: number[]) => void;
   setIsTeaching: (isTeaching: boolean) => void;
+  setLessonId: (lessonId:number) => void;
 }
 
 export const useLessonStore = create<LessonState>(set => ({
@@ -36,4 +37,5 @@ export const useLessonStore = create<LessonState>(set => ({
   setLectureId: lectureId => set({lectureId}),
   setLessonInfo: (lessonId, questionIds) => set({lessonId, questionIds}),
   setIsTeaching: isTeaching => set({isTeaching}),
+  setLessonId: lessonId => set({lessonId}),
 }));
