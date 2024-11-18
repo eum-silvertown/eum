@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 5,
     borderWidth: 1,
-    borderColor: colors.light.borderColor.pickerBorder,
+    borderColor: '#B3B3B3',
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
   },
