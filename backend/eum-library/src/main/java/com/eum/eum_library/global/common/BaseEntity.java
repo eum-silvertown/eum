@@ -1,4 +1,4 @@
-package com.github.yechanissm.eum_library.global.common;
+package com.eum.eum_library.global.common;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package com.github.yechanissm.eum_library;
+package com.eum.eum_library;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

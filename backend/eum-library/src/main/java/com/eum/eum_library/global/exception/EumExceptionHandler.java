@@ -1,4 +1,4 @@
-package com.github.yechanissm.eum_library.global.exception;
+package com.eum.eum_library.global.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
