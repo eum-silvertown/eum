@@ -6,7 +6,7 @@ import { iconSize } from '@theme/iconSize';
 import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
-import { colors } from 'src/hooks/useColors';
+import { colors } from '@hooks/useColors';
 import ProblemExSection from './ProblemExSection';
 import BackArrowIcon from '@assets/icons/backArrowIcon.svg';
 

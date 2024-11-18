@@ -4,8 +4,8 @@ import {
   TextProps,
   useWindowDimensions,
 } from 'react-native';
-import {typography, SizeVarient, WeightVarient} from '@theme/typography';
-import {TextColorVariant, useColors} from 'src/hooks/useColors';
+import { typography, SizeVarient, WeightVarient } from '@theme/typography';
+import { TextColorVariant, useColors } from '@hooks/useColors';
 
 interface CustomTextProps extends TextProps {
   variant?: SizeVarient;
@@ -24,7 +24,7 @@ export function Text({
   children,
   ...props
 }: CustomTextProps) {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const themeColors = useColors();
 
   return (

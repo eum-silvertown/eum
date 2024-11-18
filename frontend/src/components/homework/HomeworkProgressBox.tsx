@@ -1,6 +1,6 @@
 import { Text } from '@components/common/Text';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { colors } from 'src/hooks/useColors';
+import { colors } from '@hooks/useColors';
 import HomeworkIcon from '@assets/icons/homeworkIcon.svg';
 import CompletedHomeworkIcon from '@assets/icons/completeHomeworkIcon.svg';
 import UncompletedHomeworkIcon from '@assets/icons/incompleteHomeworkIcon.svg';
@@ -70,7 +70,7 @@ const HomeworkProgressBox: React.FC<HomeworkProgressBoxProps> = ({ variant, valu
         },
       ]}
       onPress={() => {
-        if(setSelected && variant !== '평균 점수') {
+        if (setSelected && variant !== '평균 점수') {
           setSelected(variant);
         }
       }}

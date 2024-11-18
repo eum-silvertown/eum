@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { Text } from '@components/common/Text';
 import InputField from '@components/account/InputField';
-import { colors } from 'src/hooks/useColors';
+import { colors } from '@hooks/useColors';
 import ColorPicker from '@components/lectureList/ColorPicker';
 import { Picker } from '@react-native-picker/picker';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
@@ -19,7 +19,7 @@ import LectureCreateBook from '@components/main/LectureCreateBook';
 import { getResponsiveSize } from '@utils/responsive';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
 import StatusMessage from '@components/account/StatusMessage';
-import { useModalContext } from 'src/contexts/useModalContext';
+import { useModalContext } from '@contexts/useModalContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   toupdateLectureDetail,

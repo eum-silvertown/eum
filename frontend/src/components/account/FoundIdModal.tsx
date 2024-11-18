@@ -1,10 +1,10 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
-import {useModalContext} from 'src/contexts/useModalContext';
-import {Text} from '@components/common/Text';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
+import { useModalContext } from '@contexts/useModalContext';
+import { Text } from '@components/common/Text';
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 interface FoundIdModalProps {
@@ -17,8 +17,8 @@ export default function FoundIdModal({
   email,
 }: FoundIdModalProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
-  const {close} = useModalContext();
+  const { setCurrentScreen } = useCurrentScreenStore();
+  const { close } = useModalContext();
 
   const handleToLogin = () => {
     close();
@@ -28,7 +28,7 @@ export default function FoundIdModal({
 
   const handleToFindPassword = () => {
     close();
-    navigation.navigate('FindPasswordScreen', {userId: id, email});
+    navigation.navigate('FindPasswordScreen', { userId: id, email });
     setCurrentScreen('FindPasswordScreen');
   };
 

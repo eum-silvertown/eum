@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -6,20 +6,20 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import {Text} from '@components/common/Text';
-import {colors} from 'src/hooks/useColors';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { Text } from '@components/common/Text';
+import { colors } from '@hooks/useColors';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import SearchIcon from '@assets/icons/searchIcon.svg';
 import PasswordVisibleIcon from '@assets/icons/passwordVisibleIcon.svg';
 import PasswordVisibleOffIcon from '@assets/icons/passwordVisibleOffIcon.svg';
-import {iconSize} from '@theme/iconSize';
+import { iconSize } from '@theme/iconSize';
 import ScreenHeader from '@components/account/ScreenHeader';
 import InputField from '@components/account/InputField';
 import SearchSchoolModal from '@components/account/SearchSchoolModal';
-import {useModal} from 'src/hooks/useModal';
-import {getResponsiveSize} from '@utils/responsive';
+import { useModal } from '@hooks/useModal';
+import { getResponsiveSize } from '@utils/responsive';
 import {
   checkUsername,
   logIn,
@@ -27,17 +27,17 @@ import {
   signUp,
   verifyEmailCode,
 } from '@services/authService';
-import {borderRadius} from '@theme/borderRadius';
+import { borderRadius } from '@theme/borderRadius';
 import StatusMessage from '@components/account/StatusMessage';
 import CustomDropdownPicker from '@components/common/CustomDropdownPicker';
 
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function SignUpScreen(): React.JSX.Element {
-  const {open} = useModal();
+  const { open } = useModal();
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen} = useCurrentScreenStore();
-  const {userType} = useRoute().params as {userType: 'teacher' | 'student'};
+  const { setCurrentScreen } = useCurrentScreenStore();
+  const { userType } = useRoute().params as { userType: 'teacher' | 'student' };
   const headerText =
     userType === 'teacher' ? '선생님으로 가입하기' : '학생으로 가입하기';
 
@@ -344,11 +344,11 @@ function SignUpScreen(): React.JSX.Element {
         console.log(requestData);
         Alert.alert('회원가입 성공', '회원가입이 완료되었습니다.');
 
-        logIn({id: userId, password});
+        logIn({ id: userId, password });
 
         navigation.reset({
           index: 0,
-          routes: [{name: 'HomeScreen'}],
+          routes: [{ name: 'HomeScreen' }],
         });
         setCurrentScreen('HomeScreen');
       } catch (error) {
@@ -476,7 +476,7 @@ function SignUpScreen(): React.JSX.Element {
               <View>
                 <View style={styles.schoolInfoContainer}>
                   <InputField
-                    style={{flex: 1}}
+                    style={{ flex: 1 }}
                     label="학교"
                     placeholder="학교 이름을 입력하거나 검색하세요."
                     value={school}
@@ -501,7 +501,7 @@ function SignUpScreen(): React.JSX.Element {
                       {/* 학년 선택 드롭다운 */}
                       <CustomDropdownPicker
                         label="학년"
-                        items={Array.from({length: 4}, (_, i) => ({
+                        items={Array.from({ length: 4 }, (_, i) => ({
                           label: i === 0 ? '학년 선택' : `${i}학년`,
                           value: `${i}`,
                         }))}
@@ -513,7 +513,7 @@ function SignUpScreen(): React.JSX.Element {
                       {/* 반 선택 드롭다운 */}
                       <CustomDropdownPicker
                         label="반"
-                        items={Array.from({length: 16}, (_, i) => ({
+                        items={Array.from({ length: 16 }, (_, i) => ({
                           label: i === 0 ? '반' : `${i}반`,
                           value: `${i}`,
                         }))}
@@ -532,7 +532,7 @@ function SignUpScreen(): React.JSX.Element {
                 <View style={styles.birthGenderContainer}>
                   {/* 생년월일 */}
                   <InputField
-                    style={{flex: 1}}
+                    style={{ flex: 1 }}
                     label="생년월일"
                     placeholder="생년월일 8자리를 입력해주세요"
                     value={birthDate}
@@ -566,7 +566,7 @@ function SignUpScreen(): React.JSX.Element {
                         weight="bold"
                         style={[
                           gender === 'female' &&
-                            styles.selectedGenderButtonText,
+                          styles.selectedGenderButtonText,
                         ]}>
                         여성
                       </Text>

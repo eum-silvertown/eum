@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   StyleSheet,
   View,
@@ -7,7 +7,7 @@ import {
   Pressable,
   useWindowDimensions,
 } from 'react-native';
-import {ScreenType, useCurrentScreenStore} from '@store/useCurrentScreenStore';
+import { ScreenType, useCurrentScreenStore } from '@store/useCurrentScreenStore';
 import useSidebarStore from '@store/useSidebarStore';
 import HomeIcon from '@assets/icons/homeIcon.svg';
 import ClassIcon from '@assets/icons/classIcon.svg';
@@ -15,10 +15,10 @@ import HomeworkIcon from '@assets/icons/homeworkIcon.svg';
 import questionBoxIcon from '@assets/icons/questionBoxIcon.svg';
 import myClassIcon from '@assets/icons/myClassIcon.svg';
 import NotificationIcon from '@assets/icons/notificationIcon.svg';
-import {Text} from '../common/Text';
-import {SvgProps} from 'react-native-svg';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useNotificationStore} from '@store/useNotificationStore';
+import { Text } from '../common/Text';
+import { SvgProps } from 'react-native-svg';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNotificationStore } from '@store/useNotificationStore';
 
 interface MenuItem {
   name: string;
@@ -29,23 +29,23 @@ interface MenuItem {
 type NavigationProps = NativeStackNavigationProp<ScreenType>;
 
 function SidebarMenus(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = useMemo(() => getStyles(width), [width]);
 
   const unreadNotifications = useNotificationStore(
     state => state.unreadNotifications,
   );
   const menuItems: MenuItem[] = [
-    {name: '홈', screen: 'HomeScreen', icon: HomeIcon},
-    {name: '알림', screen: 'NotificationScreen', icon: NotificationIcon},
-    {name: '수업 목록', screen: 'ClassListScreen', icon: ClassIcon},
-    {name: '숙제', screen: 'HomeworkScreen', icon: HomeworkIcon},
-    {name: '문제 보관함', screen: 'QuestionBoxScreen', icon: questionBoxIcon},
-    {name: '우리 반', screen: 'MyClassScreen', icon: myClassIcon},
+    { name: '홈', screen: 'HomeScreen', icon: HomeIcon },
+    { name: '알림', screen: 'NotificationScreen', icon: NotificationIcon },
+    { name: '수업 목록', screen: 'ClassListScreen', icon: ClassIcon },
+    { name: '숙제', screen: 'HomeworkScreen', icon: HomeworkIcon },
+    { name: '문제 보관함', screen: 'QuestionBoxScreen', icon: questionBoxIcon },
+    { name: '우리 반', screen: 'MyClassScreen', icon: myClassIcon },
   ];
   const navigation = useNavigation<NavigationProps>();
-  const {setCurrentScreen, currentScreen} = useCurrentScreenStore();
-  const {isExpanded} = useSidebarStore();
+  const { setCurrentScreen, currentScreen } = useCurrentScreenStore();
+  const { isExpanded } = useSidebarStore();
   const opacityAnim = useRef(new Animated.Value(1)).current;
   const [selected, setSelected] = useState(0);
 
@@ -55,7 +55,7 @@ function SidebarMenus(): React.JSX.Element {
       if (currentScreen !== screen) {
         setCurrentScreen(screen);
         requestAnimationFrame(() => {
-          navigation.reset({routes: [{name: screen}]});
+          navigation.reset({ routes: [{ name: screen }] });
         });
       }
     },
@@ -69,6 +69,13 @@ function SidebarMenus(): React.JSX.Element {
       useNativeDriver: true,
     }).start();
   }, [isExpanded, opacityAnim]);
+
+  useEffect(() => {
+    const currentIndex = menuItems.findIndex(item => item.screen === currentScreen);
+    if (currentIndex !== -1) {
+      setSelected(currentIndex);
+    }
+  }, [currentScreen, menuItems]);
 
   return (
     <View style={styles.container}>

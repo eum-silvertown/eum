@@ -9,12 +9,12 @@ import {useAuthStore} from '@store/useAuthStore';
 import {useLessonStore} from '@store/useLessonStore';
 import ProblemExSection from '@components/questionBox/ProblemExSection';
 import StudentCanvasResolveSection from '@components/classActivity/StudentCanvasResolveSection';
-import {useModal} from 'src/hooks/useModal';
+import { useModal } from '@hooks/useModal';
 import OverviewModal from '@components/classActivity/OverviewModal';
 
 function ConfirmSolvedScreen(): React.JSX.Element {
   const route = useRoute();
-  const {typeId, questionIds, solvedType} = route.params as {
+  const { typeId, questionIds, solvedType } = route.params as {
     typeId: number;
     questionIds: number[];
     solvedType: 'EXAM' | 'HOMEWORK' | 'LESSON';
@@ -22,18 +22,18 @@ function ConfirmSolvedScreen(): React.JSX.Element {
 
   const lectureId = useLessonStore(state => state.lectureId);
   const memberId = useAuthStore(state => state.userInfo.id);
-  const {open} = useModal();
+  const { open } = useModal();
 
   // EXAM 데이터 가져오기
-  const {data: examDetail} = useQuery({
+  const { data: examDetail } = useQuery({
     queryKey: ['examSubmissionDetail', typeId],
     queryFn: () => getExamSubmissionDetail(lectureId!, typeId, memberId),
     enabled: solvedType === 'EXAM',
   });
 
-  const {data: examProblems} = useQuery({
+  const { data: examProblems } = useQuery({
     queryKey: ['examProblems', questionIds],
-    queryFn: async ({queryKey}) => {
+    queryFn: async ({ queryKey }) => {
       const [, responseQuestionIds] = queryKey;
       const problemDetails = await Promise.all(
         (responseQuestionIds as number[]).map(questionId =>
@@ -46,15 +46,15 @@ function ConfirmSolvedScreen(): React.JSX.Element {
   });
 
   // HOMEWORK 데이터 가져오기
-  const {data: homeworkDetail} = useQuery({
+  const { data: homeworkDetail } = useQuery({
     queryKey: ['homeworkSubmissionDetail', typeId],
     queryFn: () => getHomeworkSubmissionDetail(lectureId!, typeId, memberId),
     enabled: solvedType === 'HOMEWORK',
   });
 
-  const {data: homeworkProblems} = useQuery({
+  const { data: homeworkProblems } = useQuery({
     queryKey: ['homeworkProblems', questionIds],
-    queryFn: async ({queryKey}) => {
+    queryFn: async ({ queryKey }) => {
       const [, responseQuestionIds] = queryKey;
       const problemDetails = await Promise.all(
         (responseQuestionIds as number[]).map(questionId =>
@@ -91,7 +91,7 @@ function ConfirmSolvedScreen(): React.JSX.Element {
           totalCount={detail.totalCount}
           onConfirm={() => console.log('Modal confirmed')}
         />,
-        {title: '결과'},
+        { title: '결과' },
       );
     }
   }, [examDetail, homeworkDetail, open, solvedType]);
@@ -108,11 +108,11 @@ function ConfirmSolvedScreen(): React.JSX.Element {
   const currentSolution =
     solvedType === 'EXAM'
       ? examDetail!.problemSubmissions.find(
-          submission => submission.questionId === currentQuestionId,
-        )?.examSolution // EXAM의 solution
+        submission => submission.questionId === currentQuestionId,
+      )?.examSolution // EXAM의 solution
       : homeworkDetail!.problemSubmissions.find(
-          submission => submission.questionId === currentQuestionId,
-        )?.homeworkSolution; // HOMEWORK의 solution
+        submission => submission.questionId === currentQuestionId,
+      )?.homeworkSolution; // HOMEWORK의 solution
 
   return (
     <View style={styles.container}>

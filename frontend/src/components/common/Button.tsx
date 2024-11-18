@@ -5,8 +5,8 @@ import {
   useWindowDimensions,
   ViewStyle,
 } from 'react-native';
-import {Text} from './Text';
-import {useColors} from 'src/hooks/useColors';
+import { Text } from './Text';
+import { useColors } from '@hooks/useColors';
 
 interface ButtonProps {
   style?: StyleProp<ViewStyle>;
@@ -22,7 +22,7 @@ function Button({
   size,
   onPress,
 }: ButtonProps): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const colors = useColors();
   const styles = StyleSheet.create({
     container: {

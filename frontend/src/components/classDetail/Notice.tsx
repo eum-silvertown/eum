@@ -1,15 +1,15 @@
 import React from 'react';
-import {Text} from '@components/common/Text';
-import {View, StyleSheet, Image, TouchableOpacity, Alert} from 'react-native';
+import { Text } from '@components/common/Text';
+import { View, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import postit from '@assets/images/postit.png';
-import {getResponsiveSize} from '@utils/responsive';
+import { getResponsiveSize } from '@utils/responsive';
 import AddCircleIcon from '@assets/icons/addCircleIcon.svg';
-import {iconSize} from '@theme/iconSize';
-import {useModal} from 'src/hooks/useModal';
+import { iconSize } from '@theme/iconSize';
+import { useModal } from '@hooks/useModal';
 import NoticeCreateModal from './NoticeCreateModal';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
-import {deleteNotice} from '@services/lectureNotice';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import { deleteNotice } from '@services/lectureNotice';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type NoticeData = {
   noticeId: number;
@@ -28,12 +28,12 @@ function Notice({
   lectureId,
   notices = [],
 }: NoticeProps): React.JSX.Element {
-  const {open} = useModal();
+  const { open } = useModal();
   const displayedNotices = notices
     .slice(Math.max(notices.length - 3, 0))
     .reverse();
   const queryClient = useQueryClient();
-  const {mutate: deleteMutation} = useMutation({
+  const { mutate: deleteMutation } = useMutation({
     mutationFn: (noticeId: number) => deleteNotice(noticeId),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -60,7 +60,7 @@ function Notice({
           style: 'cancel',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -85,7 +85,7 @@ function Notice({
         )}
       </View>
       <View style={styles.noticeLayout}>
-        {Array.from({length: 3}).map((_, index) => {
+        {Array.from({ length: 3 }).map((_, index) => {
           const notice = displayedNotices[index];
           return (
             <View key={index} style={styles.imageWrapper}>

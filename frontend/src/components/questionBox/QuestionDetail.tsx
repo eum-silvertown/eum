@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -7,10 +7,10 @@ import {
   View,
 } from 'react-native';
 import CancelIcon from '@assets/icons/cancelIcon.svg';
-import {colors} from 'src/hooks/useColors';
-import {detailQuestion, DetailQuestionType} from '@services/questionBox';
-import {useQuery} from '@tanstack/react-query';
-import {Text} from '@components/common/Text';
+import { colors } from '@hooks/useColors';
+import { detailQuestion, DetailQuestionType } from '@services/questionBox';
+import { useQuery } from '@tanstack/react-query';
+import { Text } from '@components/common/Text';
 import ProblemExSection from './ProblemExSection';
 
 interface QuestionDetailProps {
@@ -28,12 +28,12 @@ export default function QuestionDetail({
   selectedFileId,
   setSelectedFileId,
 }: QuestionDetailProps): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const toggleAnim = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
-  const {data: questionDetail, isLoading} = useQuery<DetailQuestionType>({
+  const { data: questionDetail, isLoading } = useQuery<DetailQuestionType>({
     queryKey: ['questionDetail', selectedFileId],
     queryFn: () => detailQuestion(selectedFileId),
     enabled: selectedFileId !== 0,
@@ -57,12 +57,12 @@ export default function QuestionDetail({
   return (
     <Animated.View
       onLayout={event => {
-        const {width: layoutWidth} = event.nativeEvent.layout;
+        const { width: layoutWidth } = event.nativeEvent.layout;
         setContainerWidth(layoutWidth);
       }}
       style={[
         styles.container,
-        {transform: [{translateX: toggleAnim}], height: containerHeight},
+        { transform: [{ translateX: toggleAnim }], height: containerHeight },
       ]}>
       <View style={styles.header}>
         <Text variant="subtitle" weight="medium">

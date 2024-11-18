@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, TouchableOpacity, FlatList} from 'react-native';
-import {Text} from '@components/common/Text';
+import React, { useState } from 'react';
+import { StyleSheet, View, TouchableOpacity, FlatList } from 'react-native';
+import { Text } from '@components/common/Text';
 import InputField from './InputField';
 import CustomDropdownPicker from '@components/common/CustomDropdownPicker';
 import Config from 'react-native-config';
-import {getResponsiveSize} from '@utils/responsive';
-import {useModalContext} from 'src/contexts/useModalContext';
+import { getResponsiveSize } from '@utils/responsive';
+import { useModalContext } from '@contexts/useModalContext';
 
 interface School {
   seq: string;
@@ -30,7 +30,7 @@ export default function SearchSchoolModal({
   const [selectedSchoolLevel, setSelectedSchoolLevel] = useState('midd_list');
   const [schoolList, setSchoolList] = useState<SchoolListItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const {close} = useModalContext();
+  const { close } = useModalContext();
   const [loading, setLoading] = useState(false);
   const [isSearchComplete, setIsSearchComplete] = useState(false);
 
@@ -66,10 +66,10 @@ export default function SearchSchoolModal({
   return (
     <View style={styles.container}>
       <CustomDropdownPicker
-        containerStyle={{marginTop: 10}}
+        containerStyle={{ marginTop: 10 }}
         items={[
-          {label: '중학교', value: 'midd_list'},
-          {label: '고등학교', value: 'high_list'},
+          { label: '중학교', value: 'midd_list' },
+          { label: '고등학교', value: 'high_list' },
         ]}
         onSelectItem={setSelectedSchoolLevel}
         defaultValue={selectedSchoolLevel}
@@ -86,15 +86,15 @@ export default function SearchSchoolModal({
 
       {/* 검색 결과가 없는 경우 표시할 메시지 */}
       {isSearchComplete && schoolList.length === 0 && (
-        <Text style={{textAlign: 'center', marginTop: 10}}>
+        <Text style={{ textAlign: 'center', marginTop: 10 }}>
           검색 결과가 없습니다.
         </Text>
       )}
       <FlatList
         data={schoolList}
         keyExtractor={item => item.id.toString()}
-        style={{height: getResponsiveSize(320)}}
-        renderItem={({item}) => (
+        style={{ height: getResponsiveSize(320) }}
+        renderItem={({ item }) => (
           <TouchableOpacity onPress={() => selectSchool(`${item.name}(${item.region})`)}>
             <Text>
               {item.name}({item.region})

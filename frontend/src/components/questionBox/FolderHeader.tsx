@@ -10,14 +10,14 @@ import UpArrowIcon from '@assets/icons/backArrowIcon.svg';
 import AddFolderIcon from '@assets/icons/addFolderIcon.svg';
 import AddQuestionIcon from '@assets/icons/addQuestionIcon.svg';
 import BreadCrumb from '@components/questionBox/BreadCrumb';
-import {useQuestionExplorerStore} from '@store/useQuestionExplorerStore';
+import { useQuestionExplorerStore } from '@store/useQuestionExplorerStore';
 import CreateFolder from './CreateFolder';
-import {useModal} from 'src/hooks/useModal';
-import {colors} from 'src/hooks/useColors';
+import { useModal } from '@hooks/useModal';
+import { colors } from '@hooks/useColors';
 import CreateQuestionModal from './CreateQuestionModal';
 
 function FolderHeader(): React.JSX.Element {
-  const {width} = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const styles = getStyles(width);
 
   const currentHistoryIndex = useQuestionExplorerStore(
@@ -25,9 +25,9 @@ function FolderHeader(): React.JSX.Element {
   );
   const history = useQuestionExplorerStore(state => state.history);
   const currentPath = useQuestionExplorerStore(state => state.currentPath);
-  const {navigateBack, navigateForward, navigateUp} =
+  const { navigateBack, navigateForward, navigateUp } =
     useQuestionExplorerStore();
-  const {open} = useModal();
+  const { open } = useModal();
 
   const openFolderCreateModal = () => {
     open(<CreateFolder />, {
@@ -60,7 +60,7 @@ function FolderHeader(): React.JSX.Element {
           style={[
             styles.navButton,
             currentHistoryIndex >= history.length - 1 &&
-              styles.navButtonDisabled,
+            styles.navButtonDisabled,
           ]}>
           <BackArrowIcon
             width={width * 0.02}
@@ -73,7 +73,7 @@ function FolderHeader(): React.JSX.Element {
           onPress={navigateUp}
           style={[
             styles.navButton,
-            {marginLeft: width * 0.005},
+            { marginLeft: width * 0.005 },
             currentPath.length === 0 && styles.navButtonDisabled,
           ]}>
           <UpArrowIcon
@@ -138,10 +138,10 @@ const getStyles = (width: number) =>
       opacity: 0.5,
     },
     forwardIcon: {
-      transform: [{rotate: '180deg'}],
+      transform: [{ rotate: '180deg' }],
     },
     upIcon: {
-      transform: [{rotate: '90deg'}],
+      transform: [{ rotate: '90deg' }],
     },
     rightIcons: {
       flexDirection: 'row',

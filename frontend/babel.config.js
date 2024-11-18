@@ -4,7 +4,7 @@ module.exports = {
     [
       'module-resolver',
       {
-        root: ['./'],
+        root: ['./src'],
         extensions: [
           '.ios.ts',
           '.android.ts',
@@ -24,6 +24,9 @@ module.exports = {
           '@utils': './src/utils',
           '@store': './src/store',
           '@services': './src/services',
+          '@hooks': './src/hooks',
+          '@contexts': './src/contexts',
+          '~types': './src/types',
         },
       },
     ],
