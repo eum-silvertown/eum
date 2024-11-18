@@ -95,9 +95,9 @@ export default function SearchSchoolModal({
         keyExtractor={item => item.id.toString()}
         style={{height: getResponsiveSize(320)}}
         renderItem={({item}) => (
-          <TouchableOpacity onPress={() => selectSchool(item.name)}>
+          <TouchableOpacity onPress={() => selectSchool(`${item.name}(${item.region})`)}>
             <Text>
-              {item.name} ({item.region})
+              {item.name}({item.region})
             </Text>
           </TouchableOpacity>
         )}

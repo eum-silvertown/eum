@@ -12,11 +12,10 @@ import {
   readNotification,
   readNotifications,
 } from '@services/notificationService';
-import MainCalendar from '@components/main/widgets/MainCalendar';
 import Weather from '@components/main/widgets/Weather';
 import { colors } from 'src/hooks/useColors';
 import { useState } from 'react';
-
+import CustomCalendar from '@components/main/widgets/CustomCalendar';
 function NotificationScreen(): React.JSX.Element {
   const {width, height} = useWindowDimensions();
   const styles = getStyles(width, height);
@@ -179,7 +178,7 @@ function NotificationScreen(): React.JSX.Element {
             <Weather />
           </View>
           <View style={styles.widget}>
-            <MainCalendar />
+            <CustomCalendar/>
           </View>
         </View>
       </View>
