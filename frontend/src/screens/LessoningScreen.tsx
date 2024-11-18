@@ -67,8 +67,8 @@ function LessoningScreen(): React.JSX.Element {
         new SockJS('http://k11d101.p.ssafy.io/ws-gateway/drawing'),
       debug: str => console.log('STOMP Debug:', str),
       reconnectDelay: 5000,
-      heartbeatIncoming: 1000000,
-      heartbeatOutgoing: 1000000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
       onConnect: () => {
         console.log('STOMP client successfully connected');
         setIsConnected(true);
@@ -84,14 +84,13 @@ function LessoningScreen(): React.JSX.Element {
           sendStudentInfo('in');
           console.log('problemIds:', problemIds);
           console.log('현재 문제 ID:', problemIds[currentPage - 1]);
-          if (problemIds) {
-            const studentTopic = `/topic/lesson/${lessonId}/question/${
-              problemIds[currentPage - 1]
-            }`;
-            client.subscribe(studentTopic, message => {
-              console.log('Received message for student:', message.body);
-            });
-          }
+          const studentTopic = `/topic/lesson/${lessonId}/question/${
+            problemIds[currentPage - 1]
+          }`;
+          client.subscribe(studentTopic, message => {
+            console.log('Received message for student:', message.body);
+            setReceivedMessage(message.body);
+          });
         }
       },
       onDisconnect: frame => {
