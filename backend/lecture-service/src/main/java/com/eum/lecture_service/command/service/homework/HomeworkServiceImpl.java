@@ -167,9 +167,6 @@ public class HomeworkServiceImpl implements HomeworkService {
 			.title(savedHomework.getTitle())
 			.startTime(savedHomework.getStartTime())
 			.endTime(savedHomework.getEndTime())
-			.grade(classmodel.getGrade())
-			.school(classmodel.getSchool())
-			.classNumber(classmodel.getClassNumber())
 			.studentIds(students)
 			.build();
 

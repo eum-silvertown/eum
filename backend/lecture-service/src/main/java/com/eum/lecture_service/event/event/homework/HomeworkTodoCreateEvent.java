@@ -21,8 +21,5 @@ public class HomeworkTodoCreateEvent {
 	private String title;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
-	private String school;
-	private Long classNumber;
-	private Long grade;
 	private List<Long> studentIds;
 }
