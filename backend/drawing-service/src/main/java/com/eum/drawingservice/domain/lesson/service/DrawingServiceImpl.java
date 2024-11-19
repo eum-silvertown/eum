@@ -1,0 +1,56 @@
+package com.eum.drawingservice.domain.lesson.service;
+
+import com.eum.drawingservice.domain.lesson.dto.DrawingRequestDTO;
+import com.eum.drawingservice.domain.lesson.dto.DrawingResponseDTO;
+import com.eum.drawingservice.domain.lesson.entity.Drawing;
+import com.eum.drawingservice.domain.lesson.repository.DrawingRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class DrawingServiceImpl implements DrawingService {
+
+    private static final String EMPTY_STRING = "eJyLjgUAARUAuQ==";
+
+    private final DrawingRepository drawingRepository;
+
+    @Override
+    public void saveDrawing(DrawingRequestDTO requestDTO) {
+        if (requestDTO.getDrawingData().equals(EMPTY_STRING)) {
+            return;
+        }
+        
+        Drawing existingDrawing = drawingRepository.findByMemberIdAndLessonIdAndQuestionId(
+                String.valueOf(requestDTO.getMemberId()),
+                String.valueOf(requestDTO.getLessonId()),
+                String.valueOf(requestDTO.getQuestionId())
+        ).orElse(null);
+
+        if(existingDrawing == null) {
+            existingDrawing = Drawing.builder()
+                    .memberId(String.valueOf(requestDTO.getMemberId()))
+                    .lessonId(String.valueOf(requestDTO.getLessonId()))
+                    .questionId(String.valueOf(requestDTO.getQuestionId()))
+                    .width(String.valueOf(requestDTO.getWidth()))
+                    .height(String.valueOf(requestDTO.getHeight()))
+                    .ratio(String.valueOf(requestDTO.getRatio()))
+                    .drawingData(requestDTO.getDrawingData())
+                    .build();
+        } else {
+            existingDrawing.setDrawingData(requestDTO.getDrawingData());
+        }
+
+        drawingRepository.save(existingDrawing);
+    }
+
+    @Override
+    public DrawingResponseDTO getMemberDrawingData(Long memberId, Long lessonId, Long questionId) {
+        Drawing drawing = drawingRepository.findByMemberIdAndLessonIdAndQuestionId(
+            String.valueOf(memberId),
+            String.valueOf(lessonId),
+            String.valueOf(questionId)).orElse(null);
+
+        return drawing == null ? null : DrawingResponseDTO.of(drawing);
+    }
+}
