@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-pydantic
-requests
-boto3
-python-dotenv
-py_eureka_client
-anthropic
