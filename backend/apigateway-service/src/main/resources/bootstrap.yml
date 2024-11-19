@@ -1,7 +1,0 @@
-spring:
-  cloud:
-    config:
-      uri: http://config-service:8888  # Config 서버 URI
-      name: eum-apigateway
-  profiles:
-    active: apigateway
